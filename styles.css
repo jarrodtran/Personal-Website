@@ -459,7 +459,7 @@ em { font-style: italic; }
   text-transform: uppercase;
 }
 .mandate-heading h3 {
-  max-width: 13ch;
+  max-width: 16ch;
   margin: 0;
   font-size: clamp(2.2rem, 3.6vw, 4.4rem);
   font-weight: 500;
