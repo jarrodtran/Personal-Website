@@ -1,24 +1,56 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="robots" content="noindex">
-    <title>Page not found | Jarrod Tran</title>
-    <style>
-      :root{font-family:Arial,sans-serif;color:#11120f;background:#f5f3ed}
-      body{min-height:100vh;margin:0;display:grid;place-items:center}
-      main{max-width:42rem;padding:3rem}
-      p{color:#62635e;line-height:1.6}
-      a{color:#145dff}
-    </style>
-  </head>
-  <body>
-    <main>
-      <p>404 / PAGE NOT FOUND</p>
-      <h1>This path does not exist.</h1>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>Page not found | Jarrod Tran</title>
+  <link rel="icon" href="/favicon.png">
+  <link rel="stylesheet" href="/styles.css">
+  <style>
+    .missing {
+      min-height: calc(100svh - 4.75rem);
+      display: grid;
+      place-items: center;
+      padding: clamp(4rem, 10vw, 8rem) var(--page-pad);
+    }
+    .missing-copy {
+      max-width: 38rem;
+    }
+    .missing-copy h1 {
+      letter-spacing: -0.065em;
+      margin: 1.5rem 0 1.25rem;
+      font-size: clamp(2.8rem, 8vw, 5.5rem);
+      font-weight: 450;
+      line-height: 0.92;
+    }
+    .missing-copy p {
+      color: var(--body);
+      margin: 0 0 2rem;
+      font-size: 1.05rem;
+      line-height: 1.6;
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header">
+    <a class="wordmark" href="/" aria-label="Jarrod Tran, home">JT<span>/</span>26</a>
+    <nav aria-label="Primary navigation">
+      <a href="/#work">Work</a>
+      <a href="/#approach">Approach</a>
+      <a href="/#experience">Experience</a>
+      <a href="/#contact">Contact</a>
+    </nav>
+    <a class="header-contact" href="/">Home <span aria-hidden="true">↗</span></a>
+  </header>
+  <main id="main" class="missing">
+    <div class="missing-copy">
+      <p class="section-index">404 / Page not found</p>
+      <h1>This path does not <em>exist.</em></h1>
       <p>The operating system is intact. Return to the main site to continue.</p>
-      <a href="/">Back to jarrodtran.com</a>
-    </main>
-  </body>
+      <a class="primary-action" href="/">Back to jarrodtran.com <span aria-hidden="true">↗</span></a>
+    </div>
+  </main>
+</body>
 </html>
