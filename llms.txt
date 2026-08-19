@@ -2,12 +2,12 @@
 
 Jarrod Tran is Head of Strategic Planning and Special Projects for Tesla Energy Megapack in Houston, Texas.
 
-He works on capacity planning, cost, special projects, and how factories use AI on the floor. He is an operator, not a research scientist or ML engineer.
+He works on capacity, cost, and special projects: getting cross-functional problems onto a plan the business can run.
 
-Previously: Apple (Senior Strategic Operations Program Manager, iPhone manufacturing in India), Waymo (Strategy & BizOps Manager, Engineering), Tesla Special Projects (4680 and Fremont vehicle operations), Amazon (Operations Area Manager).
+Previously: Apple (Senior Strategic Operations Program Manager, iPhone launch in India), Waymo (Strategy & BizOps Manager, Engineering), Tesla Special Projects (4680 launch and Fremont planning), Amazon (Operations Area Manager).
 
 Selected outcomes:
-- Tesla Energy: 3.2× production scale (14.7 to 46.7 GWh), $260M annualized savings, $156M incremental annual profit from a $23M capacity portfolio.
+- Tesla Energy: 3.2× capacity scale (14.7 to 46.7 GWh), $260M annualized savings, $156M incremental annual profit from a $23M capacity portfolio.
 - Apple iPhone India: 293% year-over-year unit growth (4.3M to 16.9M), revenue $2B to $10B, exports from 6 to 40+ countries.
 
 Education: B.S. Business Administration, Finance, University at Buffalo, Cum Laude.
