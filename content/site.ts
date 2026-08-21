@@ -1,0 +1,450 @@
+export const siteUrl = "https://jarrodtran.com";
+
+export type Audience = "tech" | "vc" | "consulting" | "startup";
+
+export interface ImpactBullet {
+  text: string;
+  metric?: string;
+  audiences?: Audience[];
+}
+
+export interface SectionCopy {
+  eyebrow: string;
+  title: string;
+  description: string;
+}
+
+export interface SiteContent {
+  positioning: {
+    name: string;
+    headline: string;
+    headlineVariants: Record<Audience, string>;
+    valueProp: string;
+    targeting: string[];
+    targetingLine: string;
+    status: string;
+    location: string;
+    currentRole: string;
+  };
+  highlights: { value: string; label: string }[];
+  about: {
+    bio: string[];
+    lookingFor: string[];
+    lookingForIntro: string;
+    strengths: string[];
+    education: string;
+    photo: { src: string; alt: string };
+  };
+  roles: {
+    company: string;
+    title: string;
+    dates: string;
+    summary?: string;
+    bullets: ImpactBullet[];
+  }[];
+  selectedWork: {
+    title: string;
+    problem: string;
+    contribution: string;
+    outcome: string;
+    tags: string[];
+    image?: { src: string; alt: string };
+    link?: { label: string; href: string };
+  }[];
+  principles: { title: string; description: string }[];
+  capabilities: { group: string; items: string[] }[];
+  sections: {
+    experience: SectionCopy;
+    work: SectionCopy;
+    approach: SectionCopy;
+    capabilities: SectionCopy;
+  };
+  knowsAbout: string[];
+  nav: { label: string; href: string }[];
+  contact: {
+    headline: string;
+    description: string;
+    email: string;
+    linkedin: string;
+    github?: string;
+    phone?: string;
+    resumeHref: string;
+    formEndpoint?: string;
+    calendar?: string;
+  };
+  /** Paste-ready outreach. Not rendered on the public site. */
+  outreach: {
+    linkedin: string;
+    email: string;
+    intro: string;
+  };
+}
+
+export const site: SiteContent = {
+  positioning: {
+    name: "Jarrod Tran",
+    headline:
+      "Product and strategy operator. I ship AI product work, lead across teams, and own the outcome.",
+    headlineVariants: {
+      tech: "The person who takes an AI bet from a slide to something people use, with a P&L.",
+      vc: "I put capital on the line, kill weak bets, and drive the rest to an outcome.",
+      consulting:
+        "I break a messy brief into economics, owners, and a weekly decision rhythm.",
+      startup:
+        "I walk into chaos, set the strategy, and stay until the numbers move.",
+    },
+    valueProp:
+      "I'm a corporate operator. Unclear brief, real P&L. At Tesla Energy I lead AI enablement: a product and engineering team whose tools are in production. Previously Apple and Waymo.",
+    targeting: [
+      "Product, strategy, and AI product roles at growth-stage tech companies",
+      "Consulting: structured problem-solving and client-facing delivery",
+      "Early-stage startups that need an operator with real ownership",
+      "VC-adjacent operator seats supporting portfolio companies",
+    ],
+    targetingLine:
+      "I'm targeting product, strategy, and AI product roles at growth-stage tech companies, consulting firms, early-stage startups, and VC-adjacent operator seats. Houston-based. I'll relocate for the right role.",
+    status: "Open to conversations",
+    location: "Houston, TX",
+    currentRole: "Manager, AI Enablement & Factory Strategy · Tesla Energy",
+  },
+  highlights: [
+    { value: "1,000+", label: "AI users enabled" },
+    { value: "20+", label: "Production AI solutions" },
+    { value: "$260M", label: "Annualized savings led" },
+    { value: "$156M", label: "Incremental annual profit" },
+  ],
+  about: {
+    bio: [
+      "I take an unclear brief, set the approach, and stay until the numbers move.",
+      "I'm in Houston as Manager, AI Enablement & Factory Strategy at Tesla Energy. I built a forward-deployed AI product team, got people using what we shipped, and put reporting in place so leadership can see whether it moved the business.",
+      "Before that: the 0→1 iPhone India launch at Apple, Engineering Operations planning at Waymo, and Tesla Special Projects through the 4680 launch. Finance, University at Buffalo, Cum Laude. When a staff meeting needs ground truth, I still build the model in Python or Tableau myself.",
+    ],
+    lookingForIntro:
+      "I want a seat where product sense, judgment, and cross-functional leadership actually matter. Growth-stage tech, consulting, early-stage startups, or a VC-adjacent operator role.",
+    lookingFor: [
+      "Product, strategy, or AI product roles at growth-stage tech companies",
+      "Consulting roles that reward structured problem-solving and influence",
+      "Early-stage startups that need an operator with real ownership",
+      "VC-adjacent work evaluating and supporting portfolio companies",
+    ],
+    strengths: [
+      "Cross-functional leadership without waiting on an org chart",
+      "AI product work from the first use case through 1,000+ people in production",
+      "Portfolio calls with a P&L attached",
+      "Structured problem-solving a leadership team can actually run",
+    ],
+    education:
+      "University at Buffalo · B.S. Business Administration, Finance · Cum Laude",
+    photo: {
+      src: "/avatar.jpg",
+      alt: "Jarrod Tran presenting on stage",
+    },
+  },
+  roles: [
+    {
+      company: "Tesla",
+      title: "Manager, AI Enablement & Factory Strategy",
+      dates: "Aug 2023 – Present",
+      summary:
+        "I own Tesla Energy’s AI enablement strategy and the product team that ships it: roadmap, governance, and executive reporting.",
+      bullets: [
+        {
+          text: "Built and lead a forward-deployed AI engineering organization spanning product management and embedded engineering. We ship AI product work for engineering, planning, commercial, and business-operations use cases.",
+          audiences: ["tech", "startup"],
+        },
+        {
+          text: "Scaled AI enablement to 1,000+ active users and 20+ production AI solutions: RAG troubleshooting, automated reporting, workflow automation, and decision-support.",
+          metric: "1,000+",
+          audiences: ["tech", "startup"],
+        },
+        {
+          text: "Built an AI productivity framework modeled at about 540 reclaimed hours per week and $1.6M in annualized value. MCP-based automation is extra upside as adoption grows.",
+          metric: "$1.6M",
+          audiences: ["tech", "vc"],
+        },
+        {
+          text: "Owned the global investment roadmap across California, Texas, and Shanghai. Scaled Megapack 3.2× and deployment 2.1×, including the Texas data-center program.",
+          metric: "3.2×",
+          audiences: ["tech", "vc"],
+        },
+        {
+          text: "Generated $156M in incremental annual profit by allocating $23M across 50+ initiatives and killing the rest. Separately delivered $260M in annualized savings through a new-product cost program.",
+          metric: "$156M",
+          audiences: ["vc", "consulting"],
+        },
+        {
+          text: "Mitigated $550M in projected tariff exposure by redesigning the product and investment plan, then standing up the trade architecture to run it.",
+          metric: "$550M",
+          audiences: ["consulting", "vc"],
+        },
+        {
+          text: "Rebuilt workforce planning into a self-service model that reduced required headcount 2.4% (75 roles) and saved $7.5M annually. Then I promoted successors so I could spend more time on AI transformation.",
+          metric: "$7.5M",
+          audiences: ["consulting", "startup"],
+        },
+      ],
+    },
+    {
+      company: "Waymo",
+      title: "Strategy & Operations Manager",
+      dates: "Oct 2022 – May 2023",
+      summary:
+        "Ran annual planning for Engineering Operations in a safety-critical autonomous-vehicle environment.",
+      bullets: [
+        {
+          text: "Led annual planning, OKRs, and quarterly business reviews for Engineering Operations. Turned org priorities into resource plans, targets, and milestones.",
+          audiences: ["consulting", "tech"],
+        },
+        {
+          text: "Got hardware, software, fleet, Product, Legal, and Engineering onto the same facts, including safety and regulatory work for commercial autonomous-vehicle deployment.",
+          audiences: ["consulting", "startup"],
+        },
+        {
+          text: "Built leadership dashboards for performance, fleet health, and program milestones so senior leaders weren't stuck in ad-hoc reporting.",
+          audiences: ["tech", "vc"],
+        },
+      ],
+    },
+    {
+      company: "Apple",
+      title: "Strategic Operations Program Manager",
+      dates: "Jun 2021 – Jun 2022",
+      summary:
+        "Led the 0→1 iPhone launch in India: market entry, partners, and readiness in one plan.",
+      bullets: [
+        {
+          text: "Led the 0→1 iPhone India launch from market entry and partner qualification through readiness and scaled delivery, under tight quality, regulatory, and timing requirements.",
+          audiences: ["startup", "tech"],
+        },
+        {
+          text: "Supported 293% year-over-year growth (4.3M → 16.9M units) and a program whose reported revenue grew from $2B to $10B by translating demand into investment and readiness plans.",
+          metric: "293%",
+          audiences: ["tech", "vc"],
+        },
+        {
+          text: "Expanded iPhone India exports from 6 to 40+ countries, building a second-source network that reduced geographic concentration risk.",
+          metric: "40+",
+          audiences: ["consulting", "tech"],
+        },
+      ],
+    },
+    {
+      company: "Tesla",
+      title: "Program Manager, Special Projects",
+      dates: "Jun 2018 – Jun 2021",
+      summary:
+        "Special projects with no playbook: new technology and messy scale-ups.",
+      bullets: [
+        {
+          text: "Advanced Project Roadrunner, Tesla's 4680 program, from early pilot to a launch-ready platform. Stage gates, readiness reviews, and cross-functional ownership through Battery Day.",
+          audiences: ["startup", "tech"],
+        },
+        {
+          text: "Designed and launched a $3.5M/month coordination platform (“Warehouse on Wheels”) to protect product availability during rapid scale-up.",
+          metric: "$3.5M/month",
+          audiences: ["startup", "tech"],
+        },
+        {
+          text: "Led planning and recovery across Model 3 and Model Y programs through demand surges and supply disruptions.",
+          audiences: ["startup", "tech"],
+        },
+      ],
+    },
+  ],
+  selectedWork: [
+    {
+      title: "Tesla Energy: AI product that got used",
+      problem:
+        "Tesla Energy needed AI product work people would actually use. Priorities were scattered. No owners, no way to know if adoption moved the business.",
+      contribution:
+        "I stood up a forward-deployed AI product and engineering team. Roadmap, governance, training, and executive reporting. We shipped RAG troubleshooting, workflow automation, and decision-support against ranked use cases.",
+      outcome:
+        "1,000+ active users, 20+ production AI solutions, ~540 reclaimed hours per week, and $1.6M annualized productivity value.",
+      tags: ["AI Product", "Organizational Design", "Executive Alignment"],
+      image: {
+        src: "/images/tesla-optimus.webp",
+        alt: "Tesla Optimus humanoid robot",
+      },
+      link: { label: "Tesla AI", href: "https://www.tesla.com/AI" },
+    },
+    {
+      title: "Tesla Energy: make the portfolio executable",
+      problem:
+        "Demand outran what we could fund. 50+ asks. $23M to spend. Which dollar moved the P&L?",
+      contribution:
+        "I built Python and Tableau models linking investment, labor, cost, and timing. Funded the work that moved the P&L and killed the rest. Same logic for ranking AI product use cases.",
+      outcome:
+        "3.2× scale, $156M incremental annual profit from the $23M portfolio, $260M new-product savings, 56% throughput unlocked, a −26% cost reduction, and $550M in projected tariff exposure mitigated.",
+      tags: ["Capital Allocation", "Decision Models", "Executive Alignment"],
+      image: {
+        src: "/images/megapack.webp",
+        alt: "Tesla Megapack utility-scale energy storage",
+      },
+      link: { label: "Tesla Megapack", href: "https://www.tesla.com/megapack" },
+    },
+    {
+      title: "Apple: 0→1 iPhone India",
+      problem:
+        "A new geography had to become real under tight quality, regulatory, and timing. Market entry, partners, and demand were all moving.",
+      contribution:
+        "I drove market-entry decisions, partner qualification, and launch readiness so demand, quality, and geopolitics used the same facts.",
+      outcome:
+        "293% growth (4.3M → 16.9M units), program revenue $2B → $10B, and exports expanded from 6 to 40+ countries.",
+      tags: ["0→1 Launch", "Geographic Strategy", "Cross-Functional Delivery"],
+      image: {
+        src: "/images/apple-india.webp",
+        alt: "Apple program environment in India",
+      },
+      link: {
+        label: "Apple Supply Chain",
+        href: "https://www.apple.com/supply-chain/",
+      },
+    },
+    {
+      title: "Waymo: one plan, five functions",
+      problem:
+        "Hardware, software, fleet, product, and legal each ran their own planning. Leadership resolved conflicts with data nobody else trusted.",
+      contribution:
+        "I built the annual planning, OKR, resource-plan, QBR, and dashboard rhythm that put every function on the same facts.",
+      outcome:
+        "A shared Engineering Operations rhythm that forced tradeoffs into the open and cut the ad-hoc reporting.",
+      tags: ["Operating Model", "Executive Cadence", "Decision Systems"],
+      image: {
+        src: "/images/waymo.webp",
+        alt: "Waymo autonomous Jaguar I-Pace on a San Francisco street",
+      },
+      link: { label: "Waymo", href: "https://waymo.com/" },
+    },
+  ],
+  principles: [
+    {
+      title: "Ground truth",
+      description:
+        "Get the outcome, constraints, economics, and assumptions on the table before anyone spends. Structured problem-solving starts there.",
+    },
+    {
+      title: "System map",
+      description:
+        "Follow the dependencies, incentives, and bottlenecks. Most of the time the strategy is fine and the handoffs are not.",
+    },
+    {
+      title: "Simplify",
+      description:
+        "Cut work that doesn't serve the outcome. On Megapack that was 50+ requests down to a ranked $23M portfolio.",
+    },
+    {
+      title: "Commit",
+      description:
+        "Name the tradeoff, the owner, and the next move. If you can't run it, it isn't a strategy.",
+    },
+    {
+      title: "Compound",
+      description:
+        "Put in the feedback, and the automation, that lets the system get better as it grows. AI product work included, when it earns the slot.",
+    },
+  ],
+  capabilities: [
+    {
+      group: "Strategy & Product",
+      items: [
+        "Problem framing",
+        "Capital allocation",
+        "0→1 launches",
+        "New product introduction",
+        "Portfolio management",
+        "Geographic expansion",
+        "Business cases",
+        "Stage-gate design",
+      ],
+    },
+    {
+      group: "AI & Analytics",
+      items: [
+        "AI product strategy",
+        "AI enablement",
+        "Forward-deployed engineering",
+        "Use-case prioritization",
+        "Decision models",
+        "Python",
+        "Tableau",
+      ],
+    },
+    {
+      group: "Leadership & Influence",
+      items: [
+        "Cross-functional leadership",
+        "Executive reporting",
+        "Stakeholder alignment",
+        "Workforce planning",
+        "Organizational design",
+        "Special projects",
+        "Change management",
+        "OKRs & QBRs",
+      ],
+    },
+    {
+      group: "Tools & Platforms",
+      items: ["Python", "Tableau", "Excel to executive-ready", "SQL"],
+    },
+  ],
+  sections: {
+    experience: {
+      eyebrow: "Career",
+      title: "Experience",
+      description:
+        "Tesla, Apple, Waymo. I lead with the result, then how we got it.",
+    },
+    work: {
+      eyebrow: "Initiatives",
+      title: "Selected work",
+      description:
+        "AI product work at Tesla Energy, the investment portfolio behind it, iPhone India, and Waymo planning. Same job: name the problem, model the economics, pick an owner, ship.",
+    },
+    approach: {
+      eyebrow: "Approach",
+      title: "How I work",
+      description:
+        "I start from the facts, then build a system the team can run.",
+    },
+    capabilities: {
+      eyebrow: "Toolkit",
+      title: "Capabilities",
+      description:
+        "AI product work, structured problem-solving, and the leadership to make both stick.",
+    },
+  },
+  knowsAbout: [
+    "AI product",
+    "Cross-functional leadership",
+    "Structured problem-solving",
+    "Capital allocation",
+    "0→1 launches",
+  ],
+  nav: [
+    { label: "About", href: "#about" },
+    { label: "Experience", href: "#experience" },
+    { label: "Work", href: "#work" },
+    { label: "Approach", href: "#approach" },
+    { label: "Contact", href: "#contact" },
+  ],
+  contact: {
+    headline:
+      "Open to conversations with hiring managers, founders, and investors.",
+    description:
+      "If the problem is real and the path is messy, let's talk. Houston-based. I'll relocate.",
+    email: "jarrodtran@outlook.com",
+    phone: "(607) 760-2068",
+    linkedin: "https://www.linkedin.com/in/jarrodtran/",
+    github: "https://github.com/jarrodtran",
+    resumeHref: "/resume.pdf",
+    formEndpoint: undefined,
+  },
+  outreach: {
+    linkedin:
+      "I do product and strategy work, including AI product, at Tesla Energy after Apple and Waymo. 1,000+ people on tools we shipped. Looking at growth-stage tech, consulting, early-stage startups, and VC-adjacent seats. Happy to compare notes.",
+    email:
+      "I'm a corporate operator doing product, strategy, and AI product work. I lead AI enablement at Tesla Energy (1,000+ users, $1.6M modeled annualized value) after Apple and Waymo. Exploring growth-stage tech, consulting, early-stage startups, or a VC-adjacent operator role if the brief is real.",
+    intro:
+      "Jarrod Tran is a corporate operator for product and strategy. He leads AI enablement at Tesla Energy, with AI product work in use by 1,000+ people and $156M incremental profit on the business side. He's looking at growth-stage tech, consulting, early-stage startups, and VC-adjacent operator seats.",
+  },
+};
