@@ -6,10 +6,10 @@ import { site } from "@/content/site";
 export function About() {
   return (
     <Section id="about">
-      <div className="grid items-start gap-12 lg:grid-cols-[1.15fr_0.85fr]">
+      <div className="grid items-start gap-14 lg:grid-cols-[1.15fr_0.85fr]">
         <div>
           <SectionHeading
-            eyebrow="Profile"
+            eyebrow="03 / Profile"
             title={`About ${site.positioning.name.split(" ")[0]}`}
           />
           <div className="text-muted-foreground space-y-4 text-base leading-relaxed">
@@ -19,18 +19,18 @@ export function About() {
           </div>
 
           <Reveal delay={0.08}>
-            <div className="border-border bg-card mt-8 rounded-2xl border p-6 shadow-[var(--shadow-card)]">
-              <p className="text-accent text-xs font-medium tracking-[0.16em] uppercase">
+            <div className="border-border mt-10 border-t pt-8">
+              <p className="text-accent font-mono-label">
                 What I&apos;m looking for next
               </p>
               <p className="text-foreground mt-3 text-sm leading-relaxed">
                 {site.about.lookingForIntro}
               </p>
-              <ul className="mt-4 space-y-2">
+              <ul className="mt-5 space-y-3">
                 {site.about.lookingFor.map((item) => (
                   <li
                     key={item}
-                    className="text-muted-foreground flex gap-2 text-sm leading-relaxed"
+                    className="text-muted-foreground flex gap-3 text-sm leading-relaxed"
                   >
                     <span className="bg-accent mt-2 size-1 shrink-0 rounded-full" />
                     {item}
@@ -41,28 +41,28 @@ export function About() {
           </Reveal>
         </div>
 
-        <Reveal delay={0.12}>
+        <Reveal delay={0.1}>
           <div className="lg:sticky lg:top-28">
-            <div className="border-border bg-card overflow-hidden rounded-2xl border shadow-[var(--shadow-card)]">
+            <div className="border-border overflow-hidden border">
               <Image
                 src={site.about.photo.src}
                 alt={site.about.photo.alt}
                 width={1024}
-                height={1024}
-                className="aspect-square w-full object-cover"
+                height={1280}
+                className="aspect-[4/5] w-full object-cover object-[50%_18%] saturate-[0.9]"
                 priority
               />
             </div>
-            <p className="text-muted-foreground mt-4 text-sm">
+            <p className="text-muted-foreground mt-4 text-sm leading-relaxed">
               {site.positioning.location}
               <span aria-hidden="true"> · </span>
               {site.about.education}
             </p>
-            <ul className="mt-6 space-y-3">
+            <ul className="border-border mt-8 space-y-0 border-t">
               {site.about.strengths.map((strength) => (
                 <li
                   key={strength}
-                  className="border-border bg-card rounded-xl border px-4 py-3 text-sm leading-relaxed shadow-[var(--shadow-card)]"
+                  className="border-border py-3.5 text-sm leading-relaxed not-last:border-b"
                 >
                   {strength}
                 </li>

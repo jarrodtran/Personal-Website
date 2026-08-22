@@ -63,6 +63,7 @@ export function ContactForm() {
   const [errors, setErrors] = useState<Record<string, string[] | undefined>>(
     {},
   );
+  const hasEndpoint = Boolean(site.contact.formEndpoint);
 
   async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -85,12 +86,14 @@ export function ContactForm() {
       return;
     }
 
-    form.reset();
+    if (hasEndpoint) {
+      form.reset();
+    }
     setStatus("success");
   }
 
   const fieldClass =
-    "mt-2 w-full rounded-xl border border-border bg-background px-3.5 py-2.5 text-sm shadow-[var(--shadow-card)] placeholder:text-muted-foreground/70";
+    "mt-2 w-full rounded-sm border border-border bg-background px-3.5 py-2.5 text-sm placeholder:text-muted-foreground/70";
 
   return (
     <form onSubmit={onSubmit} className="space-y-4" noValidate>
@@ -182,14 +185,22 @@ export function ContactForm() {
       <button
         type="submit"
         disabled={status === "submitting"}
-        className="bg-accent text-accent-foreground inline-flex w-full items-center justify-center rounded-full px-5 py-2.5 text-sm font-medium shadow-[var(--shadow-card)] transition-opacity hover:opacity-90 disabled:opacity-60 sm:w-auto"
+        className="bg-accent text-accent-foreground hover:bg-accent-hover inline-flex w-full items-center justify-center rounded-sm px-5 py-2.5 text-sm font-medium transition-colors disabled:opacity-60 sm:w-auto"
       >
-        {status === "submitting" ? "Sending…" : "Send message"}
+        {status === "submitting"
+          ? hasEndpoint
+            ? "Sending…"
+            : "Opening…"
+          : hasEndpoint
+            ? "Send message"
+            : "Open email draft"}
       </button>
 
       <p className="sr-only" aria-live="polite">
         {status === "success"
-          ? "Message sent."
+          ? hasEndpoint
+            ? "Message sent."
+            : "Email draft opened."
           : status === "error"
             ? "Please fix the form errors."
             : ""}
@@ -197,7 +208,7 @@ export function ContactForm() {
 
       {status === "success" ? (
         <p className="text-muted-foreground text-sm">
-          {site.contact.formEndpoint
+          {hasEndpoint
             ? "Thanks. I'll get back to you shortly."
             : "Your email draft should be open. If it isn’t, write me directly."}
         </p>
@@ -206,6 +217,13 @@ export function ContactForm() {
       {errors.form ? (
         <p className="text-sm text-red-600 dark:text-red-400">
           {errors.form[0]}
+        </p>
+      ) : null}
+
+      {!hasEndpoint ? (
+        <p className="text-muted-foreground text-xs leading-relaxed">
+          This opens your mail app with the message filled in. Nothing is sent
+          from this page.
         </p>
       ) : null}
     </form>

@@ -26,7 +26,7 @@ export interface SiteContent {
     location: string;
     currentRole: string;
   };
-  highlights: { value: string; label: string }[];
+  highlights: { value: string; label: string; source?: string }[];
   about: {
     bio: string[];
     lookingFor: string[];
@@ -84,7 +84,7 @@ export const site: SiteContent = {
   positioning: {
     name: "Jarrod Tran",
     headline:
-      "Product and strategy operator. I ship AI product work, lead cross-functionally, and own the outcome.",
+      "Product and strategy operator who ships AI product work and owns the outcome.",
     headlineVariants: {
       tech: "The person who takes an AI bet from a slide to something people use, with a P&L.",
       vc: "I put capital on the line, kill weak bets, and drive the rest to an outcome.",
@@ -108,10 +108,26 @@ export const site: SiteContent = {
     currentRole: "Manager, AI Enablement & Factory Strategy · Tesla Energy",
   },
   highlights: [
-    { value: "1,000+", label: "Active users on AI tools I shipped" },
-    { value: "20+", label: "AI solutions I built, live in production" },
-    { value: "$156M", label: "Incremental profit from capital calls I made" },
-    { value: "$1.6M", label: "Annualized productivity value, modeled" },
+    {
+      value: "1,000+",
+      label: "Active users on AI tools I shipped",
+      source: "Tesla Energy",
+    },
+    {
+      value: "20+",
+      label: "Production AI solutions",
+      source: "Tesla Energy",
+    },
+    {
+      value: "$156M",
+      label: "Incremental annual profit",
+      source: "Tesla Energy",
+    },
+    {
+      value: "$260M",
+      label: "Annualized savings",
+      source: "Tesla Energy",
+    },
   ],
   about: {
     bio: [
@@ -351,8 +367,6 @@ export const site: SiteContent = {
         "Forward-deployed engineering",
         "Use-case prioritization",
         "Decision models",
-        "Python",
-        "Tableau",
       ],
     },
     {
@@ -375,25 +389,25 @@ export const site: SiteContent = {
   ],
   sections: {
     experience: {
-      eyebrow: "Career",
+      eyebrow: "01 / Career",
       title: "Experience",
       description:
         "Tesla, Apple, Waymo. I lead with the result, then how we got it.",
     },
     work: {
-      eyebrow: "Initiatives",
+      eyebrow: "02 / Case studies",
       title: "Selected work",
       description:
         "AI product work at Tesla Energy, the investment portfolio behind it, iPhone India, and Waymo planning. Same job: name the problem, model the economics, pick an owner, ship.",
     },
     approach: {
-      eyebrow: "Approach",
+      eyebrow: "04 / Approach",
       title: "How I work",
       description:
         "I start from the facts, then build a system the team can run.",
     },
     capabilities: {
-      eyebrow: "Toolkit",
+      eyebrow: "05 / Toolkit",
       title: "Capabilities",
       description:
         "AI product work, structured problem-solving, and the leadership to make both stick.",
@@ -407,10 +421,9 @@ export const site: SiteContent = {
     "0→1 launches",
   ],
   nav: [
-    { label: "About", href: "#about" },
     { label: "Experience", href: "#experience" },
     { label: "Work", href: "#work" },
-    { label: "Approach", href: "#approach" },
+    { label: "About", href: "#about" },
     { label: "Contact", href: "#contact" },
   ],
   contact: {

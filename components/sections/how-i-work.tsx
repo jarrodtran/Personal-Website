@@ -4,30 +4,30 @@ import { site } from "@/content/site";
 
 export function HowIWork() {
   return (
-    <Section id="approach" className="bg-muted/60">
+    <Section id="approach" className="bg-muted/50">
       <SectionHeading
         eyebrow={site.sections.approach.eyebrow}
         title={site.sections.approach.title}
         description={site.sections.approach.description}
       />
 
-      <div className="grid gap-5 sm:grid-cols-2">
+      <ol>
         {site.principles.map((principle, index) => (
-          <Reveal key={principle.title} delay={index * 0.06}>
-            <article className="border-border bg-card h-full rounded-2xl border p-6 shadow-[var(--shadow-card)]">
-              <p className="text-accent text-xs font-medium tracking-[0.16em] uppercase">
+          <Reveal key={principle.title} delay={index * 0.04}>
+            <li className="border-border grid gap-3 border-t py-8 sm:grid-cols-[5rem_minmax(0,11rem)_1fr] sm:gap-8">
+              <p className="text-accent font-mono-label pt-1">
                 {String(index + 1).padStart(2, "0")}
               </p>
-              <h3 className="mt-3 text-lg font-semibold tracking-tight">
+              <h3 className="font-display text-2xl tracking-tight">
                 {principle.title}
               </h3>
-              <p className="text-muted-foreground mt-3 text-sm leading-relaxed">
+              <p className="text-muted-foreground max-w-xl text-sm leading-relaxed sm:pt-1">
                 {principle.description}
               </p>
-            </article>
+            </li>
           </Reveal>
         ))}
-      </div>
+      </ol>
     </Section>
   );
 }

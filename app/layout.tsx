@@ -1,14 +1,33 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import {
+  IBM_Plex_Mono,
+  IBM_Plex_Sans,
+  Instrument_Serif,
+} from "next/font/google";
 import { Footer } from "@/components/footer";
 import { Nav } from "@/components/nav";
 import { Providers } from "@/components/providers";
 import { site, siteUrl } from "@/content/site";
 import "./globals.css";
 
-const inter = Inter({
+const plexSans = IBM_Plex_Sans({
   subsets: ["latin"],
-  variable: "--font-inter",
+  weight: ["400", "500", "600"],
+  variable: "--font-plex-sans",
+  display: "swap",
+});
+
+const plexMono = IBM_Plex_Mono({
+  subsets: ["latin"],
+  weight: ["400", "500"],
+  variable: "--font-plex-mono",
+  display: "swap",
+});
+
+const instrument = Instrument_Serif({
+  subsets: ["latin"],
+  weight: "400",
+  variable: "--font-instrument",
   display: "swap",
 });
 
@@ -50,9 +69,6 @@ const personJsonLd = {
   worksFor: { "@type": "Organization", name: "Tesla" },
   description: site.positioning.valueProp,
   email: `mailto:${site.contact.email}`,
-  telephone: site.contact.phone
-    ? `+1${site.contact.phone.replace(/\D/g, "")}`
-    : undefined,
   image: `${siteUrl}${site.about.photo.src}`,
   address: {
     "@type": "PostalAddress",
@@ -71,7 +87,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={inter.variable} suppressHydrationWarning>
+    <html
+      lang="en"
+      className={`${plexSans.variable} ${plexMono.variable} ${instrument.variable}`}
+      suppressHydrationWarning
+    >
       <head>
         <script
           dangerouslySetInnerHTML={{
@@ -87,7 +107,7 @@ export default function RootLayout({
         <Providers>
           <a
             href="#content"
-            className="focus:bg-card sr-only focus:not-sr-only focus:absolute focus:top-3 focus:left-3 focus:z-[60] focus:rounded-full focus:px-4 focus:py-2 focus:shadow-[var(--shadow-card)]"
+            className="focus:bg-card sr-only focus:not-sr-only focus:absolute focus:top-3 focus:left-3 focus:z-[60] focus:rounded-sm focus:px-4 focus:py-2"
           >
             Skip to content
           </a>

@@ -4,10 +4,8 @@ import { site } from "@/content/site";
 export default function NotFound() {
   return (
     <div className="mx-auto max-w-5xl px-5 py-28 sm:px-8">
-      <p className="text-accent text-xs font-medium tracking-[0.16em] uppercase">
-        404
-      </p>
-      <h1 className="mt-3 text-3xl font-semibold tracking-tight">
+      <p className="text-accent font-mono-label">404</p>
+      <h1 className="font-display mt-3 text-4xl tracking-tight">
         This page doesn’t exist.
       </h1>
       <p className="text-muted-foreground mt-3 max-w-md">
@@ -15,7 +13,7 @@ export default function NotFound() {
       </p>
       <Link
         href="/"
-        className="bg-accent text-accent-foreground mt-8 inline-flex rounded-full px-5 py-2.5 text-sm font-medium"
+        className="bg-accent text-accent-foreground hover:bg-accent-hover mt-8 inline-flex rounded-sm px-5 py-2.5 text-sm font-medium"
       >
         Go home
       </Link>

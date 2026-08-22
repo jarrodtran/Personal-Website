@@ -52,12 +52,12 @@ export function Nav() {
       className={cn(
         "sticky top-0 z-50 border-b transition-colors",
         scrolled
-          ? "border-border bg-background/80 backdrop-blur-md"
+          ? "border-border bg-background/85 backdrop-blur-md"
           : "bg-background/40 border-transparent backdrop-blur-sm",
       )}
     >
       <div className="mx-auto flex h-16 max-w-5xl items-center justify-between px-5 sm:px-8">
-        <a href="#top" className="font-semibold tracking-tight">
+        <a href="#top" className="font-medium tracking-tight">
           <span className="sm:hidden">JT</span>
           <span className="hidden sm:inline">{site.positioning.name}</span>
         </a>
@@ -69,15 +69,22 @@ export function Nav() {
               href={item.href}
               aria-current={active === item.href ? "location" : undefined}
               className={cn(
-                "text-sm transition-colors",
+                "relative pb-0.5 text-sm transition-colors",
                 active === item.href
-                  ? "text-foreground font-medium"
+                  ? "text-foreground after:bg-accent after:absolute after:inset-x-0 after:-bottom-1 after:h-px"
                   : "text-muted-foreground hover:text-foreground",
               )}
             >
               {item.label}
             </a>
           ))}
+          <a
+            href={site.contact.resumeHref}
+            download
+            className="text-muted-foreground hover:text-foreground text-sm"
+          >
+            Resume
+          </a>
           <ThemeToggle />
         </nav>
 
@@ -85,7 +92,7 @@ export function Nav() {
           <ThemeToggle />
           <button
             type="button"
-            className="border-border bg-card inline-flex size-9 items-center justify-center rounded-full border"
+            className="border-border bg-card inline-flex size-9 items-center justify-center rounded-sm border"
             aria-expanded={open}
             aria-controls="mobile-nav"
             aria-label={open ? "Close menu" : "Open menu"}
@@ -115,6 +122,14 @@ export function Nav() {
                 {item.label}
               </a>
             ))}
+            <a
+              href={site.contact.resumeHref}
+              download
+              className="text-foreground py-3 text-base"
+              onClick={() => setOpen(false)}
+            >
+              Resume
+            </a>
           </nav>
         </div>
       ) : null}
