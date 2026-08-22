@@ -56,7 +56,10 @@ export function getVisitorFacingCopy(): string {
 
 /** Official job titles are facts and may contain “Factory”; narrative copy may not. */
 export function officialTitles(): string[] {
-  return [site.positioning.currentRole, ...site.roles.map((role) => role.title)];
+  return [
+    site.positioning.currentRole,
+    ...site.roles.map((role) => role.title),
+  ];
 }
 
 export function stripOfficialTitles(text: string): string {
