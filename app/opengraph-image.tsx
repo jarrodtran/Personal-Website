@@ -15,19 +15,26 @@ export default function OpenGraphImage() {
         display: "flex",
         flexDirection: "column",
         justifyContent: "space-between",
-        background: "#11141f",
-        color: "#f4f1ea",
+        background: "#1A1612",
+        color: "#F0EBE3",
         padding: 72,
       }}
     >
-      <div style={{ fontSize: 26, letterSpacing: 1, opacity: 0.62 }}>
+      <div
+        style={{
+          fontSize: 18,
+          letterSpacing: 3,
+          textTransform: "uppercase",
+          color: "#C56A45",
+        }}
+      >
         jarrodtran.com
       </div>
       <div style={{ display: "flex", flexDirection: "column", maxWidth: 980 }}>
         <div
           style={{
             fontSize: 64,
-            fontWeight: 650,
+            fontWeight: 500,
             letterSpacing: -1.6,
             lineHeight: 1.05,
           }}
@@ -45,7 +52,7 @@ export default function OpenGraphImage() {
           {site.positioning.headline}
         </div>
       </div>
-      <div style={{ fontSize: 22, color: "#8bb0ff" }}>
+      <div style={{ fontSize: 22, color: "#C56A45" }}>
         {site.positioning.status}
       </div>
     </div>,

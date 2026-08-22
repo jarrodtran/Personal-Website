@@ -1,6 +1,7 @@
-import { Download, Mail, Phone } from "lucide-react";
+import { Download, Mail } from "lucide-react";
 import { GitHubIcon, LinkedInIcon } from "@/components/brand-icons";
 import { ContactForm } from "@/components/contact-form";
+import { CopyEmail } from "@/components/copy-email";
 import { Section, SectionHeading } from "@/components/section";
 import { site } from "@/content/site";
 
@@ -16,13 +17,6 @@ export function Contact() {
       label: site.contact.email,
       icon: Mail,
     },
-    site.contact.phone
-      ? {
-          href: `tel:+1${site.contact.phone.replace(/\D/g, "")}`,
-          label: site.contact.phone,
-          icon: Phone,
-        }
-      : null,
     {
       href: site.contact.resumeHref,
       label: "Download resume",
@@ -46,19 +40,23 @@ export function Contact() {
   ].filter((link): link is NonNullable<typeof link> => Boolean(link));
 
   return (
-    <Section id="contact" className="bg-muted/60">
-      <div className="grid gap-12 lg:grid-cols-[1fr_1fr]">
+    <Section id="contact" className="bg-muted/50">
+      <div className="grid gap-14 lg:grid-cols-[1fr_1fr]">
         <div>
           <SectionHeading
-            eyebrow="Let’s talk"
+            eyebrow="06 / Contact"
             title={site.contact.headline}
             description={site.contact.description}
           />
           <ul className="space-y-3">
             {links.map((link) => {
               const Icon = link.icon;
+              const isEmail = link.href.startsWith("mailto:");
               return (
-                <li key={link.href}>
+                <li
+                  key={link.href}
+                  className="flex flex-wrap items-center gap-3"
+                >
                   <a
                     href={link.href}
                     className="text-foreground hover:text-accent inline-flex items-center gap-2 text-sm transition-colors"
@@ -75,6 +73,7 @@ export function Contact() {
                     />
                     {link.label}
                   </a>
+                  {isEmail ? <CopyEmail email={site.contact.email} /> : null}
                 </li>
               );
             })}

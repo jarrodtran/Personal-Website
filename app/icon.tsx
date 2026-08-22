@@ -13,10 +13,11 @@ export default function Icon() {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        background: "#2f5de0",
-        color: "white",
-        fontSize: 16,
-        fontWeight: 700,
+        background: "#9A4A2A",
+        color: "#F7F1E8",
+        fontSize: 14,
+        fontWeight: 600,
+        letterSpacing: -0.4,
       }}
     >
       JT

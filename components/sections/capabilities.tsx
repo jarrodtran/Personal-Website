@@ -11,23 +11,16 @@ export function Capabilities() {
         description={site.sections.capabilities.description}
       />
 
-      <div className="grid gap-8 sm:grid-cols-2">
+      <div className="border-border border-t">
         {site.capabilities.map((group, index) => (
-          <Reveal key={group.group} delay={index * 0.05}>
-            <div>
-              <h3 className="text-sm font-semibold tracking-tight">
+          <Reveal key={group.group} delay={index * 0.04}>
+            <div className="border-border grid gap-3 border-b py-6 sm:grid-cols-[14rem_1fr] sm:gap-10">
+              <h3 className="text-sm font-medium tracking-tight">
                 {group.group}
               </h3>
-              <div className="mt-4 flex flex-wrap gap-2">
-                {group.items.map((item) => (
-                  <span
-                    key={item}
-                    className="border-border bg-card text-muted-foreground rounded-full border px-3 py-1.5 text-sm shadow-[var(--shadow-card)]"
-                  >
-                    {item}
-                  </span>
-                ))}
-              </div>
+              <p className="text-muted-foreground text-sm leading-relaxed">
+                {group.items.join(" · ")}
+              </p>
             </div>
           </Reveal>
         ))}
