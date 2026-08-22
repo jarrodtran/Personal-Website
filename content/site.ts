@@ -84,7 +84,7 @@ export const site: SiteContent = {
   positioning: {
     name: "Jarrod Tran",
     headline:
-      "Product and strategy operator. I ship AI product work, lead across teams, and own the outcome.",
+      "Product and strategy operator. I ship AI product work, lead cross-functionally, and own the outcome.",
     headlineVariants: {
       tech: "The person who takes an AI bet from a slide to something people use, with a P&L.",
       vc: "I put capital on the line, kill weak bets, and drive the rest to an outcome.",
@@ -94,7 +94,7 @@ export const site: SiteContent = {
         "I walk into chaos, set the strategy, and stay until the numbers move.",
     },
     valueProp:
-      "I'm a corporate operator. Unclear brief, real P&L. At Tesla Energy I lead AI enablement: a product and engineering team whose tools are in production. Previously Apple and Waymo.",
+      "I'm a corporate operator: unclear brief, real P&L. At Tesla Energy I lead AI enablement, a product and engineering team whose tools are in production. Previously Apple and Waymo.",
     targeting: [
       "Product, strategy, and AI product roles at growth-stage tech companies",
       "Consulting: structured problem-solving and client-facing delivery",
@@ -102,16 +102,16 @@ export const site: SiteContent = {
       "VC-adjacent operator seats supporting portfolio companies",
     ],
     targetingLine:
-      "I'm targeting product, strategy, and AI product roles at growth-stage tech companies, consulting firms, early-stage startups, and VC-adjacent operator seats. Houston-based. I'll relocate for the right role.",
+      "I'm targeting product, strategy, and AI product roles at growth-stage tech, consulting, early-stage startups, and VC-adjacent operator seats. Houston-based. I'll relocate for the right role.",
     status: "Open to conversations",
     location: "Houston, TX",
     currentRole: "Manager, AI Enablement & Factory Strategy · Tesla Energy",
   },
   highlights: [
-    { value: "1,000+", label: "AI users enabled" },
-    { value: "20+", label: "Production AI solutions" },
-    { value: "$260M", label: "Annualized savings led" },
-    { value: "$156M", label: "Incremental annual profit" },
+    { value: "1,000+", label: "Active users on AI tools I shipped" },
+    { value: "20+", label: "AI solutions I built, live in production" },
+    { value: "$156M", label: "Incremental profit from capital calls I made" },
+    { value: "$1.6M", label: "Annualized productivity value, modeled" },
   ],
   about: {
     bio: [
@@ -120,12 +120,12 @@ export const site: SiteContent = {
       "Before that: the 0→1 iPhone India launch at Apple, Engineering Operations planning at Waymo, and Tesla Special Projects through the 4680 launch. Finance, University at Buffalo, Cum Laude. When a staff meeting needs ground truth, I still build the model in Python or Tableau myself.",
     ],
     lookingForIntro:
-      "I want a seat where product sense, judgment, and cross-functional leadership actually matter. Growth-stage tech, consulting, early-stage startups, or a VC-adjacent operator role.",
+      "I want a seat where product judgment and cross-functional leadership change the outcome, not just support it.",
     lookingFor: [
-      "Product, strategy, or AI product roles at growth-stage tech companies",
-      "Consulting roles that reward structured problem-solving and influence",
-      "Early-stage startups that need an operator with real ownership",
-      "VC-adjacent work evaluating and supporting portfolio companies",
+      "A real business outcome and a named decision-maker, not a slide deck",
+      "AI product work with actual users, not a pilot that never ships",
+      "A seat close enough to strategy that my judgment changes the plan",
+      "Room to set the approach and stay until the numbers move",
     ],
     strengths: [
       "Cross-functional leadership without waiting on an org chart",
@@ -149,37 +149,23 @@ export const site: SiteContent = {
         "I own Tesla Energy’s AI enablement strategy and the product team that ships it: roadmap, governance, and executive reporting.",
       bullets: [
         {
-          text: "Built and lead a forward-deployed AI engineering organization spanning product management and embedded engineering. We ship AI product work for engineering, planning, commercial, and business-operations use cases.",
-          audiences: ["tech", "startup"],
-        },
-        {
-          text: "Scaled AI enablement to 1,000+ active users and 20+ production AI solutions: RAG troubleshooting, automated reporting, workflow automation, and decision-support.",
+          text: "Built and lead a forward-deployed AI product and engineering org at Tesla Energy, scaling adoption to 1,000+ active users across 20+ production AI solutions: RAG troubleshooting, automated reporting, workflow automation, and decision-support.",
           metric: "1,000+",
           audiences: ["tech", "startup"],
         },
         {
-          text: "Built an AI productivity framework modeled at about 540 reclaimed hours per week and $1.6M in annualized value. MCP-based automation is extra upside as adoption grows.",
+          text: "Modeled an AI productivity framework at roughly 540 reclaimed hours per week and $1.6M in annualized value, with MCP-based automation as additional upside as adoption grows.",
           metric: "$1.6M",
           audiences: ["tech", "vc"],
         },
         {
-          text: "Owned the global investment roadmap across California, Texas, and Shanghai. Scaled Megapack 3.2× and deployment 2.1×, including the Texas data-center program.",
-          metric: "3.2×",
-          audiences: ["tech", "vc"],
-        },
-        {
-          text: "Generated $156M in incremental annual profit by allocating $23M across 50+ initiatives and killing the rest. Separately delivered $260M in annualized savings through a new-product cost program.",
+          text: "Owned the global investment roadmap across California, Texas, and Shanghai: scaled Megapack 3.2× and deployment 2.1×, allocated $23M across 50+ initiatives for $156M in incremental annual profit, and led a separate program that delivered $260M in annualized savings.",
           metric: "$156M",
           audiences: ["vc", "consulting"],
         },
         {
-          text: "Mitigated $550M in projected tariff exposure by redesigning the product and investment plan, then standing up the trade architecture to run it.",
+          text: "Mitigated $550M in projected tariff exposure by redesigning the product and investment plan, then rebuilt workforce planning to cut required headcount 2.4% (75 roles) for $7.5M in annual savings, and promoted successors so I could focus on AI transformation.",
           metric: "$550M",
-          audiences: ["consulting", "vc"],
-        },
-        {
-          text: "Rebuilt workforce planning into a self-service model that reduced required headcount 2.4% (75 roles) and saved $7.5M annually. Then I promoted successors so I could spend more time on AI transformation.",
-          metric: "$7.5M",
           audiences: ["consulting", "startup"],
         },
       ],
@@ -274,7 +260,7 @@ export const site: SiteContent = {
       contribution:
         "I built Python and Tableau models linking investment, labor, cost, and timing. Funded the work that moved the P&L and killed the rest. Same logic for ranking AI product use cases.",
       outcome:
-        "3.2× scale, $156M incremental annual profit from the $23M portfolio, $260M new-product savings, 56% throughput unlocked, a −26% cost reduction, and $550M in projected tariff exposure mitigated.",
+        "3.2× scale on Megapack. $156M incremental annual profit from a $23M portfolio. $260M in annualized savings. 56% more throughput. −26% cost. $550M in tariff exposure mitigated.",
       tags: ["Capital Allocation", "Decision Models", "Executive Alignment"],
       image: {
         src: "/images/megapack.webp",
@@ -428,10 +414,9 @@ export const site: SiteContent = {
     { label: "Contact", href: "#contact" },
   ],
   contact: {
-    headline:
-      "Open to conversations with hiring managers, founders, and investors.",
+    headline: "Let's talk: product, strategy, or AI product roles.",
     description:
-      "If the problem is real and the path is messy, let's talk. Houston-based. I'll relocate.",
+      "Bring the real brief, not the polished one. Houston-based. I'll relocate for the right role.",
     email: "jarrodtran@outlook.com",
     phone: "(607) 760-2068",
     linkedin: "https://www.linkedin.com/in/jarrodtran/",
