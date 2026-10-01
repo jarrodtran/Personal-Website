@@ -278,7 +278,7 @@ export const site: SiteContent = {
       contribution:
         "I stood up the product and engineering team, ranked the use cases, and set up training and adoption reporting for everything we shipped.",
       outcome:
-        "A modeled ~540 hours reclaimed per week and $1.6M in annualized productivity value.",
+        "Modeled at ~540 hours reclaimed per week and $1.6M in annualized productivity value.",
       tags: ["AI Product", "Organizational Design", "Executive Alignment"],
       panel: {
         kicker: "Tesla Energy",
