@@ -58,7 +58,9 @@ export function getVisitorFacingCopy(): string {
 export function officialTitles(): string[] {
   return [
     site.positioning.currentRole,
-    ...site.roles.map((role) => role.title),
+    ...site.experience.flatMap((employer) =>
+      employer.roles.map((role) => role.title),
+    ),
   ];
 }
 
@@ -71,11 +73,17 @@ export function stripOfficialTitles(text: string): string {
 
 /** Every claim-bearing surface: numbers here must trace to the résumé. */
 export function getProofCopy(): string {
-  const { highlights, roles, selectedWork, principles, about, positioning } =
-    site;
+  const {
+    highlights,
+    experience,
+    selectedWork,
+    principles,
+    about,
+    positioning,
+  } = site;
   return collectStrings({
     highlights,
-    roles,
+    experience,
     selectedWork,
     principles,
     about,
