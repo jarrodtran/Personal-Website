@@ -41,24 +41,30 @@ const viewports = {
   phone: { width: 390, height: 844 },
 };
 
-for (const [device, viewport] of Object.entries(viewports)) {
-  for (const colorScheme of ["light", "dark"]) {
-    const page = await browser.newPage({ viewport, colorScheme });
-    await page.goto(origin);
-    await page.addScriptTag({ content: axe.source });
-    const { violations } = await page.evaluate(() =>
-      window.axe.run(document, {
-        runOnly: ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"],
-      }),
-    );
-    for (const violation of violations) {
-      for (const node of violation.nodes) {
-        failures.push(
-          `${device}/${colorScheme} ${violation.id}: ${node.target.join(" ")} ${node.failureSummary.split("\n").slice(1).join(" ").trim()}`,
-        );
+// Home keeps the full suite below. Case studies get axe + reflow coverage.
+const caseStudyPath = "work/tesla-energy-ai-product/";
+const axeRoutes = ["", caseStudyPath];
+
+for (const route of axeRoutes) {
+  for (const [device, viewport] of Object.entries(viewports)) {
+    for (const colorScheme of ["light", "dark"]) {
+      const page = await browser.newPage({ viewport, colorScheme });
+      await page.goto(`${origin}${route}`);
+      await page.addScriptTag({ content: axe.source });
+      const { violations } = await page.evaluate(() =>
+        window.axe.run(document, {
+          runOnly: ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"],
+        }),
+      );
+      for (const violation of violations) {
+        for (const node of violation.nodes) {
+          failures.push(
+            `${route || "/"} ${device}/${colorScheme} ${violation.id}: ${node.target.join(" ")} ${node.failureSummary.split("\n").slice(1).join(" ").trim()}`,
+          );
+        }
       }
+      await page.close();
     }
-    await page.close();
   }
 }
 

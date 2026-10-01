@@ -1,36 +1,39 @@
 import {
   copyFileSync,
-  existsSync,
   readFileSync,
   readdirSync,
+  statSync,
   writeFileSync,
 } from "node:fs";
-import { join } from "node:path";
+import { basename, join } from "node:path";
 
 const out = "out";
 
-function copyIfPresent(from, to) {
-  if (existsSync(join(out, from))) {
-    copyFileSync(join(out, from), join(out, to));
+function walk(dir, visit) {
+  for (const name of readdirSync(dir)) {
+    const path = join(dir, name);
+    if (statSync(path).isDirectory()) walk(path, visit);
+    else visit(path);
   }
 }
 
-copyIfPresent("opengraph-image", "opengraph-image.png");
-copyIfPresent("icon", "icon.png");
+walk(out, (path) => {
+  const name = basename(path);
+  if (name === "opengraph-image" || name === "icon") {
+    copyFileSync(path, `${path}.png`);
+  }
+});
 
-function patchHtml(file) {
-  const path = join(out, file);
-  if (!existsSync(path)) return;
+function patchHtml(path) {
   const original = readFileSync(path, "utf8");
   const next = original
     .replaceAll("/opengraph-image?", "/opengraph-image.png?")
+    .replaceAll('/opengraph-image"', '/opengraph-image.png"')
     .replaceAll('href="/icon?', 'href="/icon.png?')
     .replaceAll('href="/icon"', 'href="/icon.png"');
-  if (next !== original) {
-    writeFileSync(path, next);
-  }
+  if (next !== original) writeFileSync(path, next);
 }
 
-for (const file of readdirSync(out)) {
-  if (file.endsWith(".html")) patchHtml(file);
-}
+walk(out, (path) => {
+  if (path.endsWith(".html")) patchHtml(path);
+});

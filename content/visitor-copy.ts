@@ -29,6 +29,7 @@ const SKIP_KEYS = new Set([
   "resumeHref",
   "resumeFilename",
   "calendar",
+  "slug",
 ]);
 
 function collectStrings(value: unknown): string[] {

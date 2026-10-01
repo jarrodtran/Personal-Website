@@ -36,6 +36,32 @@ export interface Employer {
   roles: Role[];
 }
 
+export interface CaseStudy {
+  /** Opening scene for the deep page. */
+  context: string;
+  constraints: string[];
+  decisions: string[];
+  /** Longer outcome narrative; figures must stay on the résumé ledger. */
+  outcomeDetail: string;
+  /** What Jarrod personally owned. Prefer dropping a claim over inventing credit. */
+  role: string[];
+  /** Who else was in the room. No invented titles. */
+  team: string[];
+}
+
+export interface SelectedWorkItem {
+  /** Stable URL segment under /work/[slug]. */
+  slug: string;
+  title: string;
+  problem: string;
+  contribution: string;
+  outcome: string;
+  tags: string[];
+  panel: WorkPanel;
+  link?: { label: string; href: string };
+  caseStudy: CaseStudy;
+}
+
 export interface SiteContent {
   positioning: {
     name: string;
@@ -58,15 +84,7 @@ export interface SiteContent {
     photo: { src: string; alt: string };
   };
   experience: Employer[];
-  selectedWork: {
-    title: string;
-    problem: string;
-    contribution: string;
-    outcome: string;
-    tags: string[];
-    panel: WorkPanel;
-    link?: { label: string; href: string };
-  }[];
+  selectedWork: SelectedWorkItem[];
   principles: { title: string; description: string }[];
   capabilities: { group: string; items: string[] }[];
   sections: {
@@ -272,6 +290,7 @@ export const site: SiteContent = {
   ],
   selectedWork: [
     {
+      slug: "tesla-energy-ai-product",
       title: "Tesla Energy: AI product that got used",
       problem:
         "Tesla Energy needed AI tools people would actually use. Priorities were scattered, use cases had no owners, and there was no way to tell whether adoption changed results.",
@@ -286,8 +305,35 @@ export const site: SiteContent = {
         label: "Active users across 20+ production AI solutions",
       },
       link: { label: "Tesla Energy", href: "https://www.tesla.com/energy" },
+      caseStudy: {
+        context:
+          "Scattered experiments sat next to real Energy work with no shared definition of done. Leaders wanted tools inside daily jobs, not another pilot deck.",
+        constraints: [
+          "Adoption had to be scored against workflows, not vanity installs",
+          "Finite roadmap capacity meant every use case needed a named owner",
+          "Security and data boundaries could not bend for release speed",
+        ],
+        decisions: [
+          "Stand up a dedicated product-and-engineering squad instead of a side project",
+          "Sequence the backlog by hours reclaimed and decision quality",
+          "Ship training plus weekly adoption reporting with each release",
+        ],
+        outcomeDetail:
+          "The portfolio reached 1,000+ active users across 20+ production AI solutions. Modeled impact sits near 540 hours given back each week and $1.6M in annualized productivity value.",
+        role: [
+          "Owned the enablement roadmap plus the executive reporting loop",
+          "Hired and led the product-and-engineering squad",
+          "Set prioritization rules, governance, and adoption metrics",
+        ],
+        team: [
+          "Forward-deployed engineers embedded with Energy teams",
+          "Product managers sequencing the use-case backlog",
+          "Business sponsors who owned train-the-trainer coverage",
+        ],
+      },
     },
     {
+      slug: "tesla-energy-portfolio",
       title: "Tesla Energy: make the portfolio executable",
       problem:
         "Demand outran what we could fund. 50+ asks. $23M to spend. Which dollar moved the P&L?",
@@ -302,8 +348,35 @@ export const site: SiteContent = {
         label: "Incremental annual profit from a $23M portfolio",
       },
       link: { label: "Tesla Megapack", href: "https://www.tesla.com/megapack" },
+      caseStudy: {
+        context:
+          "Capital requests ran ahead of the budget. Dozens of initiatives competed for the same dollars with weak ties to profit.",
+        constraints: [
+          "Only $23M was available against 50+ competing requests",
+          "Leaders needed a transparent kill-or-fund rule, not a popularity contest",
+          "Labor, cost, and timing had to live in one decision model",
+        ],
+        decisions: [
+          "Wire each ask to return and risk inside Python and Tableau models",
+          "Fund the highest-return work and stop the rest in public reviews",
+          "Reuse the ranking method later when sequencing AI use cases",
+        ],
+        outcomeDetail:
+          "The funded set delivered $156M in incremental annual profit, with 3.2× Megapack scale, $260M in annualized savings, and $550M in tariff exposure mitigated.",
+        role: [
+          "Owned the Energy investment roadmap and review cadence",
+          "Built the models executives used to compare asks",
+          "Facilitated the tradeoff sessions that stopped low-return work",
+        ],
+        team: [
+          "Finance partners stress-testing cost and return assumptions",
+          "Site and program leads accountable for execution",
+          "Leadership sponsors who enforced the kill list",
+        ],
+      },
     },
     {
+      slug: "apple-iphone-india",
       title: "Apple: 0→1 iPhone India",
       problem:
         "India had to go from plan to scaled launch while market entry, partner readiness, and demand were all still moving.",
@@ -318,8 +391,35 @@ export const site: SiteContent = {
         label: "Year-over-year growth, 4.3M → 16.9M units",
       },
       link: { label: "Apple India", href: "https://www.apple.com/in/" },
+      caseStudy: {
+        context:
+          "India had to leave the slideware stage and become a live, scaled iPhone footprint while partners and demand kept shifting.",
+        constraints: [
+          "Quality and regulatory bars could not slip to buy speed",
+          "Partner readiness trailed the volume curve",
+          "Geopolitical risk had to sit inside the same plan as demand",
+        ],
+        decisions: [
+          "Treat entry calls, partner checks, and go-live gates as one program",
+          "Convert volume signals into funding and readiness plans leaders could run weekly",
+          "Seed alternate sources so exports were not pinned to one geography",
+        ],
+        outcomeDetail:
+          "Reported program revenue moved from $2B to $10B while volume grew 293% year over year (4.3M → 16.9M units). Exports reached 40+ countries.",
+        role: [
+          "Led the India launch program end to end",
+          "Kept entry, partners, and readiness on one schedule",
+          "Surfaced quality, regulatory, and timing risks to leadership",
+        ],
+        team: [
+          "Operations and quality partners closest to the work",
+          "Commercial and planning stakeholders sizing demand",
+          "Leadership reviewers on stage gates",
+        ],
+      },
     },
     {
+      slug: "waymo-engineering-ops",
       title: "Waymo: one plan, five functions",
       problem:
         "Each function ran its own planning, and leadership settled conflicts with data nobody else trusted.",
@@ -334,6 +434,32 @@ export const site: SiteContent = {
         label: "Hardware, software, fleet, product, and legal",
       },
       link: { label: "Waymo", href: "https://waymo.com/" },
+      caseStudy: {
+        context:
+          "Planning lived in silos. Leaders reconciled conflicting numbers in meetings that rarely produced a single source of truth.",
+        constraints: [
+          "Safety and regulatory work had to stay first-class in every plan",
+          "Six functions needed shared targets without private scorekeeping",
+          "Senior time was burning on one-off decks",
+        ],
+        decisions: [
+          "Install one cadence covering OKRs, resources, QBRs, and dashboards",
+          "Move tradeoffs into scheduled reviews instead of private escalations",
+          "Publish durable views covering performance, vehicle health, and milestones",
+        ],
+        outcomeDetail:
+          "Cross-functional plans finally shared one calendar and one set of numbers. Escalations moved into scheduled reviews, and one-off reporting requests fell.",
+        role: [
+          "Facilitated planning and QBR cycles for Engineering Operations",
+          "Built the scoreboard leadership used instead of ad-hoc pulls",
+          "Brokered alignment on targets and resources across functions",
+        ],
+        team: [
+          "Engineering Operations partners who ran the cadence",
+          "Function leads accountable for their slice of the plan",
+          "Senior leaders who consumed the shared scoreboard",
+        ],
+      },
     },
   ],
   principles: [
@@ -471,3 +597,13 @@ export const site: SiteContent = {
       "Jarrod Tran is a corporate operator for product and strategy. He leads AI enablement at Tesla Energy, with AI product work in use by 1,000+ people and $156M incremental profit on the business side. He's looking at growth-stage tech, consulting, early-stage startups, and VC-adjacent operator seats.",
   },
 };
+
+export function getSelectedWorkBySlug(
+  slug: string,
+): SelectedWorkItem | undefined {
+  return site.selectedWork.find((item) => item.slug === slug);
+}
+
+export function selectedWorkSlugs(): string[] {
+  return site.selectedWork.map((item) => item.slug);
+}

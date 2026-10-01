@@ -26,14 +26,20 @@ INK = HexColor("#1a1a1a")
 MUTED = HexColor("#444444")
 RULE = HexColor("#222222")
 
+# Prefer fonts vendored next to this script so CI and local builds match
+# without depending on system packages. Liberation Sans is metric-compatible
+# with Arial. Numbers in the story below are the ledger source of truth for
+# content/site.ts (see tests/metric-ledger.test.ts).
+_FONTS = Path(__file__).resolve().parent / "fonts"
 FONT_CANDIDATES = {
-    # Liberation Sans is metric-compatible with Arial, so layout matches on Linux/CI.
     "Arial": [
+        str(_FONTS / "LiberationSans-Regular.ttf"),
         "/System/Library/Fonts/Supplemental/Arial.ttf",
         "/usr/share/fonts/truetype/msttcorefonts/Arial.ttf",
         "/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf",
     ],
     "Arial-Bold": [
+        str(_FONTS / "LiberationSans-Bold.ttf"),
         "/System/Library/Fonts/Supplemental/Arial Bold.ttf",
         "/usr/share/fonts/truetype/msttcorefonts/Arial_Bold.ttf",
         "/usr/share/fonts/truetype/liberation/LiberationSans-Bold.ttf",

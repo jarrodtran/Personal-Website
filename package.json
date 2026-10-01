@@ -11,7 +11,8 @@
     "test": "vitest run",
     "a11y": "node scripts/a11y.mjs",
     "size": "node scripts/js-size.mjs",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "resume": "python3 scripts/build-resume.py"
   },
   "packageManager": "pnpm@10.29.2",
   "dependencies": {
