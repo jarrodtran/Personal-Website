@@ -66,6 +66,22 @@ html {
   }
 }
 
+@keyframes reveal {
+  from {
+    translate: 0 0.625rem;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    .reveal {
+      animation: reveal linear backwards;
+      animation-timeline: view();
+      animation-range: entry 0% entry 40%;
+    }
+  }
+}
+
 body {
   background: var(--background);
   color: var(--foreground);
