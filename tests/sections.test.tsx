@@ -96,10 +96,10 @@ describe("contact", () => {
   it("names all four audiences Jarrod is talking to", () => {
     const text = textOf(html);
     for (const audience of [
-      "growth-stage tech",
+      "Growth-stage tech",
       "consulting",
       "early-stage startups",
-      "VC-adjacent operator seats",
+      "VC-adjacent operator seat",
     ]) {
       expect(text).toContain(audience);
     }
