@@ -43,7 +43,12 @@ Useful scripts: `pnpm check` (TypeScript), `pnpm lint`, `pnpm test`, `pnpm build
 
 After a build:
 
-- `pnpm a11y` runs axe on `out/` in Google Chrome at desktop and phone widths, in light and dark, and checks that Escape closes the phone menu and returns focus. Set `CHROME_PATH` to use another Chromium build.
+- `pnpm a11y` runs axe on `out/` in Google Chrome at desktop and phone widths, in light and dark. Set `CHROME_PATH` to use another Chromium build. It also fails when:
+  - an icon is squeezed or text overflows its control at 320px
+  - the page title is over 60 characters
+  - a reveal animation hides content, or runs under reduced motion
+  - the phone menu ignores Escape, drops focus, or stays open at desktop width
+  - the copy-email button does not announce success or failure
 - `pnpm size` prints the JS and HTML bytes the home page loads, raw and gzip, and fails when the JS is over 150 kB gzip. Raise the budget in `scripts/js-size.mjs` only on purpose.
 
 ## CI and deploy
