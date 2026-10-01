@@ -7,7 +7,6 @@ import { chromium } from "playwright-core";
 const types = {
   ".css": "text/css",
   ".html": "text/html; charset=utf-8",
-  ".jpg": "image/jpeg",
   ".js": "text/javascript",
   ".pdf": "application/pdf",
   ".png": "image/png",
@@ -34,6 +33,7 @@ const browser = await chromium.launch({
   channel: "chrome",
   executablePath: process.env.CHROME_PATH,
 });
+console.log(`a11y: Chrome ${browser.version()}`);
 const failures = [];
 
 const viewports = {
@@ -90,6 +90,72 @@ const reflowProblems = await narrow.evaluate(() => {
 });
 failures.push(...reflowProblems.map((problem) => `320px: ${problem}`));
 await narrow.close();
+
+const hiddenReveals = (page) =>
+  page.$$eval(
+    ".reveal",
+    (elements) =>
+      elements.filter((element) => {
+        const style = getComputedStyle(element);
+        return (
+          style.opacity !== "1" ||
+          style.visibility !== "visible" ||
+          style.clipPath !== "none"
+        );
+      }).length,
+  );
+const animatedReveals = (page) =>
+  page.$$eval(
+    ".reveal",
+    (elements) =>
+      elements.filter((element) => element.getAnimations().length > 0).length,
+  );
+
+const motion = await browser.newPage({ viewport: viewports.desktop });
+await motion.goto(origin);
+const title = await motion.title();
+if (title.length === 0 || title.length > 60) {
+  failures.push(`page title: ${title.length} characters, not 1 to 60`);
+}
+if ((await animatedReveals(motion)) === 0) {
+  failures.push("reveal: nothing animates when motion is allowed");
+}
+if ((await hiddenReveals(motion)) > 0) {
+  failures.push("reveal: content starts hidden");
+}
+await motion.evaluate(() =>
+  window.scrollTo({ top: document.body.scrollHeight, behavior: "instant" }),
+);
+await motion.evaluate(
+  () =>
+    new Promise((resolve) =>
+      requestAnimationFrame(() => requestAnimationFrame(resolve)),
+    ),
+);
+const offset = await motion.$$eval(
+  ".reveal",
+  (elements) =>
+    elements.filter((element) => getComputedStyle(element).translate !== "none")
+      .length,
+);
+if (offset > 0) {
+  failures.push(`reveal: ${offset} elements stay offset after scrolling past`);
+}
+if ((await hiddenReveals(motion)) > 0) {
+  failures.push("reveal: content is hidden after scrolling");
+}
+await motion.close();
+
+const still = await browser.newPage({
+  viewport: viewports.desktop,
+  reducedMotion: "reduce",
+});
+await still.goto(origin);
+const moving = await animatedReveals(still);
+if (moving > 0) {
+  failures.push(`reveal: ${moving} elements animate under reduced motion`);
+}
+await still.close();
 
 const page = await browser.newPage({ viewport: viewports.phone });
 await page.goto(origin);
@@ -174,5 +240,13 @@ if (failures.length > 0) {
   process.exit(1);
 }
 console.log(
-  "a11y: no axe violations (desktop and phone, light and dark); nothing squeezed or overflowing at 320px; phone menu closes on Escape, returns focus, and closes at desktop width; copy email announces success and failure",
+  [
+    "a11y: all checks pass",
+    "no axe violations at desktop and phone widths, light and dark",
+    "nothing squeezed or overflowing at 320px",
+    "page title within 60 characters",
+    "reveals never hide content and stay still under reduced motion",
+    "phone menu closes on Escape, returns focus, and closes at desktop width",
+    "copy email announces success and failure",
+  ].join("\n  "),
 );
