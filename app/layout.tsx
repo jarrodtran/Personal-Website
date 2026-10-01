@@ -106,7 +106,12 @@ export default function RootLayout({
           >
             Skip to content
           </a>
-          <Nav />
+          <Nav
+            name={site.positioning.name}
+            items={site.nav}
+            resumeHref={site.contact.resumeHref}
+            resumeFilename={site.contact.resumeFilename}
+          />
           <main id="content">{children}</main>
           <Footer />
         </Providers>

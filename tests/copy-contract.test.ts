@@ -1,4 +1,4 @@
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
 import { site } from "@/content/site";
@@ -193,6 +193,20 @@ describe("visitor-facing copy contract", () => {
     expect(page).not.toContain(linkedin);
     expect(page).not.toContain(email);
     expect(page).not.toContain(intro);
+  });
+
+  it("keeps site.ts out of client components, so internal copy never ships as JS", () => {
+    const clientSources = ["app", "components"]
+      .flatMap((dir) =>
+        readdirSync(path.join(root, dir), { recursive: true, encoding: "utf8" })
+          .filter((file) => file.endsWith(".tsx"))
+          .map((file) => readSiteFile(path.join(dir, file))),
+      )
+      .filter((source) => source.startsWith('"use client"'));
+    expect(clientSources.length).toBeGreaterThan(0);
+    for (const source of clientSources) {
+      expect(source).not.toMatch(/^import \{[^}]*\} from "@\/content\/site"/m);
+    }
   });
 
   it("renders section headings from the same content module", () => {
