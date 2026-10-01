@@ -1,7 +1,7 @@
 "use client";
 
 import { Menu, X } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { site } from "@/content/site";
 import { cn } from "@/lib/cn";
 import { ThemeToggle } from "@/components/theme-toggle";
@@ -10,6 +10,7 @@ export function Nav() {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [active, setActive] = useState<string>("");
+  const toggleRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
@@ -41,9 +42,17 @@ export function Nav() {
   }, []);
 
   useEffect(() => {
-    document.body.style.overflow = open ? "hidden" : "";
+    if (!open) return;
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key !== "Escape") return;
+      setOpen(false);
+      toggleRef.current?.focus();
+    };
+    document.body.style.overflow = "hidden";
+    document.addEventListener("keydown", onKeyDown);
     return () => {
       document.body.style.overflow = "";
+      document.removeEventListener("keydown", onKeyDown);
     };
   }, [open]);
 
@@ -80,10 +89,10 @@ export function Nav() {
           ))}
           <a
             href={site.contact.resumeHref}
-            download
+            download={site.contact.resumeFilename}
             className="text-muted-foreground hover:text-foreground text-sm"
           >
-            Resume
+            Résumé
           </a>
           <ThemeToggle />
         </nav>
@@ -91,6 +100,7 @@ export function Nav() {
         <div className="flex items-center gap-2 md:hidden">
           <ThemeToggle />
           <button
+            ref={toggleRef}
             type="button"
             className="border-border bg-card inline-flex size-9 items-center justify-center rounded-sm border"
             aria-expanded={open}
@@ -124,11 +134,11 @@ export function Nav() {
             ))}
             <a
               href={site.contact.resumeHref}
-              download
+              download={site.contact.resumeFilename}
               className="text-foreground py-3 text-base"
               onClick={() => setOpen(false)}
             >
-              Resume
+              Résumé
             </a>
           </nav>
         </div>
