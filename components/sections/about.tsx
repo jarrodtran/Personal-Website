@@ -39,7 +39,7 @@ export function About() {
         </div>
 
         <div className="reveal lg:sticky lg:top-28">
-          <div className="border-border overflow-hidden border">
+          <div className="border-border max-w-sm overflow-hidden border lg:max-w-none">
             <Image
               src={site.about.photo.src}
               alt={site.about.photo.alt}
