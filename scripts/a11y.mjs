@@ -62,6 +62,35 @@ for (const [device, viewport] of Object.entries(viewports)) {
   }
 }
 
+const narrow = await browser.newPage({ viewport: { width: 320, height: 640 } });
+await narrow.goto(origin);
+const reflowProblems = await narrow.evaluate(() => {
+  const problems = [];
+  if (document.documentElement.scrollWidth > window.innerWidth) {
+    problems.push("the page scrolls sideways");
+  }
+  for (const control of document.querySelectorAll("a, button")) {
+    if (control.getBoundingClientRect().width <= 1) continue;
+    const name =
+      control.textContent.trim() || control.getAttribute("aria-label");
+    for (const icon of control.querySelectorAll("svg")) {
+      const { width, height } = icon.getBoundingClientRect();
+      if (width < height) {
+        problems.push(`"${name}" squeezes its icon to ${width.toFixed(1)}px`);
+      }
+    }
+    if (
+      getComputedStyle(control).display !== "inline" &&
+      control.scrollWidth > control.clientWidth
+    ) {
+      problems.push(`"${name}" overflows its box`);
+    }
+  }
+  return problems;
+});
+failures.push(...reflowProblems.map((problem) => `320px: ${problem}`));
+await narrow.close();
+
 const page = await browser.newPage({ viewport: viewports.phone });
 await page.goto(origin);
 const toggle = page.locator('button[aria-controls="mobile-nav"]');
@@ -86,5 +115,5 @@ if (failures.length > 0) {
   process.exit(1);
 }
 console.log(
-  "a11y: no axe violations (desktop and phone, light and dark); phone menu closes on Escape and returns focus",
+  "a11y: no axe violations (desktop and phone, light and dark); nothing squeezed or overflowing at 320px; phone menu closes on Escape and returns focus",
 );

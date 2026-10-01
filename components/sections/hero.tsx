@@ -3,7 +3,7 @@ import { LinkedInIcon } from "@/components/brand-icons";
 import { site } from "@/content/site";
 
 const action =
-  "inline-flex items-center justify-center gap-2 rounded-sm px-3 py-2.5 text-sm font-medium transition-colors sm:px-5";
+  "inline-flex grow items-center justify-center gap-2 rounded-sm px-3 py-2.5 text-sm font-medium transition-colors sm:grow-0 sm:px-5";
 const primary = `${action} bg-accent text-accent-foreground hover:bg-accent-hover`;
 const secondary = `${action} border border-border hover:border-accent/50 hover:text-accent`;
 
@@ -35,17 +35,17 @@ export function Hero() {
           {site.positioning.location}
         </p>
 
-        <div className="mt-9 grid grid-cols-3 gap-2 sm:flex sm:gap-3">
+        <div className="mt-9 flex flex-wrap gap-2 sm:gap-3">
           <a
             href={site.contact.resumeHref}
             download={site.contact.resumeFilename}
             className={primary}
           >
-            <Download className="size-4" aria-hidden="true" />
+            <Download className="size-4 shrink-0" aria-hidden="true" />
             Résumé
           </a>
           <a href={`mailto:${site.contact.email}`} className={secondary}>
-            <Mail className="size-4" aria-hidden="true" />
+            <Mail className="size-4 shrink-0" aria-hidden="true" />
             Email
           </a>
           <a
@@ -54,7 +54,7 @@ export function Hero() {
             rel="noreferrer"
             className={secondary}
           >
-            <LinkedInIcon className="size-4" />
+            <LinkedInIcon className="size-4 shrink-0" />
             LinkedIn
           </a>
         </div>
