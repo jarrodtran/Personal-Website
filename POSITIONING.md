@@ -34,9 +34,13 @@ Visitor-facing copy must not use factory, manufacturing, or heavy operational fr
 
 Banned tokens (case-insensitive): `factory`, `manufacturing`, `manufactured`, `mass production`, `shop floor`, `GWh`, `unit cost`, `cost per unit`, `supplier`, `logistics`, `battery-cell`, `Energy Manufacturing`.
 
-`operator` is requested positioning, not a ban. Official titles (e.g. Lead, Global Planning & AI Adoption) stay. Recast mechanisms as product, strategy, investment, and organizational decisions. Keep the proof points; change the language around them.
+`operator` is requested positioning, not a ban. Official titles (e.g. Lead, AI Enablement & Factory Strategy) stay; the current one is set once as `currentTitle` in `content/site.ts`. Recast mechanisms as product, strategy, investment, and organizational decisions. Keep the proof points; change the language around them.
 
 Copy lives in [`content/site.ts`](content/site.ts) and section headings on `site.sections`. The contract is enforced by `pnpm test`.
+
+## Number ledger
+
+Every figure on the site (highlights, role bullets, case studies, principles, bio) must appear in the résumé source, [`scripts/build-resume.py`](scripts/build-resume.py), which writes `public/resume.pdf`. `tests/metric-ledger.test.ts` fails on any figure the résumé does not contain. To add a number, add it to the résumé first.
 
 ---
 
