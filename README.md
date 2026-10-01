@@ -1,6 +1,6 @@
 # jarrodtran.com
 
-Personal site for [Jarrod Tran](https://jarrodtran.com) — product and strategy operator. Built with Next.js 16 (App Router), TypeScript, Tailwind CSS v4, and Motion. Statically exported to GitHub Pages.
+Personal site for [Jarrod Tran](https://jarrodtran.com) — product and strategy operator. Built with Next.js 16 (App Router), TypeScript, and Tailwind CSS v4. Statically exported to GitHub Pages.
 
 ## Customize
 
@@ -10,17 +10,17 @@ Almost everything you will change lives in two places:
 
 1. **Copy and data** — [`content/site.ts`](content/site.ts)
    - Official current title: `currentTitle` at the top of the file. It feeds the hero, bio, Experience, and JSON-LD.
-   - Name, headline, targeting, status badge
-   - Highlight stats, bio, experience, selected work (with its proof panel), principles, capabilities
+   - Name, headline, page title (`documentTitle`, 60 characters at most), targeting line, status badge
+   - Highlight stats, bio, experience (roles grouped under each employer), selected work (with its proof panel), principles, capabilities
    - Section eyebrows, titles, and descriptions on `site.sections` (numbered in page order)
-   - Contact links, resume path, and an optional calendar link
+   - Contact links, résumé path and download filename, and `calendar` (the contact panel shows a booking link only when it is set)
    - `headlineVariants` and `audiences` tags are unused internal data — do not ship four public versions
 2. **Accent color** — [`app/globals.css`](app/globals.css)
    - Change `--accent` (and `--ring`) under `:root` and `.dark`
 
 Every figure on the site must also appear in the résumé source. Add numbers to the résumé first; `pnpm test` fails otherwise.
 
-After copy edits: `pnpm test` (copy contract + number ledger), `pnpm check`, `pnpm lint`, `pnpm build`.
+After copy edits: `pnpm test` (copy contract, number ledger, rendered sections), `pnpm check`, `pnpm lint`, `pnpm build`. The copy contract fails when a five-word phrase appears in more than one string, unless the phrase carries a figure.
 
 ## Résumé
 
@@ -40,6 +40,11 @@ pnpm dev
 ```
 
 Useful scripts: `pnpm check` (TypeScript), `pnpm lint`, `pnpm test`, `pnpm build` (writes static files to `out/`), `pnpm format`.
+
+After a build:
+
+- `pnpm a11y` runs axe on `out/` in Google Chrome at desktop and phone widths, in light and dark, and checks that Escape closes the phone menu and returns focus. Set `CHROME_PATH` to use another Chromium build.
+- `pnpm size` prints the JS and HTML bytes the home page loads, raw and gzip.
 
 ## CI and deploy
 
