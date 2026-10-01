@@ -26,12 +26,25 @@ INK = HexColor("#1a1a1a")
 MUTED = HexColor("#444444")
 RULE = HexColor("#222222")
 
-pdfmetrics.registerFont(
-    TTFont("Arial", "/System/Library/Fonts/Supplemental/Arial.ttf")
-)
-pdfmetrics.registerFont(
-    TTFont("Arial-Bold", "/System/Library/Fonts/Supplemental/Arial Bold.ttf")
-)
+FONT_CANDIDATES = {
+    # Liberation Sans is metric-compatible with Arial, so layout matches on Linux/CI.
+    "Arial": [
+        "/System/Library/Fonts/Supplemental/Arial.ttf",
+        "/usr/share/fonts/truetype/msttcorefonts/Arial.ttf",
+        "/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf",
+    ],
+    "Arial-Bold": [
+        "/System/Library/Fonts/Supplemental/Arial Bold.ttf",
+        "/usr/share/fonts/truetype/msttcorefonts/Arial_Bold.ttf",
+        "/usr/share/fonts/truetype/liberation/LiberationSans-Bold.ttf",
+    ],
+}
+
+for font_name, candidates in FONT_CANDIDATES.items():
+    font_path = next((p for p in candidates if Path(p).exists()), None)
+    if font_path is None:
+        raise SystemExit(f"No font found for {font_name}: {candidates}")
+    pdfmetrics.registerFont(TTFont(font_name, font_path))
 
 
 def style(name, **kwargs):
@@ -107,7 +120,7 @@ def build():
         ),
         Paragraph("EXPERIENCE", H),
         *role_header(
-            "Manager, AI Enablement &amp; Factory Strategy",
+            "Lead, AI Enablement &amp; Factory Strategy",
             "Aug 2023 – Present",
             "Tesla  ·  Houston, TX",
         ),

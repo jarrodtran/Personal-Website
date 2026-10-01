@@ -1,5 +1,8 @@
 export const siteUrl = "https://jarrodtran.com";
 
+/** Official current title. Every surface (hero, bio, experience, JSON-LD) reads this one value. */
+const currentTitle = "Lead, AI Enablement & Factory Strategy";
+
 export type Audience = "tech" | "vc" | "consulting" | "startup";
 
 export interface ImpactBullet {
@@ -14,6 +17,12 @@ export interface SectionCopy {
   description: string;
 }
 
+export interface WorkPanel {
+  kicker: string;
+  value: string;
+  label: string;
+}
+
 export interface SiteContent {
   positioning: {
     name: string;
@@ -25,6 +34,7 @@ export interface SiteContent {
     status: string;
     location: string;
     currentRole: string;
+    currentCompany: string;
   };
   highlights: { value: string; label: string; source?: string }[];
   about: {
@@ -48,7 +58,7 @@ export interface SiteContent {
     contribution: string;
     outcome: string;
     tags: string[];
-    image?: { src: string; alt: string };
+    panel: WorkPanel;
     link?: { label: string; href: string };
   }[];
   principles: { title: string; description: string }[];
@@ -56,14 +66,14 @@ export interface SiteContent {
   sections: {
     experience: SectionCopy;
     work: SectionCopy;
+    about: Omit<SectionCopy, "description">;
     approach: SectionCopy;
     capabilities: SectionCopy;
+    contact: SectionCopy;
   };
   knowsAbout: string[];
   nav: { label: string; href: string }[];
   contact: {
-    headline: string;
-    description: string;
     email: string;
     linkedin: string;
     github?: string;
@@ -105,7 +115,8 @@ export const site: SiteContent = {
       "I'm targeting product, strategy, and AI product roles at growth-stage tech, consulting, early-stage startups, and VC-adjacent operator seats. Houston-based. I'll relocate for the right role.",
     status: "Open to conversations",
     location: "Houston, TX",
-    currentRole: "Manager, AI Enablement & Factory Strategy · Tesla Energy",
+    currentRole: currentTitle,
+    currentCompany: "Tesla Energy",
   },
   highlights: [
     {
@@ -132,7 +143,7 @@ export const site: SiteContent = {
   about: {
     bio: [
       "I take an unclear brief, set the approach, and stay until the numbers move.",
-      "I'm in Houston as Manager, AI Enablement & Factory Strategy at Tesla Energy. I built a forward-deployed AI product team, got people using what we shipped, and put reporting in place so leadership can see whether it moved the business.",
+      `I'm in Houston as ${currentTitle} at Tesla Energy. I built a forward-deployed AI product team, got people using what we shipped, and put reporting in place so leadership can see whether it moved the business.`,
       "Before that: the 0→1 iPhone India launch at Apple, Engineering Operations planning at Waymo, and Tesla Special Projects through the 4680 launch. Finance, University at Buffalo, Cum Laude. When a staff meeting needs ground truth, I still build the model in Python or Tableau myself.",
     ],
     lookingForIntro:
@@ -159,7 +170,7 @@ export const site: SiteContent = {
   roles: [
     {
       company: "Tesla",
-      title: "Manager, AI Enablement & Factory Strategy",
+      title: currentTitle,
       dates: "Aug 2023 – Present",
       summary:
         "I own Tesla Energy’s AI enablement strategy and the product team that ships it: roadmap, governance, and executive reporting.",
@@ -175,12 +186,12 @@ export const site: SiteContent = {
           audiences: ["tech", "vc"],
         },
         {
-          text: "Owned the global investment roadmap across California, Texas, and Shanghai: scaled Megapack 3.2× and deployment 2.1×, allocated $23M across 50+ initiatives for $156M in incremental annual profit, and led a separate program that delivered $260M in annualized savings.",
+          text: "Owned the global investment roadmap across California, Texas, and Shanghai: scaled Megapack 3.2×, allocated $23M across 50+ initiatives for $156M in incremental annual profit, and led a separate program that delivered $260M in annualized savings.",
           metric: "$156M",
           audiences: ["vc", "consulting"],
         },
         {
-          text: "Mitigated $550M in projected tariff exposure by redesigning the product and investment plan, then rebuilt workforce planning to cut required headcount 2.4% (75 roles) for $7.5M in annual savings, and promoted successors so I could focus on AI transformation.",
+          text: "Mitigated $550M in projected tariff exposure by redesigning the product and investment plan, then built and promoted successors so I could focus on AI transformation.",
           metric: "$550M",
           audiences: ["consulting", "startup"],
         },
@@ -263,11 +274,12 @@ export const site: SiteContent = {
       outcome:
         "1,000+ active users, 20+ production AI solutions, ~540 reclaimed hours per week, and $1.6M annualized productivity value.",
       tags: ["AI Product", "Organizational Design", "Executive Alignment"],
-      image: {
-        src: "/images/tesla-optimus.webp",
-        alt: "Tesla Optimus humanoid robot",
+      panel: {
+        kicker: "Tesla Energy",
+        value: "1,000+",
+        label: "Active users on AI tools we shipped",
       },
-      link: { label: "Tesla AI", href: "https://www.tesla.com/AI" },
+      link: { label: "Tesla Energy", href: "https://www.tesla.com/energy" },
     },
     {
       title: "Tesla Energy: make the portfolio executable",
@@ -276,11 +288,12 @@ export const site: SiteContent = {
       contribution:
         "I built Python and Tableau models linking investment, labor, cost, and timing. Funded the work that moved the P&L and killed the rest. Same logic for ranking AI product use cases.",
       outcome:
-        "3.2× scale on Megapack. $156M incremental annual profit from a $23M portfolio. $260M in annualized savings. 56% more throughput. −26% cost. $550M in tariff exposure mitigated.",
+        "3.2× scale on Megapack. $156M incremental annual profit from a $23M portfolio. $260M in annualized savings. $550M in tariff exposure mitigated.",
       tags: ["Capital Allocation", "Decision Models", "Executive Alignment"],
-      image: {
-        src: "/images/megapack.webp",
-        alt: "Tesla Megapack utility-scale energy storage",
+      panel: {
+        kicker: "Tesla Energy",
+        value: "$156M",
+        label: "Incremental annual profit from a $23M portfolio",
       },
       link: { label: "Tesla Megapack", href: "https://www.tesla.com/megapack" },
     },
@@ -293,14 +306,12 @@ export const site: SiteContent = {
       outcome:
         "293% growth (4.3M → 16.9M units), program revenue $2B → $10B, and exports expanded from 6 to 40+ countries.",
       tags: ["0→1 Launch", "Geographic Strategy", "Cross-Functional Delivery"],
-      image: {
-        src: "/images/apple-india.webp",
-        alt: "Apple program environment in India",
+      panel: {
+        kicker: "Apple",
+        value: "293%",
+        label: "Year-over-year growth, 4.3M → 16.9M units",
       },
-      link: {
-        label: "Apple Supply Chain",
-        href: "https://www.apple.com/supply-chain/",
-      },
+      link: { label: "Apple India", href: "https://www.apple.com/in/" },
     },
     {
       title: "Waymo: one plan, five functions",
@@ -311,9 +322,11 @@ export const site: SiteContent = {
       outcome:
         "A shared Engineering Operations rhythm that forced tradeoffs into the open and cut the ad-hoc reporting.",
       tags: ["Operating Model", "Executive Cadence", "Decision Systems"],
-      image: {
-        src: "/images/waymo.webp",
-        alt: "Waymo autonomous Jaguar I-Pace on a San Francisco street",
+      panel: {
+        kicker: "Waymo",
+        value: "One plan",
+        label:
+          "Hardware, software, fleet, product, and legal on the same facts",
       },
       link: { label: "Waymo", href: "https://waymo.com/" },
     },
@@ -400,6 +413,10 @@ export const site: SiteContent = {
       description:
         "AI product work at Tesla Energy, the investment portfolio behind it, iPhone India, and Waymo planning. Same job: name the problem, model the economics, pick an owner, ship.",
     },
+    about: {
+      eyebrow: "03 / Profile",
+      title: "About Jarrod",
+    },
     approach: {
       eyebrow: "04 / Approach",
       title: "How I work",
@@ -411,6 +428,12 @@ export const site: SiteContent = {
       title: "Capabilities",
       description:
         "AI product work, structured problem-solving, and the leadership to make both stick.",
+    },
+    contact: {
+      eyebrow: "06 / Contact",
+      title: "Let's talk: product, strategy, or AI product roles.",
+      description:
+        "Bring the real brief, not the polished one. Houston-based. I'll relocate for the right role.",
     },
   },
   knowsAbout: [
@@ -427,9 +450,6 @@ export const site: SiteContent = {
     { label: "Contact", href: "#contact" },
   ],
   contact: {
-    headline: "Let's talk: product, strategy, or AI product roles.",
-    description:
-      "Bring the real brief, not the polished one. Houston-based. I'll relocate for the right role.",
     email: "jarrodtran@outlook.com",
     phone: "(607) 760-2068",
     linkedin: "https://www.linkedin.com/in/jarrodtran/",
