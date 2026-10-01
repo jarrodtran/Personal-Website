@@ -195,7 +195,7 @@ describe("visitor-facing copy contract", () => {
     expect(page).not.toContain(intro);
   });
 
-  it("keeps site.ts out of client components, so internal copy never ships as JS", () => {
+  it("keeps the content modules out of client components, so internal copy never ships as JS", () => {
     const clientSources = ["app", "components"]
       .flatMap((dir) =>
         readdirSync(path.join(root, dir), { recursive: true, encoding: "utf8" })
@@ -205,7 +205,7 @@ describe("visitor-facing copy contract", () => {
       .filter((source) => source.startsWith('"use client"'));
     expect(clientSources.length).toBeGreaterThan(0);
     for (const source of clientSources) {
-      expect(source).not.toMatch(/^import \{[^}]*\} from "@\/content\/site"/m);
+      expect(source).not.toMatch(/^import (?!type )[^;]*from "@\/content\//m);
     }
   });
 
