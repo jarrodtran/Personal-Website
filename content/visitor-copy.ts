@@ -69,6 +69,32 @@ export function stripOfficialTitles(text: string): string {
   );
 }
 
+/** Every claim-bearing surface: numbers here must trace to the résumé. */
+export function getProofCopy(): string {
+  const { highlights, roles, selectedWork, principles, about, positioning } =
+    site;
+  return collectStrings({
+    highlights,
+    roles,
+    selectedWork,
+    principles,
+    about,
+    positioning,
+  }).join("\n");
+}
+
+/**
+ * Normalized figures (e.g. "$156M", "3.2×", "1,000+", "293%") in a block of
+ * text. "0→1" is a phrase, not a figure, and a trailing "x" multiplier is
+ * treated as "×" so résumé and site spellings compare equal.
+ */
+export function extractFigures(text: string): string[] {
+  const cleaned = text.replaceAll("0→1", " ").replace(/(\d)x\b/g, "$1×");
+  const matches =
+    cleaned.match(/\$?\d+(?:[.,]\d+)*(?:[%×+]|[MBK](?![a-z]))?/g) ?? [];
+  return [...new Set(matches)];
+}
+
 export function findBannedFraming(text: string): string[] {
   const lower = text.toLowerCase();
   return BANNED_FRAMING_TOKENS.filter((token) =>

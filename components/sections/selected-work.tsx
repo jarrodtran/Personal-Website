@@ -1,5 +1,4 @@
 import { ArrowUpRight } from "lucide-react";
-import Image from "next/image";
 import { Reveal } from "@/components/reveal";
 import { Section, SectionHeading } from "@/components/section";
 import { site } from "@/content/site";
@@ -40,18 +39,25 @@ export function SelectedWork() {
                   featured && "sm:grid sm:grid-cols-2 sm:items-stretch",
                 )}
               >
-                {item.image ? (
-                  <Image
-                    src={item.image.src}
-                    alt={item.image.alt}
-                    width={1200}
-                    height={800}
-                    className={cn(
-                      "aspect-[3/2] w-full object-cover contrast-[1.04] saturate-[0.82]",
-                      featured && "sm:aspect-auto sm:h-full sm:min-h-[22rem]",
-                    )}
-                  />
-                ) : null}
+                <div
+                  className={cn(
+                    "border-border bg-muted flex aspect-[3/2] w-full flex-col justify-between border-b p-6 sm:p-7",
+                    featured &&
+                      "sm:aspect-auto sm:h-full sm:min-h-[22rem] sm:border-r sm:border-b-0",
+                  )}
+                >
+                  <p className="text-accent font-mono-label">
+                    {item.panel.kicker}
+                  </p>
+                  <div>
+                    <p className="tabular font-display text-5xl sm:text-6xl">
+                      {item.panel.value}
+                    </p>
+                    <p className="text-muted-foreground mt-3 max-w-xs text-sm leading-snug">
+                      {item.panel.label}
+                    </p>
+                  </div>
+                </div>
                 <div className="flex flex-1 flex-col p-6 sm:p-7">
                   <h3 className="font-display text-2xl tracking-tight">
                     {item.title}

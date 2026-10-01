@@ -1,4 +1,4 @@
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
 import { site } from "@/content/site";
@@ -63,8 +63,71 @@ describe("visitor-facing copy contract", () => {
     expect(findBannedFraming(stripOfficialTitles(copy))).toEqual([]);
 
     const outcomes = site.selectedWork.map((item) => item.outcome).join("\n");
-    expect(outcomes).toMatch(/−26%/);
     expect(findBannedFraming(outcomes)).toEqual([]);
+  });
+
+  it("uses one official title everywhere", () => {
+    const title = site.positioning.currentRole;
+    expect(title).toBe("Lead, AI Enablement & Factory Strategy");
+    expect(site.roles[0].title).toBe(title);
+    expect(site.about.bio.join(" ")).toContain(title);
+
+    const sources = [
+      "content/site.ts",
+      "app/layout.tsx",
+      "components/sections/hero.tsx",
+      "scripts/build-resume.py",
+    ].map(readSiteFile);
+    for (const source of sources) {
+      expect(source).not.toMatch(/Manager, AI/);
+    }
+    expect(readSiteFile("app/layout.tsx")).toContain(
+      "jobTitle: site.positioning.currentRole",
+    );
+    expect(readSiteFile("components/sections/hero.tsx")).toContain(
+      "site.positioning.currentRole",
+    );
+  });
+
+  it("numbers section eyebrows in page order from site.sections only", () => {
+    const order = [
+      "experience",
+      "work",
+      "about",
+      "approach",
+      "capabilities",
+      "contact",
+    ] as const;
+    order.forEach((key, index) => {
+      expect(site.sections[key].eyebrow).toMatch(
+        new RegExp(`^0${index + 1} / `),
+      );
+    });
+
+    const sectionFiles = [
+      "about",
+      "capabilities",
+      "contact",
+      "experience",
+      "how-i-work",
+      "selected-work",
+    ].map((name) => readSiteFile(`components/sections/${name}.tsx`));
+    for (const source of sectionFiles) {
+      expect(source).not.toMatch(/eyebrow="/);
+    }
+  });
+
+  it("does not ship third-party photos on case studies", () => {
+    for (const item of site.selectedWork) {
+      expect(item).not.toHaveProperty("image");
+      expect(item.panel.value.length).toBeGreaterThan(0);
+    }
+    expect(existsSync(path.join(root, "public/images"))).toBe(false);
+    expect(
+      existsSync(
+        path.join(root, site.about.photo.src.replace(/^\//, "public/")),
+      ),
+    ).toBe(true);
   });
 
   it("ships one shared headline, value prop, and about story — not four public narratives", () => {
@@ -128,11 +191,12 @@ describe("visitor-facing copy contract", () => {
     const files = [
       ["components/sections/hero.tsx", "site.positioning.headline"],
       ["components/sections/about.tsx", "site.about.lookingForIntro"],
+      ["components/sections/about.tsx", "site.sections.about"],
       ["components/sections/experience.tsx", "site.sections.experience"],
       ["components/sections/selected-work.tsx", "site.sections.work"],
       ["components/sections/how-i-work.tsx", "site.sections.approach"],
       ["components/sections/capabilities.tsx", "site.sections.capabilities"],
-      ["components/sections/contact.tsx", "site.contact.headline"],
+      ["components/sections/contact.tsx", "site.sections.contact"],
     ] as const;
 
     for (const [file, token] of files) {

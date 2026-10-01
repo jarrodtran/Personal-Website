@@ -44,9 +44,9 @@ export function Contact() {
       <div className="grid gap-14 lg:grid-cols-[1fr_1fr]">
         <div>
           <SectionHeading
-            eyebrow="06 / Contact"
-            title={site.contact.headline}
-            description={site.contact.description}
+            eyebrow={site.sections.contact.eyebrow}
+            title={site.sections.contact.title}
+            description={site.sections.contact.description}
           />
           <ul className="space-y-3">
             {links.map((link) => {

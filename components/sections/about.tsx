@@ -9,8 +9,8 @@ export function About() {
       <div className="grid items-start gap-14 lg:grid-cols-[1.15fr_0.85fr]">
         <div>
           <SectionHeading
-            eyebrow="03 / Profile"
-            title={`About ${site.positioning.name.split(" ")[0]}`}
+            eyebrow={site.sections.about.eyebrow}
+            title={site.sections.about.title}
           />
           <div className="text-muted-foreground space-y-4 text-base leading-relaxed">
             {site.about.bio.map((paragraph) => (

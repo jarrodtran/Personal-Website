@@ -24,6 +24,8 @@ export function Hero() {
         <p className="text-muted-foreground mt-5 max-w-2xl text-sm">
           {site.positioning.currentRole}
           <span aria-hidden="true"> · </span>
+          {site.positioning.currentCompany}
+          <span aria-hidden="true"> · </span>
           {site.positioning.location}
         </p>
 
