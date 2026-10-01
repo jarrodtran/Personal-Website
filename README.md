@@ -43,7 +43,7 @@ Useful scripts: `pnpm check` (TypeScript), `pnpm lint`, `pnpm test`, `pnpm build
 
 ## CI and deploy
 
-- [`.github/workflows/ci.yml`](.github/workflows/ci.yml) runs lint, typecheck, tests, and build on every pull request.
+- [`.github/workflows/ci.yml`](.github/workflows/ci.yml) runs lint, typecheck, tests, build, and the accessibility check (`pnpm a11y`, axe in Chrome against `out/`) on every pull request.
 - [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml) runs the same gate on every push to `main`, then publishes `out/` to GitHub Pages. A failing check blocks the deploy.
 
 ## Domain status
