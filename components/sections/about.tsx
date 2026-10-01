@@ -47,10 +47,9 @@ export function About() {
               <Image
                 src={site.about.photo.src}
                 alt={site.about.photo.alt}
-                width={1024}
-                height={1280}
-                className="aspect-[4/5] w-full object-cover object-[50%_18%] saturate-[0.9]"
-                priority
+                width={800}
+                height={1000}
+                className="aspect-[4/5] w-full object-cover saturate-[0.9]"
               />
             </div>
             <p className="text-muted-foreground mt-4 text-sm leading-relaxed">
