@@ -27,6 +27,7 @@ const SKIP_KEYS = new Set([
   "linkedin",
   "github",
   "resumeHref",
+  "resumeFilename",
   "formEndpoint",
   "calendar",
 ]);

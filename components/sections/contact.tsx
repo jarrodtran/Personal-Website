@@ -46,7 +46,7 @@ export function Contact() {
           <SectionHeading
             eyebrow={site.sections.contact.eyebrow}
             title={site.sections.contact.title}
-            description={site.sections.contact.description}
+            description={site.positioning.targetingLine}
           />
           <ul className="space-y-3">
             {links.map((link) => {
