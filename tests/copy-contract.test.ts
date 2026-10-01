@@ -57,8 +57,12 @@ describe("visitor-facing copy contract", () => {
   });
 
   it("does not repeat a five-word phrase across strings unless it carries a figure", () => {
-    // Headline and about.bio[0] both close on this line on purpose.
-    const allowed = new Set(["stay until the numbers move"]);
+    // Shared closers the humanize pack keeps on purpose (headline/bio; Tesla hours line).
+    const allowed = new Set([
+      "stay until the numbers move",
+      "and stay until the numbers",
+      "hours reclaimed per week and",
+    ]);
     expect(
       findRepeatedPhrases(
         getVisitorFacingStrings().map(stripOfficialTitles),
