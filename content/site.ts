@@ -23,6 +23,19 @@ export interface WorkPanel {
   label: string;
 }
 
+export interface Role {
+  title: string;
+  dates: string;
+  summary?: string;
+  bullets: ImpactBullet[];
+}
+
+export interface Employer {
+  company: string;
+  note?: string;
+  roles: Role[];
+}
+
 export interface SiteContent {
   positioning: {
     name: string;
@@ -45,13 +58,7 @@ export interface SiteContent {
     education: string;
     photo: { src: string; alt: string };
   };
-  roles: {
-    company: string;
-    title: string;
-    dates: string;
-    summary?: string;
-    bullets: ImpactBullet[];
-  }[];
+  experience: Employer[];
   selectedWork: {
     title: string;
     problem: string;
@@ -167,99 +174,111 @@ export const site: SiteContent = {
       alt: "Jarrod Tran presenting on stage",
     },
   },
-  roles: [
+  experience: [
     {
       company: "Tesla",
-      title: currentTitle,
-      dates: "Aug 2023 – Present",
-      summary:
-        "I own Tesla Energy’s AI enablement strategy and the product team that ships it: roadmap, governance, and executive reporting.",
-      bullets: [
+      note: "Rejoined in 2023 after Apple and Waymo.",
+      roles: [
         {
-          text: "Built and lead a forward-deployed AI product and engineering org at Tesla Energy, scaling adoption to 1,000+ active users across 20+ production AI solutions: RAG troubleshooting, automated reporting, workflow automation, and decision-support.",
-          metric: "1,000+",
-          audiences: ["tech", "startup"],
+          title: currentTitle,
+          dates: "Aug 2023 – Present",
+          summary:
+            "I own Tesla Energy’s AI enablement strategy and the product team that ships it: roadmap, governance, and executive reporting.",
+          bullets: [
+            {
+              text: "Built and lead a forward-deployed AI product and engineering org at Tesla Energy, scaling adoption to 1,000+ active users across 20+ production AI solutions: RAG troubleshooting, automated reporting, workflow automation, and decision-support.",
+              metric: "1,000+",
+              audiences: ["tech", "startup"],
+            },
+            {
+              text: "Modeled an AI productivity framework at roughly 540 reclaimed hours per week and $1.6M in annualized value, with MCP-based automation as additional upside as adoption grows.",
+              metric: "$1.6M",
+              audiences: ["tech", "vc"],
+            },
+            {
+              text: "Owned the global investment roadmap across California, Texas, and Shanghai: scaled Megapack 3.2×, allocated $23M across 50+ initiatives for $156M in incremental annual profit, and led a separate program that delivered $260M in annualized savings.",
+              metric: "$156M",
+              audiences: ["vc", "consulting"],
+            },
+            {
+              text: "Mitigated $550M in projected tariff exposure by redesigning the product and investment plan, then built and promoted successors so I could focus on AI transformation.",
+              metric: "$550M",
+              audiences: ["consulting", "startup"],
+            },
+          ],
         },
         {
-          text: "Modeled an AI productivity framework at roughly 540 reclaimed hours per week and $1.6M in annualized value, with MCP-based automation as additional upside as adoption grows.",
-          metric: "$1.6M",
-          audiences: ["tech", "vc"],
-        },
-        {
-          text: "Owned the global investment roadmap across California, Texas, and Shanghai: scaled Megapack 3.2×, allocated $23M across 50+ initiatives for $156M in incremental annual profit, and led a separate program that delivered $260M in annualized savings.",
-          metric: "$156M",
-          audiences: ["vc", "consulting"],
-        },
-        {
-          text: "Mitigated $550M in projected tariff exposure by redesigning the product and investment plan, then built and promoted successors so I could focus on AI transformation.",
-          metric: "$550M",
-          audiences: ["consulting", "startup"],
+          title: "Program Manager, Special Projects",
+          dates: "Jun 2018 – Jun 2021",
+          summary:
+            "Special projects with no playbook: new technology and messy scale-ups.",
+          bullets: [
+            {
+              text: "Advanced Project Roadrunner, Tesla's 4680 program, from early pilot to a launch-ready platform. Stage gates, readiness reviews, and cross-functional ownership through Battery Day.",
+              audiences: ["startup", "tech"],
+            },
+            {
+              text: "Designed and launched a $3.5M/month coordination platform (“Warehouse on Wheels”) to protect product availability during rapid scale-up.",
+              metric: "$3.5M/month",
+              audiences: ["startup", "tech"],
+            },
+            {
+              text: "Led planning and recovery across Model 3 and Model Y programs through demand surges and supply disruptions.",
+              audiences: ["startup", "tech"],
+            },
+          ],
         },
       ],
     },
     {
       company: "Waymo",
-      title: "Strategy & Operations Manager",
-      dates: "Oct 2022 – May 2023",
-      summary:
-        "Ran annual planning for Engineering Operations in a safety-critical autonomous-vehicle environment.",
-      bullets: [
+      roles: [
         {
-          text: "Led annual planning, OKRs, and quarterly business reviews for Engineering Operations. Turned org priorities into resource plans, targets, and milestones.",
-          audiences: ["consulting", "tech"],
-        },
-        {
-          text: "Got hardware, software, fleet, Product, Legal, and Engineering onto the same facts, including safety and regulatory work for commercial autonomous-vehicle deployment.",
-          audiences: ["consulting", "startup"],
-        },
-        {
-          text: "Built leadership dashboards for performance, fleet health, and program milestones so senior leaders weren't stuck in ad-hoc reporting.",
-          audiences: ["tech", "vc"],
+          title: "Strategy & Operations Manager",
+          dates: "Oct 2022 – May 2023",
+          summary:
+            "Ran annual planning for Engineering Operations in a safety-critical autonomous-vehicle environment.",
+          bullets: [
+            {
+              text: "Led annual planning, OKRs, and quarterly business reviews for Engineering Operations. Turned org priorities into resource plans, targets, and milestones.",
+              audiences: ["consulting", "tech"],
+            },
+            {
+              text: "Got hardware, software, fleet, Product, Legal, and Engineering onto the same facts, including safety and regulatory work for commercial autonomous-vehicle deployment.",
+              audiences: ["consulting", "startup"],
+            },
+            {
+              text: "Built leadership dashboards for performance, fleet health, and program milestones so senior leaders weren't stuck in ad-hoc reporting.",
+              audiences: ["tech", "vc"],
+            },
+          ],
         },
       ],
     },
     {
       company: "Apple",
-      title: "Strategic Operations Program Manager",
-      dates: "Jun 2021 – Jun 2022",
-      summary:
-        "Led the 0→1 iPhone launch in India: market entry, partners, and readiness in one plan.",
-      bullets: [
+      roles: [
         {
-          text: "Led the 0→1 iPhone India launch from market entry and partner qualification through readiness and scaled delivery, under tight quality, regulatory, and timing requirements.",
-          audiences: ["startup", "tech"],
-        },
-        {
-          text: "Supported 293% year-over-year growth (4.3M → 16.9M units) and a program whose reported revenue grew from $2B to $10B by translating demand into investment and readiness plans.",
-          metric: "293%",
-          audiences: ["tech", "vc"],
-        },
-        {
-          text: "Expanded iPhone India exports from 6 to 40+ countries, building a second-source network that reduced geographic concentration risk.",
-          metric: "40+",
-          audiences: ["consulting", "tech"],
-        },
-      ],
-    },
-    {
-      company: "Tesla",
-      title: "Program Manager, Special Projects",
-      dates: "Jun 2018 – Jun 2021",
-      summary:
-        "Special projects with no playbook: new technology and messy scale-ups.",
-      bullets: [
-        {
-          text: "Advanced Project Roadrunner, Tesla's 4680 program, from early pilot to a launch-ready platform. Stage gates, readiness reviews, and cross-functional ownership through Battery Day.",
-          audiences: ["startup", "tech"],
-        },
-        {
-          text: "Designed and launched a $3.5M/month coordination platform (“Warehouse on Wheels”) to protect product availability during rapid scale-up.",
-          metric: "$3.5M/month",
-          audiences: ["startup", "tech"],
-        },
-        {
-          text: "Led planning and recovery across Model 3 and Model Y programs through demand surges and supply disruptions.",
-          audiences: ["startup", "tech"],
+          title: "Strategic Operations Program Manager",
+          dates: "Jun 2021 – Jun 2022",
+          summary:
+            "Led the 0→1 iPhone launch in India: market entry, partners, and readiness in one plan.",
+          bullets: [
+            {
+              text: "Led the 0→1 iPhone India launch from market entry and partner qualification through readiness and scaled delivery, under tight quality, regulatory, and timing requirements.",
+              audiences: ["startup", "tech"],
+            },
+            {
+              text: "Supported 293% year-over-year growth (4.3M → 16.9M units) and a program whose reported revenue grew from $2B to $10B by translating demand into investment and readiness plans.",
+              metric: "293%",
+              audiences: ["tech", "vc"],
+            },
+            {
+              text: "Expanded iPhone India exports from 6 to 40+ countries, building a second-source network that reduced geographic concentration risk.",
+              metric: "40+",
+              audiences: ["consulting", "tech"],
+            },
+          ],
         },
       ],
     },

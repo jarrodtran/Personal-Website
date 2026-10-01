@@ -31,7 +31,9 @@ describe("visitor-facing copy contract", () => {
     expect(copy).toContain("1,000+");
     expect(copy).toContain("$1.6M");
     expect(copy.includes("$156M") || copy.includes("$260M")).toBe(true);
-    expect(site.roles[0].title.toLowerCase()).toContain("ai enablement");
+    expect(site.experience[0].roles[0].title.toLowerCase()).toContain(
+      "ai enablement",
+    );
   });
 
   it("states corporate operator / product & strategy positioning, AI product, leadership, impact, and the four audiences", () => {
@@ -69,7 +71,7 @@ describe("visitor-facing copy contract", () => {
   it("uses one official title everywhere", () => {
     const title = site.positioning.currentRole;
     expect(title).toBe("Lead, AI Enablement & Factory Strategy");
-    expect(site.roles[0].title).toBe(title);
+    expect(site.experience[0].roles[0].title).toBe(title);
     expect(site.about.bio.join(" ")).toContain(title);
 
     const sources = [

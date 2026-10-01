@@ -66,7 +66,7 @@ const personJsonLd = {
   name: site.positioning.name,
   url: siteUrl,
   jobTitle: site.positioning.currentRole,
-  worksFor: { "@type": "Organization", name: site.roles[0].company },
+  worksFor: { "@type": "Organization", name: site.experience[0].company },
   description: site.positioning.valueProp,
   email: `mailto:${site.contact.email}`,
   image: `${siteUrl}${site.about.photo.src}`,

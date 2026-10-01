@@ -46,9 +46,11 @@ describe("number ledger", () => {
   });
 
   it("highlights each metric bullet's figure inside its own text", () => {
-    for (const role of site.roles) {
-      for (const bullet of role.bullets) {
-        if (bullet.metric) expect(bullet.text).toContain(bullet.metric);
+    for (const employer of site.experience) {
+      for (const role of employer.roles) {
+        for (const bullet of role.bullets) {
+          if (bullet.metric) expect(bullet.text).toContain(bullet.metric);
+        }
       }
     }
   });
