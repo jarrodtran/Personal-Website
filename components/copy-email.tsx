@@ -16,12 +16,17 @@ export function CopyEmail({ email }: { email: string }) {
   }
 
   return (
-    <button
-      type="button"
-      onClick={copy}
-      className="text-accent text-sm font-medium hover:underline"
-    >
-      {copied ? "Copied" : "Copy email"}
-    </button>
+    <>
+      <button
+        type="button"
+        onClick={copy}
+        className="text-accent text-sm font-medium hover:underline"
+      >
+        {copied ? "Copied" : "Copy email"}
+      </button>
+      <span role="status" className="sr-only">
+        {copied ? "Email address copied" : ""}
+      </span>
+    </>
   );
 }

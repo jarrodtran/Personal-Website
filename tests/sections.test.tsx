@@ -90,8 +90,10 @@ describe("experience", () => {
 });
 
 describe("contact", () => {
+  const html = renderToStaticMarkup(<Contact />);
+
   it("names all four audiences Jarrod is talking to", () => {
-    const text = textOf(renderToStaticMarkup(<Contact />));
+    const text = textOf(html);
     for (const audience of [
       "growth-stage tech",
       "consulting",
@@ -99,6 +101,37 @@ describe("contact", () => {
       "VC-adjacent operator seats",
     ]) {
       expect(text).toContain(audience);
+    }
+  });
+
+  it("offers email with a copy button, LinkedIn, and the résumé, and no form", () => {
+    expect(links(html)).toEqual([
+      { href: "mailto:jarrodtran@outlook.com", text: "jarrodtran@outlook.com" },
+      {
+        href: "https://www.linkedin.com/in/jarrodtran/",
+        text: "linkedin.com/in/jarrodtran",
+        target: "_blank",
+      },
+      {
+        href: "/resume.pdf",
+        text: "Download résumé (PDF)",
+        download: "Jarrod-Tran-Resume.pdf",
+      },
+    ]);
+    expect(html).toMatch(/<button\b[^>]*>Copy email<\/button>/);
+    expect(html).not.toMatch(/<(form|input|textarea)\b/);
+  });
+
+  it("adds a calendar link only when one is configured", () => {
+    site.contact.calendar = "https://example.com/book";
+    try {
+      expect(links(renderToStaticMarkup(<Contact />))).toContainEqual({
+        href: "https://example.com/book",
+        text: "Book a call",
+        target: "_blank",
+      });
+    } finally {
+      delete site.contact.calendar;
     }
   });
 });

@@ -13,14 +13,12 @@ Almost everything you will change lives in two places:
    - Name, headline, targeting, status badge
    - Highlight stats, bio, experience, selected work (with its proof panel), principles, capabilities
    - Section eyebrows, titles, and descriptions on `site.sections` (numbered in page order)
-   - Contact links, resume path, and optional Formspree endpoint
+   - Contact links, resume path, and an optional calendar link
    - `headlineVariants` and `audiences` tags are unused internal data — do not ship four public versions
 2. **Accent color** — [`app/globals.css`](app/globals.css)
    - Change `--accent` (and `--ring`) under `:root` and `.dark`
 
 Every figure on the site must also appear in the résumé source. Add numbers to the résumé first; `pnpm test` fails otherwise.
-
-To enable in-page form submit (instead of a pre-filled email draft), create a free [Formspree](https://formspree.io) form and paste the endpoint into `site.contact.formEndpoint`.
 
 After copy edits: `pnpm test` (copy contract + number ledger), `pnpm check`, `pnpm lint`, `pnpm build`.
 

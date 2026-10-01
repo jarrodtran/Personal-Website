@@ -28,7 +28,6 @@ const SKIP_KEYS = new Set([
   "github",
   "resumeHref",
   "resumeFilename",
-  "formEndpoint",
   "calendar",
 ]);
 
