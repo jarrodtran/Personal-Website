@@ -2,6 +2,7 @@ import { readFileSync } from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
 import { normalizeBasePath, withBasePath } from "@/lib/base-path";
+import { patchHtmlContent } from "../scripts/postbuild.mjs";
 
 const root = path.resolve(__dirname, "..");
 
@@ -98,5 +99,16 @@ describe("deploy wiring", () => {
     expect(about).toContain("withBasePath");
     expect(postbuild).toMatch(/\/icon\?/);
     expect(postbuild).not.toContain('href="/icon?');
+  });
+
+  it("adds .png to generated icon/og files and prefixes the icon href when BASE_PATH is set", () => {
+    const html =
+      '<link rel="icon" href="/icon?hash"/><meta property="og:image" content="https://jarrodtran.com/opengraph-image?x"/>';
+    expect(patchHtmlContent(html, "")).toBe(
+      '<link rel="icon" href="/icon.png?hash"/><meta property="og:image" content="https://jarrodtran.com/opengraph-image.png?x"/>',
+    );
+    expect(patchHtmlContent(html, "/Personal-Website")).toBe(
+      '<link rel="icon" href="/Personal-Website/icon.png?hash"/><meta property="og:image" content="https://jarrodtran.com/opengraph-image.png?x"/>',
+    );
   });
 });
