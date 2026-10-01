@@ -1,3 +1,8 @@
+/**
+ * Budget is for JS loaded by the home page (/). Case-study routes are
+ * separate HTML entry points; keep this gate on / so recruiter landings
+ * stay lean. Raise gzipBudget only with an intentional comment.
+ */
 import { readFileSync } from "node:fs";
 import { gzipSync } from "node:zlib";
 
@@ -21,9 +26,7 @@ for (const src of sources) {
 }
 
 const kb = (bytes) => `${(bytes / 1024).toFixed(1)} kB`;
-console.log(
-  `JS on /: ${sources.size} files, ${kb(raw)} raw, ${kb(gzip)} gzip`,
-);
+console.log(`JS on /: ${sources.size} files, ${kb(raw)} raw, ${kb(gzip)} gzip`);
 console.log(
   `HTML /: ${kb(html.length)} raw, ${kb(gzipSync(html, { level: 9 }).length)} gzip`,
 );

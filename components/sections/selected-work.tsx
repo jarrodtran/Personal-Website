@@ -1,4 +1,5 @@
 import { ArrowUpRight } from "lucide-react";
+import Link from "next/link";
 import { Section, SectionHeading } from "@/components/section";
 import { site } from "@/content/site";
 import { cn } from "@/lib/cn";
@@ -26,9 +27,10 @@ export function SelectedWork() {
       <div className="grid gap-8 sm:grid-cols-2">
         {site.selectedWork.map((item, index) => {
           const featured = index === 0;
+          const caseHref = `/work/${item.slug}/`;
           return (
             <article
-              key={item.title}
+              key={item.slug}
               className={cn(
                 "reveal border-border bg-card flex flex-col overflow-hidden border",
                 featured &&
@@ -74,17 +76,26 @@ export function SelectedWork() {
                       </span>
                     ))}
                   </div>
-                  {item.link ? (
-                    <a
-                      href={item.link.href}
-                      className="text-accent inline-flex items-center gap-1 text-sm font-medium hover:underline"
-                      target="_blank"
-                      rel="noreferrer"
+                  <div className="flex flex-wrap items-center gap-4">
+                    <Link
+                      href={caseHref}
+                      className="text-foreground inline-flex items-center gap-1 text-sm font-medium hover:underline"
                     >
-                      {item.link.label}
+                      Read the case study
                       <ArrowUpRight className="size-3.5" aria-hidden="true" />
-                    </a>
-                  ) : null}
+                    </Link>
+                    {item.link ? (
+                      <a
+                        href={item.link.href}
+                        className="text-accent inline-flex items-center gap-1 text-sm font-medium hover:underline"
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        {item.link.label}
+                        <ArrowUpRight className="size-3.5" aria-hidden="true" />
+                      </a>
+                    ) : null}
+                  </div>
                 </div>
               </div>
             </article>

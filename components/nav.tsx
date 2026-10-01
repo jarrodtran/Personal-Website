@@ -1,6 +1,7 @@
 "use client";
 
 import { Menu, X } from "lucide-react";
+import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import type { SiteContent } from "@/content/site";
 import { cn } from "@/lib/cn";
@@ -21,6 +22,12 @@ export function Nav({
   const [scrolled, setScrolled] = useState(false);
   const [active, setActive] = useState<string>("");
   const toggleRef = useRef<HTMLButtonElement>(null);
+  const pathname = usePathname();
+  const onHome = pathname === "/" || pathname === "";
+  const sectionHref = (href: string) =>
+    href.startsWith("#") && !onHome ? `/${href}` : href;
+  const homeHref = onHome ? "#top" : "/";
+  const current = onHome ? active : "";
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
@@ -30,7 +37,8 @@ export function Nav({
   }, []);
 
   useEffect(() => {
-    const ids = items.map((item) => item.href.replace("#", ""));
+    if (!onHome) return;
+    const ids = items.map((item) => item.href.split("#").pop() ?? "");
     const observer = new IntersectionObserver(
       (entries) => {
         const visible = entries
@@ -49,7 +57,7 @@ export function Nav({
     });
 
     return () => observer.disconnect();
-  }, [items]);
+  }, [items, onHome]);
 
   useEffect(() => {
     if (!open) return;
@@ -82,7 +90,7 @@ export function Nav({
       )}
     >
       <div className="mx-auto flex h-16 max-w-5xl items-center justify-between px-5 sm:px-8">
-        <a href="#top" className="font-medium tracking-tight">
+        <a href={homeHref} className="font-medium tracking-tight">
           <span className="sm:hidden">JT</span>
           <span className="hidden sm:inline">{name}</span>
         </a>
@@ -91,11 +99,11 @@ export function Nav({
           {items.map((item) => (
             <a
               key={item.href}
-              href={item.href}
-              aria-current={active === item.href ? "location" : undefined}
+              href={sectionHref(item.href)}
+              aria-current={current === item.href ? "location" : undefined}
               className={cn(
                 "relative pb-0.5 text-sm transition-colors",
-                active === item.href
+                current === item.href
                   ? "text-foreground after:bg-accent after:absolute after:inset-x-0 after:-bottom-1 after:h-px"
                   : "text-muted-foreground hover:text-foreground",
               )}
@@ -141,7 +149,7 @@ export function Nav({
             {items.map((item) => (
               <a
                 key={item.href}
-                href={item.href}
+                href={sectionHref(item.href)}
                 className="text-foreground py-3 text-base"
                 onClick={() => setOpen(false)}
               >

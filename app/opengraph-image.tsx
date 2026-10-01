@@ -1,61 +1,108 @@
 import { ImageResponse } from "next/og";
 import { site } from "@/content/site";
+import { loadOgFonts, loadOgPhotoDataUrl, ogColors, ogSize } from "@/lib/og";
 
 export const alt = `${site.positioning.name}: ${site.positioning.headline}`;
-export const size = { width: 1200, height: 630 };
+export const size = ogSize;
 export const contentType = "image/png";
 export const dynamic = "force-static";
 
 export default function OpenGraphImage() {
+  const photo = loadOgPhotoDataUrl();
+  const fonts = loadOgFonts();
+
   return new ImageResponse(
     <div
       style={{
         height: "100%",
         width: "100%",
         display: "flex",
-        flexDirection: "column",
-        justifyContent: "space-between",
-        background: "#1A1612",
-        color: "#F0EBE3",
-        padding: 72,
+        background: ogColors.bg,
+        color: ogColors.fg,
+        padding: 64,
+        gap: 48,
       }}
     >
+      <img
+        src={photo}
+        alt=""
+        width={280}
+        height={280}
+        style={{
+          width: 280,
+          height: 280,
+          objectFit: "cover",
+          borderRadius: 8,
+          border: `1px solid ${ogColors.accent}`,
+        }}
+      />
       <div
         style={{
-          fontSize: 18,
-          letterSpacing: 3,
-          textTransform: "uppercase",
-          color: "#C56A45",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "space-between",
+          flex: 1,
+          paddingTop: 8,
+          paddingBottom: 8,
         }}
       >
-        jarrodtran.com
-      </div>
-      <div style={{ display: "flex", flexDirection: "column", maxWidth: 980 }}>
         <div
           style={{
-            fontSize: 64,
-            fontWeight: 500,
-            letterSpacing: -1.6,
-            lineHeight: 1.05,
+            display: "flex",
+            fontFamily: "IBM Plex Sans",
+            fontSize: 18,
+            fontWeight: 600,
+            letterSpacing: 3,
+            textTransform: "uppercase",
+            color: ogColors.accent,
           }}
         >
-          {site.positioning.name}
+          jarrodtran.com
         </div>
         <div
           style={{
-            marginTop: 18,
-            fontSize: 28,
-            opacity: 0.82,
-            lineHeight: 1.35,
+            display: "flex",
+            flexDirection: "column",
+            maxWidth: 720,
           }}
         >
-          {site.positioning.headline}
+          <div
+            style={{
+              display: "flex",
+              fontFamily: "Instrument Serif",
+              fontSize: 64,
+              letterSpacing: -1.6,
+              lineHeight: 1.05,
+            }}
+          >
+            {site.positioning.name}
+          </div>
+          <div
+            style={{
+              display: "flex",
+              marginTop: 18,
+              fontFamily: "IBM Plex Sans",
+              fontSize: 26,
+              color: ogColors.muted,
+              lineHeight: 1.35,
+            }}
+          >
+            {site.positioning.headline}
+          </div>
         </div>
-      </div>
-      <div style={{ fontSize: 22, color: "#C56A45" }}>
-        {site.positioning.status}
+        <div
+          style={{
+            display: "flex",
+            fontFamily: "IBM Plex Sans",
+            fontSize: 22,
+            fontWeight: 600,
+            color: ogColors.accent,
+          }}
+        >
+          {site.positioning.status}
+        </div>
       </div>
     </div>,
-    { ...size },
+    { ...ogSize, fonts },
   );
 }
