@@ -208,10 +208,22 @@ describe("visitor-facing copy contract", () => {
     expect(page).not.toContain(intro);
   });
 
-  it("keeps revealed sections readable instead of hiding them at opacity 0", () => {
-    const reveal = readSiteFile("components/reveal.tsx");
-    expect(reveal).toContain("whileInView");
-    expect(reveal).not.toMatch(/opacity:\s*0/);
+  it("reveals sections with CSS only and never hides them at opacity 0", () => {
+    const css = readSiteFile("app/globals.css");
+    const keyframes = css.match(
+      /@keyframes reveal \{(?:[^{}]|\{[^{}]*\})*\}/,
+    )?.[0];
+    const rules = css.match(/\.reveal \{[^}]*\}/g) ?? [];
+    expect(keyframes).toBeDefined();
+    expect(rules.length).toBeGreaterThan(0);
+    for (const block of [keyframes, ...rules]) {
+      expect(block).not.toContain("opacity");
+    }
+    expect(css).toContain("prefers-reduced-motion: no-preference");
+    expect(existsSync(path.join(root, "components/reveal.tsx"))).toBe(false);
+    expect(
+      JSON.parse(readSiteFile("package.json")).dependencies,
+    ).not.toHaveProperty("motion");
   });
 
   it("renders section headings from the same content module", () => {
