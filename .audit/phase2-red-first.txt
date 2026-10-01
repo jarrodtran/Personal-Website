@@ -1,0 +1,43 @@
+New checks against the commit before their fix
+ok     cef8f38 pnpm a11y on d18c899 (fail)
+         320px: "Résumé" squeezes its icon to 4.1px
+         320px: "LinkedIn" squeezes its icon to 0.0px
+ok     17afd98 pnpm a11y on cef8f38 (fail)
+         phone menu: widening to desktop leaves the menu open and the page locked
+ok     64f3d1e pnpm a11y on 17afd98 (fail)
+         copy email: a failed copy is not announced
+ok     tests before 8fdabec miss a clip-path that hides every reveal (pass)
+ok     c64227e import boundary test on 8fdabec (fail)
+              × keeps site.ts out of client components, so internal copy never ships as JS 5ms
+          FAIL  tests/copy-contract.test.ts > visitor-facing copy contract > keeps site.ts out of client components, so internal copy never ships as JS
+ok     c64227e boundary test misses a client import of visitor-copy (pass)
+ok     0d5ee5f boundary test catches it (fail)
+              × keeps the content modules out of client components, so internal copy never ships as JS 4ms
+          FAIL  tests/copy-contract.test.ts > visitor-facing copy contract > keeps the content modules out of client components, so internal copy never ships as JS
+ok     old phrase guard misses a repeated 0→1 phrase (pass)
+ok     b328888 phrase guard catches it (fail)
+         AssertionError: expected [ 'the 0→1 iphone india launch' ] to deeply equal []
+         +   "the 0→1 iphone india launch",
+ok     tests before d18c899 with contact.calendar set (fail)
+          ❯ tests/sections.test.tsx (7 tests | 1 failed) 12ms
+          FAIL  tests/sections.test.tsx > contact > offers email with a copy button, LinkedIn, and the résumé, and no form
+          ❯ tests/sections.test.tsx:108:25
+ok     d18c899 tests with contact.calendar set (pass)
+
+Checks against a broken copy of the branch tip
+ok     pnpm size at the tip (pass)
+ok     pnpm size with a 140 kB budget (fail)
+         JS on / is over the 140.0 kB gzip budget
+ok     clip-path hides every reveal (fail)
+         reveal: content starts hidden
+         reveal: content is hidden after scrolling
+ok     reveals start at opacity 0 (fail)
+         reveal: content starts hidden
+ok     fill both holds a transform (fail)
+         reveal: 18 elements stay offset after scrolling past
+ok     reveals ignore reduced motion (fail)
+         reveal: 18 elements animate under reduced motion
+ok     title over 60 characters (fail)
+         page title: 71 characters, not 1 to 60
+
+18 of 18 cases behave as expected
