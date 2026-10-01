@@ -1,6 +1,8 @@
 import { readFileSync } from "node:fs";
 import { gzipSync } from "node:zlib";
 
+const gzipBudget = 150 * 1024;
+
 const html = readFileSync("out/index.html");
 const sources = new Set(
   [...html.toString().matchAll(/<script\b[^>]*>/g)]
@@ -25,3 +27,7 @@ console.log(
 console.log(
   `HTML /: ${kb(html.length)} raw, ${kb(gzipSync(html, { level: 9 }).length)} gzip`,
 );
+if (gzip > gzipBudget) {
+  console.error(`JS on / is over the ${kb(gzipBudget)} gzip budget`);
+  process.exit(1);
+}

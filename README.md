@@ -44,11 +44,11 @@ Useful scripts: `pnpm check` (TypeScript), `pnpm lint`, `pnpm test`, `pnpm build
 After a build:
 
 - `pnpm a11y` runs axe on `out/` in Google Chrome at desktop and phone widths, in light and dark, and checks that Escape closes the phone menu and returns focus. Set `CHROME_PATH` to use another Chromium build.
-- `pnpm size` prints the JS and HTML bytes the home page loads, raw and gzip.
+- `pnpm size` prints the JS and HTML bytes the home page loads, raw and gzip, and fails when the JS is over 150 kB gzip. Raise the budget in `scripts/js-size.mjs` only on purpose.
 
 ## CI and deploy
 
-- [`.github/workflows/ci.yml`](.github/workflows/ci.yml) runs lint, typecheck, tests, build, and the accessibility check (`pnpm a11y`, axe in Chrome against `out/`) on every pull request.
+- [`.github/workflows/ci.yml`](.github/workflows/ci.yml) runs lint, typecheck, tests, build, the accessibility check (`pnpm a11y`, axe and page checks in Chrome against `out/`), and the JS budget (`pnpm size`) on every pull request.
 - [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml) runs the same gate on every push to `main`, then publishes `out/` to GitHub Pages. A failing check blocks the deploy.
 
 ## Domain status
