@@ -409,7 +409,7 @@ export const site: SiteContent = {
         role: [
           "Led the India launch program end to end",
           "Kept entry, partners, and readiness on one schedule",
-          "Surfaced quality, regulatory, and timing risks to leadership",
+          "Brought quality, regulatory, and timing risks to leadership",
         ],
         team: [
           "Operations and quality partners closest to the work",
@@ -420,7 +420,7 @@ export const site: SiteContent = {
     },
     {
       slug: "waymo-engineering-ops",
-      title: "Waymo: one plan, five functions",
+      title: "Waymo: one plan, six functions",
       problem:
         "Each function ran its own planning, and leadership settled conflicts with data nobody else trusted.",
       contribution:
@@ -431,7 +431,7 @@ export const site: SiteContent = {
       panel: {
         kicker: "Waymo",
         value: "One plan",
-        label: "Hardware, software, fleet, product, and legal",
+        label: "Six functions on one shared scoreboard",
       },
       link: { label: "Waymo", href: "https://waymo.com/" },
       caseStudy: {
@@ -445,14 +445,14 @@ export const site: SiteContent = {
         decisions: [
           "Install one cadence covering OKRs, resources, QBRs, and dashboards",
           "Move tradeoffs into scheduled reviews instead of private escalations",
-          "Publish durable views covering performance, vehicle health, and milestones",
+          "Publish dashboards covering performance, vehicle health, and milestones",
         ],
         outcomeDetail:
           "Cross-functional plans finally shared one calendar and one set of numbers. Escalations moved into scheduled reviews, and one-off reporting requests fell.",
         role: [
           "Facilitated planning and QBR cycles for Engineering Operations",
           "Built the scoreboard leadership used instead of ad-hoc pulls",
-          "Brokered alignment on targets and resources across functions",
+          "Aligned targets and resources across functions",
         ],
         team: [
           "Engineering Operations partners who ran the cadence",
