@@ -1,18 +1,29 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
+
+const results = {
+  idle: { label: "Copy email", status: "" },
+  copied: { label: "Copied", status: "Email address copied" },
+  failed: { label: "Couldn't copy", status: "Couldn't copy the email address" },
+};
+
+type Result = keyof typeof results;
 
 export function CopyEmail({ email }: { email: string }) {
-  const [copied, setCopied] = useState(false);
+  const [result, setResult] = useState<Result>("idle");
+  const resetTimer = useRef<number>(undefined);
 
   async function copy() {
+    let next: Result = "copied";
     try {
       await navigator.clipboard.writeText(email);
-      setCopied(true);
-      window.setTimeout(() => setCopied(false), 2000);
     } catch {
-      setCopied(false);
+      next = "failed";
     }
+    window.clearTimeout(resetTimer.current);
+    setResult(next);
+    resetTimer.current = window.setTimeout(() => setResult("idle"), 2000);
   }
 
   return (
@@ -22,10 +33,10 @@ export function CopyEmail({ email }: { email: string }) {
         onClick={copy}
         className="text-accent text-sm font-medium hover:underline"
       >
-        {copied ? "Copied" : "Copy email"}
+        {results[result].label}
       </button>
       <span role="status" className="sr-only">
-        {copied ? "Email address copied" : ""}
+        {results[result].status}
       </span>
     </>
   );

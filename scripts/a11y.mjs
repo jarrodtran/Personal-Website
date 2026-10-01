@@ -126,6 +126,46 @@ if (!released) {
   );
 }
 
+const clipboardContext = await browser.newContext({
+  viewport: viewports.desktop,
+  permissions: ["clipboard-read", "clipboard-write"],
+});
+const contact = await clipboardContext.newPage();
+await contact.goto(origin);
+const email = await contact
+  .locator('#contact a[href^="mailto:"]')
+  .textContent();
+const copyButton = contact.locator("#contact button");
+const announces = (text) =>
+  contact
+    .waitForFunction(
+      (expected) =>
+        document.querySelector('#contact [role="status"]').textContent ===
+        expected,
+      text,
+      { timeout: 2000 },
+    )
+    .then(
+      () => true,
+      () => false,
+    );
+await copyButton.click();
+if (
+  !(await announces("Email address copied")) ||
+  (await contact.evaluate(() => navigator.clipboard.readText())) !== email
+) {
+  failures.push("copy email: a successful copy is not announced");
+}
+await contact.evaluate(() => {
+  navigator.clipboard.writeText = () =>
+    Promise.reject(new DOMException("Denied", "NotAllowedError"));
+});
+await copyButton.click();
+if (!(await announces("Couldn't copy the email address"))) {
+  failures.push("copy email: a failed copy is not announced");
+}
+await clipboardContext.close();
+
 await browser.close();
 server.close();
 
@@ -134,5 +174,5 @@ if (failures.length > 0) {
   process.exit(1);
 }
 console.log(
-  "a11y: no axe violations (desktop and phone, light and dark); nothing squeezed or overflowing at 320px; phone menu closes on Escape, returns focus, and closes at desktop width",
+  "a11y: no axe violations (desktop and phone, light and dark); nothing squeezed or overflowing at 320px; phone menu closes on Escape, returns focus, and closes at desktop width; copy email announces success and failure",
 );
