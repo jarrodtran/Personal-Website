@@ -41,7 +41,6 @@ export interface SiteContent {
     name: string;
     headline: string;
     headlineVariants: Record<Audience, string>;
-    /** Browser tab and search result title. Keep it under 60 characters. */
     documentTitle: string;
     valueProp: string;
     targetingLine: string;
