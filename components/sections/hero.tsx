@@ -1,5 +1,11 @@
-import { ArrowDown, Mail } from "lucide-react";
+import { Download, Mail } from "lucide-react";
+import { LinkedInIcon } from "@/components/brand-icons";
 import { site } from "@/content/site";
+
+const action =
+  "inline-flex grow items-center justify-center gap-2 rounded-sm px-3 py-2.5 text-sm font-medium transition-colors sm:grow-0 sm:px-5";
+const primary = `${action} bg-accent text-accent-foreground hover:bg-accent-hover`;
+const secondary = `${action} border border-border hover:border-accent/50 hover:text-accent`;
 
 export function Hero() {
   return (
@@ -29,28 +35,27 @@ export function Hero() {
           {site.positioning.location}
         </p>
 
-        <p className="mt-7 max-w-2xl text-lg leading-relaxed text-pretty">
-          {site.positioning.valueProp}
-        </p>
-
-        <p className="text-muted-foreground mt-4 max-w-2xl text-sm leading-relaxed">
-          {site.positioning.targetingLine}
-        </p>
-
-        <div className="mt-10 flex flex-col gap-3 sm:flex-row sm:items-center">
+        <div className="mt-9 flex flex-wrap gap-2 sm:gap-3">
           <a
-            href="#work"
-            className="bg-accent text-accent-foreground hover:bg-accent-hover inline-flex items-center justify-center gap-2 rounded-sm px-5 py-2.5 text-sm font-medium transition-colors"
+            href={site.contact.resumeHref}
+            download={site.contact.resumeFilename}
+            className={primary}
           >
-            See the work
-            <ArrowDown className="size-4" aria-hidden="true" />
+            <Download className="size-4 shrink-0" aria-hidden="true" />
+            Résumé
+          </a>
+          <a href={`mailto:${site.contact.email}`} className={secondary}>
+            <Mail className="size-4 shrink-0" aria-hidden="true" />
+            Email
           </a>
           <a
-            href="#contact"
-            className="border-border hover:border-accent/50 hover:text-accent inline-flex items-center justify-center gap-2 rounded-sm border bg-transparent px-5 py-2.5 text-sm font-medium transition-colors"
+            href={site.contact.linkedin}
+            target="_blank"
+            rel="noreferrer"
+            className={secondary}
           >
-            Get in touch
-            <Mail className="size-4" aria-hidden="true" />
+            <LinkedInIcon className="size-4 shrink-0" />
+            LinkedIn
           </a>
         </div>
       </div>

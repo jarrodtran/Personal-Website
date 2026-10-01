@@ -34,7 +34,7 @@ const instrument = Instrument_Serif({
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: `${site.positioning.name}: ${site.positioning.headline}`,
+    default: site.positioning.documentTitle,
     template: `%s · ${site.positioning.name}`,
   },
   description: site.positioning.valueProp,
@@ -44,14 +44,14 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     url: siteUrl,
-    title: `${site.positioning.name}: ${site.positioning.headline}`,
+    title: site.positioning.documentTitle,
     description: site.positioning.valueProp,
     siteName: site.positioning.name,
     locale: "en_US",
   },
   twitter: {
     card: "summary_large_image",
-    title: `${site.positioning.name}: ${site.positioning.headline}`,
+    title: site.positioning.documentTitle,
     description: site.positioning.valueProp,
   },
   robots: {
@@ -66,7 +66,7 @@ const personJsonLd = {
   name: site.positioning.name,
   url: siteUrl,
   jobTitle: site.positioning.currentRole,
-  worksFor: { "@type": "Organization", name: site.roles[0].company },
+  worksFor: { "@type": "Organization", name: site.experience[0].company },
   description: site.positioning.valueProp,
   email: `mailto:${site.contact.email}`,
   image: `${siteUrl}${site.about.photo.src}`,
@@ -94,11 +94,6 @@ export default function RootLayout({
     >
       <head>
         <script
-          dangerouslySetInnerHTML={{
-            __html: `(function(){try{var t=localStorage.getItem('theme');var d=t==='dark'||((t==null||t==='system')&&window.matchMedia('(prefers-color-scheme: dark)').matches);document.documentElement.classList.toggle('dark',d);}catch(e){}})();`,
-          }}
-        />
-        <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}
         />
@@ -111,7 +106,12 @@ export default function RootLayout({
           >
             Skip to content
           </a>
-          <Nav />
+          <Nav
+            name={site.positioning.name}
+            items={site.nav}
+            resumeHref={site.contact.resumeHref}
+            resumeFilename={site.contact.resumeFilename}
+          />
           <main id="content">{children}</main>
           <Footer />
         </Providers>

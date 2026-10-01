@@ -1,15 +1,26 @@
 "use client";
 
 import { Menu, X } from "lucide-react";
-import { useEffect, useState } from "react";
-import { site } from "@/content/site";
+import { useEffect, useRef, useState } from "react";
+import type { SiteContent } from "@/content/site";
 import { cn } from "@/lib/cn";
 import { ThemeToggle } from "@/components/theme-toggle";
 
-export function Nav() {
+export function Nav({
+  name,
+  items,
+  resumeHref,
+  resumeFilename,
+}: {
+  name: string;
+  items: SiteContent["nav"];
+  resumeHref: string;
+  resumeFilename: string;
+}) {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [active, setActive] = useState<string>("");
+  const toggleRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
@@ -19,7 +30,7 @@ export function Nav() {
   }, []);
 
   useEffect(() => {
-    const ids = site.nav.map((item) => item.href.replace("#", ""));
+    const ids = items.map((item) => item.href.replace("#", ""));
     const observer = new IntersectionObserver(
       (entries) => {
         const visible = entries
@@ -38,12 +49,26 @@ export function Nav() {
     });
 
     return () => observer.disconnect();
-  }, []);
+  }, [items]);
 
   useEffect(() => {
-    document.body.style.overflow = open ? "hidden" : "";
+    if (!open) return;
+    const desktop = window.matchMedia("(width >= 48rem)");
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key !== "Escape") return;
+      setOpen(false);
+      toggleRef.current?.focus();
+    };
+    const onDesktop = () => {
+      if (desktop.matches) setOpen(false);
+    };
+    document.body.style.overflow = "hidden";
+    document.addEventListener("keydown", onKeyDown);
+    desktop.addEventListener("change", onDesktop);
     return () => {
       document.body.style.overflow = "";
+      document.removeEventListener("keydown", onKeyDown);
+      desktop.removeEventListener("change", onDesktop);
     };
   }, [open]);
 
@@ -59,11 +84,11 @@ export function Nav() {
       <div className="mx-auto flex h-16 max-w-5xl items-center justify-between px-5 sm:px-8">
         <a href="#top" className="font-medium tracking-tight">
           <span className="sm:hidden">JT</span>
-          <span className="hidden sm:inline">{site.positioning.name}</span>
+          <span className="hidden sm:inline">{name}</span>
         </a>
 
         <nav className="hidden items-center gap-7 md:flex" aria-label="Primary">
-          {site.nav.map((item) => (
+          {items.map((item) => (
             <a
               key={item.href}
               href={item.href}
@@ -79,11 +104,11 @@ export function Nav() {
             </a>
           ))}
           <a
-            href={site.contact.resumeHref}
-            download
+            href={resumeHref}
+            download={resumeFilename}
             className="text-muted-foreground hover:text-foreground text-sm"
           >
-            Resume
+            Résumé
           </a>
           <ThemeToggle />
         </nav>
@@ -91,6 +116,7 @@ export function Nav() {
         <div className="flex items-center gap-2 md:hidden">
           <ThemeToggle />
           <button
+            ref={toggleRef}
             type="button"
             className="border-border bg-card inline-flex size-9 items-center justify-center rounded-sm border"
             aria-expanded={open}
@@ -112,7 +138,7 @@ export function Nav() {
             className="mx-auto flex max-w-5xl flex-col px-5 py-4"
             aria-label="Mobile"
           >
-            {site.nav.map((item) => (
+            {items.map((item) => (
               <a
                 key={item.href}
                 href={item.href}
@@ -123,12 +149,12 @@ export function Nav() {
               </a>
             ))}
             <a
-              href={site.contact.resumeHref}
-              download
+              href={resumeHref}
+              download={resumeFilename}
               className="text-foreground py-3 text-base"
               onClick={() => setOpen(false)}
             >
-              Resume
+              Résumé
             </a>
           </nav>
         </div>

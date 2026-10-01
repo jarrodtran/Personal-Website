@@ -1,11 +1,13 @@
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
 import { site } from "@/content/site";
 import {
   BANNED_FRAMING_TOKENS,
   findBannedFraming,
+  findRepeatedPhrases,
   getVisitorFacingCopy,
+  getVisitorFacingStrings,
   stripOfficialTitles,
 } from "@/content/visitor-copy";
 
@@ -21,7 +23,7 @@ describe("visitor-facing copy contract", () => {
   it("imports the shipped content module, not a duplicate fixture", () => {
     expect(copy).toContain(site.positioning.headline);
     expect(copy).toContain(site.positioning.valueProp);
-    expect(copy).toContain(site.positioning.targetingLine);
+    expect(copy).toContain(site.sections.contact.description);
     expect(copy).toContain(site.about.bio[0]);
     expect(copy).toContain(site.about.lookingForIntro);
     expect(copy).toContain(site.sections.experience.description);
@@ -31,7 +33,9 @@ describe("visitor-facing copy contract", () => {
     expect(copy).toContain("1,000+");
     expect(copy).toContain("$1.6M");
     expect(copy.includes("$156M") || copy.includes("$260M")).toBe(true);
-    expect(site.roles[0].title.toLowerCase()).toContain("ai enablement");
+    expect(site.experience[0].roles[0].title.toLowerCase()).toContain(
+      "ai enablement",
+    );
   });
 
   it("states corporate operator / product & strategy positioning, AI product, leadership, impact, and the four audiences", () => {
@@ -56,6 +60,12 @@ describe("visitor-facing copy contract", () => {
     expect(copy).not.toContain("—");
   });
 
+  it("does not repeat a five-word phrase across strings unless it carries a figure", () => {
+    expect(
+      findRepeatedPhrases(getVisitorFacingStrings().map(stripOfficialTitles)),
+    ).toEqual([]);
+  });
+
   it("does not use factory, manufacturing, or heavy operational framing", () => {
     expect(BANNED_FRAMING_TOKENS).toEqual(
       expect.arrayContaining(["unit cost", "cost per unit"]),
@@ -69,7 +79,7 @@ describe("visitor-facing copy contract", () => {
   it("uses one official title everywhere", () => {
     const title = site.positioning.currentRole;
     expect(title).toBe("Lead, AI Enablement & Factory Strategy");
-    expect(site.roles[0].title).toBe(title);
+    expect(site.experience[0].roles[0].title).toBe(title);
     expect(site.about.bio.join(" ")).toContain(title);
 
     const sources = [
@@ -87,6 +97,12 @@ describe("visitor-facing copy contract", () => {
     expect(readSiteFile("components/sections/hero.tsx")).toContain(
       "site.positioning.currentRole",
     );
+  });
+
+  it("keeps the document title short enough for a browser tab or search result", () => {
+    const title = site.positioning.documentTitle;
+    expect(title.startsWith(site.positioning.name)).toBe(true);
+    expect(title.length).toBeLessThanOrEqual(60);
   });
 
   it("numbers section eyebrows in page order from site.sections only", () => {
@@ -143,8 +159,6 @@ describe("visitor-facing copy contract", () => {
 
     const hero = readSiteFile("components/sections/hero.tsx");
     expect(hero).toContain("site.positioning.headline");
-    expect(hero).toContain("site.positioning.valueProp");
-    expect(hero).toContain("site.positioning.targetingLine");
     expect(hero).not.toContain("headlineVariants");
     expect(hero).not.toContain("site.outreach");
 
@@ -181,10 +195,18 @@ describe("visitor-facing copy contract", () => {
     expect(page).not.toContain(intro);
   });
 
-  it("keeps revealed sections readable instead of hiding them at opacity 0", () => {
-    const reveal = readSiteFile("components/reveal.tsx");
-    expect(reveal).toContain("whileInView");
-    expect(reveal).not.toMatch(/opacity:\s*0/);
+  it("keeps the content modules out of client components, so internal copy never ships as JS", () => {
+    const clientSources = ["app", "components"]
+      .flatMap((dir) =>
+        readdirSync(path.join(root, dir), { recursive: true, encoding: "utf8" })
+          .filter((file) => file.endsWith(".tsx"))
+          .map((file) => readSiteFile(path.join(dir, file))),
+      )
+      .filter((source) => source.startsWith('"use client"'));
+    expect(clientSources.length).toBeGreaterThan(0);
+    for (const source of clientSources) {
+      expect(source).not.toMatch(/^import (?!type )[^;]*from "@\/content\//m);
+    }
   });
 
   it("renders section headings from the same content module", () => {

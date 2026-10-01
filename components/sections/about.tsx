@@ -1,5 +1,4 @@
 import Image from "next/image";
-import { Reveal } from "@/components/reveal";
 import { Section, SectionHeading } from "@/components/section";
 import { site } from "@/content/site";
 
@@ -18,58 +17,53 @@ export function About() {
             ))}
           </div>
 
-          <Reveal delay={0.08}>
-            <div className="border-border mt-10 border-t pt-8">
-              <p className="text-accent font-mono-label">
-                What I&apos;m looking for next
-              </p>
-              <p className="text-foreground mt-3 text-sm leading-relaxed">
-                {site.about.lookingForIntro}
-              </p>
-              <ul className="mt-5 space-y-3">
-                {site.about.lookingFor.map((item) => (
-                  <li
-                    key={item}
-                    className="text-muted-foreground flex gap-3 text-sm leading-relaxed"
-                  >
-                    <span className="bg-accent mt-2 size-1 shrink-0 rounded-full" />
-                    {item}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </Reveal>
-        </div>
-
-        <Reveal delay={0.1}>
-          <div className="lg:sticky lg:top-28">
-            <div className="border-border overflow-hidden border">
-              <Image
-                src={site.about.photo.src}
-                alt={site.about.photo.alt}
-                width={1024}
-                height={1280}
-                className="aspect-[4/5] w-full object-cover object-[50%_18%] saturate-[0.9]"
-                priority
-              />
-            </div>
-            <p className="text-muted-foreground mt-4 text-sm leading-relaxed">
-              {site.positioning.location}
-              <span aria-hidden="true"> · </span>
-              {site.about.education}
+          <div className="reveal border-border mt-10 border-t pt-8">
+            <p className="text-accent font-mono-label">
+              What I&apos;m looking for next
             </p>
-            <ul className="border-border mt-8 space-y-0 border-t">
-              {site.about.strengths.map((strength) => (
+            <p className="text-foreground mt-3 text-sm leading-relaxed">
+              {site.about.lookingForIntro}
+            </p>
+            <ul className="mt-5 space-y-3">
+              {site.about.lookingFor.map((item) => (
                 <li
-                  key={strength}
-                  className="border-border py-3.5 text-sm leading-relaxed not-last:border-b"
+                  key={item}
+                  className="text-muted-foreground flex gap-3 text-sm leading-relaxed"
                 >
-                  {strength}
+                  <span className="bg-accent mt-2 size-1 shrink-0 rounded-full" />
+                  {item}
                 </li>
               ))}
             </ul>
           </div>
-        </Reveal>
+        </div>
+
+        <div className="reveal lg:sticky lg:top-28">
+          <div className="border-border max-w-sm overflow-hidden border lg:max-w-none">
+            <Image
+              src={site.about.photo.src}
+              alt={site.about.photo.alt}
+              width={800}
+              height={1000}
+              className="aspect-[4/5] w-full object-cover saturate-[0.9]"
+            />
+          </div>
+          <p className="text-muted-foreground mt-4 text-sm leading-relaxed">
+            {site.positioning.location}
+            <span aria-hidden="true"> · </span>
+            {site.about.education}
+          </p>
+          <ul className="border-border mt-8 space-y-0 border-t">
+            {site.about.strengths.map((strength) => (
+              <li
+                key={strength}
+                className="border-border py-3.5 text-sm leading-relaxed not-last:border-b"
+              >
+                {strength}
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
     </Section>
   );

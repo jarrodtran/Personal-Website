@@ -29,6 +29,8 @@ jobs:
       - run: pnpm check
       - run: pnpm test
       - run: pnpm build
+      - run: pnpm a11y
+      - run: pnpm size
       - uses: actions/upload-pages-artifact@v3
         with:
           path: out
