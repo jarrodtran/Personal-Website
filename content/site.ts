@@ -142,7 +142,7 @@ export const site: SiteContent = {
   about: {
     bio: [
       "I take an unclear brief, set the approach, and stay until the numbers move.",
-      `I work at Tesla Energy as ${currentTitle}. I built the team that ships our AI tools, got people using them, and put reporting in place so leadership can see whether they move the business.`,
+      `I work at Tesla Energy as ${currentTitle}. I built the team that ships our AI tools, got people using them, and put reporting in place so leadership can see whether the tools move the business.`,
       "Before that: Apple's 0→1 iPhone launch in India, Engineering Operations planning at Waymo, and Tesla Special Projects through the 4680 launch. When a staff meeting needs real numbers, I still build the model in Python or Tableau myself.",
     ],
     lookingForIntro:
@@ -436,9 +436,9 @@ export const site: SiteContent = {
     },
     contact: {
       eyebrow: "06 / Contact",
-      title: "Let's talk about product, strategy, and AI product roles.",
+      title: "Let's talk about product, strategy, and AI roles.",
       description:
-        "I'm open to growth-stage tech companies, consulting firms, early-stage startups, and VC-adjacent operator seats. I work from Houston and will relocate for the right role.",
+        "Open to growth-stage tech, consulting, early-stage startups, and VC-adjacent operator seats. Houston-based; I'll relocate for the right role.",
     },
   },
   knowsAbout: [
