@@ -28,6 +28,8 @@ There is one headline, one value proposition, and one About story. `headlineVari
 
 Keep improving that one story. Do not create Tech / VC / Consulting / Startup forks of the page.
 
+Say each thing once. `pnpm test` fails when a five-word phrase without a figure appears in more than one visitor-facing string.
+
 ## Factory-language ban
 
 Visitor-facing copy must not use factory, manufacturing, or heavy operational framing.
