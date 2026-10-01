@@ -10,7 +10,7 @@ Almost everything you will change lives in two places:
 
 1. **Copy and data** — [`content/site.ts`](content/site.ts)
    - Official current title: `currentTitle` at the top of the file. It feeds the hero, bio, Experience, and JSON-LD.
-   - Name, headline, page title (`documentTitle`, 60 characters at most), targeting line, status badge
+   - Name, headline, page title (`documentTitle`, 60 characters at most), status badge
    - Highlight stats, bio, experience (roles grouped under each employer), selected work (with its proof panel), principles, capabilities
    - Section eyebrows, titles, and descriptions on `site.sections` (numbered in page order)
    - Contact links, résumé path and download filename, and `calendar` (the contact panel shows a booking link only when it is set)

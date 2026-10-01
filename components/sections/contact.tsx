@@ -31,7 +31,7 @@ export function Contact() {
         <SectionHeading
           eyebrow={site.sections.contact.eyebrow}
           title={site.sections.contact.title}
-          description={site.positioning.targetingLine}
+          description={site.sections.contact.description}
         />
         <dl className="border-border bg-card divide-border divide-y rounded-sm border">
           <ContactRow label="Email">

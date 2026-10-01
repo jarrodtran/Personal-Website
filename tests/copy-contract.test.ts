@@ -21,7 +21,7 @@ describe("visitor-facing copy contract", () => {
   it("imports the shipped content module, not a duplicate fixture", () => {
     expect(copy).toContain(site.positioning.headline);
     expect(copy).toContain(site.positioning.valueProp);
-    expect(copy).toContain(site.positioning.targetingLine);
+    expect(copy).toContain(site.sections.contact.description);
     expect(copy).toContain(site.about.bio[0]);
     expect(copy).toContain(site.about.lookingForIntro);
     expect(copy).toContain(site.sections.experience.description);

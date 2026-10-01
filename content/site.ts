@@ -43,7 +43,6 @@ export interface SiteContent {
     headlineVariants: Record<Audience, string>;
     documentTitle: string;
     valueProp: string;
-    targetingLine: string;
     status: string;
     location: string;
     currentRole: string;
@@ -76,7 +75,7 @@ export interface SiteContent {
     about: Omit<SectionCopy, "description">;
     approach: SectionCopy;
     capabilities: SectionCopy;
-    contact: Omit<SectionCopy, "description">;
+    contact: SectionCopy;
   };
   knowsAbout: string[];
   nav: { label: string; href: string }[];
@@ -113,8 +112,6 @@ export const site: SiteContent = {
     documentTitle: "Jarrod Tran · Product & strategy · Tesla, Apple, Waymo",
     valueProp:
       "I'm a corporate operator: unclear brief, real P&L. At Tesla Energy I lead AI enablement, a product and engineering team whose tools are in production. Previously Apple and Waymo.",
-    targetingLine:
-      "I'm open to growth-stage tech companies, consulting firms, early-stage startups, and VC-adjacent operator seats. I work from Houston and will relocate for the right role.",
     status: "Open to conversations",
     location: "Houston, TX",
     currentRole: currentTitle,
@@ -440,6 +437,8 @@ export const site: SiteContent = {
     contact: {
       eyebrow: "06 / Contact",
       title: "Let's talk about product, strategy, and AI product roles.",
+      description:
+        "I'm open to growth-stage tech companies, consulting firms, early-stage startups, and VC-adjacent operator seats. I work from Houston and will relocate for the right role.",
     },
   },
   knowsAbout: [
