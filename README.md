@@ -39,7 +39,7 @@ pnpm install
 pnpm dev
 ```
 
-Useful scripts: `pnpm check` (TypeScript), `pnpm lint`, `pnpm test`, `pnpm build` (writes static files to `out/`), `pnpm format`.
+Useful scripts: `pnpm check` (TypeScript), `pnpm lint`, `pnpm test`, `pnpm build` (writes static files to `out/`), `pnpm format`, `pnpm lhci` (Lighthouse CI against `out/` — see below).
 
 After a build:
 
@@ -55,6 +55,20 @@ After a build:
 
 - [`.github/workflows/ci.yml`](.github/workflows/ci.yml) runs lint, typecheck, tests, build, the accessibility check (`pnpm a11y`, axe and page checks in Chrome against `out/`), and the JS budget (`pnpm size`) on every pull request.
 - [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml) runs the same gate on every push to `main`, then publishes `out/` to GitHub Pages. A failing check blocks the deploy.
+- [`.github/workflows/lighthouse.yml`](.github/workflows/lighthouse.yml) builds the static export and runs [Lighthouse CI](https://github.com/GoogleChrome/lighthouse-ci) against `out/` on pull requests and `main`. Config lives in [`.lighthouserc.cjs`](.lighthouserc.cjs). Reports upload as the `lighthouse-results` workflow artifact.
+
+### Lighthouse locally
+
+```bash
+pnpm build
+pnpm lhci
+```
+
+That runs `@lhci/cli` against the same URLs and thresholds as CI (home + two case-study pages). Accessibility and SEO category floors fail the run; performance and best-practices are warn-only so Chrome-on-CI noise does not block merges.
+
+## Analytics
+
+Visitor analytics are **on hold**. Options and the no-paid-Plausible rule are in [`docs/analytics.md`](docs/analytics.md). Do not add tracking scripts until the domain cutover and an explicit product choice.
 
 ## Domain status
 
