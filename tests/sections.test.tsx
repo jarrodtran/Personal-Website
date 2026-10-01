@@ -99,7 +99,7 @@ describe("contact", () => {
       "growth-stage tech",
       "consulting",
       "early-stage startups",
-      "VC-adjacent operator seats",
+      "VC-adjacent operator seat",
     ]) {
       expect(text).toContain(audience);
     }

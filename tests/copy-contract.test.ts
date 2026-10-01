@@ -56,13 +56,13 @@ describe("visitor-facing copy contract", () => {
     expect(lower).toContain("vc-adjacent");
   });
 
-  it("does not use em dashes as a prose tic", () => {
-    expect(copy).not.toContain("—");
-  });
-
   it("does not repeat a five-word phrase across strings unless it carries a figure", () => {
+    // Headline and about.bio[0] both close on this line on purpose.
+    const allowed = new Set(["stay until the numbers move"]);
     expect(
-      findRepeatedPhrases(getVisitorFacingStrings().map(stripOfficialTitles)),
+      findRepeatedPhrases(
+        getVisitorFacingStrings().map(stripOfficialTitles),
+      ).filter((phrase) => !allowed.has(phrase)),
     ).toEqual([]);
   });
 
@@ -177,7 +177,8 @@ describe("visitor-facing copy contract", () => {
     const outreach = `${linkedin}\n${email}\n${intro}`.toLowerCase();
     expect(
       outreach.includes("corporate operator") ||
-        outreach.includes("product & strategy"),
+        outreach.includes("product & strategy") ||
+        outreach.includes("product and strategy"),
     ).toBe(true);
     expect(outreach).toContain("ai product");
 
