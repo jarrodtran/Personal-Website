@@ -54,7 +54,7 @@ After a build:
 ## CI and deploy
 
 - [`.github/workflows/ci.yml`](.github/workflows/ci.yml) runs lint, typecheck, tests, build, the accessibility check (`pnpm a11y`, axe and page checks in Chrome against `out/`), and the JS budget (`pnpm size`) on every pull request.
-- [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml) runs the same gate on every push to `main`, then publishes `out/` to GitHub Pages. A failing check blocks the deploy.
+- [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml) runs the same gate on every push to `main`, then publishes `out/` to GitHub Pages. A failing check blocks the deploy. The deploy build sets `BASE_PATH=/Personal-Website` so CSS/JS resolve on the project Pages URL. CI and Lighthouse omit it, so they still verify the empty/`/_next` apex build.
 - [`.github/workflows/lighthouse.yml`](.github/workflows/lighthouse.yml) builds the static export and runs [Lighthouse CI](https://github.com/GoogleChrome/lighthouse-ci) against `out/` on pull requests and `main`. Config lives in [`.lighthouserc.cjs`](.lighthouserc.cjs). Reports upload as the `lighthouse-results` workflow artifact.
 
 ### Lighthouse locally
@@ -75,7 +75,7 @@ Visitor analytics are **on hold**. Options and the no-paid-Plausible rule are in
 **jarrodtran.com is not served from this repo yet.** As of October 2026:
 
 - The custom domain is attached to the GitHub Pages site of [`jarrodtran/Jobhuntsite`](https://github.com/jarrodtran/Jobhuntsite), which is what jarrodtran.com currently shows.
-- This repo deploys to the default project URL, `https://jarrodtran.github.io/Personal-Website/`. The build has no `basePath`, so CSS and JS 404 at that sub-path. Treat that URL as broken, not as a preview.
+- This repo deploys to the default project URL, `https://jarrodtran.github.io/Personal-Website/`. That preview build sets `BASE_PATH=/Personal-Website` (`basePath` / `assetPrefix` in [`next.config.ts`](next.config.ts)) so `/_next` assets resolve under the project path. Leave `BASE_PATH` empty for a site-root build (local, CI, and the future `jarrodtran.com` cutover).
 - `public/CNAME` is ignored: GitHub Pages ignores the CNAME file when publishing from a custom Actions workflow. The domain is bound in **Settings → Pages**.
 
 DNS needs no change. The apex already has GitHub Pages A records and `www` is a CNAME to `jarrodtran.github.io`, which serve whichever repo claims the domain.
@@ -86,5 +86,6 @@ DNS needs no change. The apex already has GitHub Pages A records and `www` is a 
 2. In this repo: **Settings → Pages → Source: GitHub Actions**, then **Custom domain** → `jarrodtran.com`, and wait for the DNS check.
 3. Enable **Enforce HTTPS** once the certificate is issued.
 4. Confirm `https://jarrodtran.com` shows this site's title and that `/resume.pdf` downloads.
+5. In [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml), set `BASE_PATH` to empty (or remove it) and rebuild so assets stay `/_next/...` at the apex instead of `/Personal-Website/_next/...`.
 
 For reference, GitHub Pages apex records are `185.199.108.153`, `185.199.109.153`, `185.199.110.153`, `185.199.111.153` (optional AAAA: `2606:50c0:8000::153` through `2606:50c0:8003::153`).

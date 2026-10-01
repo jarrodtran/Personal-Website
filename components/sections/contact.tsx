@@ -1,6 +1,7 @@
 import { CopyEmail } from "@/components/copy-email";
 import { Section, SectionHeading } from "@/components/section";
 import { site } from "@/content/site";
+import { withBasePath } from "@/lib/base-path";
 
 const link = "text-foreground hover:text-accent font-medium transition-colors";
 
@@ -51,7 +52,11 @@ export function Contact() {
             </a>
           </ContactRow>
           <ContactRow label="Résumé">
-            <a href={resumeHref} download={resumeFilename} className={link}>
+            <a
+              href={withBasePath(resumeHref)}
+              download={resumeFilename}
+              className={link}
+            >
               Download résumé (PDF)
             </a>
           </ContactRow>

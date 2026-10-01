@@ -14,9 +14,13 @@ concurrency:
   group: pages
   cancel-in-progress: true
 
+# Project Pages preview lives at /Personal-Website. Leave BASE_PATH empty
+# (or omit it) on the cutover build so jarrodtran.com can serve from site root.
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      BASE_PATH: /Personal-Website
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4

@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { Section, SectionHeading } from "@/components/section";
 import { site } from "@/content/site";
+import { withBasePath } from "@/lib/base-path";
 
 export function About() {
   return (
@@ -41,7 +42,7 @@ export function About() {
         <div className="reveal lg:sticky lg:top-28">
           <div className="border-border max-w-sm overflow-hidden border lg:max-w-none">
             <Image
-              src={site.about.photo.src}
+              src={withBasePath(site.about.photo.src)}
               alt={site.about.photo.alt}
               width={800}
               height={1000}

@@ -29,8 +29,8 @@ function patchHtml(path) {
   const next = original
     .replaceAll("/opengraph-image?", "/opengraph-image.png?")
     .replaceAll('/opengraph-image"', '/opengraph-image.png"')
-    .replaceAll('href="/icon?', 'href="/icon.png?')
-    .replaceAll('href="/icon"', 'href="/icon.png"');
+    .replaceAll("/icon?", "/icon.png?")
+    .replaceAll('/icon"', '/icon.png"');
   if (next !== original) writeFileSync(path, next);
 }
 
