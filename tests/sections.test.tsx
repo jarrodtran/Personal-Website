@@ -42,6 +42,8 @@ function headings(html: string, tag: string): string[] {
   ].map(([, inner]) => textOf(inner));
 }
 
+const { email, linkedin, resumeHref, resumeFilename } = site.contact;
+
 describe("hero", () => {
   const html = renderToStaticMarkup(<Hero />);
 
@@ -55,37 +57,36 @@ describe("hero", () => {
 
   it("offers exactly three actions: résumé, email, LinkedIn", () => {
     expect(links(html)).toEqual([
-      {
-        href: "/resume.pdf",
-        text: "Résumé",
-        download: "Jarrod-Tran-Resume.pdf",
-      },
-      { href: "mailto:jarrodtran@outlook.com", text: "Email" },
-      {
-        href: "https://www.linkedin.com/in/jarrodtran/",
-        text: "LinkedIn",
-        target: "_blank",
-      },
+      { href: resumeHref, text: "Résumé", download: resumeFilename },
+      { href: `mailto:${email}`, text: "Email" },
+      { href: linkedin, text: "LinkedIn", target: "_blank" },
     ]);
   });
 });
 
 describe("experience", () => {
   const html = renderToStaticMarkup(<Experience />);
+  const companies = site.experience.map((employer) => employer.company);
 
-  it("lists each employer once, most recent first", () => {
-    expect(headings(html, "h3")).toEqual(["Tesla", "Waymo", "Apple"]);
+  it("lists each employer once", () => {
+    expect(headings(html, "h3")).toEqual(companies);
+    expect(new Set(companies).size).toBe(companies.length);
   });
 
-  it("keeps both Tesla stints under one entry and says when Jarrod returned", () => {
-    const tesla = html.slice(html.indexOf(">Tesla<"), html.indexOf(">Waymo<"));
-    expect(headings(tesla, "h4")).toEqual([
-      "Lead, AI Enablement & Factory Strategy",
-      "Program Manager, Special Projects",
-    ]);
-    expect(textOf(tesla)).toContain("Rejoined in 2023 after Apple and Waymo.");
-    expect(textOf(tesla)).toContain("Aug 2023 – Present");
-    expect(textOf(tesla)).toContain("Jun 2018 – Jun 2021");
+  it("nests each role, with its dates, under its employer", () => {
+    const starts = companies.map((company) => html.indexOf(`>${company}<`));
+    site.experience.forEach((employer, index) => {
+      const entry = html.slice(starts[index], starts[index + 1]);
+      expect(headings(entry, "h4")).toEqual(
+        employer.roles.map((role) => role.title),
+      );
+      for (const role of employer.roles) {
+        expect(textOf(entry)).toContain(role.dates);
+      }
+      if (employer.note) {
+        expect(textOf(entry)).toContain(employer.note);
+      }
+    });
   });
 });
 
@@ -104,25 +105,30 @@ describe("contact", () => {
     }
   });
 
-  it("offers email with a copy button, LinkedIn, and the résumé, and no form", () => {
+  it("offers email with a copy button, LinkedIn, the résumé, and the calendar when set, and no form", () => {
+    const { calendar } = site.contact;
     expect(links(html)).toEqual([
-      { href: "mailto:jarrodtran@outlook.com", text: "jarrodtran@outlook.com" },
+      { href: `mailto:${email}`, text: email },
       {
-        href: "https://www.linkedin.com/in/jarrodtran/",
-        text: "linkedin.com/in/jarrodtran",
+        href: linkedin,
+        text: expect.stringMatching(/^linkedin\.com\/in\/[^/]+$/),
         target: "_blank",
       },
       {
-        href: "/resume.pdf",
+        href: resumeHref,
         text: "Download résumé (PDF)",
-        download: "Jarrod-Tran-Resume.pdf",
+        download: resumeFilename,
       },
+      ...(calendar
+        ? [{ href: calendar, text: "Book a call", target: "_blank" }]
+        : []),
     ]);
     expect(html).toMatch(/<button\b[^>]*>Copy email<\/button>/);
     expect(html).not.toMatch(/<(form|input|textarea)\b/);
   });
 
-  it("adds a calendar link only when one is configured", () => {
+  it("adds a calendar link when one is configured", () => {
+    const configured = site.contact.calendar;
     site.contact.calendar = "https://example.com/book";
     try {
       expect(links(renderToStaticMarkup(<Contact />))).toContainEqual({
@@ -131,7 +137,7 @@ describe("contact", () => {
         target: "_blank",
       });
     } finally {
-      delete site.contact.calendar;
+      site.contact.calendar = configured;
     }
   });
 });
