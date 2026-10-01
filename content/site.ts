@@ -116,7 +116,7 @@ export const site: SiteContent = {
     valueProp:
       "I'm a corporate operator: unclear brief, real P&L. At Tesla Energy I lead AI enablement, a product and engineering team whose tools are in production. Previously Apple and Waymo.",
     targetingLine:
-      "I'm targeting product, strategy, and AI product roles at growth-stage tech, consulting, early-stage startups, and VC-adjacent operator seats. Houston-based. I'll relocate for the right role.",
+      "I'm open to growth-stage tech companies, consulting firms, early-stage startups, and VC-adjacent operator seats. I work from Houston and will relocate for the right role.",
     status: "Open to conversations",
     location: "Houston, TX",
     currentRole: currentTitle,
@@ -147,20 +147,19 @@ export const site: SiteContent = {
   about: {
     bio: [
       "I take an unclear brief, set the approach, and stay until the numbers move.",
-      `I'm in Houston as ${currentTitle} at Tesla Energy. I built a forward-deployed AI product team, got people using what we shipped, and put reporting in place so leadership can see whether it moved the business.`,
-      "Before that: the 0→1 iPhone India launch at Apple, Engineering Operations planning at Waymo, and Tesla Special Projects through the 4680 launch. Finance, University at Buffalo, Cum Laude. When a staff meeting needs ground truth, I still build the model in Python or Tableau myself.",
+      `I work at Tesla Energy as ${currentTitle}. I built the team that ships our AI tools, got people using them, and put reporting in place so leadership can see whether they move the business.`,
+      "Before that: Apple's 0→1 iPhone launch in India, Engineering Operations planning at Waymo, and Tesla Special Projects through the 4680 launch. When a staff meeting needs real numbers, I still build the model in Python or Tableau myself.",
     ],
     lookingForIntro:
-      "I want a seat where product judgment and cross-functional leadership change the outcome, not just support it.",
+      "I want a seat where product judgment and cross-functional leadership change the outcome.",
     lookingFor: [
       "A real business outcome and a named decision-maker, not a slide deck",
-      "AI product work with actual users, not a pilot that never ships",
-      "A seat close enough to strategy that my judgment changes the plan",
-      "Room to set the approach and stay until the numbers move",
+      "AI product work that reaches real users, past the pilot stage",
+      "Ownership that runs from the plan through the result",
     ],
     strengths: [
       "Cross-functional leadership without waiting on an org chart",
-      "AI product work from the first use case through 1,000+ people in production",
+      "AI products from the first use case to production",
       "Portfolio calls with a P&L attached",
       "Structured problem-solving a leadership team can actually run",
     ],
@@ -233,8 +232,6 @@ export const site: SiteContent = {
         {
           title: "Strategy & Operations Manager",
           dates: "Oct 2022 – May 2023",
-          summary:
-            "Ran annual planning for Engineering Operations in a safety-critical autonomous-vehicle environment.",
           bullets: [
             {
               text: "Led annual planning, OKRs, and quarterly business reviews for Engineering Operations. Turned org priorities into resource plans, targets, and milestones.",
@@ -258,8 +255,6 @@ export const site: SiteContent = {
         {
           title: "Strategic Operations Program Manager",
           dates: "Jun 2021 – Jun 2022",
-          summary:
-            "Led the 0→1 iPhone launch in India: market entry, partners, and readiness in one plan.",
           bullets: [
             {
               text: "Led the 0→1 iPhone India launch from market entry and partner qualification through readiness and scaled delivery, under tight quality, regulatory, and timing requirements.",
@@ -284,16 +279,16 @@ export const site: SiteContent = {
     {
       title: "Tesla Energy: AI product that got used",
       problem:
-        "Tesla Energy needed AI product work people would actually use. Priorities were scattered. No owners, no way to know if adoption moved the business.",
+        "Tesla Energy needed AI tools people would actually use. Priorities were scattered, use cases had no owners, and there was no way to tell whether adoption changed results.",
       contribution:
-        "I stood up a forward-deployed AI product and engineering team. Roadmap, governance, training, and executive reporting. We shipped RAG troubleshooting, workflow automation, and decision-support against ranked use cases.",
+        "I stood up the product and engineering team, ranked the use cases, and set up training and adoption reporting for everything we shipped.",
       outcome:
-        "1,000+ active users, 20+ production AI solutions, ~540 reclaimed hours per week, and $1.6M annualized productivity value.",
+        "A modeled ~540 hours reclaimed per week and $1.6M in annualized productivity value.",
       tags: ["AI Product", "Organizational Design", "Executive Alignment"],
       panel: {
         kicker: "Tesla Energy",
         value: "1,000+",
-        label: "Active users on AI tools we shipped",
+        label: "Active users across 20+ production AI solutions",
       },
       link: { label: "Tesla Energy", href: "https://www.tesla.com/energy" },
     },
@@ -302,9 +297,9 @@ export const site: SiteContent = {
       problem:
         "Demand outran what we could fund. 50+ asks. $23M to spend. Which dollar moved the P&L?",
       contribution:
-        "I built Python and Tableau models linking investment, labor, cost, and timing. Funded the work that moved the P&L and killed the rest. Same logic for ranking AI product use cases.",
+        "I built Python and Tableau models linking investment, labor, cost, and timing. We funded the work with the best return and killed the rest. The same logic ranks AI use cases today.",
       outcome:
-        "3.2× scale on Megapack. $156M incremental annual profit from a $23M portfolio. $260M in annualized savings. $550M in tariff exposure mitigated.",
+        "3.2× scale on Megapack, $260M in annualized savings, and $550M in tariff exposure mitigated.",
       tags: ["Capital Allocation", "Decision Models", "Executive Alignment"],
       panel: {
         kicker: "Tesla Energy",
@@ -316,11 +311,11 @@ export const site: SiteContent = {
     {
       title: "Apple: 0→1 iPhone India",
       problem:
-        "A new geography had to become real under tight quality, regulatory, and timing. Market entry, partners, and demand were all moving.",
+        "India had to go from plan to scaled launch while market entry, partner readiness, and demand were all still moving.",
       contribution:
-        "I drove market-entry decisions, partner qualification, and launch readiness so demand, quality, and geopolitics used the same facts.",
+        "I drove market-entry decisions, partner qualification, and launch readiness, and kept demand, quality, and geopolitical risk in one plan.",
       outcome:
-        "293% growth (4.3M → 16.9M units), program revenue $2B → $10B, and exports expanded from 6 to 40+ countries.",
+        "Program revenue grew from $2B to $10B, and exports expanded from 6 to 40+ countries.",
       tags: ["0→1 Launch", "Geographic Strategy", "Cross-Functional Delivery"],
       panel: {
         kicker: "Apple",
@@ -332,17 +327,16 @@ export const site: SiteContent = {
     {
       title: "Waymo: one plan, five functions",
       problem:
-        "Hardware, software, fleet, product, and legal each ran their own planning. Leadership resolved conflicts with data nobody else trusted.",
+        "Each function ran its own planning, and leadership settled conflicts with data nobody else trusted.",
       contribution:
-        "I built the annual planning, OKR, resource-plan, QBR, and dashboard rhythm that put every function on the same facts.",
+        "I built the annual planning, OKR, resource-plan, QBR, and dashboard rhythm that every function worked from.",
       outcome:
         "A shared Engineering Operations rhythm that forced tradeoffs into the open and cut the ad-hoc reporting.",
       tags: ["Operating Model", "Executive Cadence", "Decision Systems"],
       panel: {
         kicker: "Waymo",
         value: "One plan",
-        label:
-          "Hardware, software, fleet, product, and legal on the same facts",
+        label: "Hardware, software, fleet, product, and legal",
       },
       link: { label: "Waymo", href: "https://waymo.com/" },
     },
@@ -371,7 +365,7 @@ export const site: SiteContent = {
     {
       title: "Compound",
       description:
-        "Put in the feedback, and the automation, that lets the system get better as it grows. AI product work included, when it earns the slot.",
+        "Put in the feedback, and the automation, that lets the system get better as it grows. That includes AI, when it earns the slot.",
     },
   ],
   capabilities: [
@@ -427,7 +421,7 @@ export const site: SiteContent = {
       eyebrow: "02 / Case studies",
       title: "Selected work",
       description:
-        "AI product work at Tesla Energy, the investment portfolio behind it, iPhone India, and Waymo planning. Same job: name the problem, model the economics, pick an owner, ship.",
+        "AI at Tesla Energy, the investment portfolio behind it, iPhone India, and Waymo planning. Same job each time: name the problem, model the economics, pick an owner, ship.",
     },
     about: {
       eyebrow: "03 / Profile",
@@ -447,7 +441,7 @@ export const site: SiteContent = {
     },
     contact: {
       eyebrow: "06 / Contact",
-      title: "Let's talk: product, strategy, or AI product roles.",
+      title: "Let's talk about product, strategy, and AI product roles.",
     },
   },
   knowsAbout: [
