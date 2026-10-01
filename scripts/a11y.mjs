@@ -106,6 +106,25 @@ const focusReturned = await toggle.evaluate(
 if (!focusReturned) {
   failures.push("phone menu: focus does not return to the menu button");
 }
+await toggle.click();
+await page.setViewportSize(viewports.desktop);
+const released = await page
+  .waitForFunction(
+    () =>
+      !document.getElementById("mobile-nav") &&
+      getComputedStyle(document.body).overflow !== "hidden",
+    null,
+    { timeout: 2000 },
+  )
+  .then(
+    () => true,
+    () => false,
+  );
+if (!released) {
+  failures.push(
+    "phone menu: widening to desktop leaves the menu open and the page locked",
+  );
+}
 
 await browser.close();
 server.close();
@@ -115,5 +134,5 @@ if (failures.length > 0) {
   process.exit(1);
 }
 console.log(
-  "a11y: no axe violations (desktop and phone, light and dark); nothing squeezed or overflowing at 320px; phone menu closes on Escape and returns focus",
+  "a11y: no axe violations (desktop and phone, light and dark); nothing squeezed or overflowing at 320px; phone menu closes on Escape, returns focus, and closes at desktop width",
 );

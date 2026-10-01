@@ -43,16 +43,22 @@ export function Nav() {
 
   useEffect(() => {
     if (!open) return;
+    const desktop = window.matchMedia("(width >= 48rem)");
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key !== "Escape") return;
       setOpen(false);
       toggleRef.current?.focus();
     };
+    const onDesktop = () => {
+      if (desktop.matches) setOpen(false);
+    };
     document.body.style.overflow = "hidden";
     document.addEventListener("keydown", onKeyDown);
+    desktop.addEventListener("change", onDesktop);
     return () => {
       document.body.style.overflow = "";
       document.removeEventListener("keydown", onKeyDown);
+      desktop.removeEventListener("change", onDesktop);
     };
   }, [open]);
 
