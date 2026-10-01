@@ -41,8 +41,9 @@ export interface SiteContent {
     name: string;
     headline: string;
     headlineVariants: Record<Audience, string>;
+    /** Browser tab and search result title. Keep it under 60 characters. */
+    documentTitle: string;
     valueProp: string;
-    targeting: string[];
     targetingLine: string;
     status: string;
     location: string;
@@ -76,7 +77,7 @@ export interface SiteContent {
     about: Omit<SectionCopy, "description">;
     approach: SectionCopy;
     capabilities: SectionCopy;
-    contact: SectionCopy;
+    contact: Omit<SectionCopy, "description">;
   };
   knowsAbout: string[];
   nav: { label: string; href: string }[];
@@ -86,6 +87,7 @@ export interface SiteContent {
     github?: string;
     phone?: string;
     resumeHref: string;
+    resumeFilename: string;
     formEndpoint?: string;
     calendar?: string;
   };
@@ -110,14 +112,9 @@ export const site: SiteContent = {
       startup:
         "I walk into chaos, set the strategy, and stay until the numbers move.",
     },
+    documentTitle: "Jarrod Tran · Product & strategy · Tesla, Apple, Waymo",
     valueProp:
       "I'm a corporate operator: unclear brief, real P&L. At Tesla Energy I lead AI enablement, a product and engineering team whose tools are in production. Previously Apple and Waymo.",
-    targeting: [
-      "Product, strategy, and AI product roles at growth-stage tech companies",
-      "Consulting: structured problem-solving and client-facing delivery",
-      "Early-stage startups that need an operator with real ownership",
-      "VC-adjacent operator seats supporting portfolio companies",
-    ],
     targetingLine:
       "I'm targeting product, strategy, and AI product roles at growth-stage tech, consulting, early-stage startups, and VC-adjacent operator seats. Houston-based. I'll relocate for the right role.",
     status: "Open to conversations",
@@ -451,8 +448,6 @@ export const site: SiteContent = {
     contact: {
       eyebrow: "06 / Contact",
       title: "Let's talk: product, strategy, or AI product roles.",
-      description:
-        "Bring the real brief, not the polished one. Houston-based. I'll relocate for the right role.",
     },
   },
   knowsAbout: [
@@ -474,6 +469,7 @@ export const site: SiteContent = {
     linkedin: "https://www.linkedin.com/in/jarrodtran/",
     github: "https://github.com/jarrodtran",
     resumeHref: "/resume.pdf",
+    resumeFilename: "Jarrod-Tran-Resume.pdf",
     formEndpoint: undefined,
   },
   outreach: {

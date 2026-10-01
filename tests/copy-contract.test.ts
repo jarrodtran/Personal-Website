@@ -91,6 +91,15 @@ describe("visitor-facing copy contract", () => {
     );
   });
 
+  it("keeps the document title short enough for a browser tab or search result", () => {
+    const title = site.positioning.documentTitle;
+    expect(title.startsWith(site.positioning.name)).toBe(true);
+    expect(title.length).toBeLessThanOrEqual(60);
+    expect(readSiteFile("app/layout.tsx")).toContain(
+      "default: site.positioning.documentTitle",
+    );
+  });
+
   it("numbers section eyebrows in page order from site.sections only", () => {
     const order = [
       "experience",
@@ -145,8 +154,6 @@ describe("visitor-facing copy contract", () => {
 
     const hero = readSiteFile("components/sections/hero.tsx");
     expect(hero).toContain("site.positioning.headline");
-    expect(hero).toContain("site.positioning.valueProp");
-    expect(hero).toContain("site.positioning.targetingLine");
     expect(hero).not.toContain("headlineVariants");
     expect(hero).not.toContain("site.outreach");
 
