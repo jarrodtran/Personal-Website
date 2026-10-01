@@ -1,6 +1,7 @@
 import { Download, Mail } from "lucide-react";
 import { LinkedInIcon } from "@/components/brand-icons";
 import { site } from "@/content/site";
+import { withBasePath } from "@/lib/base-path";
 
 const action =
   "inline-flex grow items-center justify-center gap-2 rounded-sm px-3 py-2.5 text-sm font-medium transition-colors sm:grow-0 sm:px-5";
@@ -37,7 +38,7 @@ export function Hero() {
 
         <div className="mt-9 flex flex-wrap gap-2 sm:gap-3">
           <a
-            href={site.contact.resumeHref}
+            href={withBasePath(site.contact.resumeHref)}
             download={site.contact.resumeFilename}
             className={primary}
           >

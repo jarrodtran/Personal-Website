@@ -4,6 +4,8 @@ import { extname, join, normalize } from "node:path";
 import axe from "axe-core";
 import { chromium } from "playwright-core";
 
+const basePath = (process.env.BASE_PATH ?? "").replace(/\/$/, "");
+
 const types = {
   ".css": "text/css",
   ".html": "text/html; charset=utf-8",
@@ -14,9 +16,19 @@ const types = {
   ".woff2": "font/woff2",
 };
 
+function withoutBasePath(pathname) {
+  if (!basePath) return pathname;
+  if (pathname === basePath) return "/";
+  if (pathname.startsWith(`${basePath}/`)) {
+    return pathname.slice(basePath.length);
+  }
+  return pathname;
+}
+
 const server = createServer(async (request, response) => {
   const { pathname } = new URL(request.url, "http://localhost");
-  const path = pathname.endsWith("/") ? `${pathname}index.html` : pathname;
+  const stripped = withoutBasePath(pathname);
+  const path = stripped.endsWith("/") ? `${stripped}index.html` : stripped;
   const file = join("out", normalize(decodeURIComponent(path)));
   try {
     const body = await readFile(file);
@@ -27,7 +39,7 @@ const server = createServer(async (request, response) => {
   }
 });
 await new Promise((resolve) => server.listen(0, "127.0.0.1", resolve));
-const origin = `http://127.0.0.1:${server.address().port}/`;
+const origin = `http://127.0.0.1:${server.address().port}${basePath}/`;
 
 const browser = await chromium.launch({
   channel: "chrome",

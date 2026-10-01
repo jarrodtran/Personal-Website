@@ -4,6 +4,7 @@ import { Menu, X } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import type { SiteContent } from "@/content/site";
+import { withBasePath } from "@/lib/base-path";
 import { cn } from "@/lib/cn";
 import { ThemeToggle } from "@/components/theme-toggle";
 
@@ -25,8 +26,8 @@ export function Nav({
   const pathname = usePathname();
   const onHome = pathname === "/" || pathname === "";
   const sectionHref = (href: string) =>
-    href.startsWith("#") && !onHome ? `/${href}` : href;
-  const homeHref = onHome ? "#top" : "/";
+    withBasePath(href.startsWith("#") && !onHome ? `/${href}` : href);
+  const homeHref = onHome ? "#top" : withBasePath("/");
   const current = onHome ? active : "";
 
   useEffect(() => {
@@ -112,7 +113,7 @@ export function Nav({
             </a>
           ))}
           <a
-            href={resumeHref}
+            href={withBasePath(resumeHref)}
             download={resumeFilename}
             className="text-muted-foreground hover:text-foreground text-sm"
           >
@@ -157,7 +158,7 @@ export function Nav({
               </a>
             ))}
             <a
-              href={resumeHref}
+              href={withBasePath(resumeHref)}
               download={resumeFilename}
               className="text-foreground py-3 text-base"
               onClick={() => setOpen(false)}
