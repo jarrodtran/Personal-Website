@@ -88,7 +88,6 @@ export interface SiteContent {
     phone?: string;
     resumeHref: string;
     resumeFilename: string;
-    formEndpoint?: string;
     calendar?: string;
   };
   /** Paste-ready outreach. Not rendered on the public site. */
@@ -464,7 +463,6 @@ export const site: SiteContent = {
     github: "https://github.com/jarrodtran",
     resumeHref: "/resume.pdf",
     resumeFilename: "Jarrod-Tran-Resume.pdf",
-    formEndpoint: undefined,
   },
   outreach: {
     linkedin:
