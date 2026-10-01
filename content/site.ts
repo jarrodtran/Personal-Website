@@ -163,7 +163,7 @@ export const site: SiteContent = {
     education:
       "University at Buffalo · B.S. Business Administration, Finance · Cum Laude",
     photo: {
-      src: "/avatar.jpg",
+      src: "/avatar.webp",
       alt: "Jarrod Tran presenting on stage",
     },
   },
