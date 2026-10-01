@@ -49,9 +49,13 @@ function collectStrings(value: unknown): string[] {
   return [];
 }
 
+export function getVisitorFacingStrings(): string[] {
+  return collectStrings(site);
+}
+
 /** Every visitor-facing string the site content module ships. */
 export function getVisitorFacingCopy(): string {
-  return collectStrings(site).join("\n");
+  return getVisitorFacingStrings().join("\n");
 }
 
 /** Official job titles are facts and may contain “Factory”; narrative copy may not. */
@@ -101,6 +105,26 @@ export function extractFigures(text: string): string[] {
   const matches =
     cleaned.match(/\$?\d+(?:[.,]\d+)*(?:[%×+]|[MBK](?![a-z]))?/g) ?? [];
   return [...new Set(matches)];
+}
+
+export function findRepeatedPhrases(strings: string[]): string[] {
+  const firstSeen = new Map<string, number>();
+  const repeated = new Set<string>();
+  strings.forEach((text, index) => {
+    const words = text
+      .toLowerCase()
+      .split(/\s+/)
+      .map((word) => word.replace(/^[^\p{L}\p{N}$]+|[^\p{L}\p{N}%+×]+$/gu, ""))
+      .filter(Boolean);
+    for (let start = 0; start + 5 <= words.length; start++) {
+      const phrase = words.slice(start, start + 5).join(" ");
+      if (extractFigures(phrase).length > 0) continue;
+      const first = firstSeen.get(phrase) ?? index;
+      firstSeen.set(phrase, first);
+      if (first !== index) repeated.add(phrase);
+    }
+  });
+  return [...repeated];
 }
 
 export function findBannedFraming(text: string): string[] {

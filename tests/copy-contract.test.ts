@@ -5,7 +5,9 @@ import { site } from "@/content/site";
 import {
   BANNED_FRAMING_TOKENS,
   findBannedFraming,
+  findRepeatedPhrases,
   getVisitorFacingCopy,
+  getVisitorFacingStrings,
   stripOfficialTitles,
 } from "@/content/visitor-copy";
 
@@ -59,21 +61,9 @@ describe("visitor-facing copy contract", () => {
   });
 
   it("does not repeat a five-word phrase across strings unless it carries a figure", () => {
-    const firstSeen = new Map<string, number>();
-    const repeated = new Set<string>();
-    stripOfficialTitles(copy)
-      .split("\n")
-      .forEach((line, index) => {
-        const words = line.toLowerCase().match(/[\p{L}\p{N}$+→×-]+/gu) ?? [];
-        for (let start = 0; start + 5 <= words.length; start++) {
-          const phrase = words.slice(start, start + 5).join(" ");
-          if (/\d/.test(phrase)) continue;
-          const first = firstSeen.get(phrase) ?? index;
-          firstSeen.set(phrase, first);
-          if (first !== index) repeated.add(phrase);
-        }
-      });
-    expect([...repeated]).toEqual([]);
+    expect(
+      findRepeatedPhrases(getVisitorFacingStrings().map(stripOfficialTitles)),
+    ).toEqual([]);
   });
 
   it("does not use factory, manufacturing, or heavy operational framing", () => {
