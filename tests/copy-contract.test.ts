@@ -253,4 +253,39 @@ describe("visitor-facing copy contract", () => {
     expect(pdf.byteLength).toBeGreaterThan(20_000);
     expect(pdf.toString("latin1")).toContain("/Count 1");
   });
+
+  it("does not use em-dashes in content files or rendered pages", () => {
+    const emDash = /\u2014|&mdash;|&#8212;|&#x2014;/i;
+    const hits: string[] = [];
+
+    const contentDir = path.join(root, "content");
+    for (const file of readdirSync(contentDir, {
+      recursive: true,
+      encoding: "utf8",
+    })) {
+      if (!/\.(ts|tsx)$/.test(file)) continue;
+      if (emDash.test(readFileSync(path.join(contentDir, file), "utf8"))) {
+        hits.push(`content/${file}`);
+      }
+    }
+
+    if (emDash.test(getVisitorFacingCopy())) {
+      hits.push("visitor-facing copy");
+    }
+
+    const outDir = path.join(root, "out");
+    if (existsSync(outDir)) {
+      for (const file of readdirSync(outDir, {
+        recursive: true,
+        encoding: "utf8",
+      })) {
+        if (!file.endsWith(".html")) continue;
+        if (emDash.test(readFileSync(path.join(outDir, file), "utf8"))) {
+          hits.push(`out/${file}`);
+        }
+      }
+    }
+
+    expect(hits).toEqual([]);
+  });
 });
