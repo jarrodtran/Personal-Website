@@ -80,6 +80,14 @@ describe("visitor-facing copy contract", () => {
     expect(findBannedFraming(outcomes)).toEqual([]);
   });
 
+  it("does not invent recruiter shorthand like Open to Work, Mag7, SF, or NYC", () => {
+    const haystack = `${copy}\n${getVisitorFacingCopy()}`;
+    expect(haystack).not.toMatch(/Open to Work/);
+    expect(haystack).not.toMatch(/Mag7/);
+    expect(haystack).not.toMatch(/\bSF\b/);
+    expect(haystack).not.toMatch(/\bNYC\b/);
+  });
+
   it("uses one official title everywhere", () => {
     const title = site.positioning.currentRole;
     expect(title).toBe("Lead, AI Enablement & Factory Strategy");
@@ -212,6 +220,14 @@ describe("visitor-facing copy contract", () => {
     for (const source of clientSources) {
       expect(source).not.toMatch(/^import (?!type )[^;]*from "@\/content\//m);
     }
+  });
+
+  it("ships one display face and one text face", () => {
+    const layout = readSiteFile("app/layout.tsx");
+    expect(layout).toContain("import { IBM_Plex_Sans, Newsreader }");
+    expect(layout).not.toContain("IBM_Plex_Mono");
+    expect(layout).not.toContain("Instrument_Serif");
+    expect(layout.match(/from "next\/font\/google"/g) ?? []).toHaveLength(1);
   });
 
   it("renders section headings from the same content module", () => {

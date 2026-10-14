@@ -11,23 +11,25 @@ export function Experience() {
         description={site.sections.experience.description}
       />
 
-      <ol className="border-border relative space-y-14 border-l pl-8 sm:pl-10">
+      <ol className="space-y-12">
         {site.experience.map((employer) => (
-          <li key={employer.company} className="reveal relative">
-            <span className="bg-accent ring-muted absolute top-2 -left-[37px] size-2 rounded-full ring-4 sm:-left-[45px]" />
-            <h3 className="font-display text-2xl tracking-tight">
+          <li
+            key={employer.company}
+            className="reveal border-border border-t pt-8"
+          >
+            <h3 className="font-display text-2xl leading-tight tracking-tight sm:text-[1.75rem]">
               {employer.company}
             </h3>
             {employer.note ? (
-              <p className="text-muted-foreground mt-1 text-sm">
+              <p className="text-muted-foreground mt-1 text-[0.9375rem]">
                 {employer.note}
               </p>
             ) : null}
-            <div className="mt-5 space-y-10">
+            <div className="mt-6 space-y-10">
               {employer.roles.map((role) => (
                 <div key={role.dates}>
                   <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
-                    <h4 className="text-accent text-sm font-medium">
+                    <h4 className="text-accent text-[0.9375rem] font-medium">
                       {role.title}
                     </h4>
                     <p className="text-muted-foreground font-mono-label">
@@ -35,23 +37,17 @@ export function Experience() {
                     </p>
                   </div>
                   {role.summary ? (
-                    <p className="text-muted-foreground mt-3 max-w-2xl text-sm leading-relaxed">
+                    <p className="text-muted-foreground measure mt-3 text-[1.0625rem] leading-relaxed">
                       {role.summary}
                     </p>
                   ) : null}
-                  <ul className="mt-5 max-w-3xl space-y-3">
+                  <ul className="measure mt-5 space-y-3">
                     {role.bullets.map((bullet) => (
                       <li
                         key={bullet.text}
-                        className="text-muted-foreground flex gap-3 text-sm leading-relaxed"
+                        className="text-muted-foreground text-[1.0625rem] leading-relaxed"
                       >
-                        <span className="bg-foreground/25 mt-2 size-1 shrink-0 rounded-full" />
-                        <span>
-                          <MetricText
-                            text={bullet.text}
-                            metric={bullet.metric}
-                          />
-                        </span>
+                        <MetricText text={bullet.text} metric={bullet.metric} />
                       </li>
                     ))}
                   </ul>

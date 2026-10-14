@@ -14,9 +14,13 @@ concurrency:
   group: pages
   cancel-in-progress: true
 
+# Project Pages preview lives at /Personal-Website. Leave BASE_PATH empty
+# (or omit it) on the cutover build so jarrodtran.com can serve from site root.
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      BASE_PATH: /Personal-Website
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
@@ -29,11 +33,13 @@ jobs:
           python-version: "3.12"
       - run: pip install reportlab
       - run: pnpm install --frozen-lockfile
+      - run: npx playwright install --with-deps chromium
       - run: pnpm resume
       - run: pnpm lint
       - run: pnpm check
       - run: pnpm test
       - run: pnpm build
+      - run: pnpm test:tap
       - run: pnpm a11y
       - run: pnpm size
       - uses: actions/upload-pages-artifact@v3

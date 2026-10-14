@@ -4,7 +4,9 @@ import { Menu, X } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import type { SiteContent } from "@/content/site";
+import { withBasePath } from "@/lib/base-path";
 import { cn } from "@/lib/cn";
+import { tap } from "@/lib/ui";
 import { ThemeToggle } from "@/components/theme-toggle";
 
 export function Nav({
@@ -25,8 +27,8 @@ export function Nav({
   const pathname = usePathname();
   const onHome = pathname === "/" || pathname === "";
   const sectionHref = (href: string) =>
-    href.startsWith("#") && !onHome ? `/${href}` : href;
-  const homeHref = onHome ? "#top" : "/";
+    withBasePath(href.startsWith("#") && !onHome ? `/${href}` : href);
+  const homeHref = onHome ? "#top" : withBasePath("/");
   const current = onHome ? active : "";
 
   useEffect(() => {
@@ -83,28 +85,33 @@ export function Nav({
   return (
     <header
       className={cn(
-        "sticky top-0 z-50 border-b transition-colors",
-        scrolled
-          ? "border-border bg-background/85 backdrop-blur-md"
-          : "bg-background/40 border-transparent backdrop-blur-sm",
+        "bg-background sticky top-0 z-50 border-b",
+        scrolled ? "border-border" : "border-transparent",
       )}
     >
-      <div className="mx-auto flex h-16 max-w-5xl items-center justify-between px-5 sm:px-8">
-        <a href={homeHref} className="font-medium tracking-tight">
-          <span className="sm:hidden">JT</span>
-          <span className="hidden sm:inline">{name}</span>
+      <div className="mx-auto flex min-h-14 max-w-5xl items-center justify-between px-5 sm:px-8">
+        <a
+          href={homeHref}
+          className={cn(
+            tap,
+            "font-medium tracking-tight",
+            onHome && "max-md:sr-only",
+          )}
+        >
+          {name}
         </a>
 
-        <nav className="hidden items-center gap-7 md:flex" aria-label="Primary">
+        <nav className="hidden items-center gap-1 md:flex" aria-label="Primary">
           {items.map((item) => (
             <a
               key={item.href}
               href={sectionHref(item.href)}
               aria-current={current === item.href ? "location" : undefined}
               className={cn(
-                "relative pb-0.5 text-sm transition-colors",
+                tap,
+                "px-2.5 text-[0.9375rem] transition-colors",
                 current === item.href
-                  ? "text-foreground after:bg-accent after:absolute after:inset-x-0 after:-bottom-1 after:h-px"
+                  ? "text-foreground"
                   : "text-muted-foreground hover:text-foreground",
               )}
             >
@@ -112,9 +119,12 @@ export function Nav({
             </a>
           ))}
           <a
-            href={resumeHref}
+            href={withBasePath(resumeHref)}
             download={resumeFilename}
-            className="text-muted-foreground hover:text-foreground text-sm"
+            className={cn(
+              tap,
+              "text-muted-foreground hover:text-foreground px-2.5 text-[0.9375rem]",
+            )}
           >
             Résumé
           </a>
@@ -126,7 +136,7 @@ export function Nav({
           <button
             ref={toggleRef}
             type="button"
-            className="border-border bg-card inline-flex size-9 items-center justify-center rounded-sm border"
+            className="border-border bg-card inline-flex size-11 items-center justify-center border"
             aria-expanded={open}
             aria-controls="mobile-nav"
             aria-label={open ? "Close menu" : "Open menu"}
@@ -143,23 +153,23 @@ export function Nav({
           className="border-border bg-background border-t md:hidden"
         >
           <nav
-            className="mx-auto flex max-w-5xl flex-col px-5 py-4"
+            className="mx-auto flex max-w-5xl flex-col px-5 py-3"
             aria-label="Mobile"
           >
             {items.map((item) => (
               <a
                 key={item.href}
                 href={sectionHref(item.href)}
-                className="text-foreground py-3 text-base"
+                className={cn(tap, "text-foreground text-base")}
                 onClick={() => setOpen(false)}
               >
                 {item.label}
               </a>
             ))}
             <a
-              href={resumeHref}
+              href={withBasePath(resumeHref)}
               download={resumeFilename}
-              className="text-foreground py-3 text-base"
+              className={cn(tap, "text-foreground text-base")}
               onClick={() => setOpen(false)}
             >
               Résumé

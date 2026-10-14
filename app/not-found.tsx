@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { site } from "@/content/site";
+import { btnPrimary } from "@/lib/ui";
 
 export default function NotFound() {
   return (
@@ -8,13 +9,10 @@ export default function NotFound() {
       <h1 className="font-display mt-3 text-4xl tracking-tight">
         This page doesn’t exist.
       </h1>
-      <p className="text-muted-foreground mt-3 max-w-md">
+      <p className="text-muted-foreground measure mt-3">
         Head back to {site.positioning.name}&apos;s home page.
       </p>
-      <Link
-        href="/"
-        className="bg-accent text-accent-foreground hover:bg-accent-hover mt-8 inline-flex rounded-sm px-5 py-2.5 text-sm font-medium"
-      >
+      <Link href="/" className={`${btnPrimary} mt-8`}>
         Go home
       </Link>
     </div>

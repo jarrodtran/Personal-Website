@@ -306,7 +306,7 @@ export const site: SiteContent = {
       link: { label: "Tesla Energy", href: "https://www.tesla.com/energy" },
       caseStudy: {
         context:
-          "Scattered experiments sat next to real Energy work with no shared bar for \"done.\" Leaders wanted tools in daily jobs, not another pilot deck.",
+          'Scattered experiments sat next to real Energy work with no shared bar for "done." Leaders wanted tools in daily jobs, not another pilot deck.',
         constraints: [
           "Adoption had to be scored against workflows, not vanity installs",
           "Finite roadmap capacity meant every use case needed a named owner",
@@ -534,8 +534,7 @@ export const site: SiteContent = {
     experience: {
       eyebrow: "01 / Career",
       title: "Experience",
-      description:
-        "Tesla, Apple, Waymo. Result first, then how we got it.",
+      description: "Tesla, Apple, Waymo. Result first, then how we got it.",
     },
     work: {
       eyebrow: "02 / Case studies",
@@ -605,4 +604,11 @@ export function getSelectedWorkBySlug(
 
 export function selectedWorkSlugs(): string[] {
   return site.selectedWork.map((item) => item.slug);
+}
+
+export function nextSelectedWork(slug: string): SelectedWorkItem | undefined {
+  const items = site.selectedWork;
+  const index = items.findIndex((item) => item.slug === slug);
+  if (index === -1) return undefined;
+  return items[(index + 1) % items.length];
 }

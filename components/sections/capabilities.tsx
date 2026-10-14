@@ -14,12 +14,12 @@ export function Capabilities() {
         {site.capabilities.map((group) => (
           <div
             key={group.group}
-            className="reveal border-border grid gap-3 border-b py-6 sm:grid-cols-[14rem_1fr] sm:gap-10"
+            className="reveal border-border grid gap-2 border-b py-6 sm:grid-cols-[14rem_1fr] sm:gap-10"
           >
-            <h3 className="text-sm font-medium tracking-tight">
+            <h3 className="text-[1.0625rem] font-medium tracking-tight">
               {group.group}
             </h3>
-            <p className="text-muted-foreground text-sm leading-relaxed">
+            <p className="text-muted-foreground text-[1.0625rem] leading-relaxed">
               {group.items.join(" · ")}
             </p>
           </div>

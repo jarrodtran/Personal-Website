@@ -1,17 +1,18 @@
 import Image from "next/image";
 import { Section, SectionHeading } from "@/components/section";
 import { site } from "@/content/site";
+import { withBasePath } from "@/lib/base-path";
 
 export function About() {
   return (
     <Section id="about">
-      <div className="grid items-start gap-14 lg:grid-cols-[1.15fr_0.85fr]">
+      <div className="grid items-start gap-12 lg:grid-cols-[1.15fr_0.85fr] lg:gap-14">
         <div>
           <SectionHeading
             eyebrow={site.sections.about.eyebrow}
             title={site.sections.about.title}
           />
-          <div className="text-muted-foreground space-y-4 text-base leading-relaxed">
+          <div className="text-muted-foreground measure space-y-4 text-[1.0625rem] leading-relaxed">
             {site.about.bio.map((paragraph) => (
               <p key={paragraph.slice(0, 24)}>{paragraph}</p>
             ))}
@@ -21,16 +22,15 @@ export function About() {
             <p className="text-accent font-mono-label">
               What I&apos;m looking for next
             </p>
-            <p className="text-foreground mt-3 text-sm leading-relaxed">
+            <p className="measure mt-3 text-[1.0625rem] leading-relaxed">
               {site.about.lookingForIntro}
             </p>
-            <ul className="mt-5 space-y-3">
+            <ul className="measure mt-5 space-y-3">
               {site.about.lookingFor.map((item) => (
                 <li
                   key={item}
-                  className="text-muted-foreground flex gap-3 text-sm leading-relaxed"
+                  className="text-muted-foreground text-[1.0625rem] leading-relaxed"
                 >
-                  <span className="bg-accent mt-2 size-1 shrink-0 rounded-full" />
                   {item}
                 </li>
               ))}
@@ -41,14 +41,14 @@ export function About() {
         <div className="reveal lg:sticky lg:top-28">
           <div className="border-border max-w-sm overflow-hidden border lg:max-w-none">
             <Image
-              src={site.about.photo.src}
+              src={withBasePath(site.about.photo.src)}
               alt={site.about.photo.alt}
               width={800}
               height={1000}
-              className="aspect-[4/5] w-full object-cover saturate-[0.9]"
+              className="aspect-[4/5] w-full object-cover"
             />
           </div>
-          <p className="text-muted-foreground mt-4 text-sm leading-relaxed">
+          <p className="text-muted-foreground mt-4 text-[0.9375rem] leading-relaxed">
             {site.positioning.location}
             <span aria-hidden="true"> · </span>
             {site.about.education}
@@ -57,7 +57,7 @@ export function About() {
             {site.about.strengths.map((strength) => (
               <li
                 key={strength}
-                className="border-border py-3.5 text-sm leading-relaxed not-last:border-b"
+                className="border-border py-3.5 text-[1.0625rem] leading-relaxed not-last:border-b"
               >
                 {strength}
               </li>

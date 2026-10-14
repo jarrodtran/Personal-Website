@@ -19,8 +19,17 @@ const sources = new Set(
 
 let raw = 0;
 let gzip = 0;
+function outPath(src) {
+  const next = src.indexOf("/_next/");
+  if (next !== -1) return `out${src.slice(next)}`;
+  const prefix = (process.env.BASE_PATH ?? "").replace(/\/$/, "");
+  const path =
+    prefix && src.startsWith(prefix) ? src.slice(prefix.length) : src;
+  return `out${path}`;
+}
+
 for (const src of sources) {
-  const body = readFileSync(`out${src}`);
+  const body = readFileSync(outPath(src));
   raw += body.length;
   gzip += gzipSync(body, { level: 9 }).length;
 }

@@ -4,6 +4,8 @@ import { extname, join, normalize } from "node:path";
 import axe from "axe-core";
 import { chromium } from "playwright-core";
 
+const basePath = (process.env.BASE_PATH ?? "").replace(/\/$/, "");
+
 const types = {
   ".css": "text/css",
   ".html": "text/html; charset=utf-8",
@@ -14,9 +16,19 @@ const types = {
   ".woff2": "font/woff2",
 };
 
+function withoutBasePath(pathname) {
+  if (!basePath) return pathname;
+  if (pathname === basePath) return "/";
+  if (pathname.startsWith(`${basePath}/`)) {
+    return pathname.slice(basePath.length);
+  }
+  return pathname;
+}
+
 const server = createServer(async (request, response) => {
   const { pathname } = new URL(request.url, "http://localhost");
-  const path = pathname.endsWith("/") ? `${pathname}index.html` : pathname;
+  const stripped = withoutBasePath(pathname);
+  const path = stripped.endsWith("/") ? `${stripped}index.html` : stripped;
   const file = join("out", normalize(decodeURIComponent(path)));
   try {
     const body = await readFile(file);
@@ -27,13 +39,10 @@ const server = createServer(async (request, response) => {
   }
 });
 await new Promise((resolve) => server.listen(0, "127.0.0.1", resolve));
-const origin = `http://127.0.0.1:${server.address().port}/`;
+const origin = `http://127.0.0.1:${server.address().port}${basePath}/`;
 
-const browser = await chromium.launch({
-  channel: "chrome",
-  executablePath: process.env.CHROME_PATH,
-});
-console.log(`a11y: Chrome ${browser.version()}`);
+const browser = await chromium.launch();
+console.log(`a11y: Chromium ${browser.version()}`);
 const failures = [];
 
 const viewports = {
@@ -96,6 +105,37 @@ const reflowProblems = await narrow.evaluate(() => {
 });
 failures.push(...reflowProblems.map((problem) => `320px: ${problem}`));
 await narrow.close();
+
+const phone = await browser.newPage({ viewport: viewports.phone });
+await phone.goto(origin);
+const phoneProblems = await phone.evaluate(() => {
+  const problems = [];
+  if (document.documentElement.scrollWidth > window.innerWidth) {
+    problems.push("the page scrolls sideways");
+  }
+  for (const control of document.querySelectorAll("a, button")) {
+    const box = control.getBoundingClientRect();
+    const style = getComputedStyle(control);
+    if (
+      style.display === "none" ||
+      style.visibility === "hidden" ||
+      box.width <= 1 ||
+      box.height <= 1
+    ) {
+      continue;
+    }
+    if (box.height < 44) {
+      const name =
+        control.getAttribute("aria-label") ||
+        control.textContent.trim() ||
+        control.getAttribute("href");
+      problems.push(`"${name}" is ${box.height.toFixed(1)}px tall`);
+    }
+  }
+  return problems;
+});
+failures.push(...phoneProblems.map((problem) => `390px: ${problem}`));
+await phone.close();
 
 const hiddenReveals = (page) =>
   page.$$eval(
@@ -250,6 +290,8 @@ console.log(
     "a11y: all checks pass",
     "no axe violations at desktop and phone widths, light and dark",
     "nothing squeezed or overflowing at 320px",
+    "every visible link and button is at least 44px tall at 390px",
+    "nothing scrolls sideways at 390px",
     "page title within 60 characters",
     "reveals never hide content and stay still under reduced motion",
     "phone menu closes on Escape, returns focus, and closes at desktop width",
