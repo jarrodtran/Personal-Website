@@ -9,7 +9,7 @@ function WorkMeta({ label, children }: { label: string; children: string }) {
   return (
     <div className="border-border grid gap-1 border-t py-3 first:border-t-0 first:pt-0 sm:grid-cols-[7rem_1fr] sm:gap-4">
       <p className="text-accent font-mono-label pt-0.5">{label}</p>
-      <p className="text-muted-foreground text-[1.0625rem] leading-relaxed">
+      <p className="text-muted-foreground text-lg leading-relaxed">
         {children}
       </p>
     </div>

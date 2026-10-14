@@ -10,14 +10,8 @@ export function Hero() {
         <h1 className="font-display text-[2.25rem] leading-[1.1] tracking-tight sm:text-5xl">
           {site.positioning.name}
         </h1>
-        <p className="measure mt-5 text-[1.0625rem] leading-relaxed text-pretty">
+        <p className="measure mt-5 text-lg leading-relaxed text-pretty">
           {site.positioning.headline}
-        </p>
-        <p className="text-muted-foreground mt-8 text-xs tracking-wide uppercase">
-          Subscribe
-        </p>
-        <p className="text-muted-foreground mt-1 text-[1.125rem] leading-relaxed">
-          Coming soon
         </p>
       </div>
     </section>

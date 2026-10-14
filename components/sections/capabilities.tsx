@@ -16,10 +16,10 @@ export function Capabilities() {
             key={group.group}
             className="reveal border-border grid gap-2 border-b py-6 sm:grid-cols-[14rem_1fr] sm:gap-10"
           >
-            <h3 className="text-[1.0625rem] font-medium tracking-tight">
+            <h3 className="text-lg font-medium tracking-tight">
               {group.group}
             </h3>
-            <p className="text-muted-foreground text-[1.0625rem] leading-relaxed">
+            <p className="text-muted-foreground text-lg leading-relaxed">
               {group.items.join(" · ")}
             </p>
           </div>
