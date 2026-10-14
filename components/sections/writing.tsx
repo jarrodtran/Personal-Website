@@ -41,7 +41,7 @@ export function Writing({ posts }: { posts: WritingPost[] }) {
                   </p>
                 ) : null}
                 {post.summary ? (
-                  <p className="text-muted-foreground measure mt-1 text-[1.0625rem] leading-relaxed">
+                  <p className="text-muted-foreground measure mt-1 text-lg leading-relaxed">
                     {post.summary}
                   </p>
                 ) : null}

@@ -19,7 +19,7 @@ function Block({
 
 function BulletList({ items }: { items: string[] }) {
   return (
-    <ul className="text-muted-foreground measure space-y-3 text-[1.0625rem] leading-relaxed">
+    <ul className="text-muted-foreground measure space-y-3 text-lg leading-relaxed">
       {items.map((item) => (
         <li key={item}>{item}</li>
       ))}
@@ -43,7 +43,7 @@ export function CaseStudyBody({ item }: { item: SelectedWorkItem }) {
       <h1 className="font-display mt-4 text-[2rem] leading-tight tracking-tight text-balance sm:text-5xl">
         {item.title}
       </h1>
-      <p className="text-muted-foreground measure mt-5 text-[1.0625rem] leading-relaxed text-pretty">
+      <p className="text-muted-foreground measure mt-5 text-lg leading-relaxed text-pretty">
         {item.problem}
       </p>
 
@@ -70,7 +70,7 @@ export function CaseStudyBody({ item }: { item: SelectedWorkItem }) {
 
       <div className="mt-12">
         <Block label="Context">
-          <p className="text-muted-foreground measure text-[1.0625rem] leading-relaxed text-pretty">
+          <p className="text-muted-foreground measure text-lg leading-relaxed text-pretty">
             {caseStudy.context}
           </p>
         </Block>
@@ -81,7 +81,7 @@ export function CaseStudyBody({ item }: { item: SelectedWorkItem }) {
           <BulletList items={caseStudy.decisions} />
         </Block>
         <Block label="Outcome">
-          <p className="text-muted-foreground measure text-[1.0625rem] leading-relaxed text-pretty">
+          <p className="text-muted-foreground measure text-lg leading-relaxed text-pretty">
             {caseStudy.outcomeDetail}
           </p>
         </Block>

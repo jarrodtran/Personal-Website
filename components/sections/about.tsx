@@ -12,7 +12,7 @@ export function About() {
             eyebrow={site.sections.about.eyebrow}
             title={site.sections.about.title}
           />
-          <p className="text-muted-foreground measure text-[1.0625rem] leading-relaxed">
+          <p className="text-muted-foreground measure text-lg leading-relaxed">
             {site.about.bio.join(" ")}
           </p>
         </div>

@@ -22,7 +22,7 @@ export function HowIWork() {
             <h3 className="font-display text-[1.5rem] leading-tight tracking-tight">
               {principle.title}
             </h3>
-            <p className="text-muted-foreground measure text-[1.0625rem] leading-relaxed sm:pt-1">
+            <p className="text-muted-foreground measure text-lg leading-relaxed sm:pt-1">
               {principle.description}
             </p>
           </li>

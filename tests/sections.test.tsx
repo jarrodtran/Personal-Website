@@ -1,3 +1,5 @@
+import { readdirSync, readFileSync } from "node:fs";
+import path from "node:path";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 import { CaseStudyBody } from "@/components/sections/case-study";
@@ -49,14 +51,21 @@ const { email, linkedin, resumeHref, resumeFilename } = site.contact;
 describe("hero", () => {
   const html = renderToStaticMarkup(<Hero />);
 
-  it("shows name, writing line, then Subscribe coming soon", () => {
+  it("shows name and pitch only", () => {
     const { name, headline } = site.positioning;
-    expect(textOf(html)).toBe(`${name} ${headline} Subscribe Coming soon`);
+    expect(textOf(html)).toBe(`${name} ${headline}`);
   });
 
-  it("does not invent posts or turn Subscribe into a link", () => {
+  it("does not invent posts, links, or a subscribe placeholder", () => {
     expect(links(html)).toEqual([]);
     expect(html).not.toMatch(/substack/i);
+    expect(html).not.toMatch(/subscribe/i);
+    expect(html).not.toMatch(/coming soon/i);
+  });
+
+  it("sizes the pitch at 18px", () => {
+    expect(html).toContain("text-lg");
+    expect(html).not.toContain("text-[1.0625rem]");
   });
 });
 
@@ -67,6 +76,7 @@ describe("writing", () => {
     expect(textOf(html)).toContain("First post soon");
     expect(links(html)).toEqual([]);
     expect(html).not.toMatch(/skeleton|card/i);
+    expect(html).toMatch(/text-\[1\.0625rem\][^>]*>\s*First post soon/);
   });
 
   it("lists title, date, and summary rows, then All writing, when posts exist", () => {
@@ -99,9 +109,42 @@ describe("writing", () => {
           target: "_blank",
         },
       ]);
+      expect(html).toContain("text-lg");
     } finally {
       site.substack.url = "";
     }
+  });
+});
+
+describe("body text size", () => {
+  it("uses 18px body text and keeps First post soon at 17px", () => {
+    const root = path.resolve(__dirname, "..");
+    const leftovers: string[] = [];
+
+    for (const dir of ["components", "app"]) {
+      for (const file of readdirSync(path.join(root, dir), {
+        recursive: true,
+        encoding: "utf8",
+      })) {
+        if (!/\.(tsx|ts)$/.test(file)) continue;
+        const relative = `${dir}/${file}`;
+        if (relative === "app/globals.css") continue;
+        const source = readFileSync(path.join(root, dir, file), "utf8");
+        for (const [index, line] of source.split("\n").entries()) {
+          if (!line.includes("text-[1.0625rem]")) continue;
+          const next = source.split("\n")[index + 1] ?? "";
+          if (
+            relative === "components/sections/writing.tsx" &&
+            next.includes("First post soon")
+          ) {
+            continue;
+          }
+          leftovers.push(`${relative}:${index + 1}`);
+        }
+      }
+    }
+
+    expect(leftovers).toEqual([]);
   });
 });
 

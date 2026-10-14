@@ -43,7 +43,7 @@ export function SectionHeading({
         {title}
       </h2>
       {description ? (
-        <p className="text-muted-foreground measure mt-4 text-[1.0625rem] leading-relaxed text-pretty">
+        <p className="text-muted-foreground measure mt-4 text-lg leading-relaxed text-pretty">
           {description}
         </p>
       ) : null}
