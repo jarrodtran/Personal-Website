@@ -3,31 +3,31 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 :root {
-  --background: #f3efe6;
-  --foreground: #1b1914;
-  --muted: #e8e3d8;
-  --muted-foreground: #4e4940;
-  --border: #c9c2b4;
-  --card: #f8f5ee;
-  --accent: #1e3a5f;
-  --accent-hover: #162c48;
-  --accent-foreground: #f7f3ea;
-  --ring: #1e3a5f;
+  --background: #ffffff;
+  --foreground: #111111;
+  --muted: #f5f5f5;
+  --muted-foreground: #555555;
+  --border: #e5e5e5;
+  --card: #fafafa;
+  --accent: #111111;
+  --accent-hover: #333333;
+  --accent-foreground: #ffffff;
+  --ring: #111111;
   --shadow-card: none;
   color-scheme: light;
 }
 
 .dark {
-  --background: #12151c;
-  --foreground: #ede9e0;
-  --muted: #1c212b;
-  --muted-foreground: #b4afa4;
-  --border: #3a4150;
-  --card: #191e28;
-  --accent: #9bb6d4;
-  --accent-hover: #b4c9e0;
-  --accent-foreground: #10141b;
-  --ring: #9bb6d4;
+  --background: #0a0a0a;
+  --foreground: #f2f2f2;
+  --muted: #171717;
+  --muted-foreground: #a3a3a3;
+  --border: #262626;
+  --card: #121212;
+  --accent: #f2f2f2;
+  --accent-hover: #d4d4d4;
+  --accent-foreground: #0a0a0a;
+  --ring: #f2f2f2;
   --shadow-card: none;
   color-scheme: dark;
 }
@@ -122,4 +122,13 @@ body {
 
 .tabular {
   font-variant-numeric: tabular-nums;
+}
+
+main p a,
+main li a,
+main dd a,
+footer a {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
 }
