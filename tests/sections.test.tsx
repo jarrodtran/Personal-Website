@@ -4,6 +4,7 @@ import { CaseStudyBody } from "@/components/sections/case-study";
 import { Contact } from "@/components/sections/contact";
 import { Experience } from "@/components/sections/experience";
 import { Hero } from "@/components/sections/hero";
+import { Writing } from "@/components/sections/writing";
 import { nextSelectedWork, site } from "@/content/site";
 
 const entities: Record<string, string> = {
@@ -59,6 +60,51 @@ describe("hero", () => {
   });
 });
 
+describe("writing", () => {
+  it("shows a heading and First post soon when the feed is empty", () => {
+    const html = renderToStaticMarkup(<Writing posts={[]} />);
+    expect(textOf(html)).toContain(site.sections.writing.title);
+    expect(textOf(html)).toContain("First post soon");
+    expect(links(html)).toEqual([]);
+    expect(html).not.toMatch(/skeleton|card/i);
+  });
+
+  it("lists title, date, and summary rows, then All writing, when posts exist", () => {
+    site.substack.url = "https://jarrodtran.substack.com";
+    try {
+      const html = renderToStaticMarkup(
+        <Writing
+          posts={[
+            {
+              title: "A real essay",
+              href: "https://jarrodtran.substack.com/p/a-real-essay",
+              date: "2026-03-01T12:00:00.000Z",
+              summary: "One line about the essay.",
+            },
+          ]}
+        />,
+      );
+      expect(textOf(html)).toContain("A real essay");
+      expect(textOf(html)).toContain("1 Mar 2026");
+      expect(textOf(html)).toContain("One line about the essay.");
+      expect(links(html)).toEqual([
+        {
+          href: "https://jarrodtran.substack.com/p/a-real-essay",
+          text: "A real essay",
+          target: "_blank",
+        },
+        {
+          href: "https://jarrodtran.substack.com",
+          text: "All writing",
+          target: "_blank",
+        },
+      ]);
+    } finally {
+      site.substack.url = "";
+    }
+  });
+});
+
 describe("experience", () => {
   const html = renderToStaticMarkup(<Experience />);
   const companies = site.experience.map((employer) => employer.company);
@@ -100,7 +146,7 @@ describe("contact", () => {
     }
   });
 
-  it("offers email with a copy button, LinkedIn, the résumé, and the calendar when set, and no form", () => {
+  it("offers email with a copy button, LinkedIn, a speaking invite, the résumé, and the calendar when set, and no form", () => {
     const { calendar } = site.contact;
     expect(links(html)).toEqual([
       { href: `mailto:${email}`, text: email },
@@ -110,8 +156,12 @@ describe("contact", () => {
         target: "_blank",
       },
       {
+        href: `mailto:${email}?subject=Speaking%20invitation`,
+        text: "Invite me to speak",
+      },
+      {
         href: resumeHref,
-        text: "Download résumé (PDF)",
+        text: "Résumé",
         download: resumeFilename,
       },
       ...(calendar

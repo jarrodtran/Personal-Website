@@ -1,5 +1,6 @@
 import { MetricText } from "@/components/metric-text";
 import { Section, SectionHeading } from "@/components/section";
+import { Highlights } from "@/components/sections/highlights";
 import { site } from "@/content/site";
 
 export function Experience() {
@@ -10,6 +11,7 @@ export function Experience() {
         title={site.sections.experience.title}
         description={site.sections.experience.description}
       />
+      <Highlights />
 
       <ol className="space-y-12">
         {site.experience.map((employer) => (

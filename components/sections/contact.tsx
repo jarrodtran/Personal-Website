@@ -53,13 +53,21 @@ export function Contact() {
               {linkedin.replace(/^https?:\/\/(?:www\.)?|\/$/g, "")}
             </a>
           </ContactRow>
+          <ContactRow label="Speaking">
+            <a
+              href={`mailto:${email}?subject=Speaking%20invitation`}
+              className={textAction}
+            >
+              Invite me to speak
+            </a>
+          </ContactRow>
           <ContactRow label="Résumé">
             <a
               href={withBasePath(resumeHref)}
               download={resumeFilename}
-              className={textAction}
+              className={`${tap} text-muted-foreground text-[0.9375rem]`}
             >
-              Download résumé (PDF)
+              Résumé
             </a>
           </ContactRow>
           {calendar ? (
