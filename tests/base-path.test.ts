@@ -73,7 +73,7 @@ describe("deploy wiring", () => {
     expect(source).not.toMatch(/assetPrefix:\s*["']\/Personal-Website["']/);
   });
 
-  it("sets BASE_PATH=/Personal-Website only on the GitHub Pages deploy build step", () => {
+  it("sets BASE_PATH=/Personal-Website on the GitHub Pages deploy build, not at job level", () => {
     const deploy = readSiteFile(".github/workflows/deploy.yml");
     expect(deploy).toMatch(
       /run: pnpm build\n        env:\n          BASE_PATH:\s*\/Personal-Website/,
@@ -92,7 +92,7 @@ describe("deploy wiring", () => {
 
   it("re-runs the deploy-path build, a11y, and size checks in PR CI", () => {
     expect(readSiteFile(".github/workflows/ci.yml")).toMatch(
-      /run: pnpm build\n        env:\n          BASE_PATH:\s*\/Personal-Website\n      - run: pnpm a11y\n      - run: pnpm size/,
+      /run: pnpm build\n        env:\n          BASE_PATH:\s*\/Personal-Website\n      - run: pnpm a11y\n        env:\n          BASE_PATH:\s*\/Personal-Website\n      - run: pnpm size\n        env:\n          BASE_PATH:\s*\/Personal-Website/,
     );
   });
 

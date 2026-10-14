@@ -16,6 +16,17 @@ const types: Record<string, string> = {
   ".woff2": "font/woff2",
 };
 
+const basePath = (process.env.BASE_PATH ?? "").replace(/\/$/, "");
+
+function withoutBasePath(pathname: string): string {
+  if (!basePath) return pathname;
+  if (pathname === basePath) return "/";
+  if (pathname.startsWith(`${basePath}/`)) {
+    return pathname.slice(basePath.length);
+  }
+  return pathname;
+}
+
 const built = existsSync(join(process.cwd(), "out/index.html"));
 
 if (!built) {
@@ -29,7 +40,8 @@ describe("390px tap targets and first screen", () => {
   beforeAll(async () => {
     const server = createServer(async (request, response) => {
       const { pathname } = new URL(request.url ?? "/", "http://localhost");
-      const path = pathname.endsWith("/") ? `${pathname}index.html` : pathname;
+      const stripped = withoutBasePath(pathname);
+      const path = stripped.endsWith("/") ? `${stripped}index.html` : stripped;
       const file = join("out", normalize(decodeURIComponent(path)));
       try {
         const body = await readFile(file);
@@ -48,7 +60,7 @@ describe("390px tap targets and first screen", () => {
     if (!address || typeof address === "string") {
       throw new Error("test server did not bind");
     }
-    origin = `http://127.0.0.1:${address.port}`;
+    origin = `http://127.0.0.1:${address.port}${basePath}`;
     close = () =>
       new Promise<void>((resolve, reject) => {
         server.close((error) => (error ? reject(error) : resolve()));
