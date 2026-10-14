@@ -109,6 +109,37 @@ const reflowProblems = await narrow.evaluate(() => {
 failures.push(...reflowProblems.map((problem) => `320px: ${problem}`));
 await narrow.close();
 
+const phone = await browser.newPage({ viewport: viewports.phone });
+await phone.goto(origin);
+const phoneProblems = await phone.evaluate(() => {
+  const problems = [];
+  if (document.documentElement.scrollWidth > window.innerWidth) {
+    problems.push("the page scrolls sideways");
+  }
+  for (const control of document.querySelectorAll("a, button")) {
+    const box = control.getBoundingClientRect();
+    const style = getComputedStyle(control);
+    if (
+      style.display === "none" ||
+      style.visibility === "hidden" ||
+      box.width <= 1 ||
+      box.height <= 1
+    ) {
+      continue;
+    }
+    if (box.height < 44) {
+      const name =
+        control.getAttribute("aria-label") ||
+        control.textContent.trim() ||
+        control.getAttribute("href");
+      problems.push(`"${name}" is ${box.height.toFixed(1)}px tall`);
+    }
+  }
+  return problems;
+});
+failures.push(...phoneProblems.map((problem) => `390px: ${problem}`));
+await phone.close();
+
 const hiddenReveals = (page) =>
   page.$$eval(
     ".reveal",
@@ -262,6 +293,8 @@ console.log(
     "a11y: all checks pass",
     "no axe violations at desktop and phone widths, light and dark",
     "nothing squeezed or overflowing at 320px",
+    "every visible link and button is at least 44px tall at 390px",
+    "nothing scrolls sideways at 390px",
     "page title within 60 characters",
     "reveals never hide content and stay still under reduced motion",
     "phone menu closes on Escape, returns focus, and closes at desktop width",

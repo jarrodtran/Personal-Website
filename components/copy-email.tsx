@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { textAction } from "@/lib/ui";
 
 const results = {
   idle: { label: "Copy email", status: "" },
@@ -28,11 +29,7 @@ export function CopyEmail({ email }: { email: string }) {
 
   return (
     <>
-      <button
-        type="button"
-        onClick={copy}
-        className="text-accent text-sm font-medium hover:underline"
-      >
+      <button type="button" onClick={copy} className={textAction}>
         {results[result].label}
       </button>
       <span role="status" className="sr-only">

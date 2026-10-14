@@ -1,9 +1,10 @@
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
+import { CaseStudyBody } from "@/components/sections/case-study";
 import { Contact } from "@/components/sections/contact";
 import { Experience } from "@/components/sections/experience";
 import { Hero } from "@/components/sections/hero";
-import { site } from "@/content/site";
+import { nextSelectedWork, site } from "@/content/site";
 
 const entities: Record<string, string> = {
   "&amp;": "&",
@@ -47,11 +48,11 @@ const { email, linkedin, resumeHref, resumeFilename } = site.contact;
 describe("hero", () => {
   const html = renderToStaticMarkup(<Hero />);
 
-  it("shows the headline and the one-line role, nothing more", () => {
+  it("shows name, title, pitch, Résumé, then contact, in that order", () => {
     const { status, name, headline, currentRole, currentCompany, location } =
       site.positioning;
     expect(textOf(html)).toBe(
-      `${status} / ${name} ${headline} ${currentRole} · ${currentCompany} · ${location} Résumé Email LinkedIn`,
+      `${name} ${currentRole} ${headline} Résumé Email LinkedIn ${currentCompany} · ${location} · ${status}`,
     );
   });
 
@@ -139,5 +140,26 @@ describe("contact", () => {
     } finally {
       site.contact.calendar = configured;
     }
+  });
+});
+
+describe("case study", () => {
+  const item = site.selectedWork[0];
+  const html = renderToStaticMarkup(<CaseStudyBody item={item} />);
+  const next = nextSelectedWork(item.slug);
+
+  it("lets a reader skim the problem, see the proof, and reach the next link", () => {
+    const text = textOf(html);
+    expect(text.indexOf(item.problem)).toBeGreaterThan(-1);
+    expect(text.indexOf(item.panel.value)).toBeGreaterThan(
+      text.indexOf(item.problem),
+    );
+    expect(next).toBeDefined();
+    expect(text.indexOf(`Next: ${next!.title}`)).toBeGreaterThan(
+      text.indexOf(item.panel.value),
+    );
+    expect(html).toMatch(
+      new RegExp(`/work/${next!.slug}/?`),
+    );
   });
 });

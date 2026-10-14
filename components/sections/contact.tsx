@@ -2,8 +2,7 @@ import { CopyEmail } from "@/components/copy-email";
 import { Section, SectionHeading } from "@/components/section";
 import { site } from "@/content/site";
 import { withBasePath } from "@/lib/base-path";
-
-const link = "text-foreground hover:text-accent font-medium transition-colors";
+import { tap, textAction } from "@/lib/ui";
 
 function ContactRow({
   label,
@@ -13,9 +12,9 @@ function ContactRow({
   children: React.ReactNode;
 }) {
   return (
-    <div className="grid gap-1.5 px-5 py-4 sm:grid-cols-[6.5rem_1fr] sm:items-baseline sm:gap-4 sm:px-6">
+    <div className="grid gap-1 px-5 py-3 sm:grid-cols-[6.5rem_1fr] sm:items-center sm:gap-4 sm:px-6">
       <dt className="text-muted-foreground font-mono-label">{label}</dt>
-      <dd className="flex flex-wrap items-baseline gap-x-4 gap-y-1">
+      <dd className="flex min-w-0 flex-wrap items-center gap-x-4">
         {children}
       </dd>
     </div>
@@ -34,9 +33,12 @@ export function Contact() {
           title={site.sections.contact.title}
           description={site.sections.contact.description}
         />
-        <dl className="border-border bg-card divide-border divide-y rounded-sm border">
+        <dl className="border-border bg-card divide-border divide-y border">
           <ContactRow label="Email">
-            <a href={`mailto:${email}`} className={link}>
+            <a
+              href={`mailto:${email}`}
+              className={`${tap} min-w-0 font-medium break-all`}
+            >
               {email}
             </a>
             <CopyEmail email={email} />
@@ -46,7 +48,7 @@ export function Contact() {
               href={linkedin}
               target="_blank"
               rel="noreferrer"
-              className={link}
+              className={`${tap} min-w-0 font-medium break-all`}
             >
               {linkedin.replace(/^https?:\/\/(?:www\.)?|\/$/g, "")}
             </a>
@@ -55,7 +57,7 @@ export function Contact() {
             <a
               href={withBasePath(resumeHref)}
               download={resumeFilename}
-              className={link}
+              className={textAction}
             >
               Download résumé (PDF)
             </a>
@@ -66,7 +68,7 @@ export function Contact() {
                 href={calendar}
                 target="_blank"
                 rel="noreferrer"
-                className={link}
+                className={textAction}
               >
                 Book a call
               </a>

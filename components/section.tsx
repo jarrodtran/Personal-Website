@@ -12,7 +12,7 @@ export function Section({
   contained?: boolean;
 }) {
   return (
-    <section id={id} className={cn("scroll-mt-24 py-24 sm:py-32", className)}>
+    <section id={id} className={cn("scroll-mt-24 py-16 sm:py-24", className)}>
       {contained ? (
         <div className="mx-auto max-w-5xl px-5 sm:px-8">{children}</div>
       ) : (
@@ -32,15 +32,15 @@ export function SectionHeading({
   description?: string;
 }) {
   return (
-    <div className="mb-14 max-w-2xl">
+    <div className="mb-10 max-w-2xl sm:mb-12">
       {eyebrow ? (
-        <p className="text-accent font-mono-label mb-4">{eyebrow}</p>
+        <p className="text-accent font-mono-label mb-3">{eyebrow}</p>
       ) : null}
-      <h2 className="font-display text-4xl tracking-tight text-balance sm:text-5xl">
+      <h2 className="font-display text-[2rem] leading-tight tracking-tight text-balance sm:text-4xl">
         {title}
       </h2>
       {description ? (
-        <p className="text-muted-foreground mt-5 text-lg leading-relaxed text-pretty">
+        <p className="text-muted-foreground measure mt-4 text-[1.0625rem] leading-relaxed text-pretty">
           {description}
         </p>
       ) : null}

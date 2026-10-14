@@ -1,9 +1,5 @@
 import type { Metadata } from "next";
-import {
-  IBM_Plex_Mono,
-  IBM_Plex_Sans,
-  Instrument_Serif,
-} from "next/font/google";
+import { IBM_Plex_Sans, Newsreader } from "next/font/google";
 import { Footer } from "@/components/footer";
 import { Nav } from "@/components/nav";
 import { Providers } from "@/components/providers";
@@ -17,17 +13,10 @@ const plexSans = IBM_Plex_Sans({
   display: "swap",
 });
 
-const plexMono = IBM_Plex_Mono({
-  subsets: ["latin"],
-  weight: ["400", "500"],
-  variable: "--font-plex-mono",
-  display: "swap",
-});
-
-const instrument = Instrument_Serif({
+const newsreader = Newsreader({
   subsets: ["latin"],
   weight: "400",
-  variable: "--font-instrument",
+  variable: "--font-newsreader",
   display: "swap",
 });
 
@@ -89,7 +78,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${plexSans.variable} ${plexMono.variable} ${instrument.variable}`}
+      className={`${plexSans.variable} ${newsreader.variable}`}
       suppressHydrationWarning
     >
       <head>
@@ -102,7 +91,7 @@ export default function RootLayout({
         <Providers>
           <a
             href="#content"
-            className="focus:bg-card sr-only focus:not-sr-only focus:absolute focus:top-3 focus:left-3 focus:z-[60] focus:rounded-sm focus:px-4 focus:py-2"
+            className="focus:bg-card focus:text-foreground sr-only focus:not-sr-only focus:absolute focus:top-3 focus:left-3 focus:z-[60] focus:inline-flex focus:min-h-11 focus:items-center focus:px-4"
           >
             Skip to content
           </a>

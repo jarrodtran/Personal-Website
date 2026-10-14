@@ -34,8 +34,8 @@ export function loadOgPhotoDataUrl(): string {
 }
 
 export const ogColors = {
-  bg: "#1A1612",
-  fg: "#F0EBE3",
-  accent: "#C56A45",
-  muted: "rgba(240, 235, 227, 0.72)",
+  bg: "#12151C",
+  fg: "#EDE9E0",
+  accent: "#9BB6D4",
+  muted: "rgba(237, 233, 224, 0.72)",
 } as const;
