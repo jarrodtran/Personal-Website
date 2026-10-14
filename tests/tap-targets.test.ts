@@ -166,15 +166,89 @@ describe("390px tap targets and first screen", () => {
     expect(left.brand).toBe(160);
   });
 
+  async function headerLayout(width: number, colorScheme: "light" | "dark") {
+    const browser = await chromium.launch();
+    const page = await browser.newPage({
+      viewport: { width, height: width <= 390 ? 844 : 800 },
+      colorScheme,
+    });
+    await page.goto(`${origin}/`, { waitUntil: "networkidle" });
+    if (colorScheme === "dark") {
+      await page.waitForFunction(() =>
+        document.documentElement.classList.contains("dark"),
+      );
+    }
+    const layout = await page.evaluate((name) => {
+      const visibleBox = (el: Element | null | undefined) => {
+        if (!el) return null;
+        const style = getComputedStyle(el);
+        const box = el.getBoundingClientRect();
+        if (
+          style.display === "none" ||
+          style.visibility === "hidden" ||
+          box.width <= 1 ||
+          box.height <= 1
+        ) {
+          return null;
+        }
+        return box;
+      };
+
+      const header = document.querySelector("header");
+      const nameLink = [...document.querySelectorAll("header a")].find(
+        (el) => el.textContent?.trim() === name,
+      );
+      const theme = [
+        ...document.querySelectorAll('[aria-label="Toggle color theme"]'),
+      ]
+        .map((el) => visibleBox(el))
+        .find((box) => box);
+      const menu = visibleBox(
+        document.querySelector('[aria-label="Open menu"]'),
+      );
+      const headerBox = header?.getBoundingClientRect();
+      const nameBox = visibleBox(nameLink);
+
+      return {
+        nameWidth: nameBox?.width ?? 0,
+        nameLeft: nameBox?.left ?? null,
+        headerMid: headerBox ? headerBox.left + headerBox.width / 2 : 0,
+        themeLeft: theme?.left ?? null,
+        menuLeft: menu?.left ?? null,
+      };
+    }, site.positioning.name);
+    await browser.close();
+    return layout;
+  }
+
+  it.each(["light", "dark"] as const)(
+    "keeps Jarrod Tran readable and actions on the right at 390px %s",
+    async (colorScheme) => {
+      const layout = await headerLayout(390, colorScheme);
+      expect(layout.nameWidth).toBeGreaterThanOrEqual(80);
+      expect(layout.themeLeft).toBeGreaterThanOrEqual(layout.headerMid);
+      expect(layout.menuLeft).toBeGreaterThanOrEqual(layout.headerMid);
+    },
+  );
+
+  it.each(["light", "dark"] as const)(
+    "does not regress the header at 1280px %s",
+    async (colorScheme) => {
+      const layout = await headerLayout(1280, colorScheme);
+      expect(layout.nameWidth).toBeGreaterThanOrEqual(80);
+      expect(layout.nameLeft).toBe(160);
+      expect(layout.themeLeft).toBeGreaterThanOrEqual(layout.headerMid);
+      expect(layout.menuLeft).toBeNull();
+    },
+  );
+
   it("resolves résumé, email, LinkedIn, and the next case-study link", async () => {
     const { browser, page } = await open("/");
     const home = await page.evaluate(() => {
-      const resume = document.querySelector<HTMLAnchorElement>(
-        "header a[download]",
-      );
-      const email = document.querySelector<HTMLAnchorElement>(
-        'a[href^="mailto:"]',
-      );
+      const resume =
+        document.querySelector<HTMLAnchorElement>("header a[download]");
+      const email =
+        document.querySelector<HTMLAnchorElement>('a[href^="mailto:"]');
       const linkedin = document.querySelector<HTMLAnchorElement>(
         'a[href*="linkedin.com"]',
       );
