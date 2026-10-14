@@ -74,6 +74,13 @@ export interface SiteContent {
     currentRole: string;
     currentCompany: string;
   };
+  /** Empty name/url/feedUrl until the newsletter launches. */
+  substack: {
+    name: string;
+    url: string;
+    feedUrl: string;
+  };
+  talks: { event: string; date: string; href: string }[];
   highlights: { value: string; label: string; source?: string }[];
   about: {
     bio: string[];
@@ -88,6 +95,7 @@ export interface SiteContent {
   principles: { title: string; description: string }[];
   capabilities: { group: string; items: string[] }[];
   sections: {
+    writing: SectionCopy;
     experience: SectionCopy;
     work: SectionCopy;
     about: Omit<SectionCopy, "description">;
@@ -134,6 +142,12 @@ export const site: SiteContent = {
     currentRole: currentTitle,
     currentCompany: "Tesla Energy",
   },
+  substack: {
+    name: "",
+    url: "",
+    feedUrl: "",
+  },
+  talks: [],
   highlights: [
     {
       value: "1,000+",
@@ -158,9 +172,7 @@ export const site: SiteContent = {
   ],
   about: {
     bio: [
-      "I take an unclear brief, set the approach, and stay until the numbers move.",
-      `I work at Tesla Energy as ${currentTitle}. I built the team that ships our AI tools, got people using them, and put reporting in place so leadership can see whether the tools move the business.`,
-      "Before that: Apple's 0→1 iPhone launch in India, Engineering Operations planning at Waymo, and Tesla Special Projects through the 4680 launch. When a staff meeting needs real numbers, I still build the model in Python or Tableau myself.",
+      `I work at Tesla Energy as ${currentTitle}. I built the team that ships our AI tools, got people using them, and put reporting in place so leadership can see whether the tools move the business. Before that: Apple's 0→1 iPhone launch in India, Engineering Operations planning at Waymo, and Tesla Special Projects through the 4680 launch.`,
     ],
     lookingForIntro:
       "I want a seat where my judgment changes the outcome, not just the deck.",
@@ -531,35 +543,40 @@ export const site: SiteContent = {
     },
   ],
   sections: {
+    writing: {
+      eyebrow: "01 / Essays",
+      title: "Writing",
+      description: "Titles and notes from the newsletter, when it is live.",
+    },
+    about: {
+      eyebrow: "02 / Profile",
+      title: "About Jarrod",
+    },
     experience: {
-      eyebrow: "01 / Career",
+      eyebrow: "03 / Career",
       title: "Experience",
       description: "Tesla, Apple, Waymo. Result first, then how we got it.",
     },
     work: {
-      eyebrow: "02 / Case studies",
+      eyebrow: "04 / Case studies",
       title: "Selected work",
       description:
         "AI at Tesla Energy, the investment portfolio behind it, iPhone India, and Waymo planning. Same job each time: name the problem, model the economics, pick an owner, ship.",
     },
-    about: {
-      eyebrow: "03 / Profile",
-      title: "About Jarrod",
-    },
     approach: {
-      eyebrow: "04 / Approach",
+      eyebrow: "05 / Approach",
       title: "How I work",
       description:
         "I start from the facts, then build a system the team can run.",
     },
     capabilities: {
-      eyebrow: "05 / Toolkit",
+      eyebrow: "06 / Toolkit",
       title: "Capabilities",
       description:
         "AI product work, clear problem-solving, and the leadership to make both stick.",
     },
     contact: {
-      eyebrow: "06 / Contact",
+      eyebrow: "07 / Contact",
       title: "Looking for product, strategy, or AI roles.",
       description:
         "Growth-stage tech, consulting, early-stage startups, or a VC-adjacent operator seat. Based in Houston; I'll relocate for the right role.",
@@ -573,9 +590,10 @@ export const site: SiteContent = {
     "0→1 launches",
   ],
   nav: [
+    { label: "Writing", href: "#writing" },
+    { label: "About", href: "#about" },
     { label: "Experience", href: "#experience" },
     { label: "Work", href: "#work" },
-    { label: "About", href: "#about" },
     { label: "Contact", href: "#contact" },
   ],
   contact: {

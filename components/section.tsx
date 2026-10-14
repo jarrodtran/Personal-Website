@@ -12,7 +12,10 @@ export function Section({
   contained?: boolean;
 }) {
   return (
-    <section id={id} className={cn("scroll-mt-24 py-16 sm:py-24", className)}>
+    <section
+      id={id}
+      className={cn("border-border scroll-mt-24 border-t py-16 sm:py-20", className)}
+    >
       {contained ? (
         <div className="mx-auto max-w-5xl px-5 sm:px-8">{children}</div>
       ) : (

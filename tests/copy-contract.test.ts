@@ -120,9 +120,10 @@ describe("visitor-facing copy contract", () => {
 
   it("numbers section eyebrows in page order from site.sections only", () => {
     const order = [
+      "writing",
+      "about",
       "experience",
       "work",
-      "about",
       "approach",
       "capabilities",
       "contact",
@@ -140,6 +141,7 @@ describe("visitor-facing copy contract", () => {
       "experience",
       "how-i-work",
       "selected-work",
+      "writing",
     ].map((name) => readSiteFile(`components/sections/${name}.tsx`));
     for (const source of sectionFiles) {
       expect(source).not.toMatch(/eyebrow="/);
@@ -234,7 +236,8 @@ describe("visitor-facing copy contract", () => {
   it("renders section headings from the same content module", () => {
     const files = [
       ["components/sections/hero.tsx", "site.positioning.headline"],
-      ["components/sections/about.tsx", "site.about.lookingForIntro"],
+      ["components/sections/writing.tsx", "site.sections.writing"],
+      ["components/sections/about.tsx", "site.about.bio"],
       ["components/sections/about.tsx", "site.sections.about"],
       ["components/sections/experience.tsx", "site.sections.experience"],
       ["components/sections/selected-work.tsx", "site.sections.work"],

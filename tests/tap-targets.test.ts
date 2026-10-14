@@ -120,23 +120,32 @@ describe("390px tap targets and first screen", () => {
     expect(overflow).toBe(false);
   });
 
-  it("shows name, writing line, then Subscribe coming soon", async () => {
+  it("shows the hero, then the Writing heading, on the first screen", async () => {
     const { browser, page } = await open("/");
-    const order = await page.evaluate(() => {
+    const view = await page.evaluate(() => {
       const hero = document.getElementById("top");
-      if (!hero) return [];
-      return (hero.innerText || "")
-        .split("\n")
-        .map((line) => line.trim())
-        .filter(Boolean);
+      const heading = document.querySelector("#writing h2");
+      const box = heading?.getBoundingClientRect();
+      return {
+        hero: (hero?.innerText || "")
+          .split("\n")
+          .map((line) => line.trim())
+          .filter(Boolean),
+        writingTitle: heading?.textContent?.trim() ?? "",
+        writingBottom: box?.bottom ?? 0,
+        viewport: window.innerHeight,
+      };
     });
     await browser.close();
-    expect(order).toEqual([
+    expect(view.hero).toEqual([
       site.positioning.name,
       site.positioning.headline,
       "SUBSCRIBE",
       "Coming soon",
     ]);
+    expect(view.writingTitle).toBe(site.sections.writing.title);
+    expect(view.writingBottom).toBeGreaterThan(0);
+    expect(view.writingBottom).toBeLessThanOrEqual(view.viewport);
   });
 
   it("aligns the hero name with the nav column at 1280px", async () => {

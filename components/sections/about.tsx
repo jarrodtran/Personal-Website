@@ -12,30 +12,9 @@ export function About() {
             eyebrow={site.sections.about.eyebrow}
             title={site.sections.about.title}
           />
-          <div className="text-muted-foreground measure space-y-4 text-[1.0625rem] leading-relaxed">
-            {site.about.bio.map((paragraph) => (
-              <p key={paragraph.slice(0, 24)}>{paragraph}</p>
-            ))}
-          </div>
-
-          <div className="reveal border-border mt-10 border-t pt-8">
-            <p className="text-accent font-mono-label">
-              What I&apos;m looking for next
-            </p>
-            <p className="measure mt-3 text-[1.0625rem] leading-relaxed">
-              {site.about.lookingForIntro}
-            </p>
-            <ul className="measure mt-5 space-y-3">
-              {site.about.lookingFor.map((item) => (
-                <li
-                  key={item}
-                  className="text-muted-foreground text-[1.0625rem] leading-relaxed"
-                >
-                  {item}
-                </li>
-              ))}
-            </ul>
-          </div>
+          <p className="text-muted-foreground measure text-[1.0625rem] leading-relaxed">
+            {site.about.bio.join(" ")}
+          </p>
         </div>
 
         <div className="reveal lg:sticky lg:top-28">
@@ -53,16 +32,6 @@ export function About() {
             <span aria-hidden="true"> · </span>
             {site.about.education}
           </p>
-          <ul className="border-border mt-8 space-y-0 border-t">
-            {site.about.strengths.map((strength) => (
-              <li
-                key={strength}
-                className="border-border py-3.5 text-[1.0625rem] leading-relaxed not-last:border-b"
-              >
-                {strength}
-              </li>
-            ))}
-          </ul>
         </div>
       </div>
     </Section>
