@@ -128,7 +128,7 @@ export const site: SiteContent = {
     },
     documentTitle: "Jarrod Tran · Product & strategy · Tesla, Apple, Waymo",
     valueProp:
-      "Unclear brief, real P&L. At Tesla Energy I lead AI enablement — a product and engineering team whose tools are in production. Before that: Apple and Waymo.",
+      "Unclear brief, real P&L. At Tesla Energy I lead AI enablement: a product and engineering team whose tools are in production. Before that: Apple and Waymo.",
     status: "Open to the right role",
     location: "Houston, TX",
     currentRole: currentTitle,
@@ -166,7 +166,7 @@ export const site: SiteContent = {
       "I want a seat where my judgment changes the outcome, not just the deck.",
     lookingFor: [
       "A real business outcome and a named decision-maker",
-      "AI product work that real people use — past the pilot",
+      "AI product work that real people use (past the pilot)",
       "Own the plan and stay through the result",
     ],
     strengths: [
@@ -191,7 +191,7 @@ export const site: SiteContent = {
           title: currentTitle,
           dates: "Aug 2023 – Present",
           summary:
-            "I own Tesla Energy’s AI enablement strategy and the product team that ships it — roadmap, rules, and what I report to leadership.",
+            "I own Tesla Energy’s AI enablement strategy and the product team that ships it: roadmap, rules, and what I report to leadership.",
           bullets: [
             {
               text: "Built and lead a forward-deployed AI product and engineering org at Tesla Energy, scaling adoption to 1,000+ active users across 20+ production AI solutions: RAG troubleshooting, automated reporting, workflow automation, and decision-support.",
@@ -219,7 +219,7 @@ export const site: SiteContent = {
           title: "Program Manager, Special Projects",
           dates: "Jun 2018 – Jun 2021",
           summary:
-            "Special projects with no playbook — new tech and messy scale-ups.",
+            "Special projects with no playbook: new tech and messy scale-ups.",
           bullets: [
             {
               text: "Advanced Project Roadrunner, Tesla's 4680 program, from early pilot to a launch-ready platform. Stage gates, readiness reviews, and cross-functional ownership through Battery Day.",
@@ -485,7 +485,7 @@ export const site: SiteContent = {
     {
       title: "Compound",
       description:
-        "Add the feedback — and the automation — that makes the system better as it grows. AI included, when it earns the slot.",
+        "Add the feedback (and the automation) that makes the system better as it grows. AI included, when it earns the slot.",
     },
   ],
   capabilities: [
@@ -592,7 +592,7 @@ export const site: SiteContent = {
     email:
       "I do product, strategy, and AI product work. I lead AI enablement at Tesla Energy (1,000+ users, $1.6M modeled annualized value) after Apple and Waymo. Open to growth-stage tech, consulting, early-stage startups, or a VC-adjacent operator role when the brief is real.",
     intro:
-      "Jarrod Tran does product and strategy work. He leads AI enablement at Tesla Energy — AI tools in use by 1,000+ people, plus $156M incremental profit on the business side. He's looking at growth-stage tech, consulting, early-stage startups, and VC-adjacent operator seats.",
+      "Jarrod Tran does product and strategy work. He leads AI enablement at Tesla Energy: AI tools in use by 1,000+ people, plus $156M incremental profit on the business side. He's looking at growth-stage tech, consulting, early-stage startups, and VC-adjacent operator seats.",
   },
 };
 
