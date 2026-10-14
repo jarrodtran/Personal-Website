@@ -245,7 +245,7 @@ const clipboardContext = await browser.newContext({
 const contact = await clipboardContext.newPage();
 await contact.goto(origin);
 const email = await contact
-  .locator('#contact a[href^="mailto:"]')
+  .locator('#contact a[href^="mailto:"]:not([href*="?"])')
   .textContent();
 const copyButton = contact.locator("#contact button");
 const announces = (text) =>
