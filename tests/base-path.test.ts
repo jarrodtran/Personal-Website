@@ -73,16 +73,26 @@ describe("deploy wiring", () => {
     expect(source).not.toMatch(/assetPrefix:\s*["']\/Personal-Website["']/);
   });
 
-  it("sets BASE_PATH=/Personal-Website on the GitHub Pages deploy build", () => {
-    expect(readSiteFile(".github/workflows/deploy.yml")).toMatch(
-      /BASE_PATH:\s*\/Personal-Website/,
+  it("sets BASE_PATH=/Personal-Website on the GitHub Pages deploy build, not at job level", () => {
+    const deploy = readSiteFile(".github/workflows/deploy.yml");
+    expect(deploy).toMatch(
+      /run: pnpm build\n        env:\n          BASE_PATH:\s*\/Personal-Website/,
+    );
+    expect(deploy).not.toMatch(/^ {4}env:\n {6}BASE_PATH:/m);
+  });
+
+  it("keeps Lighthouse and the default CI build on an empty BASE_PATH so apex-style /_next paths still verify", () => {
+    expect(readSiteFile(".github/workflows/lighthouse.yml")).not.toMatch(
+      /BASE_PATH/,
+    );
+    expect(readSiteFile(".github/workflows/ci.yml")).toMatch(
+      /run: pnpm build\n      - run: pnpm test:tap/,
     );
   });
 
-  it("keeps CI and Lighthouse on an empty BASE_PATH so apex-style /_next paths still verify", () => {
-    expect(readSiteFile(".github/workflows/ci.yml")).not.toMatch(/BASE_PATH/);
-    expect(readSiteFile(".github/workflows/lighthouse.yml")).not.toMatch(
-      /BASE_PATH/,
+  it("re-runs the deploy-path build, a11y, and size checks in PR CI", () => {
+    expect(readSiteFile(".github/workflows/ci.yml")).toMatch(
+      /run: pnpm build\n        env:\n          BASE_PATH:\s*\/Personal-Website\n      - run: pnpm a11y\n        env:\n          BASE_PATH:\s*\/Personal-Website\n      - run: pnpm size\n        env:\n          BASE_PATH:\s*\/Personal-Website/,
     );
   });
 

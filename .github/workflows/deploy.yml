@@ -19,8 +19,6 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
-    env:
-      BASE_PATH: /Personal-Website
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
@@ -39,9 +37,17 @@ jobs:
       - run: pnpm check
       - run: pnpm test
       - run: pnpm build
+        env:
+          BASE_PATH: /Personal-Website
       - run: pnpm test:tap
+        env:
+          BASE_PATH: /Personal-Website
       - run: pnpm a11y
+        env:
+          BASE_PATH: /Personal-Website
       - run: pnpm size
+        env:
+          BASE_PATH: /Personal-Website
       - uses: actions/upload-pages-artifact@v3
         with:
           path: out
