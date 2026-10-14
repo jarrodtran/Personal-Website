@@ -1,6 +1,8 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 
+export { ogColors } from "@/lib/palette";
+
 export const ogSize = { width: 1200, height: 630 } as const;
 
 const fontsRoot = join(process.cwd(), "lib/fonts");
@@ -32,10 +34,3 @@ export function loadOgPhotoDataUrl(): string {
   const bytes = readFileSync(join(process.cwd(), "public/avatar-og.png"));
   return `data:image/png;base64,${bytes.toString("base64")}`;
 }
-
-export const ogColors = {
-  bg: "#0A0A0A",
-  fg: "#F2F2F2",
-  accent: "#F2F2F2",
-  muted: "rgba(242,242,242,0.72)",
-} as const;
