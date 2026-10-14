@@ -34,3 +34,8 @@ jobs:
       - run: pnpm test:tap
       - run: pnpm a11y
       - run: pnpm size
+      - run: pnpm build
+        env:
+          BASE_PATH: /Personal-Website
+      - run: pnpm a11y
+      - run: pnpm size
