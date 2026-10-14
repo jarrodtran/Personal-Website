@@ -4,6 +4,7 @@ import { Footer } from "@/components/footer";
 import { Nav } from "@/components/nav";
 import { Providers } from "@/components/providers";
 import { site, siteUrl } from "@/content/site";
+import { withBasePath } from "@/lib/base-path";
 import "./globals.css";
 
 const plexSans = IBM_Plex_Sans({
@@ -46,6 +47,10 @@ export const metadata: Metadata = {
   robots: {
     index: true,
     follow: true,
+  },
+  icons: {
+    icon: withBasePath("/icon.png"),
+    apple: withBasePath("/icon.png"),
   },
 };
 
