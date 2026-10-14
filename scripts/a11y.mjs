@@ -41,11 +41,8 @@ const server = createServer(async (request, response) => {
 await new Promise((resolve) => server.listen(0, "127.0.0.1", resolve));
 const origin = `http://127.0.0.1:${server.address().port}${basePath}/`;
 
-const browser = await chromium.launch({
-  channel: "chrome",
-  executablePath: process.env.CHROME_PATH,
-});
-console.log(`a11y: Chrome ${browser.version()}`);
+const browser = await chromium.launch();
+console.log(`a11y: Chromium ${browser.version()}`);
 const failures = [];
 
 const viewports = {

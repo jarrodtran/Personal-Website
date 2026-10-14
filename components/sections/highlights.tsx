@@ -4,7 +4,7 @@ export function Highlights() {
   return (
     <section aria-label="Impact highlights" className="pb-6 sm:pb-10">
       <div className="mx-auto max-w-5xl px-5 sm:px-8">
-        <div className="border-border grid grid-cols-2 border-y sm:grid-cols-4">
+        <div className="border-border grid grid-cols-2 gap-x-6 border-y sm:grid-cols-4 sm:gap-x-0">
           {site.highlights.map((item) => (
             <div
               key={item.label}

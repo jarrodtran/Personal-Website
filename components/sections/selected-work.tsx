@@ -58,7 +58,7 @@ export function SelectedWork() {
                 </div>
               </div>
               <div className="flex min-w-0 flex-1 flex-col p-5 sm:p-7">
-                <h3 className="font-display text-[1.75rem] leading-tight tracking-tight">
+                <h3 className="font-display text-2xl leading-tight tracking-tight sm:text-[1.75rem]">
                   {item.title}
                 </h3>
                 <div className="mt-5">

@@ -43,7 +43,7 @@ Useful scripts: `pnpm check` (TypeScript), `pnpm lint`, `pnpm test`, `pnpm test:
 
 After a build:
 
-- `pnpm a11y` runs axe on `out/` in Google Chrome at desktop and phone widths, in light and dark. Set `CHROME_PATH` to use another Chromium build. It also fails when:
+- `pnpm a11y` runs axe on `out/` in Playwright Chromium at desktop and phone widths, in light and dark. Install the browser with `npx playwright install --with-deps chromium`. It also fails when:
   - an icon is squeezed or text overflows its control at 320px
   - the page title is over 60 characters
   - a reveal animation hides content, or runs under reduced motion

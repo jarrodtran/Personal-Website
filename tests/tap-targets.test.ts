@@ -60,10 +60,7 @@ describe("390px tap targets and first screen", () => {
   });
 
   async function open(path: string) {
-    const browser = await chromium.launch({
-      channel: "chrome",
-      executablePath: process.env.CHROME_PATH || "/usr/local/bin/google-chrome",
-    });
+    const browser = await chromium.launch();
     const page = await browser.newPage({
       viewport: { width: 390, height: 844 },
       colorScheme: "light",

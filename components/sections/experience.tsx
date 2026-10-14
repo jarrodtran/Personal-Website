@@ -17,7 +17,7 @@ export function Experience() {
             key={employer.company}
             className="reveal border-border border-t pt-8"
           >
-            <h3 className="font-display text-[1.75rem] leading-tight tracking-tight">
+            <h3 className="font-display text-2xl leading-tight tracking-tight sm:text-[1.75rem]">
               {employer.company}
             </h3>
             {employer.note ? (

@@ -6,9 +6,9 @@ import { btnGhost, btnPrimary } from "@/lib/ui";
 
 export function Hero() {
   return (
-    <section id="top" className="px-5 pt-8 pb-10 sm:px-8 sm:pt-16 sm:pb-14">
-      <div className="mx-auto max-w-5xl">
-        <h1 className="font-display text-[2.25rem] leading-none tracking-tight sm:text-5xl">
+    <section id="top" className="pt-8 pb-10 sm:pt-16 sm:pb-14">
+      <div className="mx-auto max-w-5xl px-5 sm:px-8">
+        <h1 className="font-display text-[2.25rem] leading-[1.1] tracking-tight sm:text-5xl">
           {site.positioning.name}
         </h1>
         <p className="mt-4 text-lg leading-snug">
