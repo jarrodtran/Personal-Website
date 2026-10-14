@@ -2,7 +2,10 @@ import { readFileSync } from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
 import { normalizeBasePath, withBasePath } from "@/lib/base-path";
-import { patchHtmlContent } from "../scripts/postbuild.mjs";
+import {
+  patchHtmlContent,
+  unprefixedRootAssets,
+} from "../scripts/postbuild.mjs";
 
 const root = path.resolve(__dirname, "..");
 
@@ -118,5 +121,70 @@ describe("deploy wiring", () => {
     expect(patchHtmlContent(html, "/Personal-Website")).toBe(
       '<link rel="icon" href="/Personal-Website/icon.png?hash"/><meta property="og:image" content="https://jarrodtran.com/opengraph-image.png?x"/>',
     );
+  });
+
+  it("prefixes icon, apple-touch, and favicon hrefs in HTML and the RSC payload", () => {
+    const html = [
+      '<link rel="icon" href="/icon?abc"/>',
+      '<link rel="apple-touch-icon" href="/apple-icon?def"/>',
+      '<link rel="shortcut icon" href="/favicon.ico"/>',
+      '["$","link","23",{"rel":"icon","href":"/icon?abc"}]',
+      '["$","link","24",{"rel":"apple-touch-icon","href":"/apple-icon?def"}]',
+    ].join("");
+
+    const patched = patchHtmlContent(html, "/Personal-Website");
+
+    expect(patched).toContain('href="/Personal-Website/icon.png?abc"');
+    expect(patched).toContain('href="/Personal-Website/apple-icon.png?def"');
+    expect(patched).toContain('href="/Personal-Website/favicon.ico"');
+    expect(patched).toContain('"href":"/Personal-Website/icon.png?abc"');
+    expect(patched).toContain('"href":"/Personal-Website/apple-icon.png?def"');
+    expect(patched).not.toMatch(/href="\/icon(?:\.png)?/);
+    expect(patched).not.toMatch(/"href":"\/icon(?:\.png)?/);
+    expect(patched).not.toMatch(/href="\/apple-icon/);
+    expect(patched).not.toMatch(/"href":"\/apple-icon/);
+    expect(patched).not.toContain('href="/favicon.ico"');
+  });
+
+  it("leaves icon hrefs at site root when BASE_PATH is unset", () => {
+    const html =
+      '<link rel="icon" href="/icon?abc"/><link rel="apple-touch-icon" href="/apple-icon"/>';
+    expect(patchHtmlContent(html, "")).toBe(
+      '<link rel="icon" href="/icon.png?abc"/><link rel="apple-touch-icon" href="/apple-icon.png"/>',
+    );
+  });
+
+  it("fails the BASE_PATH export if built HTML still has a root-relative asset", () => {
+    const html =
+      '<link rel="icon" href="/Personal-Website/icon.png?h"/>' +
+      '["$","link","23",{"rel":"icon","href":"/icon.png?h"}]';
+    expect(unprefixedRootAssets(html, "/Personal-Website")).toEqual([
+      "/icon.png?h",
+    ]);
+    expect(
+      unprefixedRootAssets(
+        patchHtmlContent(html, "/Personal-Website"),
+        "/Personal-Website",
+      ),
+    ).toEqual([]);
+    expect(unprefixedRootAssets(html, "")).toEqual([]);
+  });
+
+  it("ignores in-page hashes, routes, and already-prefixed assets", () => {
+    expect(
+      unprefixedRootAssets(
+        '<a href="#content"></a><a href="/work/tesla/"></a>' +
+          '<img src="/Personal-Website/avatar.webp"/>' +
+          '{"resumeHref":"/resume.pdf","href":"/"}',
+        "/Personal-Website",
+      ),
+    ).toEqual([]);
+  });
+
+  it("declares metadata icons through withBasePath so apple-touch and icon hrefs follow BASE_PATH", () => {
+    const layout = readSiteFile("app/layout.tsx");
+    expect(layout).toContain("withBasePath");
+    expect(layout).toMatch(/icons\s*:/);
+    expect(layout).toMatch(/apple\s*:/);
   });
 });
