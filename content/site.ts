@@ -1,6 +1,6 @@
 export const siteUrl = "https://jarrodtran.com";
 
-/** Official current title. Every surface (hero, bio, experience, JSON-LD) reads this one value. */
+/** Official current title. Every surface (bio, experience, JSON-LD) reads this one value. */
 const currentTitle = "Lead, AI Enablement & Factory Strategy";
 
 export type Audience = "tech" | "vc" | "consulting" | "startup";
@@ -117,7 +117,7 @@ export interface SiteContent {
 export const site: SiteContent = {
   positioning: {
     name: "Jarrod Tran",
-    headline: "I ship AI product work and stay until the numbers move.",
+    headline: "I write about AI product work, judgment, and making a P&L move.",
     headlineVariants: {
       tech: "The person who takes an AI bet from a slide to something people use, with a P&L.",
       vc: "I put capital on the line, kill weak bets, and drive the rest to an outcome.",

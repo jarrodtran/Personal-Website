@@ -120,7 +120,7 @@ describe("390px tap targets and first screen", () => {
     expect(overflow).toBe(false);
   });
 
-  it("shows name, title, pitch, Résumé, then contact first", async () => {
+  it("shows name, writing line, then Subscribe coming soon", async () => {
     const { browser, page } = await open("/");
     const order = await page.evaluate(() => {
       const hero = document.getElementById("top");
@@ -131,23 +131,45 @@ describe("390px tap targets and first screen", () => {
         .filter(Boolean);
     });
     await browser.close();
-    expect(order[0]).toBe(site.positioning.name);
-    expect(order[1]).toBe(site.positioning.currentRole);
-    expect(order[2]).toBe(site.positioning.headline);
-    expect(order[3]).toBe("Résumé");
-    expect(order.slice(4).join(" ")).toMatch(/^Email\s+LinkedIn/);
+    expect(order).toEqual([
+      site.positioning.name,
+      site.positioning.headline,
+      "SUBSCRIBE",
+      "Coming soon",
+    ]);
+  });
+
+  it("aligns the hero name with the nav column at 1280px", async () => {
+    const browser = await chromium.launch();
+    const page = await browser.newPage({
+      viewport: { width: 1280, height: 800 },
+      colorScheme: "light",
+    });
+    await page.goto(`${origin}/`, { waitUntil: "networkidle" });
+    const left = await page.evaluate(() => {
+      const h1 = document.querySelector("#top h1");
+      const brand = document.querySelector("header a");
+      return {
+        h1: h1 ? Math.round(h1.getBoundingClientRect().left) : null,
+        brand: brand ? Math.round(brand.getBoundingClientRect().left) : null,
+      };
+    });
+    await browser.close();
+    expect(left.h1).toBe(160);
+    expect(left.brand).toBe(160);
   });
 
   it("resolves résumé, email, LinkedIn, and the next case-study link", async () => {
     const { browser, page } = await open("/");
     const home = await page.evaluate(() => {
-      const resume =
-        document.querySelector<HTMLAnchorElement>("#top a[download]");
+      const resume = document.querySelector<HTMLAnchorElement>(
+        "header a[download]",
+      );
       const email = document.querySelector<HTMLAnchorElement>(
-        '#top a[href^="mailto:"]',
+        'a[href^="mailto:"]',
       );
       const linkedin = document.querySelector<HTMLAnchorElement>(
-        '#top a[href*="linkedin.com"]',
+        'a[href*="linkedin.com"]',
       );
       return {
         resume: resume?.getAttribute("href"),

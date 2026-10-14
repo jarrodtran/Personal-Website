@@ -97,7 +97,7 @@ describe("visitor-facing copy contract", () => {
     const sources = [
       "content/site.ts",
       "app/layout.tsx",
-      "components/sections/hero.tsx",
+      "components/sections/about.tsx",
       "scripts/build-resume.py",
     ].map(readSiteFile);
     for (const source of sources) {
@@ -106,9 +106,10 @@ describe("visitor-facing copy contract", () => {
     expect(readSiteFile("app/layout.tsx")).toContain(
       "jobTitle: site.positioning.currentRole",
     );
-    expect(readSiteFile("components/sections/hero.tsx")).toContain(
-      "site.positioning.currentRole",
+    expect(readSiteFile("components/sections/hero.tsx")).not.toContain(
+      "currentRole",
     );
+    expect(readSiteFile("components/sections/hero.tsx")).not.toContain(title);
   });
 
   it("keeps the document title short enough for a browser tab or search result", () => {

@@ -48,20 +48,14 @@ const { email, linkedin, resumeHref, resumeFilename } = site.contact;
 describe("hero", () => {
   const html = renderToStaticMarkup(<Hero />);
 
-  it("shows name, title, pitch, Résumé, then contact, in that order", () => {
-    const { status, name, headline, currentRole, currentCompany, location } =
-      site.positioning;
-    expect(textOf(html)).toBe(
-      `${name} ${currentRole} ${headline} Résumé Email LinkedIn ${currentCompany} · ${location} · ${status}`,
-    );
+  it("shows name, writing line, then Subscribe coming soon", () => {
+    const { name, headline } = site.positioning;
+    expect(textOf(html)).toBe(`${name} ${headline} Subscribe Coming soon`);
   });
 
-  it("offers exactly three actions: résumé, email, LinkedIn", () => {
-    expect(links(html)).toEqual([
-      { href: resumeHref, text: "Résumé", download: resumeFilename },
-      { href: `mailto:${email}`, text: "Email" },
-      { href: linkedin, text: "LinkedIn", target: "_blank" },
-    ]);
+  it("does not invent posts or turn Subscribe into a link", () => {
+    expect(links(html)).toEqual([]);
+    expect(html).not.toMatch(/substack/i);
   });
 });
 
