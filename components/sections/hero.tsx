@@ -27,19 +27,24 @@ export function Hero() {
             <Download className="size-4 shrink-0" aria-hidden="true" />
             Résumé
           </a>
-          <a href={`mailto:${site.contact.email}`} className={btnGhost}>
-            <Mail className="size-4 shrink-0" aria-hidden="true" />
-            Email
-          </a>
-          <a
-            href={site.contact.linkedin}
-            target="_blank"
-            rel="noreferrer"
-            className={btnGhost}
-          >
-            <LinkedInIcon className="size-4 shrink-0" />
-            LinkedIn
-          </a>
+          <div className="flex gap-2 sm:contents">
+            <a
+              href={`mailto:${site.contact.email}`}
+              className={`${btnGhost} flex-1 sm:flex-none`}
+            >
+              <Mail className="size-4 shrink-0" aria-hidden="true" />
+              Email
+            </a>
+            <a
+              href={site.contact.linkedin}
+              target="_blank"
+              rel="noreferrer"
+              className={`${btnGhost} flex-1 sm:flex-none`}
+            >
+              <LinkedInIcon className="size-4 shrink-0" />
+              LinkedIn
+            </a>
+          </div>
         </div>
 
         <p className="text-muted-foreground mt-6 text-[0.9375rem]">

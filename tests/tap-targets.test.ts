@@ -126,7 +126,7 @@ describe("390px tap targets and first screen", () => {
     expect(order[1]).toBe(site.positioning.currentRole);
     expect(order[2]).toBe(site.positioning.headline);
     expect(order[3]).toBe("Résumé");
-    expect(order.slice(4, 6)).toEqual(["Email", "LinkedIn"]);
+    expect(order.slice(4).join(" ")).toMatch(/^Email\s+LinkedIn/);
   });
 
   it("resolves résumé, email, LinkedIn, and the next case-study link", async () => {
