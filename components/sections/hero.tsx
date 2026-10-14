@@ -2,7 +2,10 @@ import { site } from "@/content/site";
 
 export function Hero() {
   return (
-    <section id="top" className="pt-8 pb-10 sm:pt-16 sm:pb-14">
+    <section
+      id="top"
+      className="flex min-h-[calc(100svh-3.5rem)] flex-col justify-start pt-8 pb-16 sm:pt-16 sm:pb-20"
+    >
       <div className="mx-auto max-w-5xl px-5 sm:px-8">
         <h1 className="font-display text-[2.25rem] leading-[1.1] tracking-tight sm:text-5xl">
           {site.positioning.name}

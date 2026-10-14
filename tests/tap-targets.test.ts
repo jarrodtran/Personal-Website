@@ -139,6 +139,19 @@ describe("390px tap targets and first screen", () => {
     ]);
   });
 
+  it("keeps impact metrics below the first screen at 390px", async () => {
+    const { browser, page } = await open("/");
+    const belowFold = await page.evaluate(() => {
+      const highlights = document.querySelector(
+        '[aria-label="Impact highlights"]',
+      );
+      if (!highlights) return true;
+      return highlights.getBoundingClientRect().top >= window.innerHeight;
+    });
+    await browser.close();
+    expect(belowFold).toBe(true);
+  });
+
   it("resolves résumé, email, LinkedIn, and the next case-study link", async () => {
     const { browser, page } = await open("/");
     const home = await page.evaluate(() => {
