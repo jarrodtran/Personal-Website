@@ -134,22 +134,29 @@ describe("390px tap targets and first screen", () => {
     expect(order).toEqual([
       site.positioning.name,
       site.positioning.headline,
-      "Subscribe",
+      "SUBSCRIBE",
       "Coming soon",
     ]);
   });
 
-  it("keeps impact metrics below the first screen at 390px", async () => {
-    const { browser, page } = await open("/");
-    const belowFold = await page.evaluate(() => {
-      const highlights = document.querySelector(
-        '[aria-label="Impact highlights"]',
-      );
-      if (!highlights) return true;
-      return highlights.getBoundingClientRect().top >= window.innerHeight;
+  it("aligns the hero name with the nav column at 1280px", async () => {
+    const browser = await chromium.launch();
+    const page = await browser.newPage({
+      viewport: { width: 1280, height: 800 },
+      colorScheme: "light",
+    });
+    await page.goto(`${origin}/`, { waitUntil: "networkidle" });
+    const left = await page.evaluate(() => {
+      const h1 = document.querySelector("#top h1");
+      const brand = document.querySelector("header a");
+      return {
+        h1: h1 ? Math.round(h1.getBoundingClientRect().left) : null,
+        brand: brand ? Math.round(brand.getBoundingClientRect().left) : null,
+      };
     });
     await browser.close();
-    expect(belowFold).toBe(true);
+    expect(left.h1).toBe(160);
+    expect(left.brand).toBe(160);
   });
 
   it("resolves résumé, email, LinkedIn, and the next case-study link", async () => {

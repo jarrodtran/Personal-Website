@@ -4,16 +4,18 @@ export function Hero() {
   return (
     <section
       id="top"
-      className="flex min-h-[calc(100svh-3.5rem)] flex-col justify-start pt-8 pb-16 sm:pt-16 sm:pb-20"
+      className="flex flex-col justify-start pt-8 pb-12 sm:pt-16 sm:pb-16"
     >
-      <div className="mx-auto max-w-5xl px-5 sm:px-8">
+      <div className="mx-auto w-full max-w-5xl px-5 sm:px-8">
         <h1 className="font-display text-[2.25rem] leading-[1.1] tracking-tight sm:text-5xl">
           {site.positioning.name}
         </h1>
         <p className="measure mt-5 text-[1.0625rem] leading-relaxed text-pretty">
           {site.positioning.headline}
         </p>
-        <p className="mt-8 text-[1.125rem] leading-relaxed">Subscribe</p>
+        <p className="text-muted-foreground mt-8 text-xs tracking-wide uppercase">
+          Subscribe
+        </p>
         <p className="text-muted-foreground mt-1 text-[1.125rem] leading-relaxed">
           Coming soon
         </p>
