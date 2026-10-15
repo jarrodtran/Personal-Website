@@ -92,11 +92,7 @@ export function Nav({
       <div className="mx-auto flex min-h-14 max-w-5xl items-center justify-between px-5 sm:px-8">
         <a
           href={homeHref}
-          className={cn(
-            tap,
-            "font-medium tracking-tight",
-            onHome && "max-md:sr-only",
-          )}
+          className={cn(tap, "shrink-0 font-medium tracking-tight")}
         >
           {name}
         </a>
@@ -131,7 +127,7 @@ export function Nav({
           <ThemeToggle />
         </nav>
 
-        <div className="flex items-center gap-2 md:hidden">
+        <div className="ml-auto flex items-center gap-2 md:hidden">
           <ThemeToggle />
           <button
             ref={toggleRef}
