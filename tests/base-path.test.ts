@@ -76,11 +76,18 @@ describe("deploy wiring", () => {
     expect(source).not.toMatch(/assetPrefix:\s*["']\/Personal-Website["']/);
   });
 
-  it("sets BASE_PATH=/Personal-Website on the GitHub Pages deploy build, not at job level", () => {
+  it("builds the GitHub Pages deploy with an empty or absent BASE_PATH, not at job level", () => {
     const deploy = readSiteFile(".github/workflows/deploy.yml");
-    expect(deploy).toMatch(
+    expect(deploy).not.toMatch(
       /run: pnpm build\n        env:\n          BASE_PATH:\s*\/Personal-Website/,
     );
+    const buildEnv = deploy.match(
+      /run: pnpm build\n        env:\n          BASE_PATH:\s*(\S*)/,
+    );
+    if (buildEnv) {
+      expect(buildEnv[1]).toMatch(/^['"]?['"]?$/);
+    }
+    expect(deploy).toMatch(/run: pnpm build\n/);
     expect(deploy).not.toMatch(/^ {4}env:\n {6}BASE_PATH:/m);
   });
 
