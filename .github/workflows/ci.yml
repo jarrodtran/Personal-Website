@@ -31,11 +31,15 @@ jobs:
       - run: pnpm check
       - run: pnpm test
       - run: pnpm build
+      - run: pnpm test:redirects
       - run: pnpm test:tap
       - run: pnpm test:images
       - run: pnpm a11y
       - run: pnpm size
       - run: pnpm build
+        env:
+          BASE_PATH: /Personal-Website
+      - run: pnpm test:redirects
         env:
           BASE_PATH: /Personal-Website
       - run: pnpm a11y

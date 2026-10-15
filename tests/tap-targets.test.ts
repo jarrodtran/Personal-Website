@@ -242,6 +242,50 @@ describe("390px tap targets and first screen", () => {
     },
   );
 
+  it.each(
+    (["writing", "work"] as const).flatMap((hash) =>
+      (
+        [
+          { width: 390, height: 844 },
+          { width: 1280, height: 800 },
+        ] as const
+      ).flatMap((viewport) =>
+        (["light", "dark"] as const).map((colorScheme) => ({
+          hash,
+          ...viewport,
+          colorScheme,
+        })),
+      ),
+    ),
+  )(
+    "keeps the #$hash heading below the sticky header at $width $colorScheme",
+    async ({ hash, width, height, colorScheme }) => {
+      const browser = await chromium.launch();
+      const page = await browser.newPage({
+        viewport: { width, height },
+        colorScheme,
+        reducedMotion: "reduce",
+      });
+      await page.goto(`${origin}/#${hash}`, { waitUntil: "networkidle" });
+      if (colorScheme === "dark") {
+        await page.waitForFunction(() =>
+          document.documentElement.classList.contains("dark"),
+        );
+      }
+      await page.waitForSelector(`#${hash} h2`);
+      const boxes = await page.evaluate((id) => {
+        const header = document.querySelector("header");
+        const heading = document.querySelector(`#${id} h2`);
+        return {
+          headingTop: heading?.getBoundingClientRect().top ?? -1,
+          headerBottom: header?.getBoundingClientRect().bottom ?? 0,
+        };
+      }, hash);
+      await browser.close();
+      expect(boxes.headingTop).toBeGreaterThanOrEqual(boxes.headerBottom);
+    },
+  );
+
   it("resolves résumé, email, LinkedIn, and the next case-study link", async () => {
     const { browser, page } = await open("/");
     const home = await page.evaluate(() => {
