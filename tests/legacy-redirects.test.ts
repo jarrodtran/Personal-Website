@@ -31,12 +31,17 @@ function assertRedirectPage(
   expect(existsSync(path.join(root, file)), file).toBe(true);
   expect(html, file).toMatch(/http-equiv=["']refresh["']/i);
   expect(html, file).toContain(`url=${target}`);
-  expect(html, file).toMatch(/rel=["']canonical["']/i);
   expect(html, file).toContain(target);
   expect(html, file).toMatch(href);
   expect(html, file).toContain(label);
   expect(html, file).toMatch(/noindex/i);
   expect(html, file).not.toMatch(/<script[^>]*>[\s\S]*location\.(href|replace)/i);
+
+  const canonicals = [
+    ...html.matchAll(/<link\b[^>]*rel=["']canonical["'][^>]*>/gi),
+  ].map(([tag]) => tag);
+  expect(canonicals, file).toHaveLength(1);
+  expect(canonicals[0], file).not.toContain("#");
 }
 
 describe("exported /writing/ and /work/ redirects", () => {

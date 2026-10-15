@@ -27,7 +27,8 @@ describe("legacy /writing/ and /work/ index routes", () => {
     expect(redirect).toContain("Go to Writing");
     expect(redirect).toContain("Go to Work");
     expect(redirect).toMatch(/httpEquiv=["']refresh["']/);
-    expect(redirect).toMatch(/rel=["']canonical["']/);
+    expect(redirect).not.toMatch(/rel=["']canonical["']/);
+    expect(redirect).not.toMatch(/alternates\s*:/);
     expect(redirect).toMatch(/index:\s*false/);
 
     expect(readSiteFile("app/writing/page.tsx")).toContain("LegacyRedirect");

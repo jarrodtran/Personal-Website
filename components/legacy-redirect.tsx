@@ -14,11 +14,9 @@ export function legacyRedirectTarget(hash: LegacyHash): string {
 }
 
 export function legacyRedirectMetadata(hash: LegacyHash): Metadata {
-  const href = legacyRedirectTarget(hash);
   return {
     title: COPY[hash].title,
     robots: { index: false, follow: true },
-    alternates: { canonical: href },
   };
 }
 
@@ -27,7 +25,6 @@ export function LegacyRedirect({ hash }: { hash: LegacyHash }) {
   return (
     <>
       <meta httpEquiv="refresh" content={`0;url=${href}`} />
-      <link rel="canonical" href={href} />
       <div className="mx-auto max-w-5xl px-5 py-28 sm:px-8">
         <p className="measure text-lg leading-relaxed">
           <a href={href} className={tap}>
