@@ -1,4 +1,4 @@
-import { readFileSync } from "node:fs";
+import { readdirSync, readFileSync, statSync } from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
 import { normalizeBasePath, withBasePath } from "@/lib/base-path";
@@ -11,6 +11,21 @@ const root = path.resolve(__dirname, "..");
 
 function readSiteFile(relativePath: string): string {
   return readFileSync(path.join(root, relativePath), "utf8");
+}
+
+function sourceFilesUnder(...dirs: string[]): string[] {
+  const files: string[] = [];
+  for (const dir of dirs) {
+    for (const entry of readdirSync(path.join(root, dir), {
+      recursive: true,
+      encoding: "utf8",
+    })) {
+      const relative = path.join(dir, entry);
+      if (!statSync(path.join(root, relative)).isFile()) continue;
+      files.push(relative);
+    }
+  }
+  return files;
 }
 
 describe("normalizeBasePath", () => {
@@ -211,5 +226,59 @@ describe("deploy wiring", () => {
     expect(layout).toContain("withBasePath");
     expect(layout).toMatch(/icons\s*:/);
     expect(layout).toMatch(/apple\s*:/);
+  });
+
+  it("does not hardcode /Personal-Website under app, components, or lib", () => {
+    const hits = sourceFilesUnder("app", "components", "lib").filter((file) =>
+      readSiteFile(file).includes("/Personal-Website"),
+    );
+    expect(hits).toEqual([]);
+  });
+
+  it("does not deploy GitHub Pages from pull-request CI", () => {
+    const ci = readSiteFile(".github/workflows/ci.yml");
+    expect(ci).not.toMatch(/actions\/deploy-pages/);
+    expect(ci).not.toMatch(/pages:\s*write/);
+  });
+
+  it("pins the README live-site sentence to https://jarrodtran.com", () => {
+    const liveLine = readSiteFile("README.md")
+      .split(/\r?\n/)
+      .find((line) => /this repo is live at/i.test(line));
+    expect(liveLine, "README is missing a live-site line").toBeTruthy();
+    const liveHref = liveLine!.match(
+      /this repo is live at \[[^\]]+\]\((https?:\/\/[^)]+)\)/i,
+    )?.[1];
+    expect(liveHref).toBe("https://jarrodtran.com");
+  });
+
+  it("keeps deploy.yml off any CNAME or custom domain other than jarrodtran.com", () => {
+    const deploy = readSiteFile(".github/workflows/deploy.yml");
+    const assigned = [
+      ...deploy.matchAll(
+        /\b(?:CNAME|custom[-_]?domain)\s*[:=]\s*['"]?([^\s'"]+)/gi,
+      ),
+    ].map((match) => match[1].replace(/[.,]+$/, "").toLowerCase());
+    for (const value of assigned) {
+      expect(value).toBe("jarrodtran.com");
+    }
+
+    const allowed = new Set([
+      "jarrodtran.com",
+      "github.com",
+      "api.github.com",
+    ]);
+    for (const match of deploy.matchAll(/https?:\/\/([^/\s'")]+)/gi)) {
+      const host = match[1].toLowerCase().replace(/[.,]+$/, "");
+      if (
+        host.endsWith(".github.com") ||
+        host.endsWith(".githubusercontent.com")
+      ) {
+        continue;
+      }
+      expect(allowed.has(host), `unexpected host ${host} in deploy.yml`).toBe(
+        true,
+      );
+    }
   });
 });
