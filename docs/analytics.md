@@ -1,6 +1,6 @@
 # Analytics (hold)
 
-No visitor analytics ship on the public site yet. Phase 4 only documents options — **do not** create a paid Plausible account from this workstream (that was an explicit reverse word). Prefer a deliberate, privacy-light choice after the domain serves this repo.
+No visitor analytics ship on the public site yet. Phase 4 only documents options. Do not create a paid Plausible account from this workstream (that was an explicit reverse word). Prefer a deliberate, privacy-light choice.
 
 ## Options when ready
 
@@ -15,7 +15,7 @@ No visitor analytics ship on the public site yet. Phase 4 only documents options
 
 Ship a snippet only when **all** of these are true:
 
-1. `jarrodtran.com` points at this repo (domain cutover done — see README).
+1. `jarrodtran.com` already points at this repo. See README.
 2. One option above is chosen on purpose (not “add Plausible” by default).
 3. The snippet is loaded from first-party or a clearly disclosed privacy-friendly host, with no marketing pixels.
 

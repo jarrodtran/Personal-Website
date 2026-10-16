@@ -67,6 +67,18 @@ describe("withBasePath", () => {
 });
 
 describe("deploy wiring", () => {
+  it("tells agents that production is jarrodtran.com with an empty deploy BASE_PATH", () => {
+    const readme = readSiteFile("README.md");
+    expect(readme).toContain("https://jarrodtran.com");
+    expect(readme).toMatch(/This repo is live at/);
+    expect(readme).not.toMatch(/jarrodtran\.com is not served from this repo yet/);
+    expect(readme).not.toMatch(
+      /The deploy build sets `BASE_PATH=\/Personal-Website`/,
+    );
+    expect(readme).not.toMatch(/Moving jarrodtran\.com to this repo \(pending\)/);
+    expect(readme).toMatch(/Do not edit DNS/);
+  });
+
   it("reads basePath and assetPrefix from BASE_PATH instead of hardcoding the repo name", () => {
     const source = readSiteFile("next.config.ts");
     expect(source).toContain("process.env.BASE_PATH");
