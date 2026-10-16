@@ -43,10 +43,10 @@ describe("legacy /writing/ and /work/ index routes", () => {
   it("re-checks the exported redirect HTML after both CI builds", () => {
     const ci = readSiteFile(".github/workflows/ci.yml");
     expect(ci).toMatch(
-      /run: pnpm build\n      - run: pnpm test:redirects\n      - run: pnpm test:tap/,
+      /run: pnpm build\n      - run: pnpm test:redirects\n      - run: pnpm test:titles\n      - run: pnpm test:tap/,
     );
     expect(ci).toMatch(
-      /run: pnpm build\n        env:\n          BASE_PATH:\s*\/Personal-Website\n      - run: pnpm test:redirects\n        env:\n          BASE_PATH:\s*\/Personal-Website\n      - run: pnpm a11y/,
+      /run: pnpm build\n        env:\n          BASE_PATH:\s*\/Personal-Website\n      - run: pnpm test:redirects\n        env:\n          BASE_PATH:\s*\/Personal-Website\n      - run: pnpm test:titles\n        env:\n          BASE_PATH:\s*\/Personal-Website\n      - run: pnpm a11y/,
     );
   });
 });

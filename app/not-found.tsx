@@ -1,6 +1,14 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { site } from "@/content/site";
 import { btnPrimary } from "@/lib/ui";
+
+export const metadata: Metadata = {
+  title: {
+    absolute: `Page not found · ${site.positioning.name}`,
+  },
+  robots: { index: false, follow: false },
+};
 
 export default function NotFound() {
   return (
