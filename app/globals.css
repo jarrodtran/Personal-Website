@@ -32,6 +32,23 @@
   color-scheme: dark;
 }
 
+@media (prefers-color-scheme: dark) {
+  html:not(.light) {
+    --background: #0a0a0a;
+    --foreground: #f2f2f2;
+    --muted: #171717;
+    --muted-foreground: #a3a3a3;
+    --border: #262626;
+    --card: #121212;
+    --accent: #f2f2f2;
+    --accent-hover: #d4d4d4;
+    --accent-foreground: #0a0a0a;
+    --ring: #f2f2f2;
+    --shadow-card: none;
+    color-scheme: dark;
+  }
+}
+
 @theme inline {
   --font-sans: var(--font-plex-sans), ui-sans-serif, system-ui, sans-serif;
   --font-display: var(--font-newsreader), ui-serif, Georgia, serif;

@@ -46,13 +46,34 @@ describe("shared palette lock", () => {
     const { palette } = await import("@/lib/palette");
     const css = readSiteFile("app/globals.css");
     const rootBlock = cssBlock(css, "\n:root", "\n.dark");
-    const darkBlock = cssBlock(css, "\n.dark", "\n@theme");
+    const darkBlock = cssBlock(css, "\n.dark", "\n@media");
 
     for (const [cssName, paletteKey] of CSS_TO_PALETTE) {
       expect(cssToken(rootBlock, cssName), `light ${cssName}`).toBe(
         palette.light[paletteKey].toLowerCase(),
       );
       expect(cssToken(darkBlock, cssName), `dark ${cssName}`).toBe(
+        palette.dark[paletteKey].toLowerCase(),
+      );
+    }
+  });
+
+  it("paints the dark palette from prefers-color-scheme without a .dark class", async () => {
+    const { palette } = await import("@/lib/palette");
+    const css = readSiteFile("app/globals.css");
+    expect(css).toMatch(/@media \(prefers-color-scheme:\s*dark\)/);
+    expect(css).toMatch(/html:not\(\.light\)/);
+
+    const mediaBlock = cssBlock(
+      css,
+      "@media (prefers-color-scheme: dark)",
+      "\n@theme",
+    );
+    expect(mediaBlock).toContain("html:not(.light)");
+    expect(mediaBlock).not.toContain(".dark");
+
+    for (const [cssName, paletteKey] of CSS_TO_PALETTE) {
+      expect(cssToken(mediaBlock, cssName), `system-dark ${cssName}`).toBe(
         palette.dark[paletteKey].toLowerCase(),
       );
     }

@@ -35,6 +35,7 @@ jobs:
       - run: pnpm test:titles
       - run: pnpm test:tap
       - run: pnpm test:images
+      - run: pnpm test:theme
       - run: pnpm a11y
       - run: pnpm size
       - run: pnpm build
@@ -50,5 +51,8 @@ jobs:
         env:
           BASE_PATH: /Personal-Website
       - run: pnpm size
+        env:
+          BASE_PATH: /Personal-Website
+      - run: pnpm test:theme
         env:
           BASE_PATH: /Personal-Website
