@@ -16,7 +16,7 @@ function hasToken(block: string, name: string, hex: string): boolean {
 describe("theme contrast", () => {
   it("keeps CSS tokens aligned with the contrast ledger", () => {
     const root = css.slice(css.indexOf("\n:root"), css.indexOf("\n.dark"));
-    const dark = css.slice(css.indexOf("\n.dark"), css.indexOf("\n@theme"));
+    const dark = css.slice(css.indexOf("\n.dark"), css.indexOf("\n@media"));
 
     expect(hasToken(root, "background", themes.light.background)).toBe(true);
     expect(hasToken(root, "foreground", themes.light.foreground)).toBe(true);
