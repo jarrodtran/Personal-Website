@@ -54,7 +54,7 @@ After a build:
 ## CI and deploy
 
 - [`.github/workflows/ci.yml`](.github/workflows/ci.yml) runs lint, typecheck, tests, build, the 390px tap-target check (`pnpm test:tap`), the accessibility check (`pnpm a11y`, axe and page checks in Chrome against `out/`), and the JS budget (`pnpm size`) on every pull request.
-- [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml) runs the same gate on every push to `main`, then publishes `out/` to GitHub Pages. A failing check blocks the deploy. Production builds with an empty `BASE_PATH` so assets stay `/_next/...` at `https://jarrodtran.com`. Pull-request CI also rebuilds with `BASE_PATH=/Personal-Website` to keep the old project Pages preview path working.
+- [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml) runs the same gate on every push to `main`, then publishes `out/` to GitHub Pages. A failing check blocks the deploy. Production builds with an empty `BASE_PATH` so assets stay `/_next/...` at `https://jarrodtran.com`. Pull-request CI also rebuilds with `BASE_PATH=/Personal-Website` so a path-prefixed build still works. Pull requests do not deploy a preview.
 - [`.github/workflows/lighthouse.yml`](.github/workflows/lighthouse.yml) builds the static export and runs [Lighthouse CI](https://github.com/GoogleChrome/lighthouse-ci) against `out/` on pull requests and `main`. Config lives in [`.lighthouserc.cjs`](.lighthouserc.cjs). Reports upload as the `lighthouse-results` workflow artifact.
 
 ### Lighthouse locally
@@ -75,7 +75,7 @@ Visitor analytics are **on hold**. Options and the no-paid-Plausible rule are in
 **This repo is live at [jarrodtran.com](https://jarrodtran.com).** The 2026-10-16 cutover moved the custom domain off [`jarrodtran/Jobhuntsite`](https://github.com/jarrodtran/Jobhuntsite).
 
 - Production deploy leaves `BASE_PATH` empty (or omits it). The export is a root site (`/_next/`, `/icon.png`). `tests/base-path.test.ts` fails if the deploy build sets `BASE_PATH=/Personal-Website`.
-- `BASE_PATH=/Personal-Website` is only the pull-request preview of `https://jarrodtran.github.io/Personal-Website/`. Do not copy that prefix into `deploy.yml`.
+- `BASE_PATH=/Personal-Website` in pull-request CI is a prefixed-build check only. It is not a live preview. Do not copy that prefix into `deploy.yml`.
 - `next.config.ts` reads `BASE_PATH` through `normalizeBasePath`. Do not hardcode the repo name.
 - Leftover Jobhuntsite URLs `/writing/` and `/work/` meta-refresh to `/#writing` and `/#work`. Case studies stay at `/work/[slug]/`.
 - Do not edit DNS, the custom domain, or GitHub Pages settings from an agent PR.

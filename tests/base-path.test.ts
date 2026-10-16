@@ -76,6 +76,12 @@ describe("deploy wiring", () => {
       /The deploy build sets `BASE_PATH=\/Personal-Website`/,
     );
     expect(readme).not.toMatch(/Moving jarrodtran\.com to this repo \(pending\)/);
+    expect(readme).not.toMatch(/project Pages preview path/);
+    expect(readme).not.toMatch(
+      /pull-request preview of `https:\/\/jarrodtran\.github\.io\/Personal-Website\/`/,
+    );
+    expect(readme).toMatch(/prefixed-build check only/);
+    expect(readme).toMatch(/Pull requests do not deploy a preview/);
     expect(readme).toMatch(/Do not edit DNS/);
   });
 
