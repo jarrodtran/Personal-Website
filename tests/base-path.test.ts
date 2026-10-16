@@ -96,13 +96,13 @@ describe("deploy wiring", () => {
       /BASE_PATH/,
     );
     expect(readSiteFile(".github/workflows/ci.yml")).toMatch(
-      /run: pnpm build\n      - run: pnpm test:redirects\n      - run: pnpm test:tap/,
+      /run: pnpm build\n      - run: pnpm test:redirects\n      - run: pnpm test:titles\n      - run: pnpm test:tap/,
     );
   });
 
   it("re-runs the deploy-path build, a11y, and size checks in PR CI", () => {
     expect(readSiteFile(".github/workflows/ci.yml")).toMatch(
-      /run: pnpm build\n        env:\n          BASE_PATH:\s*\/Personal-Website\n      - run: pnpm test:redirects\n        env:\n          BASE_PATH:\s*\/Personal-Website\n      - run: pnpm a11y\n        env:\n          BASE_PATH:\s*\/Personal-Website\n      - run: pnpm size\n        env:\n          BASE_PATH:\s*\/Personal-Website/,
+      /run: pnpm build\n        env:\n          BASE_PATH:\s*\/Personal-Website\n      - run: pnpm test:redirects\n        env:\n          BASE_PATH:\s*\/Personal-Website\n      - run: pnpm test:titles\n        env:\n          BASE_PATH:\s*\/Personal-Website\n      - run: pnpm a11y\n        env:\n          BASE_PATH:\s*\/Personal-Website\n      - run: pnpm size\n        env:\n          BASE_PATH:\s*\/Personal-Website/,
     );
   });
 
