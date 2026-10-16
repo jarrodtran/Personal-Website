@@ -14,8 +14,8 @@ concurrency:
   group: pages
   cancel-in-progress: true
 
-# Project Pages preview lives at /Personal-Website. Leave BASE_PATH empty
-# (or omit it) on the cutover build so jarrodtran.com can serve from site root.
+# Production builds for the site root at https://jarrodtran.com.
+# PR CI runs a path-prefixed build as a check only. No preview is deployed.
 jobs:
   build:
     runs-on: ubuntu-latest
