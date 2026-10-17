@@ -79,10 +79,15 @@ export function Nav({
       setCompact(next);
     };
     const measure = () => {
-      bar.parentElement?.style.setProperty(
-        "--header-bar",
-        `${bar.offsetHeight}px`,
-      );
+      const header = bar.parentElement;
+      const bottom = Math.ceil(bar.getBoundingClientRect().bottom);
+      if (header) {
+        header.style.setProperty("--header-bar", `${bottom}px`);
+        header.style.setProperty(
+          "--header-panel",
+          `${Math.max(0, window.innerHeight - bottom)}px`,
+        );
+      }
       if (!window.matchMedia("(width >= 48rem)").matches) {
         apply(false);
         return;
@@ -162,13 +167,13 @@ export function Nav({
     >
       <div
         ref={barRef}
-        className="mx-auto flex min-h-14 max-w-5xl flex-wrap items-center justify-between gap-x-4 gap-y-1 px-5 sm:px-8"
+        className="mx-auto flex min-h-14 max-w-5xl items-center justify-between gap-x-4 px-5 sm:px-8"
       >
         <a
           href={homeHref}
-          className={cn(tap, "shrink-0 font-medium tracking-tight")}
+          className={cn(tap, "min-w-0 font-medium tracking-tight")}
         >
-          {name}
+          <span className="min-w-0 text-wrap">{name}</span>
         </a>
 
         <nav
@@ -210,7 +215,7 @@ export function Nav({
 
         <div
           className={cn(
-            "ml-auto flex items-center gap-2",
+            "ml-auto flex shrink-0 items-center gap-2",
             !compact && "md:hidden",
           )}
         >
@@ -218,7 +223,7 @@ export function Nav({
           <button
             ref={toggleRef}
             type="button"
-            className="border-border bg-card inline-flex size-11 items-center justify-center border"
+            className="border-border bg-card inline-flex size-[44px] items-center justify-center border"
             aria-expanded={open}
             aria-controls="mobile-nav"
             aria-label={open ? "Close menu" : "Open menu"}
@@ -236,7 +241,10 @@ export function Nav({
             "border-border bg-background overflow-y-auto overscroll-contain border-t",
             !compact && "md:hidden",
           )}
-          style={{ maxHeight: "calc(100dvh - var(--header-bar, 3.5rem))" }}
+          style={{
+            maxHeight:
+              "var(--header-panel, calc(100dvh - var(--header-bar, 0px)))",
+          }}
         >
           <nav
             className="mx-auto flex max-w-5xl flex-col px-5 py-3"
