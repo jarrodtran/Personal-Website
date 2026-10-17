@@ -42,7 +42,7 @@ Copy lives in [`content/site.ts`](content/site.ts) and section headings on `site
 
 ## Number ledger
 
-Every figure on the site (highlights, role bullets, case studies, principles, bio) must appear in the résumé source, [`scripts/build-resume.py`](scripts/build-resume.py), which writes `public/resume.pdf`. `tests/metric-ledger.test.ts` fails on any figure the résumé does not contain. To add a number, add it to the résumé first.
+Every figure on the site (highlights, role bullets, case studies, principles, bio) must appear in the committed résumé, [`public/resume.pdf`](public/resume.pdf). `tests/metric-ledger.test.ts` reads the text in that PDF and fails on any figure it does not contain, except the two exceptions recorded in that test. `tests/copy-contract.test.ts` pins the file to sha256 `0933308be9e1d33db155a2eb0c0dc2a2494311f1b3f926dae2ba3f5c1796e164`, so a new résumé means updating that pin in the same PR. To add a number, put it in the résumé PDF first.
 
 ---
 
