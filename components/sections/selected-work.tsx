@@ -85,7 +85,10 @@ export function SelectedWork() {
                     {item.link ? (
                       <a
                         href={item.link.href}
-                        className={cn(tap, "text-[0.9375rem] font-medium")}
+                        className={cn(
+                          tap,
+                          "gap-1 text-[0.9375rem] font-medium",
+                        )}
                         target="_blank"
                         rel="noreferrer"
                       >

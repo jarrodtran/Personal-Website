@@ -23,7 +23,11 @@ export function Nav({
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [active, setActive] = useState<string>("");
+  const [compact, setCompact] = useState(false);
+  const compactRef = useRef(false);
   const toggleRef = useRef<HTMLButtonElement>(null);
+  const barRef = useRef<HTMLDivElement>(null);
+  const navRef = useRef<HTMLElement>(null);
   const pathname = usePathname();
   const onHome = pathname === "/" || pathname === "";
   const sectionHref = (href: string) =>
@@ -62,6 +66,73 @@ export function Nav({
   }, [items, onHome]);
 
   useEffect(() => {
+    const bar = barRef.current;
+    const nav = navRef.current;
+    if (!bar || !nav) return;
+
+    let frame = 0;
+    const apply = (next: boolean) => {
+      // Widening past the compact threshold restores the desktop links, so a
+      // menu opened in compact mode has to close with it.
+      if (compactRef.current && !next) setOpen(false);
+      compactRef.current = next;
+      setCompact(next);
+    };
+    const measure = () => {
+      bar.parentElement?.style.setProperty(
+        "--header-bar",
+        `${bar.offsetHeight}px`,
+      );
+      if (!window.matchMedia("(width >= 48rem)").matches) {
+        apply(false);
+        return;
+      }
+
+      // At 200% text the desktop links no longer fit beside the name. Measure
+      // the nav off-canvas so the header can fall back to the phone menu.
+      const clone = nav.cloneNode(true) as HTMLElement;
+      Object.assign(clone.style, {
+        position: "absolute",
+        top: "0",
+        left: "-9999px",
+        visibility: "hidden",
+        display: "flex",
+      });
+      document.body.append(clone);
+      const navWidth = clone.getBoundingClientRect().width;
+      clone.remove();
+
+      const style = getComputedStyle(bar);
+      const available =
+        bar.clientWidth -
+        Number.parseFloat(style.paddingLeft) -
+        Number.parseFloat(style.paddingRight);
+      const nameWidth =
+        bar.firstElementChild?.getBoundingClientRect().width ?? 0;
+      apply(nameWidth + navWidth + 16 > available);
+    };
+    let cancelled = false;
+    const schedule = () => {
+      if (cancelled) return;
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(measure);
+    };
+
+    schedule();
+    const observer = new ResizeObserver(schedule);
+    observer.observe(bar);
+    window.addEventListener("resize", schedule);
+    document.fonts.ready.then(schedule).catch(() => {});
+
+    return () => {
+      cancelled = true;
+      cancelAnimationFrame(frame);
+      observer.disconnect();
+      window.removeEventListener("resize", schedule);
+    };
+  }, []);
+
+  useEffect(() => {
     if (!open) return;
     const desktop = window.matchMedia("(width >= 48rem)");
     const onKeyDown = (event: KeyboardEvent) => {
@@ -89,7 +160,10 @@ export function Nav({
         scrolled ? "border-border" : "border-transparent",
       )}
     >
-      <div className="mx-auto flex min-h-14 max-w-5xl items-center justify-between px-5 sm:px-8">
+      <div
+        ref={barRef}
+        className="mx-auto flex min-h-14 max-w-5xl flex-wrap items-center justify-between gap-x-4 gap-y-1 px-5 sm:px-8"
+      >
         <a
           href={homeHref}
           className={cn(tap, "shrink-0 font-medium tracking-tight")}
@@ -97,7 +171,14 @@ export function Nav({
           {name}
         </a>
 
-        <nav className="hidden items-center gap-1 md:flex" aria-label="Primary">
+        <nav
+          ref={navRef}
+          className={cn(
+            "items-center gap-1",
+            compact ? "hidden" : "hidden md:flex",
+          )}
+          aria-label="Primary"
+        >
           {items.map((item) => (
             <a
               key={item.href}
@@ -127,7 +208,12 @@ export function Nav({
           <ThemeToggle />
         </nav>
 
-        <div className="ml-auto flex items-center gap-2 md:hidden">
+        <div
+          className={cn(
+            "ml-auto flex items-center gap-2",
+            !compact && "md:hidden",
+          )}
+        >
           <ThemeToggle />
           <button
             ref={toggleRef}
@@ -146,7 +232,11 @@ export function Nav({
       {open ? (
         <div
           id="mobile-nav"
-          className="border-border bg-background border-t md:hidden"
+          className={cn(
+            "border-border bg-background overflow-y-auto overscroll-contain border-t",
+            !compact && "md:hidden",
+          )}
+          style={{ maxHeight: "calc(100dvh - var(--header-bar, 3.5rem))" }}
         >
           <nav
             className="mx-auto flex max-w-5xl flex-col px-5 py-3"

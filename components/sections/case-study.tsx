@@ -112,7 +112,10 @@ export function CaseStudyBody({ item }: { item: SelectedWorkItem }) {
               {item.link.label}
             </a>
           ) : null}
-          <Link href="/#work" className={`${tap} text-muted-foreground`}>
+          <Link
+            href="/#work"
+            className={`${tap} text-muted-foreground hover:text-foreground underline underline-offset-4`}
+          >
             Back to selected work
           </Link>
         </div>

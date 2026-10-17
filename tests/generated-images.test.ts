@@ -103,7 +103,11 @@ function collectPngs(dir: string): string[] {
   return readdirSync(dir, { recursive: true, encoding: "utf8" })
     .filter((file) => {
       const name = path.basename(file);
-      return name === "icon.png" || name === "opengraph-image.png";
+      return (
+        name === "icon.png" ||
+        name === "apple-icon.png" ||
+        name === "opengraph-image.png"
+      );
     })
     .map((file) => path.join(dir, file));
 }
@@ -120,10 +124,13 @@ function sameRgb(
 describe("built icon and OG images stay on palette A", () => {
   const files = collectPngs(path.join(root, "out"));
 
-  it("finds the favicon and OG PNGs in the export", () => {
+  it("finds the favicon, apple icon, and OG PNGs in the export", () => {
     expect(files.some((file) => file.endsWith(`${path.sep}icon.png`))).toBe(
       true,
     );
+    expect(
+      files.some((file) => file.endsWith(`${path.sep}apple-icon.png`)),
+    ).toBe(true);
     expect(
       files.some((file) => file.endsWith(`${path.sep}opengraph-image.png`)),
     ).toBe(true);
