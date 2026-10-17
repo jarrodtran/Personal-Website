@@ -7,7 +7,6 @@ const root = path.resolve(__dirname, "..");
 const TINT_DELTA = 6;
 const OLD_NAVY = [0x1e, 0x3a, 0x5f] as const;
 const OLD_CREAM = [0xf7, 0xf3, 0xea] as const;
-const HOME_PHOTO = { x0: 65, y0: 65, x1: 342, y1: 342 };
 
 const built = existsSync(path.join(root, "out/index.html"));
 
@@ -109,17 +108,6 @@ function collectPngs(dir: string): string[] {
     .map((file) => path.join(dir, file));
 }
 
-function isHomePhoto(file: string, x: number, y: number): boolean {
-  if (path.basename(path.dirname(file)) !== "out") return false;
-  if (path.basename(file) !== "opengraph-image.png") return false;
-  return (
-    x >= HOME_PHOTO.x0 &&
-    x <= HOME_PHOTO.x1 &&
-    y >= HOME_PHOTO.y0 &&
-    y <= HOME_PHOTO.y1
-  );
-}
-
 function sameRgb(
   r: number,
   g: number,
@@ -139,6 +127,11 @@ describe("built icon and OG images stay on palette A", () => {
     expect(
       files.some((file) => file.endsWith(`${path.sep}opengraph-image.png`)),
     ).toBe(true);
+    const exported = readdirSync(path.join(root, "out"), {
+      recursive: true,
+      encoding: "utf8",
+    }).filter((file) => /(?:^|\/)(avatar\.webp|avatar-og\.png)$/.test(file));
+    expect(exported).toEqual([]);
   });
 
   it("rejects tinted pixels and leftover navy or cream", () => {
@@ -149,7 +142,6 @@ describe("built icon and OG images stay on palette A", () => {
       const rel = path.relative(root, file);
       for (let y = 0; y < png.height; y++) {
         for (let x = 0; x < png.width; x++) {
-          if (isHomePhoto(file, x, y)) continue;
           const i = (y * png.width + x) * 4;
           const r = png.data[i] ?? 0;
           const g = png.data[i + 1] ?? 0;

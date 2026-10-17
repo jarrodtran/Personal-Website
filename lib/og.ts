@@ -29,8 +29,3 @@ export function loadOgFonts() {
     },
   ];
 }
-
-export function loadOgPhotoDataUrl(): string {
-  const bytes = readFileSync(join(process.cwd(), "public/avatar-og.png"));
-  return `data:image/png;base64,${bytes.toString("base64")}`;
-}

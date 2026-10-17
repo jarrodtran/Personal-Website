@@ -84,7 +84,7 @@ export default async function OpenGraphImage({
             fontSize: 52,
             letterSpacing: -1.2,
             lineHeight: 1.1,
-            maxWidth: 980,
+            maxWidth: 960,
           }}
         >
           {title}
