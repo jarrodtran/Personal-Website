@@ -127,6 +127,11 @@ describe("built icon and OG images stay on palette A", () => {
     expect(
       files.some((file) => file.endsWith(`${path.sep}opengraph-image.png`)),
     ).toBe(true);
+    const exported = readdirSync(path.join(root, "out"), {
+      recursive: true,
+      encoding: "utf8",
+    }).filter((file) => /(?:^|\/)(avatar\.webp|avatar-og\.png)$/.test(file));
+    expect(exported).toEqual([]);
   });
 
   it("rejects tinted pixels and leftover navy or cream", () => {

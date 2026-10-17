@@ -9,8 +9,14 @@ if (!existsSync(path.join(outDir, "index.html"))) {
   throw new Error("no-photo test needs a production build in out/");
 }
 
+const PHOTO_TOKENS = ["avatar.webp", "avatar-og.png"] as const;
+
+function listedFiles(dir: string): string[] {
+  return readdirSync(dir, { recursive: true, encoding: "utf8" });
+}
+
 function htmlFiles(dir: string): string[] {
-  return readdirSync(dir, { recursive: true, encoding: "utf8" })
+  return listedFiles(dir)
     .filter((file) => file.endsWith(".html"))
     .map((file) => path.join(dir, file));
 }
@@ -21,9 +27,18 @@ describe("built HTML does not ship a photo of Jarrod", () => {
     html: readFileSync(file, "utf8"),
   }));
 
-  it("does not reference avatar.webp", () => {
+  it("does not export avatar.webp or avatar-og.png", () => {
+    const hits = listedFiles(outDir).filter((file) =>
+      PHOTO_TOKENS.some((token) => path.basename(file) === token),
+    );
+    expect(hits).toEqual([]);
+  });
+
+  it("does not reference avatar.webp or avatar-og.png", () => {
     const hits = pages
-      .filter((page) => page.html.includes("avatar.webp"))
+      .filter((page) =>
+        PHOTO_TOKENS.some((token) => page.html.includes(token)),
+      )
       .map((page) => page.file);
     expect(hits).toEqual([]);
   });

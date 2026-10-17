@@ -44,8 +44,8 @@ describe("withBasePath", () => {
     expect(withBasePath("/#work", "/Personal-Website")).toBe(
       "/Personal-Website/#work",
     );
-    expect(withBasePath("/avatar.webp", "Personal-Website")).toBe(
-      "/Personal-Website/avatar.webp",
+    expect(withBasePath("/icon.png", "Personal-Website")).toBe(
+      "/Personal-Website/icon.png",
     );
   });
 
@@ -197,7 +197,7 @@ describe("deploy wiring", () => {
     expect(
       unprefixedRootAssets(
         '<a href="#content"></a><a href="/work/tesla/"></a>' +
-          '<img src="/Personal-Website/avatar.webp"/>' +
+          '<img src="/Personal-Website/icon.png"/>' +
           '{"resumeHref":"/resume.pdf","href":"/"}',
         "/Personal-Website",
       ),
