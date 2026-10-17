@@ -50,7 +50,11 @@ export const metadata: Metadata = {
   },
   icons: {
     icon: withBasePath("/icon.png"),
-    apple: withBasePath("/icon.png"),
+    apple: {
+      url: withBasePath("/apple-icon.png"),
+      sizes: "180x180",
+      type: "image/png",
+    },
   },
 };
 

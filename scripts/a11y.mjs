@@ -137,6 +137,85 @@ const phoneProblems = await phone.evaluate(() => {
 failures.push(...phoneProblems.map((problem) => `390px: ${problem}`));
 await phone.close();
 
+// Text resize: at 200% text the header must fall back or wrap instead of
+// pushing its controls off screen.
+for (const [width, height] of [
+  [320, 640],
+  [900, 800],
+]) {
+  const large = await browser.newPage({ viewport: { width, height } });
+  await large.goto(origin);
+  await large.evaluate(() => {
+    document.documentElement.style.fontSize = "32px";
+  });
+  await large.waitForTimeout(200);
+  const clipped = await large.evaluate(() => {
+    const problems = [];
+    for (const control of document.querySelectorAll("header a, header button")) {
+      const style = getComputedStyle(control);
+      if (
+        style.display === "none" ||
+        style.visibility === "hidden" ||
+        style.opacity === "0"
+      ) {
+        continue;
+      }
+      const box = control.getBoundingClientRect();
+      if (box.width <= 1 || box.height <= 1) continue;
+      if (box.left < -1 || box.right > window.innerWidth + 1) {
+        const name =
+          control.textContent.trim() || control.getAttribute("aria-label");
+        problems.push(
+          `"${name}" spans ${Math.round(box.left)}-${Math.round(box.right)}`,
+        );
+      }
+    }
+    return problems;
+  });
+  failures.push(
+    ...clipped.map(
+      (control) => `${width}px at 200% text: header control ${control}`,
+    ),
+  );
+  await large.close();
+}
+
+// A short viewport plus the scroll lock must not put the last menu link
+// out of reach.
+const shortMenu = await browser.newPage({
+  viewport: { width: 320, height: 256 },
+});
+await shortMenu.goto(origin);
+await shortMenu.locator('button[aria-controls="mobile-nav"]').click();
+const reachable = await shortMenu.evaluate(() => {
+  const panel = document.querySelector("#mobile-nav");
+  panel.scrollTop = panel.scrollHeight;
+  const links = [...document.querySelectorAll("#mobile-nav a")];
+  const last = links[links.length - 1];
+  last.focus();
+  const box = last.getBoundingClientRect();
+  const hit = document.elementFromPoint(
+    box.left + box.width / 2,
+    box.top + box.height / 2,
+  );
+  return {
+    top: box.top,
+    bottom: box.bottom,
+    viewport: window.innerHeight,
+    clickable: hit === last || last.contains(hit),
+  };
+});
+if (
+  reachable.top < 0 ||
+  reachable.bottom > reachable.viewport + 1 ||
+  !reachable.clickable
+) {
+  failures.push(
+    `phone menu: at 320x256 the last link is not reachable (top ${Math.round(reachable.top)}, bottom ${Math.round(reachable.bottom)}, viewport ${reachable.viewport})`,
+  );
+}
+await shortMenu.close();
+
 const hiddenReveals = (page) =>
   page.$$eval(
     ".reveal",
@@ -295,6 +374,8 @@ console.log(
     "page title within 60 characters",
     "reveals never hide content and stay still under reduced motion",
     "phone menu closes on Escape, returns focus, and closes at desktop width",
+    "header controls stay on screen at 200% text",
+    "phone menu stays reachable on a short viewport",
     "copy email announces success and failure",
   ].join("\n  "),
 );
