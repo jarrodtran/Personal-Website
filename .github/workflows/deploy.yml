@@ -32,7 +32,6 @@ jobs:
       - run: pip install reportlab
       - run: pnpm install --frozen-lockfile
       - run: npx playwright install --with-deps chromium
-      - run: pnpm resume
       - run: pnpm lint
       - run: pnpm check
       - run: pnpm test
