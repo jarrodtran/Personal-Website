@@ -375,9 +375,7 @@ describe("390px tap targets and first screen", () => {
         panelTop: panelBox?.top ?? -1,
         panelBottom: panelBox?.bottom ?? -1,
         viewport: window.innerHeight,
-        clickable: Boolean(
-          last && hit && (hit === last || last.contains(hit)),
-        ),
+        clickable: Boolean(last && hit && (hit === last || last.contains(hit))),
       };
     });
     await browser.close();

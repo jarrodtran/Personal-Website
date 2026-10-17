@@ -151,7 +151,9 @@ for (const [width, height] of [
   await large.waitForTimeout(200);
   const clipped = await large.evaluate(() => {
     const problems = [];
-    for (const control of document.querySelectorAll("header a, header button")) {
+    for (const control of document.querySelectorAll(
+      "header a, header button",
+    )) {
       const style = getComputedStyle(control);
       if (
         style.display === "none" ||
@@ -213,10 +215,7 @@ const reachable = await shortMenu.evaluate(() => {
   const box = last.getBoundingClientRect();
   const panelBox = panel.getBoundingClientRect();
   const hitY = Math.min(box.bottom - 1, panelBox.bottom - 1);
-  const hit = document.elementFromPoint(
-    box.left + box.width / 2,
-    hitY,
-  );
+  const hit = document.elementFromPoint(box.left + box.width / 2, hitY);
   return {
     top: box.top,
     bottom: box.bottom,
