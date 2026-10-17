@@ -107,6 +107,8 @@ describe("deploy wiring", () => {
     }
     expect(deploy).toMatch(/run: pnpm build\n/);
     expect(deploy).not.toMatch(/^ {4}env:\n {6}BASE_PATH:/m);
+    expect(deploy).not.toMatch(/Project Pages preview lives at \/Personal-Website/);
+    expect(deploy).toMatch(/No preview is deployed/);
   });
 
   it("keeps Lighthouse and the default CI build on an empty BASE_PATH so apex-style /_next paths still verify", () => {
