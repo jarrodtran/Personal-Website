@@ -1,3 +1,4 @@
+import { createHash } from "node:crypto";
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
@@ -98,7 +99,6 @@ describe("visitor-facing copy contract", () => {
       "content/site.ts",
       "app/layout.tsx",
       "components/sections/about.tsx",
-      "scripts/build-resume.py",
     ].map(readSiteFile);
     for (const source of sources) {
       expect(source).not.toMatch(/Manager, AI/);
@@ -256,15 +256,11 @@ describe("visitor-facing copy contract", () => {
     expect(pdf.toString("latin1")).toContain("/Count 1");
   });
 
-  it("does not regenerate the committed resume in any GitHub workflow", () => {
-    const workflowsDir = path.join(root, ".github/workflows");
-    const hits: string[] = [];
-    for (const file of readdirSync(workflowsDir)) {
-      if (!/\.ya?ml$/.test(file)) continue;
-      const source = readFileSync(path.join(workflowsDir, file), "utf8");
-      if (/pnpm resume|build-resume\.py/.test(source)) hits.push(file);
-    }
-    expect(hits).toEqual([]);
+  it("pins the committed resume to the one-page file bytes", () => {
+    const pdf = readFileSync(path.join(root, "public/resume.pdf"));
+    expect(createHash("sha256").update(pdf).digest("hex")).toBe(
+      "0933308be9e1d33db155a2eb0c0dc2a2494311f1b3f926dae2ba3f5c1796e164",
+    );
   });
 
   it("does not use em-dashes in content files or rendered pages", () => {

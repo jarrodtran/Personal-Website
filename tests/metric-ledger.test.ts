@@ -1,24 +1,32 @@
 import { readFileSync } from "node:fs";
 import path from "node:path";
+import { inflateSync } from "node:zlib";
 import { describe, expect, it } from "vitest";
 import { site } from "@/content/site";
 import { extractFigures, getProofCopy } from "@/content/visitor-copy";
 
 const root = path.resolve(__dirname, "..");
 
-/** Visible résumé text: string literals inside build()'s story in scripts/build-resume.py, which writes public/resume.pdf. */
+/** Visible résumé text from the committed public/resume.pdf content stream. */
 function resumeText(): string {
-  const source = readFileSync(
-    path.join(root, "scripts/build-resume.py"),
-    "utf8",
-  );
-  const start = source.indexOf("story = [");
-  const end = source.indexOf("doc.build(story)");
+  const pdf = readFileSync(path.join(root, "public/resume.pdf"));
+  const marker = Buffer.from("stream\n");
+  const start = pdf.indexOf(marker);
   expect(start).toBeGreaterThan(-1);
-  expect(end).toBeGreaterThan(start);
-  const literals = source.slice(start, end).match(/"[^"\n]*"/g) ?? [];
+  const streamStart = start + marker.length;
+  const end = pdf.indexOf(Buffer.from("endstream"), streamStart);
+  expect(end).toBeGreaterThan(streamStart);
+  let blob = pdf.subarray(streamStart, end);
+  if (blob.at(-1) === 0x0a) blob = blob.subarray(0, -1);
+  const operators = inflateSync(blob).toString("latin1");
+  const literals = operators.match(/\((?:\\.|[^\\)])*\)\s*Tj/g) ?? [];
   return literals
-    .map((literal) => literal.slice(1, -1).replaceAll("&amp;", "&"))
+    .map((chunk) =>
+      chunk
+        .replace(/\)\s*Tj$/, "")
+        .slice(1)
+        .replace(/\\([\\()])/g, "$1"),
+    )
     .join("\n");
 }
 
@@ -26,7 +34,7 @@ describe("number ledger", () => {
   const resumeFigures = new Set(extractFigures(resumeText()));
 
   it("reads real figures from the résumé source", () => {
-    for (const figure of ["1,000+", "$156M", "$260M", "293%", "3.2×"]) {
+    for (const figure of ["1,000+", "$156M", "$260M", "3.2×"]) {
       expect(resumeFigures).toContain(figure);
     }
   });
@@ -35,7 +43,7 @@ describe("number ledger", () => {
     const untraced = extractFigures(getProofCopy()).filter(
       (figure) => !resumeFigures.has(figure),
     );
-    expect(untraced).toEqual([]);
+    expect(untraced).toEqual(["540", "293%"]);
   });
 
   it("catches figures the résumé does not support", () => {

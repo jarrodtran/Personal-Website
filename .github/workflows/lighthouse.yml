@@ -22,10 +22,6 @@ jobs:
         with:
           node-version: 22
           cache: pnpm
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-      - run: pip install reportlab
       - run: pnpm install --frozen-lockfile
       - run: pnpm build
       - name: Run Lighthouse CI
