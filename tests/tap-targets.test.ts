@@ -386,4 +386,86 @@ describe("390px tap targets and first screen", () => {
     expect(menu.bottom).toBeLessThanOrEqual(menu.panelBottom + 1);
     expect(menu.clickable).toBe(true);
   });
+
+  it.each([
+    { width: 320, height: 256 },
+    { width: 1280, height: 800 },
+  ])(
+    "keeps header theme and menu icons at 16px at $width with 200% text",
+    async ({ width, height }) => {
+      const browser = await chromium.launch();
+      const page = await browser.newPage({
+        viewport: { width, height },
+        colorScheme: "light",
+      });
+      await page.goto(`${origin}/`, { waitUntil: "networkidle" });
+      await page.evaluate(() => {
+        document.documentElement.style.fontSize = "32px";
+      });
+      await page.evaluate(
+        () =>
+          new Promise<void>((resolve) => {
+            const done = () => requestAnimationFrame(() => resolve());
+            if (document.fonts.status === "loaded") {
+              done();
+              return;
+            }
+            document.fonts.ready.then(done).catch(done);
+          }),
+      );
+      await page.waitForTimeout(300);
+
+      const icons = await page.evaluate(() => {
+        const visible = (el: Element | null) => {
+          if (!el) return null;
+          const style = getComputedStyle(el);
+          const box = el.getBoundingClientRect();
+          if (
+            style.display === "none" ||
+            style.visibility === "hidden" ||
+            box.width <= 1 ||
+            box.height <= 1
+          ) {
+            return null;
+          }
+          return box;
+        };
+
+        const result: { label: string; width: number; height: number }[] = [];
+        for (const button of document.querySelectorAll("header button")) {
+          if (!visible(button)) continue;
+          const label = button.getAttribute("aria-label") ?? "";
+          if (
+            label !== "Toggle color theme" &&
+            label !== "Open menu" &&
+            label !== "Close menu"
+          ) {
+            continue;
+          }
+          for (const svg of button.querySelectorAll("svg")) {
+            const box = visible(svg);
+            if (!box) continue;
+            result.push({
+              label,
+              width: box.width,
+              height: box.height,
+            });
+          }
+        }
+        return result;
+      });
+      await browser.close();
+
+      expect(icons.some((icon) => icon.label === "Toggle color theme")).toBe(
+        true,
+      );
+      if (width === 320) {
+        expect(icons.some((icon) => icon.label === "Open menu")).toBe(true);
+      }
+      for (const icon of icons) {
+        expect(icon.width, `${icon.label} width`).toBe(16);
+        expect(icon.height, `${icon.label} height`).toBe(16);
+      }
+    },
+  );
 });
