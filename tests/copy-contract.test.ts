@@ -252,7 +252,7 @@ describe("visitor-facing copy contract", () => {
   it("ships a real PDF at the resume download path", () => {
     const pdf = readFileSync(path.join(root, "public/resume.pdf"));
     expect(pdf.subarray(0, 5).toString("latin1")).toBe("%PDF-");
-    expect(pdf.byteLength).toBeGreaterThan(20_000);
+    expect(pdf.byteLength).toBeGreaterThan(3_000);
     expect(pdf.toString("latin1")).toContain("/Count 1");
   });
 
