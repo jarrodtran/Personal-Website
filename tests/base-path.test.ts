@@ -127,12 +127,10 @@ describe("deploy wiring", () => {
   it("prefixes raw site-root hrefs and next/image src so they resolve under the project path", () => {
     const nav = readSiteFile("components/nav.tsx");
     const contact = readSiteFile("components/sections/contact.tsx");
-    const about = readSiteFile("components/sections/about.tsx");
     const postbuild = readSiteFile("scripts/postbuild.mjs");
 
     expect(nav).toContain("withBasePath");
     expect(contact).toContain("withBasePath");
-    expect(about).toContain("withBasePath");
     expect(postbuild).toMatch(/\/icon\?/);
     expect(postbuild).not.toContain('href="/icon?');
   });

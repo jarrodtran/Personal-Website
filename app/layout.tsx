@@ -63,7 +63,6 @@ const personJsonLd = {
   worksFor: { "@type": "Organization", name: site.experience[0].company },
   description: site.positioning.valueProp,
   email: `mailto:${site.contact.email}`,
-  image: `${siteUrl}${site.about.photo.src}`,
   address: {
     "@type": "PostalAddress",
     addressLocality: "Houston",

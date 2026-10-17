@@ -88,7 +88,6 @@ export interface SiteContent {
     lookingForIntro: string;
     strengths: string[];
     education: string;
-    photo: { src: string; alt: string };
   };
   experience: Employer[];
   selectedWork: SelectedWorkItem[];
@@ -189,10 +188,6 @@ export const site: SiteContent = {
     ],
     education:
       "University at Buffalo · B.S. Business Administration, Finance · Cum Laude",
-    photo: {
-      src: "/avatar.webp",
-      alt: "Jarrod Tran presenting on stage",
-    },
   },
   experience: [
     {

@@ -148,17 +148,15 @@ describe("visitor-facing copy contract", () => {
     }
   });
 
-  it("does not ship third-party photos on case studies", () => {
+  it("does not ship photos of Jarrod or third-party case-study images", () => {
     for (const item of site.selectedWork) {
       expect(item).not.toHaveProperty("image");
       expect(item.panel.value.length).toBeGreaterThan(0);
     }
+    expect(site.about).not.toHaveProperty("photo");
     expect(existsSync(path.join(root, "public/images"))).toBe(false);
-    expect(
-      existsSync(
-        path.join(root, site.about.photo.src.replace(/^\//, "public/")),
-      ),
-    ).toBe(true);
+    expect(existsSync(path.join(root, "public/avatar.webp"))).toBe(false);
+    expect(existsSync(path.join(root, "public/avatar-og.png"))).toBe(false);
   });
 
   it("ships one shared headline, value prop, and about story — not four public narratives", () => {
