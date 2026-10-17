@@ -30,6 +30,12 @@ function resumeText(): string {
     .join("\n");
 }
 
+/** Site figures not in public/resume.pdf, with Jarrod-confirmed sources. */
+const sourcedFigures: Record<string, string> = {
+  "293%": "unit growth from 4.3M to 16.9M",
+  "540": "burden cost estimates times hours saved",
+};
+
 describe("number ledger", () => {
   const resumeFigures = new Set(extractFigures(resumeText()));
 
@@ -39,11 +45,11 @@ describe("number ledger", () => {
     }
   });
 
-  it("only shows figures that appear in the résumé", () => {
+  it("only shows figures that appear in the résumé or have a recorded source", () => {
     const untraced = extractFigures(getProofCopy()).filter(
-      (figure) => !resumeFigures.has(figure),
+      (figure) => !resumeFigures.has(figure) && !sourcedFigures[figure],
     );
-    expect(untraced).toEqual(["540", "293%"]);
+    expect(untraced).toEqual([]);
   });
 
   it("catches figures the résumé does not support", () => {
