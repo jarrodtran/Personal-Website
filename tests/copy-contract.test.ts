@@ -256,6 +256,17 @@ describe("visitor-facing copy contract", () => {
     expect(pdf.toString("latin1")).toContain("/Count 1");
   });
 
+  it("does not regenerate the committed resume in any GitHub workflow", () => {
+    const workflowsDir = path.join(root, ".github/workflows");
+    const hits: string[] = [];
+    for (const file of readdirSync(workflowsDir)) {
+      if (!/\.ya?ml$/.test(file)) continue;
+      const source = readFileSync(path.join(workflowsDir, file), "utf8");
+      if (/pnpm resume|build-resume\.py/.test(source)) hits.push(file);
+    }
+    expect(hits).toEqual([]);
+  });
+
   it("does not use em-dashes in content files or rendered pages", () => {
     const emDash = /\u2014|&mdash;|&#8212;|&#x2014;/i;
     const hits: string[] = [];
