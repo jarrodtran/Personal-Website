@@ -151,7 +151,9 @@ for (const [width, height] of [
   await large.waitForTimeout(200);
   const clipped = await large.evaluate(() => {
     const problems = [];
-    for (const control of document.querySelectorAll("header a, header button")) {
+    for (const control of document.querySelectorAll(
+      "header a, header button",
+    )) {
       const style = getComputedStyle(control);
       if (
         style.display === "none" ||
@@ -180,12 +182,29 @@ for (const [width, height] of [
   await large.close();
 }
 
-// A short viewport plus the scroll lock must not put the last menu link
-// out of reach.
+// A short viewport plus 200% text must keep the header compact and the last
+// menu link fully inside the remaining viewport (scroll the panel if needed).
 const shortMenu = await browser.newPage({
   viewport: { width: 320, height: 256 },
 });
 await shortMenu.goto(origin);
+await shortMenu.evaluate(() => {
+  document.documentElement.style.fontSize = "32px";
+});
+await shortMenu.waitForTimeout(300);
+const shortHeader = await shortMenu.evaluate(() => {
+  const header = document.querySelector("header");
+  const bar = header?.firstElementChild;
+  return {
+    headerHeight: header?.getBoundingClientRect().height ?? 0,
+    barBottom: bar?.getBoundingClientRect().bottom ?? 0,
+  };
+});
+if (shortHeader.headerHeight >= 184 || shortHeader.barBottom >= 184) {
+  failures.push(
+    `phone menu: at 320x256 / 200% text the header is ${Math.round(shortHeader.headerHeight)}px (bar ${Math.round(shortHeader.barBottom)}px), want under 184px`,
+  );
+}
 await shortMenu.locator('button[aria-controls="mobile-nav"]').click();
 const reachable = await shortMenu.evaluate(() => {
   const panel = document.querySelector("#mobile-nav");
@@ -194,24 +213,26 @@ const reachable = await shortMenu.evaluate(() => {
   const last = links[links.length - 1];
   last.focus();
   const box = last.getBoundingClientRect();
-  const hit = document.elementFromPoint(
-    box.left + box.width / 2,
-    box.top + box.height / 2,
-  );
+  const panelBox = panel.getBoundingClientRect();
+  const hitY = Math.min(box.bottom - 1, panelBox.bottom - 1);
+  const hit = document.elementFromPoint(box.left + box.width / 2, hitY);
   return {
     top: box.top,
     bottom: box.bottom,
+    panelTop: panelBox.top,
+    panelBottom: panelBox.bottom,
     viewport: window.innerHeight,
     clickable: hit === last || last.contains(hit),
   };
 });
 if (
-  reachable.top < 0 ||
+  reachable.top < reachable.panelTop - 1 ||
   reachable.bottom > reachable.viewport + 1 ||
+  reachable.bottom > reachable.panelBottom + 1 ||
   !reachable.clickable
 ) {
   failures.push(
-    `phone menu: at 320x256 the last link is not reachable (top ${Math.round(reachable.top)}, bottom ${Math.round(reachable.bottom)}, viewport ${reachable.viewport})`,
+    `phone menu: at 320x256 / 200% text the last link is not fully in the viewport (top ${Math.round(reachable.top)}, bottom ${Math.round(reachable.bottom)}, panel ${Math.round(reachable.panelTop)}-${Math.round(reachable.panelBottom)}, viewport ${reachable.viewport})`,
   );
 }
 await shortMenu.close();
@@ -375,7 +396,7 @@ console.log(
     "reveals never hide content and stay still under reduced motion",
     "phone menu closes on Escape, returns focus, and closes at desktop width",
     "header controls stay on screen at 200% text",
-    "phone menu stays reachable on a short viewport",
+    "phone menu stays reachable on a short viewport at 200% text",
     "copy email announces success and failure",
   ].join("\n  "),
 );
