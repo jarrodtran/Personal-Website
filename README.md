@@ -40,6 +40,7 @@ After a build:
   - a reveal animation hides content, or runs under reduced motion
   - the phone menu ignores Escape, drops focus, or stays open at desktop width
   - the phone menu cannot reach its last link on a short viewport
+  - at 320x256 with 200% text the header grows past 184px, or Résumé sits outside the panel
   - the copy-email button does not announce success or failure
 - `pnpm size` prints the JS and HTML bytes the home page loads, raw and gzip, and fails when the JS is over 150 kB gzip. Raise the budget in `scripts/js-size.mjs` only on purpose.
 

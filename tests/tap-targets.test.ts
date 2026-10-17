@@ -314,4 +314,78 @@ describe("390px tap targets and first screen", () => {
     await casePage.browser.close();
     expect(nextHref).toMatch(/\/work\/tesla-energy-portfolio\/?$/);
   });
+
+  it("keeps the header short and Résumé reachable at 320x256 with 200% text", async () => {
+    const browser = await chromium.launch();
+    const page = await browser.newPage({
+      viewport: { width: 320, height: 256 },
+      colorScheme: "light",
+    });
+    await page.goto(`${origin}/`, { waitUntil: "networkidle" });
+    await page.evaluate(() => {
+      document.documentElement.style.fontSize = "32px";
+    });
+    await page.evaluate(
+      () =>
+        new Promise<void>((resolve) => {
+          const done = () => requestAnimationFrame(() => resolve());
+          if (document.fonts.status === "loaded") {
+            done();
+            return;
+          }
+          document.fonts.ready.then(done).catch(done);
+        }),
+    );
+    await page.waitForTimeout(300);
+
+    const closed = await page.evaluate(() => {
+      const header = document.querySelector("header");
+      const bar = header?.firstElementChild;
+      return {
+        headerHeight: header?.getBoundingClientRect().height ?? 0,
+        barBottom: bar?.getBoundingClientRect().bottom ?? 0,
+      };
+    });
+    expect(closed.headerHeight).toBeLessThan(184);
+    expect(closed.barBottom).toBeLessThan(184);
+
+    await page.locator('button[aria-controls="mobile-nav"]').click();
+    await page.waitForSelector("#mobile-nav a");
+
+    const menu = await page.evaluate(() => {
+      const panel = document.querySelector("#mobile-nav");
+      if (panel) panel.scrollTop = panel.scrollHeight;
+      const links = [...document.querySelectorAll("#mobile-nav a")];
+      const last = links[links.length - 1];
+      const lastBox = last?.getBoundingClientRect();
+      const panelBox = panel?.getBoundingClientRect();
+      const hit = lastBox
+        ? document.elementFromPoint(
+            lastBox.left + lastBox.width / 2,
+            Math.min(
+              lastBox.bottom - 1,
+              (panelBox?.bottom ?? window.innerHeight) - 1,
+            ),
+          )
+        : null;
+      return {
+        text: last?.textContent?.trim() ?? "",
+        top: lastBox?.top ?? -1,
+        bottom: lastBox?.bottom ?? -1,
+        panelTop: panelBox?.top ?? -1,
+        panelBottom: panelBox?.bottom ?? -1,
+        viewport: window.innerHeight,
+        clickable: Boolean(
+          last && hit && (hit === last || last.contains(hit)),
+        ),
+      };
+    });
+    await browser.close();
+
+    expect(menu.text).toMatch(/R[ée]sum[ée]/);
+    expect(menu.top).toBeGreaterThanOrEqual(menu.panelTop - 1);
+    expect(menu.bottom).toBeLessThanOrEqual(menu.viewport + 1);
+    expect(menu.bottom).toBeLessThanOrEqual(menu.panelBottom + 1);
+    expect(menu.clickable).toBe(true);
+  });
 });
