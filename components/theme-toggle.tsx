@@ -13,8 +13,8 @@ export function ThemeToggle() {
       className="border-muted-foreground text-foreground hover:border-foreground inline-flex size-[44px] items-center justify-center border transition-colors"
       aria-label="Toggle color theme"
     >
-      <Sun className="hidden size-4 dark:block" aria-hidden="true" />
-      <Moon className="size-4 dark:hidden" aria-hidden="true" />
+      <Sun className="hidden size-[16px] dark:block" aria-hidden="true" />
+      <Moon className="size-[16px] dark:hidden" aria-hidden="true" />
     </button>
   );
 }

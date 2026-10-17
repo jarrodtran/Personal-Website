@@ -229,7 +229,11 @@ export function Nav({
             aria-label={open ? "Close menu" : "Open menu"}
             onClick={() => setOpen((value) => !value)}
           >
-            {open ? <X className="size-4" /> : <Menu className="size-4" />}
+            {open ? (
+              <X className="size-[16px]" />
+            ) : (
+              <Menu className="size-[16px]" />
+            )}
           </button>
         </div>
       </div>
