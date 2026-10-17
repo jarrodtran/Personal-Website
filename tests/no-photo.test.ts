@@ -43,16 +43,8 @@ describe("built HTML does not ship a photo of Jarrod", () => {
     expect(hits).toEqual([]);
   });
 
-  it("does not render an img whose alt names Jarrod Tran", () => {
-    const hits: string[] = [];
-    for (const page of pages) {
-      for (const tag of page.html.matchAll(/<img\b[^>]*>/gi)) {
-        const alt = tag[0].match(/\balt=["']([^"']*)["']/i)?.[1] ?? "";
-        if (/Jarrod Tran/i.test(alt)) {
-          hits.push(`${page.file}: ${alt}`);
-        }
-      }
-    }
-    expect(hits).toEqual([]);
+  it("renders the home page without an img", () => {
+    const home = readFileSync(path.join(outDir, "index.html"), "utf8");
+    expect(home.match(/<img\b/gi) ?? []).toEqual([]);
   });
 });

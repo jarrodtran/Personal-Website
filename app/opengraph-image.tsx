@@ -40,14 +40,14 @@ export default function OpenGraphImage() {
         style={{
           display: "flex",
           flexDirection: "column",
-          maxWidth: 980,
+          maxWidth: 960,
         }}
       >
         <div
           style={{
             display: "flex",
             fontFamily: "Instrument Serif",
-            fontSize: 72,
+            fontSize: 64,
             letterSpacing: -1.6,
             lineHeight: 1.05,
           }}
@@ -57,9 +57,9 @@ export default function OpenGraphImage() {
         <div
           style={{
             display: "flex",
-            marginTop: 24,
+            marginTop: 18,
             fontFamily: "IBM Plex Sans",
-            fontSize: 28,
+            fontSize: 26,
             color: ogColors.muted,
             lineHeight: 1.35,
           }}
