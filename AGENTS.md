@@ -34,4 +34,3 @@ Each row names the test file that fails when the rule is broken, or `untestable`
 | Body text meets WCAG AA contrast in light and dark.                                                                                          | `tests/contrast.test.ts`                                                |
 | Icon and OG images stay on palette A with no tinted pixels.                                                                                  | `tests/generated-images.test.ts`                                        |
 | Do not ship a photo of Jarrod.                                                                                                               | `tests/no-photo.test.ts`                                                |
-| Demo missing-file row for CI.                                                                                                                | `tests/does-not-exist.test.ts`                                          |
