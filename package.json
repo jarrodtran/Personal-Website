@@ -22,6 +22,11 @@
     "lhci": "pnpm dlx @lhci/cli@0.15.x autorun"
   },
   "packageManager": "pnpm@10.29.2",
+  "pnpm": {
+    "overrides": {
+      "source-map-js": "^1.2.2"
+    }
+  },
   "dependencies": {
     "lucide-react": "^1.33.0",
     "next": "16.3.1",
