@@ -11,7 +11,7 @@ function Block({
 }) {
   return (
     <section className="border-border border-t py-8 first:border-t-0 first:pt-0">
-      <p className="text-accent font-mono-label mb-3">{label}</p>
+      <h2 className="text-accent font-mono-label mb-3">{label}</h2>
       {children}
     </section>
   );
