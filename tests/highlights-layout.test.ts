@@ -31,21 +31,34 @@ if (!existsSync(join(process.cwd(), "out/index.html"))) {
   throw new Error("highlights layout test needs a production build in out/");
 }
 
-// Measured on main 1c0847d in this file's Playwright Chromium setup
-// (32px root font for 200% text, same as tests/selected-work-layout.test.ts).
-const MAIN_1C0847D_100 = {
-  1280: { height: 181.328125, fontSize: 34.4, lineHeight: 41.28 },
-  768: { height: 181.328125, fontSize: 34.4, lineHeight: 41.28 },
-  390: { height: 334.09375, fontSize: 30, lineHeight: 36 },
-  320: { height: 334.09375, fontSize: 30, lineHeight: 36 },
-} as const;
-
-// Measured on main 85c2d2d; highlights.tsx unchanged through e1babc6.
-const MAIN_85C2D2D_100 = {
-  320: { height: 334.09375, lines: [2, 2, 2, 2] },
-  390: { height: 334.09375, lines: [2, 1, 2, 1] },
-  768: { height: 181.328125, lines: [2, 2, 2, 1] },
-  1280: { height: 181.328125, lines: [2, 1, 1, 1] },
+// Figure font-size and line-height measured on main 1c0847d. Label line
+// counts measured on main 85c2d2d. 100% Highlights height is the same on
+// both (highlights.tsx height unchanged through 95b1017).
+const MAIN_100 = {
+  1280: {
+    height: 181.328125,
+    fontSize: 34.4,
+    lineHeight: 41.28,
+    lines: [2, 1, 1, 1],
+  },
+  768: {
+    height: 181.328125,
+    fontSize: 34.4,
+    lineHeight: 41.28,
+    lines: [2, 2, 2, 1],
+  },
+  390: {
+    height: 334.09375,
+    fontSize: 30,
+    lineHeight: 36,
+    lines: [2, 1, 2, 1],
+  },
+  320: {
+    height: 334.09375,
+    fontSize: 30,
+    lineHeight: 36,
+    lines: [2, 2, 2, 2],
+  },
 } as const;
 
 const VIEWPORTS = {
@@ -310,25 +323,17 @@ describe("highlights figure layout", () => {
     }
   }, 120_000);
 
-  it("does not change Highlights label lines at 100% text versus main 85c2d2d", async () => {
-    for (const width of [320, 390, 768, 1280] as const) {
-      const [w, height] = VIEWPORTS[width];
-      const at100 = await measureHighlights(w, height, 100);
-      expect(at100.height).toBeCloseTo(MAIN_85C2D2D_100[width].height, 0);
-      expect(at100.figures.map((row) => row.labelLines)).toEqual([
-        ...MAIN_85C2D2D_100[width].lines,
-      ]);
-    }
-  }, 120_000);
-
-  it("does not change Highlights at 100% text versus main 1c0847d", async () => {
+  it("does not change Highlights at 100% text versus main 85c2d2d", async () => {
     for (const width of [320, 390, 768, 1280] as const) {
       const [w, height] = VIEWPORTS[width];
       const at100 = await measureHighlights(w, height, 100);
       const at200 = await measureHighlights(w, height, 200);
-      const main = MAIN_1C0847D_100[width];
+      const main = MAIN_100[width];
       expect(at100.height, `${width} 100% Highlights height`).toBe(main.height);
       expect(at100.figures.length).toBe(site.highlights.length);
+      expect(at100.figures.map((row) => row.labelLines)).toEqual([
+        ...main.lines,
+      ]);
       for (const figure of at100.figures) {
         const at200Figure =
           at200.figures.find((row) => row.text === figure.text) ?? figure;
