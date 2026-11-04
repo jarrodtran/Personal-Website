@@ -35,7 +35,7 @@ export function Writing({ posts }: { posts: WritingPost[] }) {
   return (
     <Section id="writing">
       <SectionHeading title={site.substack.name} />
-      <div className={latest.length > 0 ? "max-w-2xl" : undefined}>
+      <div className="max-w-2xl">
         {latest.length === 0 ? (
           <p className="text-muted-foreground measure text-lg leading-relaxed">
             {EMPTY_COPY}
