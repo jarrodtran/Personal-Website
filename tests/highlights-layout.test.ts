@@ -40,6 +40,14 @@ const MAIN_1C0847D_100 = {
   320: { height: 334.09375, fontSize: 30, lineHeight: 36 },
 } as const;
 
+// Measured on main 85c2d2d; highlights.tsx unchanged through e1babc6.
+const MAIN_85C2D2D_100 = {
+  320: { height: 334.09375, lines: [2, 2, 2, 2] },
+  390: { height: 334.09375, lines: [2, 1, 2, 1] },
+  768: { height: 181.328125, lines: [2, 2, 2, 1] },
+  1280: { height: 181.328125, lines: [2, 1, 1, 1] },
+} as const;
+
 const VIEWPORTS = {
   1280: [1280, 800],
   768: [768, 800],
@@ -144,6 +152,11 @@ describe("highlights figure layout", () => {
           textWidth = rect.width;
           textRight = rect.right;
         }
+        const label = cell.querySelectorAll("p")[1];
+        const labelBox = label?.getBoundingClientRect();
+        const labelLineHeight = label
+          ? parseFloat(getComputedStyle(label).lineHeight)
+          : -1;
         return {
           text: figure?.textContent?.trim() ?? "",
           fontSize: style ? parseFloat(style.fontSize) : -1,
@@ -159,6 +172,13 @@ describe("highlights figure layout", () => {
           padR,
           cellScrollWidth: cell.scrollWidth,
           cellClientWidth: cell.clientWidth,
+          label: label?.textContent?.trim() ?? "",
+          labelScrollWidth: label?.scrollWidth ?? -1,
+          labelLeft: labelBox?.left ?? -1,
+          labelRight: labelBox?.right ?? -1,
+          cellLeft: cellRect.left,
+          cellRight: cellRect.right,
+          labelLines: Math.round((labelBox?.height ?? -1) / labelLineHeight),
         };
       });
       return {
@@ -276,6 +296,29 @@ describe("highlights figure layout", () => {
       console.log(`${width} least spare=${leastSpare}px`);
     }
     expect(tight, "200% spare under 8px").toEqual([]);
+  }, 120_000);
+
+  it("keeps every Highlights label inside its cell at 320, 390, and 768 with 200% text", async () => {
+    for (const width of [320, 390, 768] as const) {
+      const [w, height] = VIEWPORTS[width];
+      const at200 = await measureHighlights(w, height, 200);
+      for (const row of at200.figures) {
+        expect(row.labelScrollWidth).toBeLessThanOrEqual(row.cellClientWidth);
+        expect(row.labelLeft).toBeGreaterThanOrEqual(row.cellLeft);
+        expect(row.labelRight).toBeLessThanOrEqual(row.cellRight);
+      }
+    }
+  }, 120_000);
+
+  it("does not change Highlights label lines at 100% text versus main 85c2d2d", async () => {
+    for (const width of [320, 390, 768, 1280] as const) {
+      const [w, height] = VIEWPORTS[width];
+      const at100 = await measureHighlights(w, height, 100);
+      expect(at100.height).toBeCloseTo(MAIN_85C2D2D_100[width].height, 0);
+      expect(at100.figures.map((row) => row.labelLines)).toEqual([
+        ...MAIN_85C2D2D_100[width].lines,
+      ]);
+    }
   }, 120_000);
 
   it("does not change Highlights at 100% text versus main 1c0847d", async () => {
