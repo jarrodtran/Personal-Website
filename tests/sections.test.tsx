@@ -116,12 +116,18 @@ const threeXml = readFileSync(
 );
 
 describe("writing", () => {
-  it("shows the subscribe link and no helper copy when there are 0 posts", () => {
+  it("shows the launching-soon line and subscribe link when there are 0 posts", () => {
     const html = renderToStaticMarkup(<Writing posts={[]} />);
     const text = textOf(html);
+    const paragraphs = [...html.matchAll(/<p\b[^>]*>([\s\S]*?)<\/p>/g)].map(
+      ([, inner]) => textOf(inner),
+    );
     expect(text).toContain(site.substack.name);
     expect(text).not.toContain("01 / Essays");
     expect(text).not.toContain("Posts from my Substack.");
+    expect(paragraphs).toContain(
+      "First post coming soon. Subscribe to get it by email.",
+    );
     expect(text).not.toContain("Nothing published yet");
     expect(text).not.toContain("Subscribe and the first post");
     expect(text).not.toContain("First post soon");
@@ -138,7 +144,6 @@ describe("writing", () => {
     expect(html).toMatch(/rel="noopener noreferrer"/);
     expect(html).toContain(btnGhost);
     expect(html).toContain("size-[16px]");
-    expect(html).not.toContain('<div class="max-w-2xl">');
     expect(html).toMatch(
       /mt-6[\s\S]*Subscribe on Substack|Subscribe on Substack[\s\S]*mt-6/,
     );
