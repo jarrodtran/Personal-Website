@@ -3,12 +3,9 @@ export const siteUrl = "https://jarrodtran.com";
 /** Official current title. Every surface (bio, experience, JSON-LD) reads this one value. */
 const currentTitle = "Lead, AI Enablement & Factory Strategy";
 
-export type Audience = "tech" | "vc" | "consulting" | "startup";
-
 export interface ImpactBullet {
   text: string;
   metric?: string;
-  audiences?: Audience[];
 }
 
 export interface WorkPanel {
@@ -57,7 +54,6 @@ export interface SiteContent {
   positioning: {
     name: string;
     headline: string;
-    headlineVariants: Record<Audience, string>;
     documentTitle: string;
     valueProp: string;
     status: string;
@@ -114,14 +110,6 @@ export const site: SiteContent = {
   positioning: {
     name: "Jarrod Tran",
     headline: "I write about AI product work, judgment, and making a P&L move.",
-    headlineVariants: {
-      tech: "The person who takes an AI bet from a slide to something people use, with a P&L.",
-      vc: "I put capital on the line, kill weak bets, and drive the rest to an outcome.",
-      consulting:
-        "I break a messy brief into economics, owners, and a weekly decision rhythm.",
-      startup:
-        "I walk into chaos, set the strategy, and stay until the numbers move.",
-    },
     documentTitle: "Jarrod Tran · Product & strategy · Tesla, Apple, Waymo",
     valueProp:
       "Unclear brief, real P&L. At Tesla Energy I lead AI enablement: a product and engineering team whose tools are in production. Before that: Apple and Waymo.",
@@ -189,22 +177,18 @@ export const site: SiteContent = {
             {
               text: "Built and lead a forward-deployed AI product and engineering org at Tesla Energy, scaling adoption to 1,000+ active users across 20+ production AI solutions: RAG troubleshooting, automated reporting, workflow automation, and decision-support.",
               metric: "1,000+",
-              audiences: ["tech", "startup"],
             },
             {
               text: "Modeled AI productivity at roughly 540 hours reclaimed per week and $1.6M in annualized value, with more upside as automation adoption grows.",
               metric: "$1.6M",
-              audiences: ["tech", "vc"],
             },
             {
               text: "Owned the global investment roadmap across California, Texas, and Shanghai: scaled Megapack 3.2×, allocated $23M across 50+ initiatives for $156M in incremental annual profit, and led a separate program that delivered $260M in annualized savings.",
               metric: "$156M",
-              audiences: ["vc", "consulting"],
             },
             {
               text: "Mitigated $550M in projected tariff exposure by redesigning the product and investment plan, then built and promoted successors so I could focus on AI enablement.",
               metric: "$550M",
-              audiences: ["consulting", "startup"],
             },
           ],
         },
@@ -216,16 +200,13 @@ export const site: SiteContent = {
           bullets: [
             {
               text: "Advanced Project Roadrunner, Tesla's 4680 program, from early pilot to a launch-ready platform. Stage gates, readiness reviews, and cross-functional ownership through Battery Day.",
-              audiences: ["startup", "tech"],
             },
             {
               text: "Designed and launched a $3.5M/month coordination platform (“Warehouse on Wheels”) to protect product availability during rapid scale-up.",
               metric: "$3.5M/month",
-              audiences: ["startup", "tech"],
             },
             {
               text: "Led planning and recovery across Model 3 and Model Y programs through demand surges and supply disruptions.",
-              audiences: ["startup", "tech"],
             },
           ],
         },
@@ -240,15 +221,12 @@ export const site: SiteContent = {
           bullets: [
             {
               text: "Led annual planning, OKRs, and quarterly business reviews for Engineering Operations. Turned org priorities into resource plans, targets, and milestones.",
-              audiences: ["consulting", "tech"],
             },
             {
               text: "Got hardware, software, fleet, Product, Legal, and Engineering onto the same facts, including safety and regulatory work for commercial autonomous-vehicle deployment.",
-              audiences: ["consulting", "startup"],
             },
             {
               text: "Built leadership dashboards for performance, fleet health, and program milestones so senior leaders weren't stuck in ad-hoc reporting.",
-              audiences: ["tech", "vc"],
             },
           ],
         },
@@ -263,17 +241,14 @@ export const site: SiteContent = {
           bullets: [
             {
               text: "Led the 0→1 iPhone India launch from market entry and partner qualification through readiness and scaled delivery, under tight quality, regulatory, and timing requirements.",
-              audiences: ["startup", "tech"],
             },
             {
               text: "Supported 293% year-over-year growth (4.3M → 16.9M units) and a program whose reported revenue grew from $2B to $10B by translating demand into investment and readiness plans.",
               metric: "293%",
-              audiences: ["tech", "vc"],
             },
             {
               text: "Expanded iPhone India exports from 6 to 40+ countries, building a second-source network that reduced geographic concentration risk.",
               metric: "40+",
-              audiences: ["consulting", "tech"],
             },
           ],
         },

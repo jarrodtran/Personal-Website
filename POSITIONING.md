@@ -24,7 +24,7 @@ Target conversations at:
 
 ## Single coherent narrative
 
-There is one headline, one value proposition, and one About story. `headlineVariants` and per-bullet `audiences` tags are unused internal data — never ship four public versions.
+There is one headline, one value proposition, and one About story.
 
 Keep improving that one story. Do not create Tech / VC / Consulting / Startup forks of the page.
 
@@ -69,7 +69,7 @@ Implement the approved plan against this personal site.
 
 Keep a single coherent corporate operator / product & strategy narrative for growth-stage tech, consulting, early-stage startups, and VC-adjacent operator seats. Emphasize AI product work, cross-functional leadership, structured problem-solving, and organizational impact. Polished, confident, corporate tone.
 
-Edit content/site.ts (and site.sections) in place. Do not ship headlineVariants or per-bullet audiences as public UI. Do not invent employers, titles, or metrics.
+Edit content/site.ts (and site.sections) in place. Do not invent employers, titles, or metrics.
 
 Factory-language ban — visitor-facing copy must not contain: factory, manufacturing, manufactured, mass production, shop floor, GWh, unit cost, cost per unit, supplier, logistics, battery-cell, Energy Manufacturing.
 

@@ -17,8 +17,6 @@ export const BANNED_FRAMING_TOKENS = [
 ] as const;
 
 const SKIP_KEYS = new Set([
-  "headlineVariants",
-  "audiences",
   "outreach",
   "href",
   "src",
