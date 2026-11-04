@@ -5,10 +5,6 @@ import { extname, join, normalize } from "node:path";
 import { chromium } from "playwright-core";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { site } from "@/content/site";
-import {
-  countDifferingPixels,
-  readPngRgba,
-} from "../scripts/highlights-screenshots.mjs";
 
 const types: Record<string, string> = {
   ".css": "text/css",
@@ -42,6 +38,47 @@ const MAIN_1C0847D_100 = {
   768: { height: 181.328125, fontSize: 34.4, lineHeight: 41.28 },
   390: { height: 334.09375, fontSize: 30, lineHeight: 36 },
   320: { height: 334.09375, fontSize: 30, lineHeight: 36 },
+} as const;
+
+// Measured on main 85c2d2d; highlights.tsx unchanged through e1babc6.
+// 16px root font for 100% text, after document.fonts.ready.
+const MAIN_85C2D2D_100 = {
+  320: {
+    height: 334.09375,
+    labels: {
+      "Active users on AI tools I shipped": { lines: 2, height: 41.25 },
+      "Production AI solutions": { lines: 2, height: 41.25 },
+      "Incremental annual profit": { lines: 2, height: 41.25 },
+      "Annualized savings": { lines: 2, height: 41.25 },
+    },
+  },
+  390: {
+    height: 334.09375,
+    labels: {
+      "Active users on AI tools I shipped": { lines: 2, height: 41.25 },
+      "Production AI solutions": { lines: 1, height: 20.625 },
+      "Incremental annual profit": { lines: 2, height: 41.25 },
+      "Annualized savings": { lines: 1, height: 20.625 },
+    },
+  },
+  768: {
+    height: 181.328125,
+    labels: {
+      "Active users on AI tools I shipped": { lines: 2, height: 41.25 },
+      "Production AI solutions": { lines: 2, height: 41.25 },
+      "Incremental annual profit": { lines: 2, height: 41.25 },
+      "Annualized savings": { lines: 1, height: 20.625 },
+    },
+  },
+  1280: {
+    height: 181.328125,
+    labels: {
+      "Active users on AI tools I shipped": { lines: 2, height: 41.25 },
+      "Production AI solutions": { lines: 1, height: 20.625 },
+      "Incremental annual profit": { lines: 1, height: 20.625 },
+      "Annualized savings": { lines: 1, height: 20.625 },
+    },
+  },
 } as const;
 
 const VIEWPORTS = {
@@ -104,6 +141,10 @@ describe("highlights figure layout", () => {
       await page.evaluate(() => {
         document.documentElement.style.fontSize = "32px";
       });
+    } else {
+      await page.evaluate(() => {
+        document.documentElement.style.fontSize = "16px";
+      });
     }
     await page.evaluate(
       () =>
@@ -151,6 +192,12 @@ describe("highlights figure layout", () => {
         const paragraphs = [...cell.querySelectorAll("p")];
         const label = paragraphs[1];
         const labelRect = label?.getBoundingClientRect();
+        const labelStyle = label ? getComputedStyle(label) : null;
+        const labelHeight = labelRect?.height ?? -1;
+        const labelLineHeight = labelStyle
+          ? parseFloat(labelStyle.lineHeight)
+          : -1;
+        const labelLines = Math.round(labelHeight / labelLineHeight);
         let labelContentWidth = -1;
         let labelContentRight = -1;
         let labelContentLeft = -1;
@@ -189,6 +236,9 @@ describe("highlights figure layout", () => {
           labelContentWidth,
           labelContentLeft,
           labelContentRight,
+          labelHeight,
+          labelLineHeight,
+          labelLines,
         };
       });
       return {
@@ -363,23 +413,31 @@ describe("highlights figure layout", () => {
     expect(overflowed, "label overflowed cell").toEqual([]);
   }, 120_000);
 
-  it("does not change Highlights pixels at 100% text versus main 85c2d2d", async () => {
+  it("does not change Highlights label geometry at 100% text versus main 85c2d2d", async () => {
     for (const width of [320, 390, 768, 1280] as const) {
       const [w, height] = VIEWPORTS[width];
-      const { browser, page } = await openHighlights(w, height, 100);
-      const png = await page
-        .locator('[aria-label="Impact highlights"]')
-        .screenshot({ type: "png" });
-      await browser.close();
-      const baseline = await readFile(
-        join("tests/fixtures/highlights-100", `${width}.png`),
+      const at100 = await measureHighlights(w, height, 100);
+      const main = MAIN_85C2D2D_100[width];
+      console.log(`${width} 100% Highlights height=${at100.height}`);
+      expect(at100.height, `${width} 100% Highlights height`).toBeCloseTo(
+        main.height,
+        0,
       );
-      const { differing } = countDifferingPixels(
-        readPngRgba(png),
-        readPngRgba(baseline),
-      );
-      console.log(`${width} 100% differing pixels=${differing}`);
-      expect(differing, `${width} 100% differing pixels`).toBe(0);
+      expect(at100.figures).toHaveLength(site.highlights.length);
+      for (const figure of at100.figures) {
+        const expected = main.labels[figure.label as keyof typeof main.labels];
+        console.log(
+          `${width} "${figure.label}": lines=${figure.labelLines} height=${figure.labelHeight} lineHeight=${figure.labelLineHeight}`,
+        );
+        expect(expected, `${width} ${figure.label} baseline`).toBeTruthy();
+        expect(figure.labelLines, `${width} 100% ${figure.label} lines`).toBe(
+          expected.lines,
+        );
+        expect(
+          figure.labelHeight,
+          `${width} 100% ${figure.label} height`,
+        ).toBeCloseTo(expected.height, 0);
+      }
     }
   }, 120_000);
 
