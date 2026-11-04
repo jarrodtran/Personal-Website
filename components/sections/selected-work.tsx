@@ -1,20 +1,7 @@
-import { ArrowUpRight } from "lucide-react";
 import Link from "next/link";
 import { Section, SectionHeading } from "@/components/section";
 import { site } from "@/content/site";
 import { cn } from "@/lib/cn";
-import { tap, textAction } from "@/lib/ui";
-
-function WorkMeta({ label, children }: { label: string; children: string }) {
-  return (
-    <div className="border-border grid gap-1 border-t py-3 first:border-t-0 first:pt-0 sm:grid-cols-[7rem_1fr] sm:gap-4">
-      <p className="text-accent font-mono-label pt-0.5">{label}</p>
-      <p className="text-muted-foreground text-lg leading-relaxed">
-        {children}
-      </p>
-    </div>
-  );
-}
 
 export function SelectedWork() {
   return (
@@ -24,63 +11,59 @@ export function SelectedWork() {
       <div className="grid gap-6 sm:grid-cols-2">
         {site.selectedWork.map((item, index) => {
           const featured = index === 0;
-          const caseHref = `/work/${item.slug}/`;
           return (
             <article
               key={item.slug}
               className={cn(
-                "reveal border-border bg-card flex min-w-0 flex-col overflow-hidden border",
-                featured &&
-                  "sm:col-span-2 sm:grid sm:grid-cols-2 sm:items-stretch",
+                "reveal border-border bg-card group has-[a:focus-visible]:outline-ring relative flex min-w-0 flex-col overflow-hidden border has-[a:focus-visible]:outline-2 has-[a:focus-visible]:outline-offset-2",
+                featured && "sm:col-span-2",
               )}
             >
               <div
                 className={cn(
-                  "border-border bg-muted flex aspect-[3/2] w-full min-w-0 flex-col justify-between border-b p-5 sm:p-7",
+                  "border-border bg-muted @container flex aspect-[3/2] w-full min-w-0 flex-col justify-end border-b p-[20px] sm:p-[28px]",
                   featured &&
-                    "sm:aspect-auto sm:h-full sm:min-h-[20rem] sm:border-r sm:border-b-0",
+                    "sm:order-last sm:aspect-auto sm:min-h-0 sm:justify-start sm:border-t sm:border-b-0",
                 )}
               >
-                <p className="text-accent font-mono-label">
-                  {item.panel.kicker}
-                </p>
                 <div>
-                  <p className="tabular font-display text-5xl sm:text-6xl">
+                  <p
+                    className={cn(
+                      "tabular font-display text-[min(3rem,30cqi)] leading-none sm:text-[min(3.75rem,30cqi)]",
+                      featured && "measure",
+                    )}
+                  >
                     {item.panel.value}
                   </p>
-                  <p className="text-muted-foreground mt-3 max-w-xs text-[0.9375rem] leading-snug">
+                  <p
+                    className={cn(
+                      "text-muted-foreground mt-3 text-[0.9375rem] leading-snug",
+                      featured ? "measure" : "max-w-xs",
+                    )}
+                  >
                     {item.panel.label}
                   </p>
                 </div>
               </div>
               <div className="flex min-w-0 flex-1 flex-col p-5 sm:p-7">
                 <h3 className="font-display text-2xl leading-tight tracking-tight sm:text-[1.75rem]">
-                  {item.title}
-                </h3>
-                <div className="mt-5">
-                  <WorkMeta label="Problem">{item.problem}</WorkMeta>
-                  <WorkMeta label="What I did">{item.contribution}</WorkMeta>
-                  <WorkMeta label="Outcome">{item.outcome}</WorkMeta>
-                </div>
-                <div className="mt-auto flex flex-col gap-1 pt-6 sm:flex-row sm:flex-wrap sm:items-center sm:gap-4">
-                  <Link href={caseHref} className={textAction}>
-                    Read the case study
-                    <ArrowUpRight className="size-[16px] shrink-0" aria-hidden="true" />
+                  <Link
+                    href={`/work/${item.slug}/`}
+                    className="underline-offset-4 group-hover:underline after:absolute after:inset-0 after:content-[''] focus-visible:outline-none"
+                  >
+                    {item.title}
                   </Link>
-                  {item.link ? (
-                    <a
-                      href={item.link.href}
-                      className={cn(
-                        tap,
-                        "gap-1 text-[0.9375rem] font-medium",
-                      )}
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      {item.link.label}
-                      <ArrowUpRight className="size-[16px] shrink-0" aria-hidden="true" />
-                    </a>
-                  ) : null}
+                </h3>
+                <div className="mt-4 space-y-3">
+                  <p className="text-muted-foreground text-lg leading-relaxed">
+                    {item.problem}
+                  </p>
+                  <p className="text-muted-foreground text-lg leading-relaxed">
+                    {item.contribution}
+                  </p>
+                  <p className="text-muted-foreground text-lg leading-relaxed">
+                    {item.outcome}
+                  </p>
                 </div>
               </div>
             </article>

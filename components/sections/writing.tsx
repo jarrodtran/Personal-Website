@@ -10,7 +10,7 @@ import {
 } from "@/lib/writing";
 
 const EMPTY_COPY =
-  "Nothing published yet. Subscribe and the first post will land in your inbox.";
+  "First post coming soon. Subscribe to get it by email.";
 
 function SubscribeLink({ href }: { href: string }) {
   return (
