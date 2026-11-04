@@ -9,6 +9,17 @@ import { cn } from "@/lib/cn";
 import { tap } from "@/lib/ui";
 import { ThemeToggle } from "@/components/theme-toggle";
 
+const TOP_SCROLL_PX = 8;
+
+export function sectionHash(visibleId: string, topOffset: number) {
+  if (topOffset >= 0 || visibleId === "top") return "";
+  return `#${visibleId}`;
+}
+
+function heroTop() {
+  return document.getElementById("top")?.getBoundingClientRect().top;
+}
+
 export function Nav({
   name,
   items,
@@ -30,13 +41,17 @@ export function Nav({
   const navRef = useRef<HTMLElement>(null);
   const pathname = usePathname();
   const onHome = pathname === "/" || pathname === "";
+  const onWork = pathname === "/work" || pathname.startsWith("/work/");
   const sectionHref = (href: string) =>
     withBasePath(href.startsWith("#") && !onHome ? `/${href}` : href);
   const homeHref = onHome ? "#top" : withBasePath("/");
-  const current = onHome ? active : "";
+  const current = onHome ? active : onWork ? "#work" : "";
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 8);
+    const onScroll = () => {
+      setScrolled(window.scrollY > TOP_SCROLL_PX);
+      if ((heroTop() ?? -1) >= 0) setActive("");
+    };
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
@@ -44,14 +59,17 @@ export function Nav({
 
   useEffect(() => {
     if (!onHome) return;
-    const ids = items.map((item) => item.href.split("#").pop() ?? "");
+    const ids = [
+      "top",
+      ...items.map((item) => item.href.split("#").pop() ?? ""),
+    ];
     const observer = new IntersectionObserver(
       (entries) => {
         const visible = entries
           .filter((entry) => entry.isIntersecting)
           .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
         if (visible?.target.id) {
-          setActive(`#${visible.target.id}`);
+          setActive(sectionHash(visible.target.id, heroTop() ?? -1));
         }
       },
       { rootMargin: "-35% 0px -50% 0px", threshold: [0, 0.25, 0.6] },
@@ -193,7 +211,7 @@ export function Nav({
                 tap,
                 "px-2.5 text-[0.9375rem] transition-colors",
                 current === item.href
-                  ? "text-foreground"
+                  ? "text-foreground underline decoration-1 underline-offset-8"
                   : "text-muted-foreground hover:text-foreground",
               )}
             >
@@ -205,7 +223,7 @@ export function Nav({
             download={resumeFilename}
             className={cn(
               tap,
-              "text-muted-foreground hover:text-foreground px-2.5 text-[0.9375rem]",
+              "text-muted-foreground hover:text-foreground px-2.5 text-[0.9375rem] transition-colors",
             )}
           >
             Résumé
@@ -223,7 +241,7 @@ export function Nav({
           <button
             ref={toggleRef}
             type="button"
-            className="border-border bg-card inline-flex size-[44px] items-center justify-center border"
+            className="border-border bg-card hover:border-foreground/40 inline-flex size-[44px] items-center justify-center border transition-colors"
             aria-expanded={open}
             aria-controls="mobile-nav"
             aria-label={open ? "Close menu" : "Open menu"}
@@ -258,7 +276,13 @@ export function Nav({
               <a
                 key={item.href}
                 href={sectionHref(item.href)}
-                className={cn(tap, "text-foreground text-base")}
+                aria-current={current === item.href ? "location" : undefined}
+                className={cn(
+                  tap,
+                  "text-foreground text-base",
+                  current === item.href &&
+                    "underline decoration-1 underline-offset-4",
+                )}
                 onClick={() => setOpen(false)}
               >
                 {item.label}
