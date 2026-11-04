@@ -125,7 +125,6 @@ describe("visitor-facing copy contract", () => {
 
     const sectionFiles = [
       "about",
-      "capabilities",
       "contact",
       "experience",
       "how-i-work",
@@ -230,7 +229,6 @@ describe("visitor-facing copy contract", () => {
       ["components/sections/experience.tsx", "site.sections.experience"],
       ["components/sections/selected-work.tsx", "site.sections.work"],
       ["components/sections/how-i-work.tsx", "site.sections.approach"],
-      ["components/sections/capabilities.tsx", "site.sections.capabilities"],
       ["components/sections/contact.tsx", "site.sections.contact"],
     ] as const;
 
