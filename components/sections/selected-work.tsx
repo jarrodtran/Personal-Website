@@ -3,26 +3,38 @@ import { Section, SectionHeading } from "@/components/section";
 import { site } from "@/content/site";
 import { cn } from "@/lib/cn";
 
+/**
+ * The first card is the featured one. When the cards after it come to an odd
+ * number, the last card also gets the wide treatment so the grid never ends on
+ * an empty column.
+ */
+export function spansFullRow(index: number, total: number): boolean {
+  if (index === 0) return true;
+  return index === total - 1 && total % 2 === 0;
+}
+
 export function SelectedWork() {
+  const total = site.selectedWork.length;
+
   return (
     <Section id="work">
       <SectionHeading title={site.sections.work.title} />
 
       <div className="grid gap-6 sm:grid-cols-2">
         {site.selectedWork.map((item, index) => {
-          const featured = index === 0;
+          const wide = spansFullRow(index, total);
           return (
             <article
               key={item.slug}
               className={cn(
                 "reveal border-border bg-card group has-[a:focus-visible]:outline-ring relative flex min-w-0 flex-col overflow-hidden border has-[a:focus-visible]:outline-2 has-[a:focus-visible]:outline-offset-2",
-                featured && "sm:col-span-2",
+                wide && "sm:col-span-2",
               )}
             >
               <div
                 className={cn(
                   "border-border bg-muted @container flex aspect-[3/2] w-full min-w-0 flex-col justify-end border-b p-[20px] sm:p-[28px]",
-                  featured &&
+                  wide &&
                     "sm:order-last sm:aspect-auto sm:min-h-0 sm:justify-start sm:border-t sm:border-b-0",
                 )}
               >
@@ -30,7 +42,7 @@ export function SelectedWork() {
                   <p
                     className={cn(
                       "tabular font-display text-[min(3rem,30cqi)] leading-none sm:text-[min(3.75rem,30cqi)]",
-                      featured && "measure",
+                      wide && "measure",
                     )}
                   >
                     {item.panel.value}
@@ -38,7 +50,7 @@ export function SelectedWork() {
                   <p
                     className={cn(
                       "text-muted-foreground mt-3 text-[0.9375rem] leading-snug",
-                      featured ? "measure" : "max-w-xs",
+                      wide ? "measure" : "max-w-xs",
                     )}
                   >
                     {item.panel.label}
