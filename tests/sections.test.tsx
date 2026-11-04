@@ -109,21 +109,26 @@ describe("hero", () => {
   });
 });
 
-const EMPTY_WRITING =
-  "Nothing published yet. Subscribe and the first post will land in your inbox.";
 const threeXml = readFileSync(
   path.join(__dirname, "fixtures/writing/three-posts.xml"),
   "utf8",
 );
 
 describe("writing", () => {
-  it("shows the empty-state copy and subscribe link when there are 0 posts", () => {
+  it("shows the launching-soon line and subscribe link when there are 0 posts", () => {
     const html = renderToStaticMarkup(<Writing posts={[]} />);
     const text = textOf(html);
+    const paragraphs = [...html.matchAll(/<p\b[^>]*>([\s\S]*?)<\/p>/g)].map(
+      ([, inner]) => textOf(inner),
+    );
     expect(text).toContain(site.substack.name);
     expect(text).not.toContain("01 / Essays");
     expect(text).not.toContain("Posts from my Substack.");
-    expect(text).toContain(EMPTY_WRITING);
+    expect(paragraphs).toContain(
+      "First post coming soon. Subscribe to get it by email.",
+    );
+    expect(text).not.toContain("Nothing published yet");
+    expect(text).not.toContain("Subscribe and the first post");
     expect(text).not.toContain("First post soon");
     expect(text).not.toContain("All writing");
     expect(html).not.toMatch(/<ol\b/);
@@ -138,7 +143,6 @@ describe("writing", () => {
     expect(html).toMatch(/rel="noopener noreferrer"/);
     expect(html).toContain(btnGhost);
     expect(html).toContain("size-[16px]");
-    expect(html).toMatch(/max-w-2xl[\s\S]*Subscribe on Substack/);
     expect(html).toMatch(
       /mt-6[\s\S]*Subscribe on Substack|Subscribe on Substack[\s\S]*mt-6/,
     );
@@ -190,6 +194,7 @@ describe("writing", () => {
     expect(html).toMatch(/rel="noopener noreferrer"/);
     expect(html).not.toContain("All writing");
     expect(html).not.toContain("First post soon");
+    expect(html).toContain('<div class="max-w-2xl">');
     expect(links(html)).toEqual([
       {
         href: `${WRITING_FIXTURE_BASE}/p/zxq-aurora`,

@@ -163,11 +163,28 @@ describe("selected work featured panel layout", () => {
       const row = articles
         .slice(1, 3)
         .map((article) => article.getBoundingClientRect().bottom);
+      const grid = articles[0]?.parentElement ?? null;
+      const gridTemplateColumns = grid
+        ? getComputedStyle(grid).gridTemplateColumns
+        : "none";
+      // Used tracks stay 2 when sm:col-span-2 creates implicit columns.
+      // The specified template is none unless sm:grid-cols-2 is applied.
+      const specifiedTemplate = grid
+        ? (grid.computedStyleMap().get("grid-template-columns")?.toString() ??
+          gridTemplateColumns)
+        : "none";
+      const repeatTracks = /^repeat\((\d+)\s*,/.exec(specifiedTemplate);
+      const columnTracks = repeatTracks
+        ? Number(repeatTracks[1])
+        : !specifiedTemplate || specifiedTemplate === "none"
+          ? 0
+          : specifiedTemplate.split(/\s+(?![^(]*\))/).length;
       return {
         workHeight: work?.getBoundingClientRect().height ?? -1,
         panelTop: panel?.getBoundingClientRect().top ?? -1,
         textBottom: text?.getBoundingClientRect().bottom ?? -1,
         rowBottoms: row,
+        columnTracks,
         overflow: document.documentElement.scrollWidth > window.innerWidth,
       };
     }, site.selectedWork[0].panel.value);
@@ -218,6 +235,10 @@ describe("selected work featured panel layout", () => {
     for (const width of [768, 1280] as const) {
       const layout = await measureWork(width, 800, 100);
       expect(layout.rowBottoms, `${width} row cards`).toHaveLength(2);
+      expect(
+        layout.columnTracks,
+        `${width} selected work grid is not 2 columns`,
+      ).toBe(2);
       expect(
         Math.abs(layout.rowBottoms[0] - layout.rowBottoms[1]),
         `${width} row bottom delta`,
