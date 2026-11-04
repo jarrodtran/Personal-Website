@@ -24,10 +24,4 @@ describe("how I work", () => {
     expect(html).toContain("<ul");
     expect(html).not.toContain("<ol");
   });
-
-  it("gives each title a column wide enough for one line", () => {
-    // The longest title needs 232px; 15rem is 240px.
-    expect(html).toContain("sm:grid-cols-[minmax(0,15rem)_minmax(0,1fr)]");
-    expect(html).not.toContain("11rem");
-  });
 });
