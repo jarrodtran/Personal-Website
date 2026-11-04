@@ -36,6 +36,11 @@ if (!existsSync(join(process.cwd(), "out/index.html"))) {
 const MAIN_TOP_HEIGHT = {
   320: { 100: 227.34375, 200: 709.375 },
   390: { 100: 198.09375, 200: 650.875 },
+  640: { 100: 230.046875, 200: 577.09375 },
+  700: { 100: 230.046875, 200: 577.09375 },
+  768: { 100: 230.046875, 200: 518.59375 },
+  900: { 100: 230.046875, 200: 518.59375 },
+  1024: { 100: 230.046875, 200: 518.59375 },
   1280: { 100: 230.046875, 200: 460.09375 },
 } as const;
 
@@ -45,10 +50,14 @@ const VIEWPORTS = [
   [1280, 800],
 ] as const;
 
-const SIZE_VIEWPORTS = [
+const HEIGHT_VIEWPORTS = [
   [320, 844],
   [390, 844],
+  [640, 800],
+  [700, 800],
   [768, 800],
+  [900, 800],
+  [1024, 800],
   [1280, 800],
 ] as const;
 
@@ -290,7 +299,7 @@ describe("hero headline layout", () => {
   }, 180_000);
 
   it("keeps #top no taller than main 1c0847d", async () => {
-    for (const [width, height] of VIEWPORTS) {
+    for (const [width, height] of HEIGHT_VIEWPORTS) {
       for (const textPercent of [100, 200] as const) {
         for (const colorScheme of ["light", "dark"] as const) {
           const { browser, page } = await openPage(
@@ -317,7 +326,7 @@ describe("hero headline layout", () => {
   }, 180_000);
 
   it("keeps the home h1 at least as large as body text", async () => {
-    for (const [width, height] of SIZE_VIEWPORTS) {
+    for (const [width, height] of HEIGHT_VIEWPORTS) {
       for (const textPercent of [100, 200] as const) {
         const { browser, page } = await openPage(
           "/",
@@ -328,7 +337,7 @@ describe("hero headline layout", () => {
         );
         const layout = await page.evaluate(readHome);
         process.stdout.write(
-          `${width} ${textPercent}%: h1=${layout.h1Font} body=${layout.bodyFont} #top=${layout.topHeight} one-word=${JSON.stringify(layout.singles.map((row) => row.line[0]))}\n`,
+          `${width} ${textPercent}%: h1=${layout.h1Font} body=${layout.bodyFont} main=${MAIN_TOP_HEIGHT[width][textPercent]} pr=${layout.topHeight} one-word=${JSON.stringify(layout.singles.map((row) => row.line[0]))}\n`,
         );
         await browser.close();
         expect(

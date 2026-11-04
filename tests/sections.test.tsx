@@ -103,7 +103,7 @@ describe("hero", () => {
 
   it("sizes the headline with the shared display classes", () => {
     expect(html).toContain(
-      "measure font-display text-[min(1.75rem,15cqi)] leading-[1.15] tracking-tight text-balance sm:text-4xl",
+      "measure font-display text-[min(1.75rem,15cqi)] leading-[1.15] tracking-tight text-balance sm:text-[min(2.25rem,9cqi)]",
     );
     expect(html).not.toContain("text-lg");
     expect(html).not.toContain("text-[1.0625rem]");
