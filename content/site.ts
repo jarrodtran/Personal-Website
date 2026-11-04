@@ -504,7 +504,7 @@ export const site: SiteContent = {
   ],
   sections: {
     about: {
-      title: "About Jarrod",
+      title: "About",
     },
     experience: {
       title: "Experience",
