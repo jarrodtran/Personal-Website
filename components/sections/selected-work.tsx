@@ -16,22 +16,31 @@ export function SelectedWork() {
               key={item.slug}
               className={cn(
                 "reveal border-border bg-card group has-[a:focus-visible]:outline-ring relative flex min-w-0 flex-col overflow-hidden border has-[a:focus-visible]:outline-2 has-[a:focus-visible]:outline-offset-2",
-                featured &&
-                  "sm:col-span-2 sm:grid sm:grid-cols-2 sm:items-stretch",
+                featured && "sm:col-span-2",
               )}
             >
               <div
                 className={cn(
-                  "border-border bg-muted flex aspect-[3/2] w-full min-w-0 flex-col justify-end border-b p-5 sm:p-7",
+                  "border-border bg-muted @container flex aspect-[3/2] w-full min-w-0 flex-col justify-end border-b p-[20px] sm:p-[28px]",
                   featured &&
-                    "sm:aspect-auto sm:h-full sm:min-h-[20rem] sm:border-r sm:border-b-0",
+                    "sm:order-last sm:aspect-auto sm:min-h-0 sm:justify-start sm:border-t sm:border-b-0",
                 )}
               >
                 <div>
-                  <p className="tabular font-display text-5xl sm:text-6xl">
+                  <p
+                    className={cn(
+                      "tabular font-display text-[min(3rem,30cqi)] leading-none sm:text-[min(3.75rem,30cqi)]",
+                      featured && "measure",
+                    )}
+                  >
                     {item.panel.value}
                   </p>
-                  <p className="text-muted-foreground mt-3 max-w-xs text-[0.9375rem] leading-snug">
+                  <p
+                    className={cn(
+                      "text-muted-foreground mt-3 text-[0.9375rem] leading-snug",
+                      featured ? "measure" : "max-w-xs",
+                    )}
+                  >
                     {item.panel.label}
                   </p>
                 </div>
