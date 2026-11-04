@@ -45,7 +45,7 @@ export function Writing({ posts }: { posts: WritingPost[] }) {
             {latest.map((post) => {
               const dateLabel = post.date ? formatPostDate(post.date) : "";
               return (
-                <li key={post.href} className="border-border border-b py-4">
+                <li key={post.href} className="reveal border-border border-b py-4">
                   <a
                     href={post.href}
                     className={`${tap} text-foreground max-w-full gap-1 text-lg font-medium no-underline hover:underline`}

@@ -5,7 +5,7 @@ export function About() {
   return (
     <Section id="about">
       <SectionHeading title={site.sections.about.title} />
-      <p className="text-muted-foreground measure text-lg leading-relaxed">
+      <p className="reveal text-muted-foreground measure text-lg leading-relaxed">
         {site.about.bio.join(" ")}
       </p>
       <p className="text-muted-foreground measure mt-4 text-[0.9375rem] leading-relaxed">

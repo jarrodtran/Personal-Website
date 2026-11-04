@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { IBM_Plex_Sans, Newsreader } from "next/font/google";
 import { Footer } from "@/components/footer";
 import { Nav } from "@/components/nav";
@@ -21,6 +21,13 @@ const newsreader = Newsreader({
   display: "swap",
 });
 
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+    { media: "(prefers-color-scheme: dark)", color: "#0a0a0a" },
+  ],
+};
+
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
@@ -30,6 +37,9 @@ export const metadata: Metadata = {
   description: site.positioning.valueProp,
   alternates: {
     canonical: "/",
+    types: {
+      "application/rss+xml": `${site.substack.url}/feed`,
+    },
   },
   openGraph: {
     type: "website",

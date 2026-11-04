@@ -33,7 +33,7 @@ export function Contact() {
             {site.contact.intro}
           </p>
         </SectionHeading>
-        <dl className="border-border bg-card divide-border divide-y border">
+        <dl className="reveal border-border bg-card divide-border divide-y border">
           <ContactRow label="Email">
             <a
               href={`mailto:${email}`}

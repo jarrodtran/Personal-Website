@@ -89,7 +89,18 @@ html {
   }
 }
 
+@keyframes hero-in {
+  from {
+    opacity: 0;
+    translate: 0 0.75rem;
+  }
+}
+
 @media (prefers-reduced-motion: no-preference) {
+  .hero-in {
+    animation: hero-in 0.7s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+  }
+
   @supports (animation-timeline: view()) {
     .reveal {
       animation: reveal linear backwards;
