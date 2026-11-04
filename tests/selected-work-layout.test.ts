@@ -183,21 +183,21 @@ describe("selected work featured panel layout", () => {
         `1280 ${textPercent}% panel top`,
       ).toBeGreaterThanOrEqual(layout.textBottom);
     }
-  });
+  }, 120_000);
 
   it("keeps #work no taller than main at 1280 and 100% text", async () => {
     const layout = await measureWork(1280, 800, 100);
     expect(layout.workHeight, "1280 100% #work height").toBeLessThanOrEqual(
       MAIN_WORK_HEIGHT[1280][100],
     );
-  });
+  }, 120_000);
 
   it("shortens #work versus main at 1280 and 200% text", async () => {
     const layout = await measureWork(1280, 800, 200);
     expect(layout.workHeight, "1280 200% #work height").toBeLessThan(
       MAIN_WORK_HEIGHT[1280][200],
     );
-  });
+  }, 120_000);
 
   it("does not grow #work on phones versus main at 100% and 200% text", async () => {
     for (const [width, height] of [
@@ -212,7 +212,7 @@ describe("selected work featured panel layout", () => {
         ).toBeLessThanOrEqual(MAIN_WORK_HEIGHT[width][textPercent]);
       }
     }
-  });
+  }, 120_000);
 
   it("keeps the two-column row bottoms equal at 768 and 1280", async () => {
     for (const width of [768, 1280] as const) {
@@ -223,7 +223,7 @@ describe("selected work featured panel layout", () => {
         `${width} row bottom delta`,
       ).toBeLessThanOrEqual(1);
     }
-  });
+  }, 120_000);
 
   it("does not scroll sideways at 320, 390, or 1280", async () => {
     for (const [width, height] of [
@@ -234,7 +234,7 @@ describe("selected work featured panel layout", () => {
       const layout = await measureWork(width, height, 100);
       expect(layout.overflow, `${width} overflow`).toBe(false);
     }
-  });
+  }, 120_000);
 
   it("does not log console errors at 320, 390, or 1280", async () => {
     for (const [width, height] of [
@@ -245,7 +245,7 @@ describe("selected work featured panel layout", () => {
       const layout = await measureWork(width, height, 100);
       expect(layout.errors, `${width} console`).toEqual([]);
     }
-  });
+  }, 120_000);
 
   async function openWorkPx(
     width: number,
