@@ -89,9 +89,9 @@ const CONTACT_INTRO =
 describe("hero", () => {
   const html = renderToStaticMarkup(<Hero />);
 
-  it("shows name and pitch only", () => {
-    const { name, headline } = site.positioning;
-    expect(textOf(html)).toBe(`${name} ${headline}`);
+  it("shows the headline only", () => {
+    expect(textOf(html)).toBe(site.positioning.headline);
+    expect(headings(html, "h1")).toEqual([site.positioning.headline]);
   });
 
   it("does not invent posts, links, or a subscribe placeholder", () => {
@@ -101,8 +101,11 @@ describe("hero", () => {
     expect(html).not.toMatch(/coming soon/i);
   });
 
-  it("sizes the pitch at 18px", () => {
-    expect(html).toContain("text-lg");
+  it("sizes the headline with the shared display classes", () => {
+    expect(html).toContain(
+      "measure font-display text-[min(1.75rem,15cqi)] leading-[1.15] tracking-tight text-balance sm:text-[min(2.25rem,9cqi)]",
+    );
+    expect(html).not.toContain("text-lg");
     expect(html).not.toContain("text-[1.0625rem]");
   });
 });
