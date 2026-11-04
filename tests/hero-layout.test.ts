@@ -158,15 +158,22 @@ describe("hero headline layout", () => {
           );
           const layout = await page.evaluate(() => {
             const top = document.getElementById("top");
+            const h1 = document.querySelector("#top h1");
             return {
               topHeight: top?.getBoundingClientRect().height ?? -1,
+              fontSize: h1 ? parseFloat(getComputedStyle(h1).fontSize) : -1,
               scrollWidth: document.documentElement.scrollWidth,
               clientWidth: document.documentElement.clientWidth,
             };
           });
-          console.log(
-            `#top height ${width} ${textPercent}% ${colorScheme}: ${layout.topHeight}`,
+          process.stdout.write(
+            `#top height ${width} ${textPercent}% ${colorScheme}: ${layout.topHeight}\n`,
           );
+          if (width === 320) {
+            process.stdout.write(
+              `h1 font size 320 ${textPercent}% ${colorScheme}: ${layout.fontSize}\n`,
+            );
+          }
           await browser.close();
           expect(
             layout.scrollWidth,
@@ -250,8 +257,8 @@ describe("hero headline layout", () => {
               lines: lines.filter((line) => line.length > 0),
             };
           });
-          console.log(
-            `#top height ${width} ${textPercent}% ${colorScheme}: ${layout.topHeight}`,
+          process.stdout.write(
+            `#top height ${width} ${textPercent}% ${colorScheme}: ${layout.topHeight}\n`,
           );
           await browser.close();
           const singles = layout.lines
@@ -280,8 +287,8 @@ describe("hero headline layout", () => {
           const topHeight = await page.evaluate(
             () => document.getElementById("top")?.getBoundingClientRect().height ?? -1,
           );
-          console.log(
-            `#top height ${width} ${textPercent}% ${colorScheme}: ${topHeight}`,
+          process.stdout.write(
+            `#top height ${width} ${textPercent}% ${colorScheme}: ${topHeight}\n`,
           );
           await browser.close();
           expect(
