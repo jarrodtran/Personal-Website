@@ -63,7 +63,6 @@ export interface SiteContent {
     status: string;
     location: string;
     currentRole: string;
-    currentCompany: string;
   };
   /**
    * Public Substack. `url` is the only publication setting: subscribe href,
@@ -74,7 +73,6 @@ export interface SiteContent {
     name: string;
     url: string;
   };
-  talks: { event: string; date: string; href: string }[];
   highlights: { value: string; label: string; source?: string }[];
   about: {
     bio: string[];
@@ -99,7 +97,6 @@ export interface SiteContent {
     email: string;
     linkedin: string;
     github?: string;
-    phone?: string;
     resumeHref: string;
     resumeFilename: string;
     calendar?: string;
@@ -131,13 +128,11 @@ export const site: SiteContent = {
     status: "Open to the right role",
     location: "Houston, TX",
     currentRole: currentTitle,
-    currentCompany: "Tesla Energy",
   },
   substack: {
     name: "Worth Mulling",
     url: "https://jarrodtran.substack.com",
   },
-  talks: [],
   highlights: [
     {
       value: "1,000+",
@@ -495,7 +490,6 @@ export const site: SiteContent = {
   ],
   contact: {
     email: "jarrodtran@outlook.com",
-    phone: "(607) 760-2068",
     linkedin: "https://www.linkedin.com/in/jarrodtran/",
     github: "https://github.com/jarrodtran",
     resumeHref: "/resume.pdf",
