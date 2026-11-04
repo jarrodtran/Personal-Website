@@ -219,28 +219,42 @@ describe("highlights figure layout", () => {
 
   it("grows every Highlights figure at 200% versus 100% at 320, 390, and 768", async () => {
     const shrunk: string[] = [];
+    const floors: string[] = [];
     for (const width of [320, 390, 768] as const) {
       const [w, height] = VIEWPORTS[width];
       const at100 = await measureHighlights(w, height, 100);
       const at200 = await measureHighlights(w, height, 200);
-      for (const figure of at200.figures) {
+      for (const [index, figure] of at200.figures.entries()) {
         const size100 =
           at100.figures.find((row) => row.text === figure.text)?.fontSize ?? -1;
         console.log(
-          `${width} ${figure.text}: 100%=${size100}px 200%=${figure.fontSize}px`,
+          `${width} ${figure.text}: 100%=${size100}px 200%=${figure.fontSize}px spare=${figure.spare}px`,
         );
-        // 768 middle cells have padding on both sides. 29cqi of that inner
-        // width sits below the 34.4px sm floor because section sm:px-8 still
-        // doubles at a 32px root. First and last cells, and every cell at
-        // 320 and 390, still grow.
-        const middle768 = width === 768 && figure.padL > 0 && figure.padR > 0;
-        if (!middle768 && figure.fontSize <= size100) {
+        // 768 middle cells (index 1 = 20+, index 2 = $156M) are 111px
+        // inside at 200% text, and $156M can't grow past 34.4px without
+        // leaving only about 2px.
+        const is768Middle = width === 768 && (index === 1 || index === 2);
+        if (is768Middle) {
+          if (figure.fontSize < 32) {
+            floors.push(
+              `${width} ${figure.text} 200%=${figure.fontSize}px < 32px`,
+            );
+          }
+          if (figure.spare < 8) {
+            floors.push(
+              `${width} ${figure.text} spare ${figure.spare}px < 8px`,
+            );
+          }
+          continue;
+        }
+        if (figure.fontSize <= size100) {
           shrunk.push(
             `${width} ${figure.text} 200%=${figure.fontSize}px <= 100%=${size100}px`,
           );
         }
       }
     }
+    expect(floors, "768 middle 20+ and $156M floors").toEqual([]);
     expect(shrunk, "200% font not larger").toEqual([]);
   }, 120_000);
 
@@ -267,13 +281,17 @@ describe("highlights figure layout", () => {
   it("does not change Highlights at 100% text versus main 1c0847d", async () => {
     for (const width of [320, 390, 768, 1280] as const) {
       const [w, height] = VIEWPORTS[width];
-      const layout = await measureHighlights(w, height, 100);
+      const at100 = await measureHighlights(w, height, 100);
+      const at200 = await measureHighlights(w, height, 200);
       const main = MAIN_1C0847D_100[width];
-      expect(layout.height, `${width} 100% Highlights height`).toBe(
-        main.height,
-      );
-      expect(layout.figures.length).toBe(site.highlights.length);
-      for (const figure of layout.figures) {
+      expect(at100.height, `${width} 100% Highlights height`).toBe(main.height);
+      expect(at100.figures.length).toBe(site.highlights.length);
+      for (const figure of at100.figures) {
+        const at200Figure =
+          at200.figures.find((row) => row.text === figure.text) ?? figure;
+        console.log(
+          `${width} ${figure.text}: 100%=${figure.fontSize}px spare100=${figure.spare}px 200%=${at200Figure.fontSize}px spare200=${at200Figure.spare}px`,
+        );
         expect(figure.fontSize, `${width} 100% ${figure.text} font-size`).toBe(
           main.fontSize,
         );
@@ -283,5 +301,5 @@ describe("highlights figure layout", () => {
         ).toBe(main.lineHeight);
       }
     }
-  }, 60_000);
+  }, 120_000);
 });
