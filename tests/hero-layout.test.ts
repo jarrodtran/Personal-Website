@@ -45,6 +45,13 @@ const VIEWPORTS = [
   [1280, 800],
 ] as const;
 
+const SIZE_VIEWPORTS = [
+  [320, 844],
+  [390, 844],
+  [768, 800],
+  [1280, 800],
+] as const;
+
 const ROUTES = [
   "/",
   "/404.html",
@@ -129,6 +136,74 @@ describe("hero headline layout", () => {
     return { browser, page };
   }
 
+  function readHome() {
+    const top = document.getElementById("top");
+    const h1 = document.querySelector("#top h1");
+    const paragraph =
+      document.querySelector("#writing p") ??
+      document.querySelector("main p") ??
+      document.body;
+    const nodes: Text[] = [];
+    if (h1) {
+      const walker = document.createTreeWalker(h1, NodeFilter.SHOW_TEXT);
+      let node = walker.nextNode();
+      while (node) {
+        nodes.push(node as Text);
+        node = walker.nextNode();
+      }
+    }
+    const content = nodes.map((node) => node.data).join("");
+    const full = document.createRange();
+    if (h1) full.selectNodeContents(h1);
+    const lineRects = h1 ? [...full.getClientRects()] : [];
+    const lines: string[][] = lineRects.map(() => []);
+    const re = /\S+/g;
+    let match: RegExpExecArray | null;
+    while ((match = re.exec(content))) {
+      let seen = 0;
+      const wordRange = document.createRange();
+      let started = false;
+      for (const node of nodes) {
+        const len = node.data.length;
+        if (!started && match.index < seen + len) {
+          wordRange.setStart(node, match.index - seen);
+          started = true;
+        }
+        if (started && match.index + match[0].length <= seen + len) {
+          wordRange.setEnd(node, match.index + match[0].length - seen);
+          break;
+        }
+        seen += len;
+      }
+      const wordRect = wordRange.getBoundingClientRect();
+      const midY = wordRect.top + wordRect.height / 2;
+      let index = lineRects.findIndex(
+        (line) => midY >= line.top - 0.5 && midY <= line.bottom + 0.5,
+      );
+      if (index < 0) {
+        let best = Infinity;
+        lineRects.forEach((line, lineIndex) => {
+          const distance = Math.abs(midY - (line.top + line.height / 2));
+          if (distance < best) {
+            best = distance;
+            index = lineIndex;
+          }
+        });
+      }
+      if (index >= 0) lines[index].push(match[0]);
+    }
+    const filled = lines.filter((line) => line.length > 0);
+    return {
+      topHeight: top?.getBoundingClientRect().height ?? -1,
+      h1Font: h1 ? parseFloat(getComputedStyle(h1).fontSize) : -1,
+      bodyFont: parseFloat(getComputedStyle(paragraph).fontSize),
+      lines: filled,
+      singles: filled
+        .map((line, index) => ({ index, line }))
+        .filter((row) => row.line.length === 1),
+    };
+  }
+
   it("has exactly one h1 on every route, and the home h1 is the headline", async () => {
     for (const path of ROUTES) {
       const { browser, page } = await openPage(path, 390, 844, 100, "light");
@@ -195,77 +270,18 @@ describe("hero headline layout", () => {
             textPercent,
             colorScheme,
           );
-          const layout = await page.evaluate(() => {
-            const top = document.getElementById("top");
-            const h1 = document.querySelector("#top h1");
-            const nodes: Text[] = [];
-            if (h1) {
-              const walker = document.createTreeWalker(
-                h1,
-                NodeFilter.SHOW_TEXT,
-              );
-              let node = walker.nextNode();
-              while (node) {
-                nodes.push(node as Text);
-                node = walker.nextNode();
-              }
-            }
-            const content = nodes.map((node) => node.data).join("");
-            const full = document.createRange();
-            if (h1) full.selectNodeContents(h1);
-            const lineRects = h1 ? [...full.getClientRects()] : [];
-            const lines: string[][] = lineRects.map(() => []);
-            const re = /\S+/g;
-            let match: RegExpExecArray | null;
-            while ((match = re.exec(content))) {
-              let seen = 0;
-              const wordRange = document.createRange();
-              let started = false;
-              for (const node of nodes) {
-                const len = node.data.length;
-                if (!started && match.index < seen + len) {
-                  wordRange.setStart(node, match.index - seen);
-                  started = true;
-                }
-                if (started && match.index + match[0].length <= seen + len) {
-                  wordRange.setEnd(node, match.index + match[0].length - seen);
-                  break;
-                }
-                seen += len;
-              }
-              const wordRect = wordRange.getBoundingClientRect();
-              const midY = wordRect.top + wordRect.height / 2;
-              let index = lineRects.findIndex(
-                (line) => midY >= line.top - 0.5 && midY <= line.bottom + 0.5,
-              );
-              if (index < 0) {
-                let best = Infinity;
-                lineRects.forEach((line, lineIndex) => {
-                  const distance = Math.abs(
-                    midY - (line.top + line.height / 2),
-                  );
-                  if (distance < best) {
-                    best = distance;
-                    index = lineIndex;
-                  }
-                });
-              }
-              if (index >= 0) lines[index].push(match[0]);
-            }
-            return {
-              topHeight: top?.getBoundingClientRect().height ?? -1,
-              lines: lines.filter((line) => line.length > 0),
-            };
-          });
+          const layout = await page.evaluate(readHome);
           process.stdout.write(
             `#top height ${width} ${textPercent}% ${colorScheme}: ${layout.topHeight}\n`,
           );
           await browser.close();
-          const singles = layout.lines
-            .map((line, index) => ({ index, line }))
-            .filter((row) => row.line.length === 1);
+          // 320 at 200% text: the heading must stay at least body size in a
+          // 240px column, so a one-word wrap is allowed only in that case.
+          if (width === 320 && textPercent === 200) {
+            continue;
+          }
           expect(
-            singles,
+            layout.singles,
             `${width} ${textPercent}% ${colorScheme} one-word h1 lines`,
           ).toEqual([]);
         }
@@ -296,6 +312,29 @@ describe("hero headline layout", () => {
             `${width} ${textPercent}% ${colorScheme} #top height`,
           ).toBeLessThanOrEqual(MAIN_TOP_HEIGHT[width][textPercent]);
         }
+      }
+    }
+  }, 180_000);
+
+  it("keeps the home h1 at least as large as body text", async () => {
+    for (const [width, height] of SIZE_VIEWPORTS) {
+      for (const textPercent of [100, 200] as const) {
+        const { browser, page } = await openPage(
+          "/",
+          width,
+          height,
+          textPercent,
+          "light",
+        );
+        const layout = await page.evaluate(readHome);
+        process.stdout.write(
+          `${width} ${textPercent}%: h1=${layout.h1Font} body=${layout.bodyFont} #top=${layout.topHeight} one-word=${JSON.stringify(layout.singles.map((row) => row.line[0]))}\n`,
+        );
+        await browser.close();
+        expect(
+          layout.h1Font,
+          `${width} ${textPercent}% h1 vs body`,
+        ).toBeGreaterThanOrEqual(layout.bodyFont);
       }
     }
   }, 180_000);
