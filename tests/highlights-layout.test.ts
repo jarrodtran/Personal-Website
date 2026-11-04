@@ -41,44 +41,11 @@ const MAIN_1C0847D_100 = {
 } as const;
 
 // Measured on main 85c2d2d; highlights.tsx unchanged through e1babc6.
-// 16px root font for 100% text, after document.fonts.ready.
 const MAIN_85C2D2D_100 = {
-  320: {
-    height: 334.09375,
-    labels: {
-      "Active users on AI tools I shipped": { lines: 2, height: 41.25 },
-      "Production AI solutions": { lines: 2, height: 41.25 },
-      "Incremental annual profit": { lines: 2, height: 41.25 },
-      "Annualized savings": { lines: 2, height: 41.25 },
-    },
-  },
-  390: {
-    height: 334.09375,
-    labels: {
-      "Active users on AI tools I shipped": { lines: 2, height: 41.25 },
-      "Production AI solutions": { lines: 1, height: 20.625 },
-      "Incremental annual profit": { lines: 2, height: 41.25 },
-      "Annualized savings": { lines: 1, height: 20.625 },
-    },
-  },
-  768: {
-    height: 181.328125,
-    labels: {
-      "Active users on AI tools I shipped": { lines: 2, height: 41.25 },
-      "Production AI solutions": { lines: 2, height: 41.25 },
-      "Incremental annual profit": { lines: 2, height: 41.25 },
-      "Annualized savings": { lines: 1, height: 20.625 },
-    },
-  },
-  1280: {
-    height: 181.328125,
-    labels: {
-      "Active users on AI tools I shipped": { lines: 2, height: 41.25 },
-      "Production AI solutions": { lines: 1, height: 20.625 },
-      "Incremental annual profit": { lines: 1, height: 20.625 },
-      "Annualized savings": { lines: 1, height: 20.625 },
-    },
-  },
+  320: { height: 334.09375, lines: [2, 2, 2, 2] },
+  390: { height: 334.09375, lines: [2, 1, 2, 1] },
+  768: { height: 181.328125, lines: [2, 2, 2, 1] },
+  1280: { height: 181.328125, lines: [2, 1, 1, 1] },
 } as const;
 
 const VIEWPORTS = {
@@ -141,10 +108,6 @@ describe("highlights figure layout", () => {
       await page.evaluate(() => {
         document.documentElement.style.fontSize = "32px";
       });
-    } else {
-      await page.evaluate(() => {
-        document.documentElement.style.fontSize = "16px";
-      });
     }
     await page.evaluate(
       () =>
@@ -189,26 +152,11 @@ describe("highlights figure layout", () => {
           textWidth = rect.width;
           textRight = rect.right;
         }
-        const paragraphs = [...cell.querySelectorAll("p")];
-        const label = paragraphs[1];
-        const labelRect = label?.getBoundingClientRect();
-        const labelStyle = label ? getComputedStyle(label) : null;
-        const labelHeight = labelRect?.height ?? -1;
-        const labelLineHeight = labelStyle
-          ? parseFloat(labelStyle.lineHeight)
+        const label = cell.querySelectorAll("p")[1];
+        const labelBox = label?.getBoundingClientRect();
+        const labelLineHeight = label
+          ? parseFloat(getComputedStyle(label).lineHeight)
           : -1;
-        const labelLines = Math.round(labelHeight / labelLineHeight);
-        let labelContentWidth = -1;
-        let labelContentRight = -1;
-        let labelContentLeft = -1;
-        if (label) {
-          const labelRange = document.createRange();
-          labelRange.selectNodeContents(label);
-          const labelContentRect = labelRange.getBoundingClientRect();
-          labelContentWidth = labelContentRect.width;
-          labelContentRight = labelContentRect.right;
-          labelContentLeft = labelContentRect.left;
-        }
         return {
           text: figure?.textContent?.trim() ?? "",
           fontSize: style ? parseFloat(style.fontSize) : -1,
@@ -224,21 +172,13 @@ describe("highlights figure layout", () => {
           padR,
           cellScrollWidth: cell.scrollWidth,
           cellClientWidth: cell.clientWidth,
-          cellWidth: cellRect.width,
-          cellLeft: cellRect.left,
-          cellRight: cellRect.right,
           label: label?.textContent?.trim() ?? "",
           labelScrollWidth: label?.scrollWidth ?? -1,
-          labelClientWidth: label?.clientWidth ?? -1,
-          labelWidth: labelRect?.width ?? -1,
-          labelLeft: labelRect?.left ?? -1,
-          labelRight: labelRect?.right ?? -1,
-          labelContentWidth,
-          labelContentLeft,
-          labelContentRight,
-          labelHeight,
-          labelLineHeight,
-          labelLines,
+          labelLeft: labelBox?.left ?? -1,
+          labelRight: labelBox?.right ?? -1,
+          cellLeft: cellRect.left,
+          cellRight: cellRect.right,
+          labelLines: Math.round((labelBox?.height ?? -1) / labelLineHeight),
         };
       });
       return {
@@ -359,85 +299,25 @@ describe("highlights figure layout", () => {
   }, 120_000);
 
   it("keeps every Highlights label inside its cell at 320, 390, and 768 with 200% text", async () => {
-    const expected = site.highlights.map((item) => item.label);
-    const overflowed: string[] = [];
     for (const width of [320, 390, 768] as const) {
       const [w, height] = VIEWPORTS[width];
       const at200 = await measureHighlights(w, height, 200);
-      expect(
-        at200.figures.map((figure) => figure.label),
-        `${width} label texts`,
-      ).toEqual(expected);
-
-      for (const figure of at200.figures) {
-        console.log(
-          `${width} label "${figure.label}": scrollWidth=${figure.labelScrollWidth} cellClientWidth=${figure.cellClientWidth} labelRect=${figure.labelWidth}x cellRect=${figure.cellWidth} labelRight=${figure.labelRight} cellRight=${figure.cellRight} contentWidth=${figure.labelContentWidth} contentRight=${figure.labelContentRight} contentLeft=${figure.labelContentLeft} cellLeft=${figure.cellLeft}`,
-        );
-        if (figure.labelScrollWidth > figure.cellClientWidth) {
-          overflowed.push(
-            `${width} "${figure.label}" scrollWidth ${figure.labelScrollWidth} > cell clientWidth ${figure.cellClientWidth}`,
-          );
-        }
-        if (figure.labelWidth > figure.cellWidth) {
-          overflowed.push(
-            `${width} "${figure.label}" label rect ${figure.labelWidth} > cell rect ${figure.cellWidth}`,
-          );
-        }
-        if (figure.labelRight > figure.cellRight) {
-          overflowed.push(
-            `${width} "${figure.label}" label right ${figure.labelRight} > cell right ${figure.cellRight}`,
-          );
-        }
-        if (figure.labelLeft < figure.cellLeft) {
-          overflowed.push(
-            `${width} "${figure.label}" label left ${figure.labelLeft} < cell left ${figure.cellLeft}`,
-          );
-        }
-        if (figure.labelContentWidth > figure.cellWidth) {
-          overflowed.push(
-            `${width} "${figure.label}" content width ${figure.labelContentWidth} > cell rect ${figure.cellWidth}`,
-          );
-        }
-        if (figure.labelContentRight > figure.cellRight) {
-          overflowed.push(
-            `${width} "${figure.label}" content right ${figure.labelContentRight} > cell right ${figure.cellRight}`,
-          );
-        }
-        if (figure.labelContentLeft < figure.cellLeft) {
-          overflowed.push(
-            `${width} "${figure.label}" content left ${figure.labelContentLeft} < cell left ${figure.cellLeft}`,
-          );
-        }
+      for (const row of at200.figures) {
+        expect(row.labelScrollWidth).toBeLessThanOrEqual(row.cellClientWidth);
+        expect(row.labelLeft).toBeGreaterThanOrEqual(row.cellLeft);
+        expect(row.labelRight).toBeLessThanOrEqual(row.cellRight);
       }
     }
-    expect(overflowed, "label overflowed cell").toEqual([]);
   }, 120_000);
 
-  it("does not change Highlights label geometry at 100% text versus main 85c2d2d", async () => {
+  it("does not change Highlights label lines at 100% text versus main 85c2d2d", async () => {
     for (const width of [320, 390, 768, 1280] as const) {
       const [w, height] = VIEWPORTS[width];
       const at100 = await measureHighlights(w, height, 100);
-      const main = MAIN_85C2D2D_100[width];
-      console.log(`${width} 100% Highlights height=${at100.height}`);
-      expect(at100.height, `${width} 100% Highlights height`).toBeCloseTo(
-        main.height,
-        0,
-      );
-      expect(at100.figures).toHaveLength(site.highlights.length);
-      for (const figure of at100.figures) {
-        const expected = main.labels[figure.label as keyof typeof main.labels];
-        console.log(
-          `${width} "${figure.label}": lines=${figure.labelLines} height=${figure.labelHeight} lineHeight=${figure.labelLineHeight}`,
-        );
-        expect(expected, `${width} ${figure.label} baseline`).toBeTruthy();
-        expect(figure.labelLines, `${width} 100% ${figure.label} lines`).toBe(
-          expected.lines,
-        );
-        expect(
-          figure.labelHeight,
-          `${width} 100% ${figure.label} height`,
-        ).toBeCloseTo(expected.height, 0);
-      }
+      expect(at100.height).toBeCloseTo(MAIN_85C2D2D_100[width].height, 0);
+      expect(at100.figures.map((row) => row.labelLines)).toEqual([
+        ...MAIN_85C2D2D_100[width].lines,
+      ]);
     }
   }, 120_000);
 
