@@ -1,25 +1,9 @@
+import { ArrowUpRight } from "lucide-react";
 import { CopyEmail } from "@/components/copy-email";
 import { Section, SectionHeading } from "@/components/section";
 import { site } from "@/content/site";
 import { withBasePath } from "@/lib/base-path";
 import { tap, textAction } from "@/lib/ui";
-
-function ContactRow({
-  label,
-  children,
-}: {
-  label: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <div className="grid gap-1 px-5 py-3 sm:grid-cols-[6.5rem_1fr] sm:items-center sm:gap-4 sm:px-6">
-      <dt className="text-muted-foreground font-mono-label">{label}</dt>
-      <dd className="flex min-w-0 flex-wrap items-center gap-x-4">
-        {children}
-      </dd>
-    </div>
-  );
-}
 
 export function Contact() {
   const { email, linkedin, resumeHref, resumeFilename, calendar } =
@@ -33,8 +17,8 @@ export function Contact() {
             {site.contact.intro}
           </p>
         </SectionHeading>
-        <dl className="border-border bg-card divide-border divide-y border">
-          <ContactRow label="Email">
+        <ul className="border-border divide-border divide-y border-y">
+          <li className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1 py-3">
             <a
               href={`mailto:${email}`}
               className={`${tap} min-w-0 font-medium break-all`}
@@ -42,47 +26,55 @@ export function Contact() {
               {email}
             </a>
             <CopyEmail email={email} />
-          </ContactRow>
-          <ContactRow label="LinkedIn">
+          </li>
+          <li className="py-3">
             <a
               href={linkedin}
               target="_blank"
-              rel="noreferrer"
-              className={`${tap} min-w-0 font-medium break-all`}
+              rel="noopener noreferrer"
+              className={`${tap} min-w-0 gap-1 font-medium break-all`}
             >
               {linkedin.replace(/^https?:\/\/(?:www\.)?|\/$/g, "")}
+              <ArrowUpRight
+                className="size-[16px] shrink-0"
+                aria-hidden="true"
+              />
             </a>
-          </ContactRow>
-          <ContactRow label="Speaking">
+          </li>
+          <li className="py-3">
             <a
               href={`mailto:${email}?subject=Speaking%20invitation`}
               className={textAction}
             >
               Invite me to speak
             </a>
-          </ContactRow>
-          <ContactRow label="Résumé">
+          </li>
+          <li className="py-3">
             <a
               href={withBasePath(resumeHref)}
               download={resumeFilename}
-              className={`${tap} text-muted-foreground text-[0.9375rem]`}
+              className={textAction}
             >
               Résumé
             </a>
-          </ContactRow>
+          </li>
           {calendar ? (
-            <ContactRow label="Calendar">
+            <li className="py-3">
               <a
                 href={calendar}
                 target="_blank"
-                rel="noreferrer"
+                rel="noopener noreferrer"
                 className={textAction}
               >
                 Book a call
+                <ArrowUpRight
+                  className="size-[16px] shrink-0"
+                  aria-hidden="true"
+                />
               </a>
-            </ContactRow>
+            </li>
           ) : null}
-        </dl>
+        </ul>
       </div>
     </Section>
   );

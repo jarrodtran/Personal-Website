@@ -23,7 +23,6 @@ const SKIP_KEYS = new Set([
   "href",
   "src",
   "email",
-  "phone",
   "linkedin",
   "github",
   "resumeHref",
