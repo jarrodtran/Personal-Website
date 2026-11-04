@@ -38,3 +38,6 @@ next-env.d.ts
 
 # lighthouse ci
 .lighthouseci/
+
+# test scratch dirs
+out.tap-empty/
