@@ -4,13 +4,11 @@ export function Section({
   id,
   children,
   className,
-  contained = true,
   compact = false,
 }: {
   id: string;
   children: React.ReactNode;
   className?: string;
-  contained?: boolean;
   compact?: boolean;
 }) {
   return (
@@ -22,11 +20,7 @@ export function Section({
         className,
       )}
     >
-      {contained ? (
-        <div className="mx-auto max-w-5xl px-5 sm:px-8">{children}</div>
-      ) : (
-        children
-      )}
+      <div className="mx-auto max-w-5xl px-5 sm:px-8">{children}</div>
     </section>
   );
 }
