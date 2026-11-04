@@ -14,7 +14,7 @@ export function Highlights() {
           <p className="tabular font-display text-[min(1.875rem,29cqi)] leading-[1.2] sm:text-[min(2.15rem,29cqi)]">
             {item.value}
           </p>
-          <p className="text-muted-foreground mt-2 text-[0.9375rem] leading-snug">
+          <p className="text-muted-foreground mt-2 text-[0.9375rem] leading-snug wrap-anywhere">
             {item.label}
           </p>
           {item.source ? (

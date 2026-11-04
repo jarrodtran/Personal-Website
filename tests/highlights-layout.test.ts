@@ -5,6 +5,10 @@ import { extname, join, normalize } from "node:path";
 import { chromium } from "playwright-core";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { site } from "@/content/site";
+import {
+  countDifferingPixels,
+  readPngRgba,
+} from "../scripts/highlights-screenshots.mjs";
 
 const types: Record<string, string> = {
   ".css": "text/css",
@@ -144,6 +148,20 @@ describe("highlights figure layout", () => {
           textWidth = rect.width;
           textRight = rect.right;
         }
+        const paragraphs = [...cell.querySelectorAll("p")];
+        const label = paragraphs[1];
+        const labelRect = label?.getBoundingClientRect();
+        let labelContentWidth = -1;
+        let labelContentRight = -1;
+        let labelContentLeft = -1;
+        if (label) {
+          const labelRange = document.createRange();
+          labelRange.selectNodeContents(label);
+          const labelContentRect = labelRange.getBoundingClientRect();
+          labelContentWidth = labelContentRect.width;
+          labelContentRight = labelContentRect.right;
+          labelContentLeft = labelContentRect.left;
+        }
         return {
           text: figure?.textContent?.trim() ?? "",
           fontSize: style ? parseFloat(style.fontSize) : -1,
@@ -159,6 +177,18 @@ describe("highlights figure layout", () => {
           padR,
           cellScrollWidth: cell.scrollWidth,
           cellClientWidth: cell.clientWidth,
+          cellWidth: cellRect.width,
+          cellLeft: cellRect.left,
+          cellRight: cellRect.right,
+          label: label?.textContent?.trim() ?? "",
+          labelScrollWidth: label?.scrollWidth ?? -1,
+          labelClientWidth: label?.clientWidth ?? -1,
+          labelWidth: labelRect?.width ?? -1,
+          labelLeft: labelRect?.left ?? -1,
+          labelRight: labelRect?.right ?? -1,
+          labelContentWidth,
+          labelContentLeft,
+          labelContentRight,
         };
       });
       return {
@@ -276,6 +306,81 @@ describe("highlights figure layout", () => {
       console.log(`${width} least spare=${leastSpare}px`);
     }
     expect(tight, "200% spare under 8px").toEqual([]);
+  }, 120_000);
+
+  it("keeps every Highlights label inside its cell at 320, 390, and 768 with 200% text", async () => {
+    const expected = site.highlights.map((item) => item.label);
+    const overflowed: string[] = [];
+    for (const width of [320, 390, 768] as const) {
+      const [w, height] = VIEWPORTS[width];
+      const at200 = await measureHighlights(w, height, 200);
+      expect(
+        at200.figures.map((figure) => figure.label),
+        `${width} label texts`,
+      ).toEqual(expected);
+
+      for (const figure of at200.figures) {
+        console.log(
+          `${width} label "${figure.label}": scrollWidth=${figure.labelScrollWidth} cellClientWidth=${figure.cellClientWidth} labelRect=${figure.labelWidth}x cellRect=${figure.cellWidth} labelRight=${figure.labelRight} cellRight=${figure.cellRight} contentWidth=${figure.labelContentWidth} contentRight=${figure.labelContentRight} contentLeft=${figure.labelContentLeft} cellLeft=${figure.cellLeft}`,
+        );
+        if (figure.labelScrollWidth > figure.cellClientWidth) {
+          overflowed.push(
+            `${width} "${figure.label}" scrollWidth ${figure.labelScrollWidth} > cell clientWidth ${figure.cellClientWidth}`,
+          );
+        }
+        if (figure.labelWidth > figure.cellWidth) {
+          overflowed.push(
+            `${width} "${figure.label}" label rect ${figure.labelWidth} > cell rect ${figure.cellWidth}`,
+          );
+        }
+        if (figure.labelRight > figure.cellRight) {
+          overflowed.push(
+            `${width} "${figure.label}" label right ${figure.labelRight} > cell right ${figure.cellRight}`,
+          );
+        }
+        if (figure.labelLeft < figure.cellLeft) {
+          overflowed.push(
+            `${width} "${figure.label}" label left ${figure.labelLeft} < cell left ${figure.cellLeft}`,
+          );
+        }
+        if (figure.labelContentWidth > figure.cellWidth) {
+          overflowed.push(
+            `${width} "${figure.label}" content width ${figure.labelContentWidth} > cell rect ${figure.cellWidth}`,
+          );
+        }
+        if (figure.labelContentRight > figure.cellRight) {
+          overflowed.push(
+            `${width} "${figure.label}" content right ${figure.labelContentRight} > cell right ${figure.cellRight}`,
+          );
+        }
+        if (figure.labelContentLeft < figure.cellLeft) {
+          overflowed.push(
+            `${width} "${figure.label}" content left ${figure.labelContentLeft} < cell left ${figure.cellLeft}`,
+          );
+        }
+      }
+    }
+    expect(overflowed, "label overflowed cell").toEqual([]);
+  }, 120_000);
+
+  it("does not change Highlights pixels at 100% text versus main 85c2d2d", async () => {
+    for (const width of [320, 390, 768, 1280] as const) {
+      const [w, height] = VIEWPORTS[width];
+      const { browser, page } = await openHighlights(w, height, 100);
+      const png = await page
+        .locator('[aria-label="Impact highlights"]')
+        .screenshot({ type: "png" });
+      await browser.close();
+      const baseline = await readFile(
+        join("tests/fixtures/highlights-100", `${width}.png`),
+      );
+      const { differing } = countDifferingPixels(
+        readPngRgba(png),
+        readPngRgba(baseline),
+      );
+      console.log(`${width} 100% differing pixels=${differing}`);
+      expect(differing, `${width} 100% differing pixels`).toBe(0);
+    }
   }, 120_000);
 
   it("does not change Highlights at 100% text versus main 1c0847d", async () => {
