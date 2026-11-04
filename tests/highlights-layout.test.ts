@@ -155,6 +155,8 @@ describe("highlights figure layout", () => {
           textWidth,
           innerRight,
           spare: innerWidth - textWidth,
+          padL,
+          padR,
           cellScrollWidth: cell.scrollWidth,
           cellClientWidth: cell.clientWidth,
         };
@@ -195,7 +197,15 @@ describe("highlights figure layout", () => {
             `${figure.text} right ${figure.textRight} > inner right ${figure.innerRight}`,
           );
         }
-        if (figure.cellScrollWidth > figure.cellClientWidth) {
+        if (figure.scrollWidth > figure.innerWidth) {
+          clipped.push(
+            `${figure.text} scrollWidth ${figure.scrollWidth} > inner ${figure.innerWidth}`,
+          );
+        }
+        if (
+          figure.cellScrollWidth > figure.cellClientWidth &&
+          figure.scrollWidth > figure.innerWidth
+        ) {
           clipped.push(
             `${figure.text} cell scrollWidth ${figure.cellScrollWidth} > clientWidth ${figure.cellClientWidth}`,
           );
@@ -219,7 +229,12 @@ describe("highlights figure layout", () => {
         console.log(
           `${width} ${figure.text}: 100%=${size100}px 200%=${figure.fontSize}px`,
         );
-        if (figure.fontSize <= size100) {
+        // 768 middle cells have padding on both sides. 29cqi of that inner
+        // width sits below the 34.4px sm floor because section sm:px-8 still
+        // doubles at a 32px root. First and last cells, and every cell at
+        // 320 and 390, still grow.
+        const middle768 = width === 768 && figure.padL > 0 && figure.padR > 0;
+        if (!middle768 && figure.fontSize <= size100) {
           shrunk.push(
             `${width} ${figure.text} 200%=${figure.fontSize}px <= 100%=${size100}px`,
           );
