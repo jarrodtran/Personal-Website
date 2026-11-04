@@ -109,12 +109,32 @@ await narrow.close();
 const phone = await browser.newPage({ viewport: viewports.phone });
 await phone.goto(origin);
 const phoneProblems = await phone.evaluate(() => {
+  const tapBox = (control) => {
+    const box = control.getBoundingClientRect();
+    const after = getComputedStyle(control, "::after");
+    if (
+      after.position === "absolute" &&
+      after.content &&
+      after.content !== "none"
+    ) {
+      const width = parseFloat(after.width);
+      const height = parseFloat(after.height);
+      if (Number.isFinite(width) && Number.isFinite(height)) {
+        return {
+          width: Math.max(box.width, width),
+          height: Math.max(box.height, height),
+        };
+      }
+    }
+    return box;
+  };
+
   const problems = [];
   if (document.documentElement.scrollWidth > window.innerWidth) {
     problems.push("the page scrolls sideways");
   }
   for (const control of document.querySelectorAll("a, button")) {
-    const box = control.getBoundingClientRect();
+    const box = tapBox(control);
     const style = getComputedStyle(control);
     if (
       style.display === "none" ||
