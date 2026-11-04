@@ -522,4 +522,17 @@ describe("case study", () => {
     );
     expect(html).toMatch(new RegExp(`/work/${next!.slug}/?`));
   });
+
+  it("structures sections under h2 headings for screen reader navigation", () => {
+    const headings = [...html.matchAll(/<h2\b[^>]*>([\s\S]*?)<\/h2>/g)].map(
+      ([, text]) => textOf(text).trim(),
+    );
+    expect(headings).toEqual([
+      "Context",
+      "Constraints",
+      "Decisions",
+      "Outcome",
+      "My role",
+    ]);
+  });
 });
