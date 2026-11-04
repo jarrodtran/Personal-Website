@@ -36,19 +36,22 @@ if (!existsSync(join(process.cwd(), "out/index.html"))) {
 // both (highlights.tsx height unchanged through 95b1017).
 const MAIN_100 = {
   1280: {
-    height: 181.328125,
+    // Same border fix: not-last:border-b was still painting at sm+, so the one-row strip is 1px shorter.
+    height: 180.328125,
     fontSize: 34.4,
     lineHeight: 41.28,
     lines: [2, 1, 1, 1],
   },
   768: {
-    height: 181.328125,
+    // Same 1px drop as 1280: stray cell bottom borders are gone at sm+.
+    height: 180.328125,
     fontSize: 34.4,
     lineHeight: 41.28,
     lines: [2, 2, 2, 1],
   },
   390: {
-    height: 334.09375,
+    // Same 1px drop as 320: the stray bottom-left border is gone below 640.
+    height: 333.09375,
     fontSize: 30,
     lineHeight: 36,
     lines: [2, 1, 2, 1],

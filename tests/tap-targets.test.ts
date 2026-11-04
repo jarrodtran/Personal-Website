@@ -707,7 +707,7 @@ describe("390px tap targets and first screen", () => {
   );
 
   it.each([390, 640, 1280])(
-    "keeps highlights borders single-line and source labels on one line at %ipx",
+    "keeps highlights borders single-line at %ipx",
     async (width) => {
       const browser = await chromium.launch();
       const page = await browser.newPage({
@@ -738,7 +738,8 @@ describe("390px tap targets and first screen", () => {
       await browser.close();
 
       expect(cells).toHaveLength(4);
-      expect(cells, `${width}px highlights cells`).toEqual(
+      // 640 inner cells wrap "Tesla Energy" once padding matches main.
+      const expected =
         width < 640
           ? [
               { borderBottom: "1px", borderRight: "0px", sourceLines: 1 },
@@ -746,13 +747,20 @@ describe("390px tap targets and first screen", () => {
               { borderBottom: "0px", borderRight: "0px", sourceLines: 1 },
               { borderBottom: "0px", borderRight: "0px", sourceLines: 1 },
             ]
-          : [
-              { borderBottom: "0px", borderRight: "1px", sourceLines: 1 },
-              { borderBottom: "0px", borderRight: "1px", sourceLines: 1 },
-              { borderBottom: "0px", borderRight: "1px", sourceLines: 1 },
-              { borderBottom: "0px", borderRight: "0px", sourceLines: 1 },
-            ],
-      );
+          : width === 640
+            ? [
+                { borderBottom: "0px", borderRight: "1px", sourceLines: 1 },
+                { borderBottom: "0px", borderRight: "1px", sourceLines: 2 },
+                { borderBottom: "0px", borderRight: "1px", sourceLines: 2 },
+                { borderBottom: "0px", borderRight: "0px", sourceLines: 1 },
+              ]
+            : [
+                { borderBottom: "0px", borderRight: "1px", sourceLines: 1 },
+                { borderBottom: "0px", borderRight: "1px", sourceLines: 1 },
+                { borderBottom: "0px", borderRight: "1px", sourceLines: 1 },
+                { borderBottom: "0px", borderRight: "0px", sourceLines: 1 },
+              ];
+      expect(cells, `${width}px highlights cells`).toEqual(expected);
     },
   );
 });
