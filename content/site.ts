@@ -86,13 +86,11 @@ export interface SiteContent {
   experience: Employer[];
   selectedWork: SelectedWorkItem[];
   principles: { title: string; description: string }[];
-  capabilities: { group: string; items: string[] }[];
   sections: {
     experience: { title: string };
     work: { title: string };
     about: { title: string };
     approach: { title: string };
-    capabilities: { title: string };
     contact: { title: string };
   };
   knowsAbout: string[];
@@ -464,44 +462,6 @@ export const site: SiteContent = {
         "Add the feedback (and the automation) that makes the system better as it grows. I add AI where it clearly saves time.",
     },
   ],
-  capabilities: [
-    {
-      group: "Strategy & Product",
-      items: [
-        "Problem framing",
-        "Capital allocation",
-        "0→1 launches",
-        "New product introduction",
-        "Portfolio management",
-        "Geographic expansion",
-        "Business cases",
-        "Stage-gate design",
-      ],
-    },
-    {
-      group: "AI & Analytics",
-      items: [
-        "AI product strategy",
-        "AI enablement",
-        "Forward-deployed engineering",
-        "Use-case prioritization",
-        "Decision models",
-      ],
-    },
-    {
-      group: "Leadership & Influence",
-      items: [
-        "Hiring and leading teams",
-        "Executive reporting",
-        "Workforce planning",
-        "OKRs & QBRs",
-      ],
-    },
-    {
-      group: "Tools & Platforms",
-      items: ["Python", "Tableau", "Excel", "SQL"],
-    },
-  ],
   sections: {
     about: {
       title: "About",
@@ -514,9 +474,6 @@ export const site: SiteContent = {
     },
     approach: {
       title: "How I work",
-    },
-    capabilities: {
-      title: "Capabilities",
     },
     contact: {
       title: "Looking for product, strategy, or AI roles.",

@@ -1,10 +1,9 @@
-import { readdirSync, readFileSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
 import path from "node:path";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 import { SectionHeading } from "@/components/section";
 import { About } from "@/components/sections/about";
-import { Capabilities } from "@/components/sections/capabilities";
 import { CaseStudyBody } from "@/components/sections/case-study";
 import { Contact } from "@/components/sections/contact";
 import { Experience } from "@/components/sections/experience";
@@ -297,7 +296,6 @@ describe("section headings", () => {
       renderToStaticMarkup(<Experience />),
       renderToStaticMarkup(<SelectedWork />),
       renderToStaticMarkup(<HowIWork />),
-      renderToStaticMarkup(<Capabilities />),
       renderToStaticMarkup(<Contact />),
     ].join("\n");
     const text = textOf(html);
@@ -313,6 +311,29 @@ describe("section headings", () => {
     expect(heading).toMatch(/<h2\b[^>]*>Experience<\/h2>/);
     expect(heading).not.toContain("<p");
     expect(heading.match(/<h2\b/g) ?? []).toHaveLength(1);
+  });
+
+  it("has no Capabilities section and still renders How I work", () => {
+    const page = readFileSync(path.resolve(__dirname, "../app/page.tsx"), "utf8");
+    expect(page).not.toMatch(/\bCapabilities\b/);
+    expect(page).not.toMatch(/sections\/capabilities/);
+    expect(page).toContain("HowIWork");
+    expect(page).toContain("@/components/sections/how-i-work");
+    expect(page).toContain("<HowIWork");
+
+    const html = renderToStaticMarkup(<HowIWork />);
+    expect(headings(html, "h2")).toEqual([site.sections.approach.title]);
+    expect(html).toContain('id="approach"');
+    expect(textOf(html)).toContain("How I work");
+    for (const principle of site.principles) {
+      expect(textOf(html)).toContain(principle.title);
+    }
+
+    expect(
+      existsSync(
+        path.resolve(__dirname, "../components/sections/capabilities.tsx"),
+      ),
+    ).toBe(false);
   });
 
   it("gives every section heading the shared spacing from one place", () => {
