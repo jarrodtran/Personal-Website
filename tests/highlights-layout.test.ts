@@ -54,7 +54,8 @@ const MAIN_100 = {
     lines: [2, 1, 2, 1],
   },
   320: {
-    height: 334.09375,
+    // The PR #85 border fix removes the stray bottom border under the bottom-left cell below 640 wide, so Highlights is 1px shorter (approved by Product Designer).
+    height: 333.09375,
     fontSize: 30,
     lineHeight: 36,
     lines: [2, 2, 2, 2],
