@@ -21,12 +21,7 @@ jobs:
           node-version: 22
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      # Advisory review on every PR. Warn-only for now so a fresh advisory
-      # does not pin every merge; make it blocking once the source-map-js
-      # override (branch cursor/source-map-js-override) lands and the
-      # remaining next@16.3.1 advisories clear via the 16.4.4 bump.
       - run: pnpm audit --prod --audit-level high
-        continue-on-error: true
       - run: npx playwright install --with-deps chromium
       - run: pnpm lint
       - run: pnpm check
