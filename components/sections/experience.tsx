@@ -35,7 +35,7 @@ export function Experience() {
                     </p>
                   </div>
                   {role.summary ? (
-                    <p className="text-muted-foreground measure mt-3 text-lg leading-relaxed">
+                    <p className="text-muted-foreground measure mt-3">
                       {role.summary}
                     </p>
                   ) : null}
@@ -43,7 +43,7 @@ export function Experience() {
                     {role.bullets.map((bullet) => (
                       <li
                         key={bullet.text}
-                        className="text-muted-foreground text-lg leading-relaxed"
+                        className="text-muted-foreground"
                       >
                         <MetricText text={bullet.text} metric={bullet.metric} />
                       </li>

@@ -55,13 +55,13 @@ export function SelectedWork() {
                   </Link>
                 </h3>
                 <div className="mt-4 space-y-3">
-                  <p className="text-muted-foreground text-lg leading-relaxed">
+                  <p className="text-muted-foreground">
                     {item.problem}
                   </p>
-                  <p className="text-muted-foreground text-lg leading-relaxed">
+                  <p className="text-muted-foreground">
                     {item.contribution}
                   </p>
-                  <p className="text-muted-foreground text-lg leading-relaxed">
+                  <p className="text-muted-foreground">
                     {item.outcome}
                   </p>
                 </div>

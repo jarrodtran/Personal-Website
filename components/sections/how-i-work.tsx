@@ -15,7 +15,7 @@ export function HowIWork() {
             <h3 className="font-display text-[1.5rem] leading-tight tracking-tight text-balance">
               {principle.title}
             </h3>
-            <p className="text-muted-foreground measure text-lg leading-relaxed">
+            <p className="text-muted-foreground measure">
               {principle.description}
             </p>
           </li>

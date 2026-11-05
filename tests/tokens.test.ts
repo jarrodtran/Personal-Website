@@ -83,10 +83,18 @@ describe("design tokens on :root", () => {
       document.body.appendChild(probe);
       const probeStyle = getComputedStyle(probe);
       const bodyStyle = getComputedStyle(document.body);
+      const prose = document.querySelector("main p.measure");
+      if (!(prose instanceof HTMLElement)) {
+        throw new Error("home page must expose a measured prose paragraph");
+      }
+      const proseStyle = getComputedStyle(prose);
       return {
         probeWidth: probeStyle.width,
         fontSize: bodyStyle.fontSize,
         lineHeight: bodyStyle.lineHeight,
+        proseWidth: proseStyle.maxWidth,
+        proseFontSize: proseStyle.fontSize,
+        proseLineHeight: proseStyle.lineHeight,
       };
     });
 
@@ -95,5 +103,8 @@ describe("design tokens on :root", () => {
     expect(parseFloat(metrics.probeWidth)).toBe(640);
     expect(metrics.fontSize).toBe("17px");
     expect(parseFloat(metrics.lineHeight)).toBeCloseTo(28.05, 2);
+    expect(parseFloat(metrics.proseWidth)).toBe(640);
+    expect(metrics.proseFontSize).toBe("17px");
+    expect(parseFloat(metrics.proseLineHeight)).toBeCloseTo(28.05, 2);
   });
 });
