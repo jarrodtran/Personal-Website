@@ -27,7 +27,7 @@ function SubscribeLink({
       target="_blank"
       rel="noopener noreferrer"
     >
-      Subscribe on Substack
+      <span className="min-w-0 flex-1">Subscribe on Substack</span>
       <ArrowUpRight className="size-[16px] shrink-0" aria-hidden="true" />
     </a>
   );
@@ -44,12 +44,15 @@ export function Writing({ posts }: { posts: WritingPost[] }) {
     <Section id="writing" compact={empty}>
       <SectionHeading title={site.substack.name} />
       {empty ? (
-        <div className="flex max-w-3xl flex-col gap-5 sm:flex-row sm:flex-wrap sm:items-center sm:gap-6">
-          <p className="text-muted-foreground measure text-lg leading-relaxed">
+        <div className="@container flex max-w-3xl flex-col gap-5 sm:flex-row sm:items-center sm:gap-6">
+          <p className="text-muted-foreground measure min-w-0 text-lg leading-relaxed">
             {EMPTY_COPY}
           </p>
           {canSubscribe ? (
-            <SubscribeLink href={subscribe} className="min-w-0 max-w-full" />
+            <SubscribeLink
+              href={subscribe}
+              className="max-w-full min-w-0 @[28rem]:shrink-0"
+            />
           ) : null}
         </div>
       ) : (
