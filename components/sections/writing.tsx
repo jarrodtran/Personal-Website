@@ -34,7 +34,7 @@ function SubscribeLink({
 }
 
 export function Writing({ posts }: { posts: WritingPost[] }) {
-  const latest = posts.slice(0, 5);
+  const latest = posts.slice(0, 3);
   const subscribe = writingSubscribeUrl(site.substack);
   const canSubscribe =
     Boolean(subscribe) && isOwnWritingUrl(subscribe, site.substack.url);
