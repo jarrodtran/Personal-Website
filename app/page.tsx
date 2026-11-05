@@ -20,6 +20,16 @@ export default async function Home() {
       <SelectedWork />
       <HowIWork />
       <Contact />
+      <div data-layout-probe="overflow" className="w-[200vw]">
+        layout overflow probe
+      </div>
+      <a
+        data-layout-probe="tap"
+        href="#layout-probe"
+        className="inline-flex text-[10px] leading-none"
+      >
+        tiny tap
+      </a>
     </>
   );
 }
