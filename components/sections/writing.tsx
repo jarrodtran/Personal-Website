@@ -1,6 +1,7 @@
 import { ArrowUpRight } from "lucide-react";
 import { Section, SectionHeading } from "@/components/section";
 import { site } from "@/content/site";
+import { cn } from "@/lib/cn";
 import { btnGhost, tap } from "@/lib/ui";
 import {
   formatPostDate,
@@ -12,15 +13,21 @@ import {
 const EMPTY_COPY =
   "First post coming soon. Subscribe to get it by email.";
 
-function SubscribeLink({ href }: { href: string }) {
+function SubscribeLink({
+  href,
+  className,
+}: {
+  href: string;
+  className?: string;
+}) {
   return (
     <a
       href={href}
-      className={`${btnGhost} mt-6 w-fit`}
+      className={cn(btnGhost, "w-fit max-w-full flex-wrap", className)}
       target="_blank"
       rel="noopener noreferrer"
     >
-      Subscribe on Substack
+      <span className="min-w-0 flex-1">Subscribe on Substack</span>
       <ArrowUpRight className="size-[16px] shrink-0" aria-hidden="true" />
     </a>
   );
@@ -31,16 +38,25 @@ export function Writing({ posts }: { posts: WritingPost[] }) {
   const subscribe = writingSubscribeUrl(site.substack);
   const canSubscribe =
     Boolean(subscribe) && isOwnWritingUrl(subscribe, site.substack.url);
+  const empty = latest.length === 0;
 
   return (
-    <Section id="writing">
+    <Section id="writing" compact={empty}>
       <SectionHeading title={site.substack.name} />
-      <div className="max-w-2xl">
-        {latest.length === 0 ? (
-          <p className="text-muted-foreground measure text-lg leading-relaxed">
+      {empty ? (
+        <div className="@container flex max-w-3xl flex-col gap-5 sm:flex-row sm:items-center sm:gap-6">
+          <p className="text-muted-foreground measure min-w-0 text-lg leading-relaxed">
             {EMPTY_COPY}
           </p>
-        ) : (
+          {canSubscribe ? (
+            <SubscribeLink
+              href={subscribe}
+              className="max-w-full min-w-0 @[28rem]:shrink-0"
+            />
+          ) : null}
+        </div>
+      ) : (
+        <div className="max-w-2xl">
           <ol className="border-border border-t">
             {latest.map((post) => {
               const dateLabel = post.date ? formatPostDate(post.date) : "";
@@ -76,9 +92,11 @@ export function Writing({ posts }: { posts: WritingPost[] }) {
               );
             })}
           </ol>
-        )}
-        {canSubscribe ? <SubscribeLink href={subscribe} /> : null}
-      </div>
+          {canSubscribe ? (
+            <SubscribeLink href={subscribe} className="mt-6" />
+          ) : null}
+        </div>
+      )}
     </Section>
   );
 }

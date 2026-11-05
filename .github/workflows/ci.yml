@@ -34,6 +34,7 @@ jobs:
       - run: pnpm test:writing-output
       - run: pnpm test:images
       - run: pnpm test:theme
+      - run: pnpm test:tokens
       - run: pnpm a11y
       - run: pnpm size
       - run: pnpm build
