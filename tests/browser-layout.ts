@@ -55,18 +55,24 @@ export function requireOutBuild(message: string): string {
 
 export function listTopLevelPageRoutes(outDir: string): string[] {
   const routes: string[] = [];
-  for (const name of readdirSync(outDir)) {
-    if (SKIP_ENTRY.test(name)) continue;
-    const full = join(outDir, name);
-    const stat = statSync(full);
-    if (stat.isFile() && name.endsWith(".html")) {
-      routes.push(name === "index.html" ? "/" : `/${name}`);
-      continue;
-    }
-    if (stat.isDirectory() && existsSync(join(full, "index.html"))) {
-      routes.push(`/${name}/`);
+
+  function visit(dir: string, urlPath: string) {
+    for (const name of readdirSync(dir)) {
+      if (name === "404.html" || name === "404") continue;
+      if (SKIP_ENTRY.test(name)) continue;
+      const full = join(dir, name);
+      const stat = statSync(full);
+      if (stat.isDirectory()) {
+        visit(full, `${urlPath}${name}/`);
+        continue;
+      }
+      if (name === "index.html") {
+        routes.push(urlPath === "" ? "/" : `/${urlPath}`);
+      }
     }
   }
+
+  visit(outDir, "");
   return routes.sort();
 }
 

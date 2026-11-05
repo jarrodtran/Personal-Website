@@ -33,7 +33,7 @@ afterEach(() => {
 });
 
 describe("listTopLevelPageRoutes", () => {
-  it("derives routes from top-level html and index directories, not a hard list", () => {
+  it("walks every index.html under out/ and skips 404 and _next", () => {
     const outDir = fakeOut({
       "index.html": "<html></html>",
       "404.html": "<html></html>",
@@ -47,8 +47,8 @@ describe("listTopLevelPageRoutes", () => {
 
     expect(listTopLevelPageRoutes(outDir)).toEqual([
       "/",
-      "/404.html",
       "/work/",
+      "/work/nested/",
       "/writing/",
     ]);
   });
