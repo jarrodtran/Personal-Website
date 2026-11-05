@@ -8,7 +8,6 @@ export function buildLlmsTxt(): string {
     selectedWork,
     experience,
     principles,
-    capabilities,
     contact,
   } = site;
 
@@ -50,12 +49,6 @@ export function buildLlmsTxt(): string {
     ...principles.map(
       (principle, index) =>
         `${index + 1}. **${principle.title}**: ${principle.description}`,
-    ),
-    "",
-    `## ${site.sections.capabilities.title}`,
-    "",
-    ...capabilities.map(
-      (group) => `- **${group.group}**: ${group.items.join(", ")}`,
     ),
     "",
     "## Writing",
