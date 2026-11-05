@@ -2,7 +2,7 @@ import { execFileSync, execSync } from "node:child_process";
 import { resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
-export const ALLOWLIST = ["jarrodtran"];
+export const ALLOWLIST = ["jarrodtran", "cursor[bot]"];
 
 const GATE_NAMES = ["design", "qa", "review"];
 const GATE_LINE =
