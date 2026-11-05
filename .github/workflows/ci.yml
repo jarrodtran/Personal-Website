@@ -32,6 +32,7 @@ jobs:
       - run: pnpm test:titles
       - run: pnpm test:tap
       - run: pnpm test:writing-output
+      - run: pnpm test:height
       - run: pnpm test:images
       - run: pnpm test:theme
       - run: pnpm test:tokens

@@ -52,7 +52,7 @@ const MAIN_HOME_SCROLL_HEIGHT_200 = {
   1280: 15011,
 } as const;
 
-/** Product Lead height ruling for #143 (main baselines below). */
+/** Product Lead height ruling for #143 (main baselines below). rule:home-height */
 const PRODUCT_LEAD_TALLER_CAP_PX = 700;
 
 // Prior head 4f2b3d9 only compared #top height at 1280 and #content scroll at
