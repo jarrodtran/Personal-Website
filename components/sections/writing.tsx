@@ -9,13 +9,14 @@ import {
   type WritingPost,
 } from "@/lib/writing";
 
-const EMPTY_COPY = "First post coming soon. Subscribe to get it by email.";
+const EMPTY_COPY =
+  "First post coming soon. Subscribe to get it by email.";
 
 function SubscribeLink({ href }: { href: string }) {
   return (
     <a
       href={href}
-      className={`${btnGhost} mt-6 w-fit max-w-full flex-wrap`}
+      className={`${btnGhost} mt-6 w-fit`}
       target="_blank"
       rel="noopener noreferrer"
     >
