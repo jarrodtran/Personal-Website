@@ -32,22 +32,23 @@ if (!existsSync(join(process.cwd(), "out/index.html"))) {
 }
 
 // Figure font-size and line-height measured on main 1c0847d. Label line
-// counts measured on main 85c2d2d. 100% Highlights height is the same on
-// both (highlights.tsx height unchanged through 95b1017).
+// counts and 100% strip height remeasured with writing-first home prose wrapper (#143).
 const MAIN_100 = {
   1280: {
-    // Same border fix: not-last:border-b was still painting at sm+, so the one-row strip is 1px shorter.
-    height: 180.328125,
+    height: 200.953125,
     fontSize: 34.4,
+    figureFontSizes: [34.4, 27.55, 27.55, 34.4] as const,
+    figureLineHeights: [41.28, 33.06, 33.06, 41.28] as const,
     lineHeight: 41.28,
-    lines: [2, 1, 1, 1],
+    lines: [3, 2, 2, 2],
   },
   768: {
-    // Same 1px drop as 1280: stray cell bottom borders are gone at sm+.
-    height: 180.328125,
+    height: 200.953125,
     fontSize: 34.4,
+    figureFontSizes: [34.4, 27.55, 27.55, 34.4] as const,
+    figureLineHeights: [41.28, 33.06, 33.06, 41.28] as const,
     lineHeight: 41.28,
-    lines: [2, 2, 2, 1],
+    lines: [3, 2, 2, 2],
   },
   390: {
     // Same 1px drop as 320: the stray bottom-left border is gone below 640.
@@ -338,19 +339,27 @@ describe("highlights figure layout", () => {
       expect(at100.figures.map((row) => row.labelLines)).toEqual([
         ...main.lines,
       ]);
-      for (const figure of at100.figures) {
+      for (const [index, figure] of at100.figures.entries()) {
         const at200Figure =
           at200.figures.find((row) => row.text === figure.text) ?? figure;
         console.log(
           `${width} ${figure.text}: 100%=${figure.fontSize}px spare100=${figure.spare}px 200%=${at200Figure.fontSize}px spare200=${at200Figure.spare}px`,
         );
+        const expectedFontSize =
+          "figureFontSizes" in main && main.figureFontSizes
+            ? main.figureFontSizes[index]
+            : main.fontSize;
         expect(figure.fontSize, `${width} 100% ${figure.text} font-size`).toBe(
-          main.fontSize,
+          expectedFontSize,
         );
         expect(
           figure.lineHeight,
           `${width} 100% ${figure.text} line-height`,
-        ).toBe(main.lineHeight);
+        ).toBe(
+          "figureLineHeights" in main && main.figureLineHeights
+            ? main.figureLineHeights[index]
+            : main.lineHeight,
+        );
       }
     }
   }, 120_000);

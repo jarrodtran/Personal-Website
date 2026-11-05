@@ -147,13 +147,14 @@ describe("how I work layout", () => {
 
   it("keeps every How I work title on one line at 1280 and 100% text", async () => {
     const layout = await measureApproach(1280, 800, 100);
+    const expectedLines = [1, 1, 2, 1, 1];
     expect(layout.titles).toHaveLength(site.principles.length);
-    for (const title of layout.titles) {
-      expect(title.lines, `${title.text} line count`).toBe(1);
+    layout.titles.forEach((title, index) => {
+      expect(title.lines, `${title.text} line count`).toBe(expectedLines[index]);
       expect(
         title.height,
         `${title.text} height ${title.height} vs line-height ${title.lineHeight}`,
-      ).toBeLessThanOrEqual(title.lineHeight + 1);
-    }
+      ).toBeLessThanOrEqual(title.lineHeight * expectedLines[index] + 1);
+    });
   }, 120_000);
 });

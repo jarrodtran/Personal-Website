@@ -18,7 +18,10 @@ export default async function Home() {
   const posts = result.posts;
 
   return (
-    <>
+    <div
+      data-testid="home-prose"
+      className="mx-auto w-full max-w-[var(--container-prose)]"
+    >
       <Hero />
       <Writing posts={posts} />
       <About />
@@ -26,6 +29,6 @@ export default async function Home() {
       <SelectedWork />
       <HowIWork />
       <Contact />
-    </>
+    </div>
   );
 }

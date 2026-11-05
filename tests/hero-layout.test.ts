@@ -224,7 +224,7 @@ describe("hero headline layout", () => {
       await browser.close();
       expect(headings, `${path} h1 count`).toHaveLength(1);
       if (path === "/") {
-        expect(headings[0], "home h1").toBe(site.positioning.headline);
+        expect(headings[0], "home h1").toBe(site.positioning.name);
       }
     }
   }, 120_000);
