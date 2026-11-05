@@ -48,6 +48,13 @@ jobs:
         with:
           fetch-depth: 0
           ref: ${{ steps.pr.outputs.base }}
+          path: base
+
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          ref: ${{ steps.pr.outputs.head }}
+          path: head
 
       - uses: actions/setup-node@v4
         with:
@@ -58,4 +65,15 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           HEAD_SHA: ${{ steps.pr.outputs.head }}
           PR_NUMBER: ${{ steps.pr.outputs.number }}
-        run: node scripts/gates.mjs
+        run: |
+          set -euo pipefail
+          if [ -f base/scripts/gates.mjs ]; then
+            SCRIPT=base/scripts/gates.mjs
+          elif [ -f head/scripts/gates.mjs ]; then
+            echo "scripts/gates.mjs is not on the PR base ref yet; using head copy for bootstrap only" >&2
+            SCRIPT=head/scripts/gates.mjs
+          else
+            echo "scripts/gates.mjs is missing on base and head" >&2
+            exit 1
+          fi
+          node "$SCRIPT"
