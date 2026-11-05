@@ -10,7 +10,7 @@ export function Contact() {
     site.contact;
 
   return (
-    <Section id="contact" className="bg-muted/50">
+    <Section id="contact">
       <div className="grid items-start gap-x-14 lg:grid-cols-2">
         <SectionHeading title={site.sections.contact.title}>
           <p className="text-muted-foreground measure mt-4 text-lg leading-relaxed text-pretty">
