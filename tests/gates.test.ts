@@ -106,7 +106,7 @@ describe("evaluateGates", () => {
   it("a non-allowlisted author is ignored", () => {
     const comments = threePasses(HEAD).map((entry) => ({
       ...entry,
-      author: "cursor[bot]",
+      author: "outsider",
     }));
 
     const result = evaluateGates(comments, HEAD, [], {});
