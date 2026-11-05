@@ -63,7 +63,6 @@ export interface SiteContent {
     status: string;
     location: string;
     currentRole: string;
-    currentCompany: string;
   };
   /**
    * Public Substack. `url` is the only publication setting: subscribe href,
@@ -74,7 +73,6 @@ export interface SiteContent {
     name: string;
     url: string;
   };
-  talks: { event: string; date: string; href: string }[];
   highlights: { value: string; label: string; source?: string }[];
   about: {
     bio: string[];
@@ -86,13 +84,11 @@ export interface SiteContent {
   experience: Employer[];
   selectedWork: SelectedWorkItem[];
   principles: { title: string; description: string }[];
-  capabilities: { group: string; items: string[] }[];
   sections: {
     experience: { title: string };
     work: { title: string };
     about: { title: string };
     approach: { title: string };
-    capabilities: { title: string };
     contact: { title: string };
   };
   knowsAbout: string[];
@@ -101,7 +97,6 @@ export interface SiteContent {
     email: string;
     linkedin: string;
     github?: string;
-    phone?: string;
     resumeHref: string;
     resumeFilename: string;
     calendar?: string;
@@ -133,13 +128,11 @@ export const site: SiteContent = {
     status: "Open to the right role",
     location: "Houston, TX",
     currentRole: currentTitle,
-    currentCompany: "Tesla Energy",
   },
   substack: {
     name: "Worth Mulling",
     url: "https://jarrodtran.substack.com",
   },
-  talks: [],
   highlights: [
     {
       value: "1,000+",
@@ -464,47 +457,9 @@ export const site: SiteContent = {
         "Add the feedback (and the automation) that makes the system better as it grows. I add AI where it clearly saves time.",
     },
   ],
-  capabilities: [
-    {
-      group: "Strategy & Product",
-      items: [
-        "Problem framing",
-        "Capital allocation",
-        "0→1 launches",
-        "New product introduction",
-        "Portfolio management",
-        "Geographic expansion",
-        "Business cases",
-        "Stage-gate design",
-      ],
-    },
-    {
-      group: "AI & Analytics",
-      items: [
-        "AI product strategy",
-        "AI enablement",
-        "Forward-deployed engineering",
-        "Use-case prioritization",
-        "Decision models",
-      ],
-    },
-    {
-      group: "Leadership & Influence",
-      items: [
-        "Hiring and leading teams",
-        "Executive reporting",
-        "Workforce planning",
-        "OKRs & QBRs",
-      ],
-    },
-    {
-      group: "Tools & Platforms",
-      items: ["Python", "Tableau", "Excel", "SQL"],
-    },
-  ],
   sections: {
     about: {
-      title: "About Jarrod",
+      title: "About",
     },
     experience: {
       title: "Experience",
@@ -514,9 +469,6 @@ export const site: SiteContent = {
     },
     approach: {
       title: "How I work",
-    },
-    capabilities: {
-      title: "Capabilities",
     },
     contact: {
       title: "Looking for product, strategy, or AI roles.",
@@ -538,7 +490,6 @@ export const site: SiteContent = {
   ],
   contact: {
     email: "jarrodtran@outlook.com",
-    phone: "(607) 760-2068",
     linkedin: "https://www.linkedin.com/in/jarrodtran/",
     github: "https://github.com/jarrodtran",
     resumeHref: "/resume.pdf",

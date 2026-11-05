@@ -157,10 +157,30 @@ describe("390px tap targets and first screen", () => {
     for (const path of ["/", "/work/tesla-energy-ai-product/"]) {
       const { browser, page } = await open(path);
       const short = await page.evaluate(() => {
+        const tapBox = (control: Element) => {
+          const box = control.getBoundingClientRect();
+          const after = getComputedStyle(control, "::after");
+          if (
+            after.position === "absolute" &&
+            after.content &&
+            after.content !== "none"
+          ) {
+            const width = parseFloat(after.width);
+            const height = parseFloat(after.height);
+            if (Number.isFinite(width) && Number.isFinite(height)) {
+              return {
+                width: Math.max(box.width, width),
+                height: Math.max(box.height, height),
+              };
+            }
+          }
+          return box;
+        };
+
         return [...document.querySelectorAll("a, button")]
           .filter((control) => {
             const style = getComputedStyle(control);
-            const box = control.getBoundingClientRect();
+            const box = tapBox(control);
             return (
               style.display !== "none" &&
               style.visibility !== "hidden" &&
@@ -168,19 +188,97 @@ describe("390px tap targets and first screen", () => {
               box.height > 1
             );
           })
-          .filter((control) => control.getBoundingClientRect().height < 44)
+          .filter((control) => tapBox(control).height < 44)
           .map((control) => {
             const name =
               control.getAttribute("aria-label") ||
               control.textContent?.trim() ||
               control.getAttribute("href") ||
               control.tagName;
-            return `${name}: ${control.getBoundingClientRect().height.toFixed(1)}px`;
+            return `${name}: ${tapBox(control).height.toFixed(1)}px`;
           });
       });
       await browser.close();
       expect(short, `${path} short controls`).toEqual([]);
     }
+  });
+
+  it("makes each selected work title link cover its card with a 44px tap box", async () => {
+    const { browser, page } = await open("/");
+    const cards = await page.evaluate(
+      (slugs) => {
+        const section = document.getElementById("work");
+        return [...(section?.querySelectorAll("article") ?? [])].map(
+          (article, index) => {
+            const link = article.querySelector("a");
+            const after = link ? getComputedStyle(link, "::after") : null;
+            const articleBox = article.getBoundingClientRect();
+            const afterWidth = after ? parseFloat(after.width) : 0;
+            const afterHeight = after ? parseFloat(after.height) : 0;
+            return {
+              slug: slugs[index],
+              href: link?.getAttribute("href") ?? "",
+              linkCount: article.querySelectorAll("a").length,
+              afterWidth,
+              afterHeight,
+              articleWidth: articleBox.width,
+              articleHeight: articleBox.height,
+            };
+          },
+        );
+      },
+      site.selectedWork.map((item) => item.slug),
+    );
+    await browser.close();
+
+    expect(cards).toHaveLength(site.selectedWork.length);
+    for (const card of cards) {
+      expect(card.linkCount, card.slug).toBe(1);
+      expect(card.href, card.slug).toMatch(new RegExp(`/work/${card.slug}/?$`));
+      expect(card.afterWidth, `${card.slug} tap width`).toBeGreaterThanOrEqual(
+        44,
+      );
+      expect(
+        card.afterHeight,
+        `${card.slug} tap height`,
+      ).toBeGreaterThanOrEqual(44);
+      expect(
+        card.afterWidth,
+        `${card.slug} overlay width`,
+      ).toBeGreaterThanOrEqual(card.articleWidth - 4);
+      expect(
+        card.afterHeight,
+        `${card.slug} overlay height`,
+      ).toBeGreaterThanOrEqual(card.articleHeight - 4);
+    }
+  });
+
+  it("puts the selected work card ring on the article, not the title link", async () => {
+    const { browser, page } = await open("/");
+    const title = page.locator("#work article a").first();
+    await title.scrollIntoViewIfNeeded();
+    await page.keyboard.press("Tab");
+    await title.focus();
+
+    const outlines = await title.evaluate((link) => {
+      const article = link.closest("article");
+      if (!article) return null;
+      const linkStyle = getComputedStyle(link);
+      const articleStyle = getComputedStyle(article);
+      return {
+        linkMatches: link.matches(":focus-visible"),
+        linkOutlineStyle: linkStyle.outlineStyle,
+        articleOutlineStyle: articleStyle.outlineStyle,
+        articleOutlineWidth: articleStyle.outlineWidth,
+      };
+    });
+    await browser.close();
+
+    expect(outlines).not.toBeNull();
+    expect(outlines?.linkMatches).toBe(true);
+    expect(outlines?.linkOutlineStyle).toBe("none");
+    expect(outlines?.articleOutlineStyle).toBe("solid");
+    expect(outlines?.articleOutlineWidth).toBe("2px");
   });
 
   it("does not scroll sideways at 390px", async () => {
@@ -209,10 +307,7 @@ describe("390px tap targets and first screen", () => {
       };
     });
     await browser.close();
-    expect(view.hero).toEqual([
-      site.positioning.name,
-      site.positioning.headline,
-    ]);
+    expect(view.hero).toEqual([site.positioning.headline]);
     expect(view.writingTitle).toBe(site.substack.name);
     expect(view.writingBottom).toBeGreaterThan(0);
     expect(view.writingBottom).toBeLessThanOrEqual(view.viewport);
@@ -608,6 +703,64 @@ describe("390px tap targets and first screen", () => {
         expect(icon.width, `${icon.name} width`).toBe(16);
         expect(icon.height, `${icon.name} height`).toBe(16);
       }
+    },
+  );
+
+  it.each([390, 640, 1280])(
+    "keeps highlights borders single-line at %ipx",
+    async (width) => {
+      const browser = await chromium.launch();
+      const page = await browser.newPage({
+        viewport: { width, height: 844 },
+        colorScheme: "light",
+      });
+      await page.goto(`${origin}/`, { waitUntil: "networkidle" });
+      const cells = await page.evaluate(() => {
+        const strip = document.querySelector(
+          '[aria-label="Impact highlights"]',
+        );
+        return [...(strip?.children ?? [])].map((cell) => {
+          const style = getComputedStyle(cell);
+          const source = cell.querySelector(".font-mono-label");
+          let sourceLines = 0;
+          if (source?.firstChild) {
+            const range = document.createRange();
+            range.selectNodeContents(source.firstChild);
+            sourceLines = range.getClientRects().length;
+          }
+          return {
+            borderBottom: style.borderBottomWidth,
+            borderRight: style.borderRightWidth,
+            sourceLines,
+          };
+        });
+      });
+      await browser.close();
+
+      expect(cells).toHaveLength(4);
+      // 640 inner cells wrap "Tesla Energy" once padding matches main.
+      const expected =
+        width < 640
+          ? [
+              { borderBottom: "1px", borderRight: "0px", sourceLines: 1 },
+              { borderBottom: "1px", borderRight: "0px", sourceLines: 1 },
+              { borderBottom: "0px", borderRight: "0px", sourceLines: 1 },
+              { borderBottom: "0px", borderRight: "0px", sourceLines: 1 },
+            ]
+          : width === 640
+            ? [
+                { borderBottom: "0px", borderRight: "1px", sourceLines: 1 },
+                { borderBottom: "0px", borderRight: "1px", sourceLines: 2 },
+                { borderBottom: "0px", borderRight: "1px", sourceLines: 2 },
+                { borderBottom: "0px", borderRight: "0px", sourceLines: 1 },
+              ]
+            : [
+                { borderBottom: "0px", borderRight: "1px", sourceLines: 1 },
+                { borderBottom: "0px", borderRight: "1px", sourceLines: 1 },
+                { borderBottom: "0px", borderRight: "1px", sourceLines: 1 },
+                { borderBottom: "0px", borderRight: "0px", sourceLines: 1 },
+              ];
+      expect(cells, `${width}px highlights cells`).toEqual(expected);
     },
   );
 });
