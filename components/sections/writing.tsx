@@ -23,7 +23,7 @@ function SubscribeLink({
   return (
     <a
       href={href}
-      className={cn(btnGhost, "w-fit", className)}
+      className={cn(btnGhost, "w-fit max-w-full flex-wrap", className)}
       target="_blank"
       rel="noopener noreferrer"
     >
@@ -44,12 +44,12 @@ export function Writing({ posts }: { posts: WritingPost[] }) {
     <Section id="writing" compact={empty}>
       <SectionHeading title={site.substack.name} />
       {empty ? (
-        <div className="flex max-w-3xl flex-col gap-5 sm:flex-row sm:items-center sm:gap-6">
+        <div className="flex max-w-3xl flex-col gap-5 sm:flex-row sm:flex-wrap sm:items-center sm:gap-6">
           <p className="text-muted-foreground measure text-lg leading-relaxed">
             {EMPTY_COPY}
           </p>
           {canSubscribe ? (
-            <SubscribeLink href={subscribe} className="shrink-0" />
+            <SubscribeLink href={subscribe} className="min-w-0 max-w-full" />
           ) : null}
         </div>
       ) : (
