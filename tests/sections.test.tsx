@@ -88,9 +88,10 @@ const CONTACT_INTRO =
 describe("hero", () => {
   const html = renderToStaticMarkup(<Hero />);
 
-  it("shows the headline only", () => {
-    expect(textOf(html)).toBe(site.positioning.headline);
-    expect(headings(html, "h1")).toEqual([site.positioning.headline]);
+  it("shows the name only", () => {
+    expect(textOf(html)).toBe(site.positioning.name);
+    expect(headings(html, "h1")).toEqual([site.positioning.name]);
+    expect(html).not.toContain(site.positioning.headline);
   });
 
   it("does not invent posts, links, or a subscribe placeholder", () => {
