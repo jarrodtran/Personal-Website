@@ -187,11 +187,12 @@ describe("390px tap targets and first screen", () => {
     }
   }, 180_000);
 
-  it("makes each selected work title link cover its card with a 44px tap box", async () => {
+  it("makes each selected work entry its own full-width, 44px tap row", async () => {
     const { browser, page } = await open("/");
-    const cards = await page.evaluate(
+    const entries = await page.evaluate(
       (slugs) => {
         const section = document.getElementById("work");
+        const sectionBox = section?.getBoundingClientRect();
         return [...(section?.querySelectorAll("article") ?? [])].map(
           (article, index) => {
             const link = article.querySelector("a");
@@ -205,8 +206,11 @@ describe("390px tap targets and first screen", () => {
               linkCount: article.querySelectorAll("a").length,
               afterWidth,
               afterHeight,
+              articleLeft: articleBox.left,
               articleWidth: articleBox.width,
               articleHeight: articleBox.height,
+              sectionLeft: sectionBox?.left ?? -1,
+              sectionWidth: sectionBox?.width ?? -1,
             };
           },
         );
@@ -215,29 +219,40 @@ describe("390px tap targets and first screen", () => {
     );
     await browser.close();
 
-    expect(cards).toHaveLength(site.selectedWork.length);
-    for (const card of cards) {
-      expect(card.linkCount, card.slug).toBe(1);
-      expect(card.href, card.slug).toMatch(new RegExp(`/work/${card.slug}/?$`));
-      expect(card.afterWidth, `${card.slug} tap width`).toBeGreaterThanOrEqual(
-        44,
+    expect(entries).toHaveLength(site.selectedWork.length);
+    for (const entry of entries) {
+      expect(entry.linkCount, entry.slug).toBe(1);
+      expect(entry.href, entry.slug).toMatch(
+        new RegExp(`/work/${entry.slug}/?$`),
+      );
+      expect(entry.articleLeft, `${entry.slug} full-width left`).toBeCloseTo(
+        entry.sectionLeft,
+        0,
+      );
+      expect(entry.articleWidth, `${entry.slug} full-width`).toBeCloseTo(
+        entry.sectionWidth,
+        0,
       );
       expect(
-        card.afterHeight,
-        `${card.slug} tap height`,
+        entry.afterWidth,
+        `${entry.slug} tap width`,
       ).toBeGreaterThanOrEqual(44);
       expect(
-        card.afterWidth,
-        `${card.slug} overlay width`,
-      ).toBeGreaterThanOrEqual(card.articleWidth - 4);
+        entry.afterHeight,
+        `${entry.slug} tap height`,
+      ).toBeGreaterThanOrEqual(44);
       expect(
-        card.afterHeight,
-        `${card.slug} overlay height`,
-      ).toBeGreaterThanOrEqual(card.articleHeight - 4);
+        entry.afterWidth,
+        `${entry.slug} overlay width`,
+      ).toBeGreaterThanOrEqual(entry.articleWidth - 4);
+      expect(
+        entry.afterHeight,
+        `${entry.slug} overlay height`,
+      ).toBeGreaterThanOrEqual(entry.articleHeight - 4);
     }
   });
 
-  it("puts the selected work card ring on the article, not the title link", async () => {
+  it("puts the selected work entry ring on the article, not the title link", async () => {
     const { browser, page } = await open("/");
     const title = page.locator("#work article a").first();
     await title.scrollIntoViewIfNeeded();
