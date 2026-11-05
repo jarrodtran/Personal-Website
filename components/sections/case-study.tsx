@@ -11,7 +11,7 @@ function Block({
 }) {
   return (
     <section className="border-border border-t py-8 first:border-t-0 first:pt-0">
-      <p className="text-accent font-mono-label mb-3">{label}</p>
+      <h2 className="text-accent font-mono-label mb-3">{label}</h2>
       {children}
     </section>
   );
@@ -47,14 +47,14 @@ export function CaseStudyBody({ item }: { item: SelectedWorkItem }) {
         {item.problem}
       </p>
 
-      <div className="border-border bg-muted mt-8 flex flex-col justify-between gap-4 border p-5 sm:flex-row sm:items-end sm:p-7">
-        <div>
+      <div className="border-border bg-muted @container mt-8 flex flex-col justify-between gap-4 border p-5 sm:flex-row sm:items-end sm:p-7">
+        <div className="min-w-0 @[450px]:min-w-min">
           <p className="text-accent font-mono-label">{item.panel.kicker}</p>
           <p className="tabular font-display mt-3 text-5xl sm:text-6xl">
             {item.panel.value}
           </p>
         </div>
-        <p className="text-muted-foreground max-w-sm text-[0.9375rem] leading-snug">
+        <p className="text-muted-foreground max-w-sm min-w-0 text-[0.9375rem] leading-snug @[450px]:min-w-min">
           {item.panel.label}
         </p>
       </div>

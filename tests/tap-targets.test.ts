@@ -307,10 +307,7 @@ describe("390px tap targets and first screen", () => {
       };
     });
     await browser.close();
-    expect(view.hero).toEqual([
-      site.positioning.name,
-      site.positioning.headline,
-    ]);
+    expect(view.hero).toEqual([site.positioning.headline]);
     expect(view.writingTitle).toBe(site.substack.name);
     expect(view.writingBottom).toBeGreaterThan(0);
     expect(view.writingBottom).toBeLessThanOrEqual(view.viewport);
@@ -706,6 +703,64 @@ describe("390px tap targets and first screen", () => {
         expect(icon.width, `${icon.name} width`).toBe(16);
         expect(icon.height, `${icon.name} height`).toBe(16);
       }
+    },
+  );
+
+  it.each([390, 640, 1280])(
+    "keeps highlights borders single-line at %ipx",
+    async (width) => {
+      const browser = await chromium.launch();
+      const page = await browser.newPage({
+        viewport: { width, height: 844 },
+        colorScheme: "light",
+      });
+      await page.goto(`${origin}/`, { waitUntil: "networkidle" });
+      const cells = await page.evaluate(() => {
+        const strip = document.querySelector(
+          '[aria-label="Impact highlights"]',
+        );
+        return [...(strip?.children ?? [])].map((cell) => {
+          const style = getComputedStyle(cell);
+          const source = cell.querySelector(".font-mono-label");
+          let sourceLines = 0;
+          if (source?.firstChild) {
+            const range = document.createRange();
+            range.selectNodeContents(source.firstChild);
+            sourceLines = range.getClientRects().length;
+          }
+          return {
+            borderBottom: style.borderBottomWidth,
+            borderRight: style.borderRightWidth,
+            sourceLines,
+          };
+        });
+      });
+      await browser.close();
+
+      expect(cells).toHaveLength(4);
+      // 640 inner cells wrap "Tesla Energy" once padding matches main.
+      const expected =
+        width < 640
+          ? [
+              { borderBottom: "1px", borderRight: "0px", sourceLines: 1 },
+              { borderBottom: "1px", borderRight: "0px", sourceLines: 1 },
+              { borderBottom: "0px", borderRight: "0px", sourceLines: 1 },
+              { borderBottom: "0px", borderRight: "0px", sourceLines: 1 },
+            ]
+          : width === 640
+            ? [
+                { borderBottom: "0px", borderRight: "1px", sourceLines: 1 },
+                { borderBottom: "0px", borderRight: "1px", sourceLines: 2 },
+                { borderBottom: "0px", borderRight: "1px", sourceLines: 2 },
+                { borderBottom: "0px", borderRight: "0px", sourceLines: 1 },
+              ]
+            : [
+                { borderBottom: "0px", borderRight: "1px", sourceLines: 1 },
+                { borderBottom: "0px", borderRight: "1px", sourceLines: 1 },
+                { borderBottom: "0px", borderRight: "1px", sourceLines: 1 },
+                { borderBottom: "0px", borderRight: "0px", sourceLines: 1 },
+              ];
+      expect(cells, `${width}px highlights cells`).toEqual(expected);
     },
   );
 });

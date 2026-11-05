@@ -1,10 +1,9 @@
-import { readdirSync, readFileSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
 import path from "node:path";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 import { SectionHeading } from "@/components/section";
 import { About } from "@/components/sections/about";
-import { Capabilities } from "@/components/sections/capabilities";
 import { CaseStudyBody } from "@/components/sections/case-study";
 import { Contact } from "@/components/sections/contact";
 import { Experience } from "@/components/sections/experience";
@@ -89,9 +88,9 @@ const CONTACT_INTRO =
 describe("hero", () => {
   const html = renderToStaticMarkup(<Hero />);
 
-  it("shows name and pitch only", () => {
-    const { name, headline } = site.positioning;
-    expect(textOf(html)).toBe(`${name} ${headline}`);
+  it("shows the headline only", () => {
+    expect(textOf(html)).toBe(site.positioning.headline);
+    expect(headings(html, "h1")).toEqual([site.positioning.headline]);
   });
 
   it("does not invent posts, links, or a subscribe placeholder", () => {
@@ -101,27 +100,35 @@ describe("hero", () => {
     expect(html).not.toMatch(/coming soon/i);
   });
 
-  it("sizes the pitch at 18px", () => {
-    expect(html).toContain("text-lg");
+  it("sizes the headline with the shared display classes", () => {
+    expect(html).toContain(
+      "measure font-display text-[min(1.75rem,15cqi)] leading-[1.15] tracking-tight text-balance sm:text-[min(2.25rem,9cqi)]",
+    );
+    expect(html).not.toContain("text-lg");
     expect(html).not.toContain("text-[1.0625rem]");
   });
 });
 
-const EMPTY_WRITING =
-  "Nothing published yet. Subscribe and the first post will land in your inbox.";
 const threeXml = readFileSync(
   path.join(__dirname, "fixtures/writing/three-posts.xml"),
   "utf8",
 );
 
 describe("writing", () => {
-  it("shows the empty-state copy and subscribe link when there are 0 posts", () => {
+  it("shows the launching-soon line and subscribe link when there are 0 posts", () => {
     const html = renderToStaticMarkup(<Writing posts={[]} />);
     const text = textOf(html);
+    const paragraphs = [...html.matchAll(/<p\b[^>]*>([\s\S]*?)<\/p>/g)].map(
+      ([, inner]) => textOf(inner),
+    );
     expect(text).toContain(site.substack.name);
     expect(text).not.toContain("01 / Essays");
     expect(text).not.toContain("Posts from my Substack.");
-    expect(text).toContain(EMPTY_WRITING);
+    expect(paragraphs).toContain(
+      "First post coming soon. Subscribe to get it by email.",
+    );
+    expect(text).not.toContain("Nothing published yet");
+    expect(text).not.toContain("Subscribe and the first post");
     expect(text).not.toContain("First post soon");
     expect(text).not.toContain("All writing");
     expect(html).not.toMatch(/<ol\b/);
@@ -136,8 +143,21 @@ describe("writing", () => {
     expect(html).toMatch(/rel="noopener noreferrer"/);
     expect(html).toContain(btnGhost);
     expect(html).toContain("size-[16px]");
-    expect(html).toMatch(/max-w-2xl[\s\S]*Subscribe on Substack/);
-    expect(html).toMatch(
+    expect(html).toMatch(/sm:flex-row[\s\S]*Subscribe on Substack/);
+  });
+
+  it("compacts the empty section so About starts on the first screen", () => {
+    const empty = renderToStaticMarkup(<Writing posts={[]} />);
+    expect(empty).toContain("py-10 sm:py-12");
+    expect(empty).not.toContain("py-16 sm:py-20");
+    expect(empty).not.toContain("mt-6");
+
+    const filled = renderToStaticMarkup(
+      <Writing posts={parseFeed(threeXml, WRITING_FIXTURE_BASE)} />,
+    );
+    expect(filled).toContain("py-16 sm:py-20");
+    expect(filled).not.toContain("py-10 sm:py-12");
+    expect(filled).toMatch(
       /mt-6[\s\S]*Subscribe on Substack|Subscribe on Substack[\s\S]*mt-6/,
     );
   });
@@ -188,6 +208,7 @@ describe("writing", () => {
     expect(html).toMatch(/rel="noopener noreferrer"/);
     expect(html).not.toContain("All writing");
     expect(html).not.toContain("First post soon");
+    expect(html).toContain('<div class="max-w-2xl">');
     expect(links(html)).toEqual([
       {
         href: `${WRITING_FIXTURE_BASE}/p/zxq-aurora`,
@@ -289,7 +310,6 @@ describe("section headings", () => {
       renderToStaticMarkup(<Experience />),
       renderToStaticMarkup(<SelectedWork />),
       renderToStaticMarkup(<HowIWork />),
-      renderToStaticMarkup(<Capabilities />),
       renderToStaticMarkup(<Contact />),
     ].join("\n");
     const text = textOf(html);
@@ -305,6 +325,29 @@ describe("section headings", () => {
     expect(heading).toMatch(/<h2\b[^>]*>Experience<\/h2>/);
     expect(heading).not.toContain("<p");
     expect(heading.match(/<h2\b/g) ?? []).toHaveLength(1);
+  });
+
+  it("has no Capabilities section and still renders How I work", () => {
+    const page = readFileSync(path.resolve(__dirname, "../app/page.tsx"), "utf8");
+    expect(page).not.toMatch(/\bCapabilities\b/);
+    expect(page).not.toMatch(/sections\/capabilities/);
+    expect(page).toContain("HowIWork");
+    expect(page).toContain("@/components/sections/how-i-work");
+    expect(page).toContain("<HowIWork");
+
+    const html = renderToStaticMarkup(<HowIWork />);
+    expect(headings(html, "h2")).toEqual([site.sections.approach.title]);
+    expect(html).toContain('id="approach"');
+    expect(textOf(html)).toContain("How I work");
+    for (const principle of site.principles) {
+      expect(textOf(html)).toContain(principle.title);
+    }
+
+    expect(
+      existsSync(
+        path.resolve(__dirname, "../components/sections/capabilities.tsx"),
+      ),
+    ).toBe(false);
   });
 
   it("gives every section heading the shared spacing from one place", () => {
@@ -492,5 +535,18 @@ describe("case study", () => {
       text.indexOf(item.panel.value),
     );
     expect(html).toMatch(new RegExp(`/work/${next!.slug}/?`));
+  });
+
+  it("structures sections under h2 headings for screen reader navigation", () => {
+    const headings = [...html.matchAll(/<h2\b[^>]*>([\s\S]*?)<\/h2>/g)].map(
+      ([, text]) => textOf(text).trim(),
+    );
+    expect(headings).toEqual([
+      "Context",
+      "Constraints",
+      "Decisions",
+      "Outcome",
+      "My role",
+    ]);
   });
 });
