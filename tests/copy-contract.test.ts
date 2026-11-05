@@ -160,7 +160,8 @@ describe("visitor-facing copy contract", () => {
     }
 
     const hero = readSiteFile("components/sections/hero.tsx");
-    expect(hero).toContain("site.positioning.headline");
+    expect(hero).toContain("site.positioning.name");
+    expect(hero).not.toContain("site.positioning.headline");
     expect(hero).not.toContain("headlineVariants");
     expect(hero).not.toContain("site.outreach");
 
@@ -222,7 +223,7 @@ describe("visitor-facing copy contract", () => {
 
   it("renders section headings from the same content module", () => {
     const files = [
-      ["components/sections/hero.tsx", "site.positioning.headline"],
+      ["components/sections/hero.tsx", "site.positioning.name"],
       ["components/sections/writing.tsx", "site.substack.name"],
       ["components/sections/about.tsx", "site.about.bio"],
       ["components/sections/about.tsx", "site.sections.about"],

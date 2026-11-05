@@ -88,9 +88,10 @@ const CONTACT_INTRO =
 describe("hero", () => {
   const html = renderToStaticMarkup(<Hero />);
 
-  it("shows the headline only", () => {
-    expect(textOf(html)).toBe(site.positioning.headline);
-    expect(headings(html, "h1")).toEqual([site.positioning.headline]);
+  it("shows the name only", () => {
+    expect(textOf(html)).toBe(site.positioning.name);
+    expect(headings(html, "h1")).toEqual([site.positioning.name]);
+    expect(html).not.toContain(site.positioning.headline);
   });
 
   it("does not invent posts, links, or a subscribe placeholder", () => {
@@ -143,7 +144,21 @@ describe("writing", () => {
     expect(html).toMatch(/rel="noopener noreferrer"/);
     expect(html).toContain(btnGhost);
     expect(html).toContain("size-[16px]");
-    expect(html).toMatch(
+    expect(html).toMatch(/sm:flex-row[\s\S]*Subscribe on Substack/);
+  });
+
+  it("compacts the empty section so About starts on the first screen", () => {
+    const empty = renderToStaticMarkup(<Writing posts={[]} />);
+    expect(empty).toContain("py-10 sm:py-12");
+    expect(empty).not.toContain("py-16 sm:py-20");
+    expect(empty).not.toContain("mt-6");
+
+    const filled = renderToStaticMarkup(
+      <Writing posts={parseFeed(threeXml, WRITING_FIXTURE_BASE)} />,
+    );
+    expect(filled).toContain("py-16 sm:py-20");
+    expect(filled).not.toContain("py-10 sm:py-12");
+    expect(filled).toMatch(
       /mt-6[\s\S]*Subscribe on Substack|Subscribe on Substack[\s\S]*mt-6/,
     );
   });

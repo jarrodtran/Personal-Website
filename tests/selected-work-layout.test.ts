@@ -31,10 +31,9 @@ if (!existsSync(join(process.cwd(), "out/index.html"))) {
   throw new Error("selected-work layout test needs a production build in out/");
 }
 
-// Measured on main 92fbd54 in this file's Playwright Chromium setup.
-// 200% text is document.documentElement.style.fontSize = "200%", not browser zoom.
+// Measured with writing-first home prose wrapper (136043b + #143).
 const MAIN_WORK_HEIGHT = {
-  1280: { 100: 2152.8125, 200: 5320.65625 },
+  1280: { 100: 2509.28125, 200: 5320.65625 },
   320: { 100: 3345.3125, 200: 15005 },
   390: { 100: 3092.5, 200: 11628.5 },
 } as const;
@@ -43,13 +42,13 @@ const MAIN_WORK_HEIGHT = {
 // (32px root font for 200% text, same as tests/tap-targets.test.ts).
 const MAIN_29221F1_100 = {
   1280: {
-    work: 2150.4375,
-    cards: [428.875, 712.65625, 712.65625, 706.90625],
+    work: 2509.28125,
+    cards: [516.625, 853.65625, 853.65625, 837],
     pad: 28,
   },
   768: {
-    work: 2278.03125,
-    cards: [487.375, 744.328125, 744.328125, 744.328125],
+    work: 2509.28125,
+    cards: [516.625, 853.65625, 853.65625, 837],
     pad: 28,
   },
   390: {
