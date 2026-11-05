@@ -162,6 +162,24 @@ describe("writing-first home", () => {
         scrollWidth: document.documentElement.scrollWidth,
         clientWidth: document.documentElement.clientWidth,
         desktopNavDisplay: headerNav ? getComputedStyle(headerNav).display : "",
+        // The pre-redesign .measure class caps prose at 34rem inside the 40rem
+        // prose column, which leaves a dead band on the right edge of text
+        // while dividers and headings span the full column.
+        // Only prose in normal block flow should fill the column. Grid and
+        // flex parents (the writing row's button, the two-column principle
+        // rows) size their children on purpose.
+        proseOverhang: [...document.querySelectorAll("main .measure")]
+          .filter((element) => {
+            const parent = element.parentElement;
+            return parent !== null && getComputedStyle(parent).display === "block";
+          })
+          .map((element) => {
+            const parent = element.parentElement as HTMLElement;
+            return Math.round(
+              parent.getBoundingClientRect().width -
+                element.getBoundingClientRect().width,
+            );
+          }),
       };
     }, [...HOME_SECTION_IDS]);
     await browser.close();
@@ -183,6 +201,16 @@ describe("writing-first home", () => {
         width,
         `${HOME_SECTION_IDS[index]} width at 1280`,
       ).toBeLessThanOrEqual(640);
+    }
+  });
+
+  it("lets the prose column govern line length instead of the 34rem measure", async () => {
+    for (const width of [768, 1280] as const) {
+      const layout = await readHomeLayout(width, VIEWPORT_HEIGHT[width]);
+      expect(layout.proseOverhang.length).toBeGreaterThan(0);
+      for (const overhang of layout.proseOverhang) {
+        expect(overhang, `${width}px prose overhang`).toBeLessThanOrEqual(1);
+      }
     }
   });
 
