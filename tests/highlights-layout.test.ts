@@ -31,35 +31,35 @@ if (!existsSync(join(process.cwd(), "out/index.html"))) {
   throw new Error("highlights layout test needs a production build in out/");
 }
 
-// Figure font-size and line-height measured on main 1c0847d. Label line
-// counts and 100% strip height remeasured with #143 home prose shell (136043b + head).
+// 2x2 strip inside the #143 40rem prose column (#148 flattening): each cell
+// is half the column, the four repeated source labels collapse into one
+// caption, and every label fits on one line from 640px up. Figures are
+// capped by the same 2.15rem token as before at >=768.
 const MAIN_100 = {
   1280: {
-    height: 180.328125,
+    height: 299.609375,
     fontSize: 34.4,
-    figureFontSizes: [34.4, 32.19, 32.19, 34.4] as const,
-    figureLineHeights: [41.28, 38.628, 38.628, 41.28] as const,
+    figureFontSizes: [34.4, 34.4, 34.4, 34.4] as const,
+    figureLineHeights: [41.28, 41.28, 41.28, 41.28] as const,
     lineHeight: 41.28,
-    lines: [2, 2, 2, 1],
+    lines: [1, 1, 1, 1],
   },
   768: {
-    height: 180.328125,
+    height: 299.609375,
     fontSize: 34.4,
-    figureFontSizes: [34.4, 32.19, 32.19, 34.4] as const,
-    figureLineHeights: [41.28, 38.628, 38.628, 41.28] as const,
+    figureFontSizes: [34.4, 34.4, 34.4, 34.4] as const,
+    figureLineHeights: [41.28, 41.28, 41.28, 41.28] as const,
     lineHeight: 41.28,
-    lines: [2, 2, 2, 1],
+    lines: [1, 1, 1, 1],
   },
   390: {
-    // Same 1px drop as 320: the stray bottom-left border is gone below 640.
-    height: 333.09375,
+    height: 314.296875,
     fontSize: 30,
     lineHeight: 36,
     lines: [2, 1, 2, 1],
   },
   320: {
-    // The PR #85 border fix removes the stray bottom border under the bottom-left cell below 640 wide, so Highlights is 1px shorter (approved by Product Designer).
-    height: 333.09375,
+    height: 314.296875,
     fontSize: 30,
     lineHeight: 36,
     lines: [2, 2, 2, 2],
@@ -150,7 +150,7 @@ describe("highlights figure layout", () => {
     const { browser, page } = await openHighlights(width, height, textPercent);
     const layout = await page.evaluate(() => {
       const root = document.querySelector('[aria-label="Impact highlights"]');
-      const cells = [...(root?.children ?? [])];
+      const cells = [...(root?.querySelectorAll(":scope > div > div") ?? [])];
       const figures = cells.map((cell) => {
         const figure = cell.querySelector("p");
         const style = figure ? getComputedStyle(figure) : null;
@@ -262,29 +262,12 @@ describe("highlights figure layout", () => {
       const [w, height] = VIEWPORTS[width];
       const at100 = await measureHighlights(w, height, 100);
       const at200 = await measureHighlights(w, height, 200);
-      for (const [index, figure] of at200.figures.entries()) {
+      for (const figure of at200.figures) {
         const size100 =
           at100.figures.find((row) => row.text === figure.text)?.fontSize ?? -1;
         console.log(
           `${width} ${figure.text}: 100%=${size100}px 200%=${figure.fontSize}px spare=${figure.spare}px`,
         );
-        // 768 middle cells (index 1 = 20+, index 2 = $156M) are 111px
-        // inside at 200% text, and $156M can't grow past 34.4px without
-        // leaving only about 2px.
-        const is768Middle = width === 768 && (index === 1 || index === 2);
-        if (is768Middle) {
-          if (figure.fontSize < 32) {
-            floors.push(
-              `${width} ${figure.text} 200%=${figure.fontSize}px < 32px`,
-            );
-          }
-          if (figure.spare < 8) {
-            floors.push(
-              `${width} ${figure.text} spare ${figure.spare}px < 8px`,
-            );
-          }
-          continue;
-        }
         if (figure.fontSize <= size100) {
           shrunk.push(
             `${width} ${figure.text} 200%=${figure.fontSize}px <= 100%=${size100}px`,
@@ -292,7 +275,7 @@ describe("highlights figure layout", () => {
         }
       }
     }
-    expect(floors, "768 middle 20+ and $156M floors").toEqual([]);
+    expect(floors, "200% figure floors").toEqual([]);
     expect(shrunk, "200% font not larger").toEqual([]);
   }, 120_000);
 
