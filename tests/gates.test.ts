@@ -55,7 +55,7 @@ function threePasses(sha: string): Comment[] {
 
 describe("evaluateGates", () => {
   it("2 of 3 passes is red and lists the missing review", () => {
-    const result = evaluateGates(twoPasses(HEAD), HEAD, [], {});
+    const result = evaluateGates(twoPasses(HEAD), HEAD);
 
     expect(result.pass).toBe(false);
     expect(result.summary).toContain(`design PASS ${HEAD}`);
@@ -64,7 +64,7 @@ describe("evaluateGates", () => {
   });
 
   it("3 passes is green", () => {
-    const result = evaluateGates(threePasses(HEAD), HEAD, [], {});
+    const result = evaluateGates(threePasses(HEAD), HEAD);
 
     expect(result.pass).toBe(true);
     expect(result.summary).toContain(`design PASS ${HEAD}`);
@@ -80,7 +80,7 @@ describe("evaluateGates", () => {
       }),
     ];
 
-    const result = evaluateGates(comments, HEAD, [], {});
+    const result = evaluateGates(comments, HEAD);
 
     expect(result.pass).toBe(false);
     expect(result.summary).toContain(`design FAIL ${HEAD}`);
@@ -97,7 +97,7 @@ describe("evaluateGates", () => {
       }),
     ];
 
-    const result = evaluateGates(comments, HEAD, [], {});
+    const result = evaluateGates(comments, HEAD);
 
     expect(result.pass).toBe(false);
     expect(result.summary).toContain("design missing");
@@ -109,7 +109,7 @@ describe("evaluateGates", () => {
       author: "outsider",
     }));
 
-    const result = evaluateGates(comments, HEAD, [], {});
+    const result = evaluateGates(comments, HEAD);
 
     expect(result.pass).toBe(false);
     expect(result.summary).toContain("design missing");
@@ -123,7 +123,7 @@ describe("evaluateGates", () => {
       updated_at: "2026-11-05T00:00:10Z",
     }));
 
-    const result = evaluateGates(comments, HEAD, [], {});
+    const result = evaluateGates(comments, HEAD);
 
     expect(result.pass).toBe(false);
     expect(result.summary).toContain("design missing");
@@ -139,39 +139,19 @@ describe("evaluateGates", () => {
       }),
     ];
 
-    const result = evaluateGates(comments, HEAD, [], {});
+    const result = evaluateGates(comments, HEAD);
 
     expect(result.pass).toBe(false);
     expect(result.summary).toContain(`review PASS ${HEAD}`);
     expect(result.summary).toMatch(/touches: dns|missing touches: none/);
   });
 
-  it("carry-forward after a main-only merge is green", () => {
-    const result = evaluateGates(threePasses(OLD), HEAD, [OLD], {
-      [OLD]: { fetchable: true, samePatchId: true },
-    });
-
-    expect(result.pass).toBe(true);
-    expect(result.summary).toContain(`design PASS ${OLD}`);
-    expect(result.summary).toContain(`qa PASS ${OLD}`);
-    expect(result.summary).toContain(`review PASS ${OLD}`);
-  });
-
-  it("an own-file change is red", () => {
-    const result = evaluateGates(threePasses(OLD), HEAD, [OLD], {
-      [OLD]: { fetchable: true, samePatchId: false },
-    });
+  it("a PASS for an older sha is stale at the current head", () => {
+    const result = evaluateGates(threePasses(OLD), HEAD);
 
     expect(result.pass).toBe(false);
-    expect(result.summary).toMatch(/stale|missing/);
-  });
-
-  it("an unfetchable old head is red", () => {
-    const result = evaluateGates(threePasses(OLD), HEAD, [OLD], {
-      [OLD]: { fetchable: false, samePatchId: true },
-    });
-
-    expect(result.pass).toBe(false);
-    expect(result.summary).toMatch(/unfetchable|missing|stale/);
+    expect(result.summary).toContain(`design PASS ${OLD} stale`);
+    expect(result.summary).toContain(`qa PASS ${OLD} stale`);
+    expect(result.summary).toContain(`review PASS ${OLD} stale`);
   });
 });
