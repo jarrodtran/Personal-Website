@@ -32,23 +32,23 @@ if (!existsSync(join(process.cwd(), "out/index.html"))) {
 }
 
 // Figure font-size and line-height measured on main 1c0847d. Label line
-// counts and 100% strip height remeasured with writing-first home prose wrapper (#143).
+// counts and 100% strip height remeasured with #143 home prose shell (136043b + head).
 const MAIN_100 = {
   1280: {
-    height: 200.953125,
+    height: 180.328125,
     fontSize: 34.4,
-    figureFontSizes: [34.4, 27.55, 27.55, 34.4] as const,
-    figureLineHeights: [41.28, 33.06, 33.06, 41.28] as const,
+    figureFontSizes: [34.4, 32.19, 32.19, 34.4] as const,
+    figureLineHeights: [41.28, 38.628, 38.628, 41.28] as const,
     lineHeight: 41.28,
-    lines: [3, 2, 2, 2],
+    lines: [2, 2, 2, 1],
   },
   768: {
-    height: 200.953125,
+    height: 180.328125,
     fontSize: 34.4,
-    figureFontSizes: [34.4, 27.55, 27.55, 34.4] as const,
-    figureLineHeights: [41.28, 33.06, 33.06, 41.28] as const,
+    figureFontSizes: [34.4, 32.19, 32.19, 34.4] as const,
+    figureLineHeights: [41.28, 38.628, 38.628, 41.28] as const,
     lineHeight: 41.28,
-    lines: [3, 2, 2, 2],
+    lines: [2, 2, 2, 1],
   },
   390: {
     // Same 1px drop as 320: the stray bottom-left border is gone below 640.

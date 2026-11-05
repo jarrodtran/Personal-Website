@@ -145,9 +145,9 @@ describe("how I work layout", () => {
     );
   }, 120_000);
 
-  it("keeps every How I work title on one line at 1280 and 100% text", async () => {
+  it("keeps every How I work title on one line at 1280 in the home prose column", async () => {
     const layout = await measureApproach(1280, 800, 100);
-    const expectedLines = [1, 1, 2, 1, 1];
+    const expectedLines = [1, 1, 1, 1, 1];
     expect(layout.titles).toHaveLength(site.principles.length);
     layout.titles.forEach((title, index) => {
       expect(title.lines, `${title.text} line count`).toBe(expectedLines[index]);

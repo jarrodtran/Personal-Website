@@ -329,7 +329,7 @@ describe("390px tap targets and first screen", () => {
       };
     });
     await browser.close();
-    expect(left.h1).toBe(352);
+    expect(left.h1).toBe(160);
     expect(left.brand).toBe(160);
   });
 
@@ -756,8 +756,8 @@ describe("390px tap targets and first screen", () => {
               ]
             : [
                 { borderBottom: "0px", borderRight: "1px", sourceLines: 1 },
-                { borderBottom: "0px", borderRight: "1px", sourceLines: 2 },
-                { borderBottom: "0px", borderRight: "1px", sourceLines: 2 },
+                { borderBottom: "0px", borderRight: "1px", sourceLines: 1 },
+                { borderBottom: "0px", borderRight: "1px", sourceLines: 1 },
                 { borderBottom: "0px", borderRight: "0px", sourceLines: 1 },
               ];
       expect(cells, `${width}px highlights cells`).toEqual(expected);

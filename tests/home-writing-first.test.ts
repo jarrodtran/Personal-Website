@@ -37,14 +37,33 @@ const HOME_SECTION_IDS = [
 ] as const;
 
 // Measured on origin/main (136043b) production build in this Playwright setup.
-const MAIN_HOME_SCROLL_HEIGHT = {
+const MAIN_HOME_SCROLL_HEIGHT_100 = {
+  320: 10501,
   390: 9312,
+  640: 7838,
+  768: 7351,
   1280: 6968,
 } as const;
 
-const MAIN_TOP_HEIGHT = {
-  390: 198.09375,
-  1280: 230.046875,
+const MAIN_HOME_SCROLL_HEIGHT_200 = {
+  320: 41616,
+  390: 32925,
+  768: 22560,
+  1280: 15011,
+} as const;
+
+/** Product Lead height ruling for #143 (main baselines below). */
+const PRODUCT_LEAD_TALLER_CAP_PX = 700;
+
+// Prior head 4f2b3d9 only compared #top height at 1280 and #content scroll at
+// 390, so a +663px taller #content at 1280 vs main never failed CI.
+
+const VIEWPORT_HEIGHT = {
+  320: 844,
+  390: 844,
+  640: 800,
+  768: 800,
+  1280: 800,
 } as const;
 
 if (!existsSync(join(process.cwd(), "out/index.html"))) {
@@ -128,16 +147,18 @@ describe("writing-first home", () => {
     const layout = await page.evaluate((sectionIds) => {
       const sections = sectionIds.map((id) => document.getElementById(id));
       const h1 = document.querySelector("#top h1");
+      const brand = document.querySelector("header a");
       const headerNav = document.querySelector('header nav[aria-label="Primary"]');
       return {
         h1: h1?.textContent?.trim() ?? "",
+        h1Left: h1 ? Math.round(h1.getBoundingClientRect().left) : -1,
+        brandLeft: brand ? Math.round(brand.getBoundingClientRect().left) : -1,
         introParagraphCount: document.querySelectorAll("#top p").length,
         sectionOrder: sections.map((section) => section?.id ?? ""),
         sectionWidths: sections.map(
           (section) => section?.getBoundingClientRect().width ?? -1,
         ),
         homeHeight: document.getElementById("content")?.scrollHeight ?? -1,
-        topHeight: document.getElementById("top")?.getBoundingClientRect().height ?? -1,
         scrollWidth: document.documentElement.scrollWidth,
         clientWidth: document.documentElement.clientWidth,
         desktopNavDisplay: headerNav ? getComputedStyle(headerNav).display : "",
@@ -165,25 +186,46 @@ describe("writing-first home", () => {
     }
   });
 
+  it("aligns the home h1 left edge with the header brand at 768 and 1280", async () => {
+    for (const width of [768, 1280] as const) {
+      const layout = await readHomeLayout(width, VIEWPORT_HEIGHT[width]);
+      expect(layout.h1Left, `${width}px h1 left`).toBe(layout.brandLeft);
+    }
+  });
+
   it("does not scroll sideways at 320 with 200% text", async () => {
     const layout = await readHomeLayout(320, 844, 200);
     expect(layout.scrollWidth).toBe(layout.clientWidth);
   });
 
-  it("keeps the home page shorter than main at 390 and 1280", async () => {
-    for (const width of [390, 1280] as const) {
-      const height = width === 390 ? 844 : 800;
-      const layout = await readHomeLayout(width, height);
+  it("keeps home shorter than main at 320 and 390 with 100% text", async () => {
+    for (const width of [320, 390] as const) {
+      const layout = await readHomeLayout(width, VIEWPORT_HEIGHT[width], 100);
       expect(
-        layout.topHeight,
-        `${width}px #top height`,
-      ).toBeLessThan(MAIN_TOP_HEIGHT[width]);
-      if (width === 390) {
-        expect(
-          layout.homeHeight,
-          `${width}px home scroll height`,
-        ).toBeLessThan(MAIN_HOME_SCROLL_HEIGHT[390]);
-      }
+        layout.homeHeight,
+        `${width}px home scroll height vs main`,
+      ).toBeLessThan(MAIN_HOME_SCROLL_HEIGHT_100[width]);
+    }
+  });
+
+  it("allows home at most 700px taller than main at 640px and up with 100% text", async () => {
+    for (const width of [640, 768, 1280] as const) {
+      const layout = await readHomeLayout(width, VIEWPORT_HEIGHT[width], 100);
+      const main = MAIN_HOME_SCROLL_HEIGHT_100[width];
+      expect(
+        layout.homeHeight,
+        `${width}px home scroll height vs main + ${PRODUCT_LEAD_TALLER_CAP_PX}`,
+      ).toBeLessThanOrEqual(main + PRODUCT_LEAD_TALLER_CAP_PX);
+    }
+  });
+
+  it("keeps home shorter than main at every width with 200% text", async () => {
+    for (const width of [320, 390, 768, 1280] as const) {
+      const layout = await readHomeLayout(width, VIEWPORT_HEIGHT[width], 200);
+      expect(
+        layout.homeHeight,
+        `${width}px home scroll height at 200% vs main`,
+      ).toBeLessThan(MAIN_HOME_SCROLL_HEIGHT_200[width]);
     }
   });
 

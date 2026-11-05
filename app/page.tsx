@@ -20,15 +20,17 @@ export default async function Home() {
   return (
     <div
       data-testid="home-prose"
-      className="mx-auto w-full max-w-[var(--container-prose)]"
+      className="mx-auto w-full max-w-5xl px-5 sm:px-8"
     >
-      <Hero />
-      <Writing posts={posts} />
-      <About />
-      <Experience />
-      <SelectedWork />
-      <HowIWork />
-      <Contact />
+      <div className="w-full max-w-[var(--container-prose)] [&_#top>div]:px-0 [&_section>div]:px-0">
+        <Hero />
+        <Writing posts={posts} />
+        <About />
+        <Experience />
+        <SelectedWork />
+        <HowIWork />
+        <Contact />
+      </div>
     </div>
   );
 }
