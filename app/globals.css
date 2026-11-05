@@ -65,7 +65,7 @@
 }
 
 @theme static {
-  --container-prose: 41rem;
+  --container-prose: 40rem;
   --text-body: 1.0625rem;
   --text-small: 0.875rem;
   --text-h3: 1.25rem;
