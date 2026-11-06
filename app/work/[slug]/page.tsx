@@ -7,6 +7,7 @@ import {
   site,
   siteUrl,
 } from "@/content/site";
+import { caseStudyJsonLd } from "@/lib/structured-data";
 
 export const dynamicParams = false;
 
@@ -53,5 +54,15 @@ export default async function CaseStudyPage({
   const { slug } = await params;
   const item = getSelectedWorkBySlug(slug);
   if (!item) notFound();
-  return <CaseStudyBody item={item} />;
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(caseStudyJsonLd(item)),
+        }}
+      />
+      <CaseStudyBody item={item} />
+    </>
+  );
 }
