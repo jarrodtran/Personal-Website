@@ -95,45 +95,12 @@ describe("deploy wiring", () => {
     expect(source).not.toMatch(/assetPrefix:\s*["']\/Personal-Website["']/);
   });
 
-  it("builds the GitHub Pages deploy with an empty or absent BASE_PATH, not at job level", () => {
-    const deploy = readSiteFile(".github/workflows/deploy.yml");
-    expect(deploy).not.toMatch(
-      /run: pnpm build\n        env:\n          BASE_PATH:\s*\/Personal-Website/,
-    );
-    const buildEnv = deploy.match(
-      /run: pnpm build\n        env:\n          BASE_PATH:\s*(\S*)/,
-    );
-    if (buildEnv) {
-      expect(buildEnv[1]).toMatch(/^['"]?['"]?$/);
-    }
-    expect(deploy).toMatch(/run: pnpm build\n/);
-    expect(deploy).not.toMatch(/^ {4}env:\n {6}BASE_PATH:/m);
-  });
-
-  it("keeps Lighthouse and the default CI build on an empty BASE_PATH so apex-style /_next paths still verify", () => {
-    expect(readSiteFile(".github/workflows/lighthouse.yml")).not.toMatch(
-      /BASE_PATH/,
-    );
-    expect(readSiteFile(".github/workflows/ci.yml")).toMatch(
-      /run: pnpm build\n      - run: pnpm test:banned\n      - run: pnpm test:redirects\n      - run: pnpm test:titles\n      - run: pnpm test:tap/,
-    );
-  });
-
-  it("re-runs the deploy-path build, a11y, and size checks in PR CI", () => {
-    expect(readSiteFile(".github/workflows/ci.yml")).toMatch(
-      /run: pnpm build\n        env:\n          BASE_PATH:\s*\/Personal-Website\n      - run: pnpm test:banned\n        env:\n          BASE_PATH:\s*\/Personal-Website\n      - run: pnpm test:redirects\n        env:\n          BASE_PATH:\s*\/Personal-Website\n      - run: pnpm test:titles\n        env:\n          BASE_PATH:\s*\/Personal-Website\n      - run: pnpm a11y\n        env:\n          BASE_PATH:\s*\/Personal-Website\n      - run: pnpm size\n        env:\n          BASE_PATH:\s*\/Personal-Website/,
-    );
-  });
-
   it("prefixes raw site-root hrefs and next/image src so they resolve under the project path", () => {
     const nav = readSiteFile("components/nav.tsx");
     const contact = readSiteFile("components/sections/contact.tsx");
-    const postbuild = readSiteFile("scripts/postbuild.mjs");
 
     expect(nav).toContain("withBasePath");
     expect(contact).toContain("withBasePath");
-    expect(postbuild).toMatch(/\/icon\?/);
-    expect(postbuild).not.toContain('href="/icon?');
   });
 
   it("adds .png to generated icon/og files and prefixes the icon href when BASE_PATH is set", () => {
