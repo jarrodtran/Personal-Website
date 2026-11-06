@@ -63,13 +63,35 @@ export function Nav({
 
   useEffect(() => {
     if (!open) return;
+    const toggle = toggleRef.current;
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key !== "Escape") return;
-      setOpen(false);
-      toggleRef.current?.focus();
+      if (event.key === "Escape") {
+        setOpen(false);
+        toggle?.focus();
+        return;
+      }
+      if (
+        event.key !== "Tab" ||
+        event.altKey ||
+        event.ctrlKey ||
+        event.metaKey
+      ) {
+        return;
+      }
+      const panel = document.getElementById("mobile-nav");
+      if (!panel || !toggle) return;
+      const ring = [toggle, ...panel.querySelectorAll<HTMLElement>("a[href]")];
+      const current = ring.findIndex((el) => el === document.activeElement);
+      const last = ring.length - 1;
+      let next = event.shiftKey ? current - 1 : current + 1;
+      if (current === -1) next = event.shiftKey ? last : 0;
+      if (next < 0) next = last;
+      if (next > last) next = 0;
+      event.preventDefault();
+      ring[next].focus({ preventScroll: true });
     };
     const onResize = () => {
-      if (toggleRef.current?.offsetParent === null) setOpen(false);
+      if (toggle?.offsetParent === null) setOpen(false);
     };
     document.body.style.overflow = "hidden";
     document.addEventListener("keydown", onKeyDown);
@@ -78,6 +100,11 @@ export function Nav({
       document.body.style.overflow = "";
       document.removeEventListener("keydown", onKeyDown);
       window.removeEventListener("resize", onResize);
+      if (!toggle?.isConnected || toggle.offsetParent === null) return;
+      requestAnimationFrame(() => {
+        if (!toggle.isConnected || toggle.offsetParent === null) return;
+        toggle.focus({ preventScroll: true });
+      });
     };
   }, [open]);
 

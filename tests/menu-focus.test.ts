@@ -62,16 +62,6 @@ describe("mobile menu keyboard focus", () => {
       await toggle.click();
       await page.waitForSelector("#mobile-nav a");
 
-      const locked = await page.evaluate(() => {
-        window.scrollTo(0, 3000);
-        return {
-          overflow: document.body.style.overflow,
-          scrollY: window.scrollY,
-        };
-      });
-      expect(locked.overflow).toBe("hidden");
-      expect(locked.scrollY).toBe(0);
-
       const linkCount = await page.locator("#mobile-nav a").count();
       expect(linkCount).toBeGreaterThan(0);
       const forward: Stop[] = [];
@@ -82,8 +72,16 @@ describe("mobile menu keyboard focus", () => {
       for (const landed of forward) {
         expectVisibleMenuStop(landed);
       }
-      const stillLocked = await page.evaluate(() => window.scrollY);
-      expect(stillLocked).toBe(0);
+
+      const locked = await page.evaluate(() => {
+        window.scrollTo(0, 3000);
+        return {
+          overflow: document.body.style.overflow,
+          scrollY: window.scrollY,
+        };
+      });
+      expect(locked.overflow).toBe("hidden");
+      expect(locked.scrollY).toBe(0);
 
       await page.getByRole("button", { name: "Close menu" }).focus();
       await page.keyboard.press("Shift+Tab");
@@ -103,15 +101,53 @@ describe("mobile menu keyboard focus", () => {
       expect(closed.panel).toBe(false);
       expect(closed.label).toBe("Open menu");
       expect(closed.focused).toBe(true);
-      const released = await page.evaluate(() => {
-        window.scrollTo(0, 400);
-        return {
-          overflow: document.body.style.overflow,
-          scrollY: window.scrollY,
-        };
-      });
-      expect(released.overflow).toBe("");
-      expect(released.scrollY).toBeGreaterThan(0);
+      const released = await page.evaluate(() => document.body.style.overflow);
+      expect(released).toBe("");
+      await page.evaluate(() => window.scrollTo(0, 400));
+      await page.waitForFunction(() => window.scrollY > 100);
+    } finally {
+      await browser.close();
+    }
+  });
+
+  it("returns focus to the trigger after a menu link and keeps that section in view", async () => {
+    const browser = await chromium.launch();
+    const page = await browser.newPage({
+      viewport: { width: 390, height: 844 },
+    });
+    try {
+      await page.goto(`${origin}/`, { waitUntil: "networkidle" });
+      const before = await page.evaluate(
+        () =>
+          document.querySelector("#writing")?.getBoundingClientRect().top ?? -1,
+      );
+      await page.getByRole("button", { name: "Open menu" }).click();
+      await page.locator("#mobile-nav a", { hasText: "Writing" }).click();
+      await page.waitForFunction((start) => {
+        const button = document.querySelector(
+          'header button[aria-expanded="false"]',
+        );
+        const top =
+          document.querySelector("#writing")?.getBoundingClientRect().top ??
+          start;
+        return (
+          !document.getElementById("mobile-nav") &&
+          location.hash === "#writing" &&
+          document.activeElement === button &&
+          top < start &&
+          top >= 0
+        );
+      }, before);
+      const landed = await page.evaluate(() => ({
+        hash: location.hash,
+        focused: document.activeElement?.getAttribute("aria-label") ?? "",
+        top:
+          document.querySelector("#writing")?.getBoundingClientRect().top ?? -1,
+      }));
+      expect(landed.hash).toBe("#writing");
+      expect(landed.focused).toBe("Open menu");
+      expect(landed.top).toBeGreaterThanOrEqual(0);
+      expect(landed.top).toBeLessThan(before);
     } finally {
       await browser.close();
     }
