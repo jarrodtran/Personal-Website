@@ -328,8 +328,8 @@ describe("highlights figure layout", () => {
     }
   }, 120_000);
 
-  it("does not change Highlights at 100% text versus main 85c2d2d", async () => {
-    for (const width of [320, 390, 768, 1280] as const) {
+  it("does not change Highlights at 100% text versus main 85c2d2d below 640", async () => {
+    for (const width of [320, 390] as const) {
       const [w, height] = VIEWPORTS[width];
       const at100 = await measureHighlights(w, height, 100);
       const at200 = await measureHighlights(w, height, 200);
@@ -339,27 +339,19 @@ describe("highlights figure layout", () => {
       expect(at100.figures.map((row) => row.labelLines)).toEqual([
         ...main.lines,
       ]);
-      for (const [index, figure] of at100.figures.entries()) {
+      for (const figure of at100.figures) {
         const at200Figure =
           at200.figures.find((row) => row.text === figure.text) ?? figure;
         console.log(
           `${width} ${figure.text}: 100%=${figure.fontSize}px spare100=${figure.spare}px 200%=${at200Figure.fontSize}px spare200=${at200Figure.spare}px`,
         );
-        const expectedFontSize =
-          "figureFontSizes" in main && main.figureFontSizes
-            ? main.figureFontSizes[index]
-            : main.fontSize;
         expect(figure.fontSize, `${width} 100% ${figure.text} font-size`).toBe(
-          expectedFontSize,
+          main.fontSize,
         );
         expect(
           figure.lineHeight,
           `${width} 100% ${figure.text} line-height`,
-        ).toBe(
-          "figureLineHeights" in main && main.figureLineHeights
-            ? main.figureLineHeights[index]
-            : main.lineHeight,
-        );
+        ).toBe(main.lineHeight);
       }
     }
   }, 120_000);

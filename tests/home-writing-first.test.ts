@@ -166,8 +166,8 @@ describe("writing-first home", () => {
         // prose column, which leaves a dead band on the right edge of text
         // while dividers and headings span the full column.
         // Only prose in normal block flow should fill the column. Grid and
-        // flex parents (the writing row's button, the two-column principle
-        // rows) size their children on purpose.
+        // flex parents (the writing row's button and the principle rows)
+        // size their children on purpose.
         proseOverhang: [...document.querySelectorAll("main .measure")]
           .filter((element) => {
             const parent = element.parentElement;
@@ -256,6 +256,104 @@ describe("writing-first home", () => {
       ).toBeLessThan(MAIN_HOME_SCROLL_HEIGHT_200[width]);
     }
   });
+
+  it("stacks highlights, selected work, and how I work into one column at 640, 768, and 1280", async () => {
+    for (const width of [640, 768, 1280] as const) {
+      const { browser, page } = await openHome(width, VIEWPORT_HEIGHT[width]);
+      const layout = await page.evaluate(() => {
+        const strip = document.querySelector(
+          '[aria-label="Impact highlights"]',
+        );
+        const stripBox = strip?.getBoundingClientRect();
+        const cells = [...(strip?.children ?? [])].map((cell) => {
+          const box = cell.getBoundingClientRect();
+          return { left: box.left, width: box.width };
+        });
+        const work = document.getElementById("work");
+        const grid = work?.querySelector("article")?.parentElement;
+        const gridBox = grid?.getBoundingClientRect();
+        const articles = [...(work?.querySelectorAll("article") ?? [])].map(
+          (article) => {
+            const box = article.getBoundingClientRect();
+            return { left: box.left, width: box.width, right: box.right };
+          },
+        );
+        const rows = [
+          ...(document.getElementById("approach")?.querySelectorAll("li") ??
+            []),
+        ].map((row) => {
+          const title = row.querySelector("h3")?.getBoundingClientRect();
+          const copy = row.querySelector("p")?.getBoundingClientRect();
+          return {
+            titleLeft: title?.left ?? -1,
+            copyLeft: copy?.left ?? -1,
+          };
+        });
+        return {
+          sections: [
+            "top",
+            "writing",
+            "about",
+            "experience",
+            "work",
+            "approach",
+            "contact",
+          ].map((id) => document.getElementById(id)?.id ?? ""),
+          cells,
+          stripWidth: stripBox?.width ?? -1,
+          articles,
+          gridWidth: gridBox?.width ?? -1,
+          lastGap:
+            gridBox && articles.length > 0
+              ? gridBox.right - articles[articles.length - 1].right
+              : -1,
+          rows,
+        };
+      });
+      await browser.close();
+
+      expect(layout.sections).toEqual([...HOME_SECTION_IDS]);
+      expect(layout.cells, `${width}px highlights`).toHaveLength(
+        site.highlights.length,
+      );
+      expect(layout.articles, `${width}px selected work`).toHaveLength(
+        site.selectedWork.length,
+      );
+      expect(layout.rows, `${width}px how I work`).toHaveLength(
+        site.principles.length,
+      );
+      for (const cell of layout.cells) {
+        expect(
+          Math.abs(cell.left - layout.cells[0].left),
+          `${width}px highlight left`,
+        ).toBeLessThanOrEqual(1);
+        expect(
+          Math.abs(cell.width - layout.stripWidth),
+          `${width}px highlight width`,
+        ).toBeLessThanOrEqual(1);
+      }
+      for (const article of layout.articles) {
+        expect(
+          Math.abs(article.left - layout.articles[0].left),
+          `${width}px work left`,
+        ).toBeLessThanOrEqual(1);
+        expect(
+          Math.abs(article.width - layout.gridWidth),
+          `${width}px work width`,
+        ).toBeLessThanOrEqual(1);
+      }
+      expect(
+        layout.lastGap,
+        `${width}px empty work column`,
+      ).toBeLessThanOrEqual(1);
+      for (const row of layout.rows) {
+        expect(
+          Math.abs(row.copyLeft - row.titleLeft),
+          `${width}px how I work columns`,
+        ).toBeLessThanOrEqual(1);
+      }
+    }
+  }, 120_000);
 
   it("keeps the #140 desktop nav breakpoint at 1280", async () => {
     const layout = await readHomeLayout(1280, 800);

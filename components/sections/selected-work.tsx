@@ -8,22 +8,19 @@ export function SelectedWork() {
     <Section id="work">
       <SectionHeading title={site.sections.work.title} />
 
-      <div className="grid gap-6 sm:grid-cols-2">
+      <div className="grid gap-6">
         {site.selectedWork.map((item, index) => {
           const featured = index === 0;
           return (
             <article
               key={item.slug}
-              className={cn(
-                "reveal border-border bg-card group has-[a:focus-visible]:outline-ring relative flex min-w-0 flex-col overflow-hidden border has-[a:focus-visible]:outline-2 has-[a:focus-visible]:outline-offset-2",
-                featured && "sm:col-span-2",
-              )}
+              className="reveal border-border bg-card group has-[a:focus-visible]:outline-ring relative flex min-w-0 flex-col overflow-hidden border has-[a:focus-visible]:outline-2 has-[a:focus-visible]:outline-offset-2"
             >
               <div
                 className={cn(
-                  "border-border bg-muted @container flex aspect-[3/2] w-full min-w-0 flex-col justify-end border-b p-[20px] sm:p-[28px]",
+                  "border-border bg-muted @container flex aspect-[3/2] w-full min-w-0 flex-col justify-end border-b p-[20px] sm:aspect-auto sm:p-[28px]",
                   featured &&
-                    "sm:order-last sm:aspect-auto sm:min-h-0 sm:justify-start sm:border-t sm:border-b-0",
+                    "sm:order-last sm:min-h-0 sm:justify-start sm:border-t sm:border-b-0",
                 )}
               >
                 <div>

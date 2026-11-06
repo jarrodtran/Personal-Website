@@ -713,7 +713,12 @@ describe("390px tap targets and first screen", () => {
       await browser.close();
 
       expect(cells).toHaveLength(4);
-      // 640 inner cells wrap "Tesla Energy" once padding matches main.
+      const stacked = [
+        { borderBottom: "1px", borderRight: "0px", sourceLines: 1 },
+        { borderBottom: "1px", borderRight: "0px", sourceLines: 1 },
+        { borderBottom: "1px", borderRight: "0px", sourceLines: 1 },
+        { borderBottom: "0px", borderRight: "0px", sourceLines: 1 },
+      ];
       const expected =
         width < 640
           ? [
@@ -722,19 +727,7 @@ describe("390px tap targets and first screen", () => {
               { borderBottom: "0px", borderRight: "0px", sourceLines: 1 },
               { borderBottom: "0px", borderRight: "0px", sourceLines: 1 },
             ]
-          : width === 640
-            ? [
-                { borderBottom: "0px", borderRight: "1px", sourceLines: 1 },
-                { borderBottom: "0px", borderRight: "1px", sourceLines: 2 },
-                { borderBottom: "0px", borderRight: "1px", sourceLines: 2 },
-                { borderBottom: "0px", borderRight: "0px", sourceLines: 1 },
-              ]
-            : [
-                { borderBottom: "0px", borderRight: "1px", sourceLines: 1 },
-                { borderBottom: "0px", borderRight: "1px", sourceLines: 1 },
-                { borderBottom: "0px", borderRight: "1px", sourceLines: 1 },
-                { borderBottom: "0px", borderRight: "0px", sourceLines: 1 },
-              ];
+          : stacked;
       expect(cells, `${width}px highlights cells`).toEqual(expected);
     },
   );

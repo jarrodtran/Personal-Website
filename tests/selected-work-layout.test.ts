@@ -159,31 +159,18 @@ describe("selected work featured panel layout", () => {
         panel = panel.parentElement;
       }
       const text = featured?.querySelector("h3")?.parentElement;
-      const row = articles
-        .slice(1, 3)
-        .map((article) => article.getBoundingClientRect().bottom);
       const grid = articles[0]?.parentElement ?? null;
-      const gridTemplateColumns = grid
-        ? getComputedStyle(grid).gridTemplateColumns
-        : "none";
-      // Used tracks stay 2 when sm:col-span-2 creates implicit columns.
-      // The specified template is none unless sm:grid-cols-2 is applied.
-      const specifiedTemplate = grid
-        ? (grid.computedStyleMap().get("grid-template-columns")?.toString() ??
-          gridTemplateColumns)
-        : "none";
-      const repeatTracks = /^repeat\((\d+)\s*,/.exec(specifiedTemplate);
-      const columnTracks = repeatTracks
-        ? Number(repeatTracks[1])
-        : !specifiedTemplate || specifiedTemplate === "none"
-          ? 0
-          : specifiedTemplate.split(/\s+(?![^(]*\))/).length;
+      const gridBox = grid?.getBoundingClientRect();
+      const cards = articles.map((article) => article.getBoundingClientRect());
+      const last = cards.at(-1);
       return {
         workHeight: work?.getBoundingClientRect().height ?? -1,
         panelTop: panel?.getBoundingClientRect().top ?? -1,
         textBottom: text?.getBoundingClientRect().bottom ?? -1,
-        rowBottoms: row,
-        columnTracks,
+        cardLefts: cards.map((card) => card.left),
+        cardWidths: cards.map((card) => card.width),
+        gridWidth: gridBox?.width ?? -1,
+        lastGap: gridBox && last ? gridBox.right - last.right : -1,
         overflow: document.documentElement.scrollWidth > window.innerWidth,
       };
     }, site.selectedWork[0].panel.value);
@@ -230,18 +217,23 @@ describe("selected work featured panel layout", () => {
     }
   }, 120_000);
 
-  it("keeps the two-column row bottoms equal at 768 and 1280", async () => {
+  it("stacks selected work in one column at 768 and 1280", async () => {
     for (const width of [768, 1280] as const) {
       const layout = await measureWork(width, 800, 100);
-      expect(layout.rowBottoms, `${width} row cards`).toHaveLength(2);
-      expect(
-        layout.columnTracks,
-        `${width} selected work grid is not 2 columns`,
-      ).toBe(2);
-      expect(
-        Math.abs(layout.rowBottoms[0] - layout.rowBottoms[1]),
-        `${width} row bottom delta`,
-      ).toBeLessThanOrEqual(1);
+      expect(layout.cardWidths, `${width} cards`).toHaveLength(
+        site.selectedWork.length,
+      );
+      for (const [index, cardWidth] of layout.cardWidths.entries()) {
+        expect(
+          Math.abs(layout.cardLefts[index] - layout.cardLefts[0]),
+          `${width} card ${index} left`,
+        ).toBeLessThanOrEqual(1);
+        expect(
+          Math.abs(cardWidth - layout.gridWidth),
+          `${width} card ${index} width`,
+        ).toBeLessThanOrEqual(1);
+      }
+      expect(layout.lastGap, `${width} empty column`).toBeLessThanOrEqual(1);
     }
   }, 120_000);
 
