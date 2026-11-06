@@ -1,5 +1,13 @@
 # Positioning — keep this narrative
 
+> **Direction update proposed (Nov 4, 2026, pending review):** Jarrod has
+> directed that jarrodtran.com be a personal website, not a resume or
+> job-search site. The full proposal, the homepage copy, and the list of
+> conflicts with the brief below live in
+> [docs/personal-site-direction.md](docs/personal-site-direction.md). The
+> brief below stays in force until that proposal is approved; the first
+> copy changes ship in the same PR for review.
+
 Single public story for [jarrodtran.com](https://jarrodtran.com). Do not fragment it into audience-specific pages, headlines, or toggles.
 
 ## Core Direction

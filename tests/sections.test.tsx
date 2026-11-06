@@ -83,7 +83,7 @@ const SECTION_DESCRIPTIONS = [
 ] as const;
 
 const CONTACT_INTRO =
-  "Growth-stage tech, consulting, early-stage startups, or an operating role at a VC firm. Based in Houston.";
+  "I am always up for swapping notes on AI adoption. Based in Houston.";
 
 describe("hero", () => {
   const html = renderToStaticMarkup(<Hero />);
@@ -458,15 +458,19 @@ describe("experience", () => {
 describe("contact", () => {
   const html = renderToStaticMarkup(<Contact />);
 
-  it("names all four audiences Jarrod is talking to", () => {
+  it("invites conversation instead of naming audiences", () => {
+    // Direction change (Nov 4, 2026, per Jarrod): personal website, not a
+    // job-search page. The four-audience pitch is retired on purpose.
     const text = textOf(html);
+    expect(text).toContain("Say hello.");
+    expect(text).toContain(CONTACT_INTRO);
     for (const audience of [
       "Growth-stage tech",
       "consulting",
       "early-stage startups",
       "operating role at a VC firm",
     ]) {
-      expect(text).toContain(audience);
+      expect(text).not.toContain(audience);
     }
   });
 

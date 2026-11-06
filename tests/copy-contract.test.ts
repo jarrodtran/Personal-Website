@@ -26,7 +26,6 @@ describe("visitor-facing copy contract", () => {
     expect(copy).toContain(site.positioning.valueProp);
     expect(copy).toContain(site.contact.intro);
     expect(copy).toContain(site.about.bio[0]);
-    expect(copy).toContain(site.about.lookingForIntro);
     expect(copy).toContain("1,000+");
     expect(copy).toContain("$1.6M");
     expect(copy.includes("$156M") || copy.includes("$260M")).toBe(true);
@@ -35,7 +34,10 @@ describe("visitor-facing copy contract", () => {
     );
   });
 
-  it("states corporate operator / product & strategy positioning, AI product, leadership, impact, and the four audiences", () => {
+  it("states personal-site positioning: writing first, work as context, no audience pitch", () => {
+    // Direction change (Nov 4, 2026, per Jarrod): jarrodtran.com is a
+    // personal website, not a resume or job-search site. The four-audience
+    // pitch that used to live in the contact intro is retired on purpose.
     const lower = copy.toLowerCase();
     expect(
       lower.includes("corporate operator") ||
@@ -47,10 +49,14 @@ describe("visitor-facing copy contract", () => {
       lower.includes("structured problem-solving") ||
         lower.includes("organizational impact"),
     ).toBe(true);
-    expect(lower).toContain("growth-stage tech");
-    expect(lower).toContain("consulting");
-    expect(lower).toContain("early-stage startup");
-    expect(lower).toContain("operating role at a vc firm");
+    expect(lower).toContain("notes on ai and judgment");
+    expect(lower).toContain(
+      "here i write about the calls behind that work",
+    );
+    expect(lower).not.toContain("growth-stage tech");
+    expect(lower).not.toContain("consulting");
+    expect(lower).not.toContain("early-stage startup");
+    expect(lower).not.toContain("operating role at a vc firm");
   });
 
   // rule:one-public-narrative

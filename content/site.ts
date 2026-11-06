@@ -77,7 +77,6 @@ export interface SiteContent {
   about: {
     bio: string[];
     lookingFor: string[];
-    lookingForIntro: string;
     strengths: string[];
     education: string;
   };
@@ -124,8 +123,8 @@ export const site: SiteContent = {
     },
     documentTitle: "Jarrod Tran · Product & strategy · Tesla, Apple, Waymo",
     valueProp:
-      "Unclear brief, real P&L. At Tesla Energy I lead AI enablement: a product and engineering team whose tools are in production. Before that: Apple and Waymo.",
-    status: "Open to the right role",
+      "I lead AI enablement at Tesla Energy. My team builds tools people use. Here I write about the calls behind that work and what Apple and Waymo taught me.",
+    status: "Notes on AI and judgment",
     location: "Houston, TX",
     currentRole: currentTitle,
   },
@@ -159,8 +158,6 @@ export const site: SiteContent = {
     bio: [
       `I work at Tesla Energy as ${currentTitle}. I built the team that ships our AI tools, got people using them, and put reporting in place so leadership can see whether the tools move the business. Before that: Apple's 0→1 iPhone launch in India, Engineering Operations planning at Waymo, and Tesla Special Projects through the 4680 launch.`,
     ],
-    lookingForIntro:
-      "I want a seat where my judgment changes the outcome, not just the deck.",
     lookingFor: [
       "A real business outcome and a named decision-maker",
       "AI product work that real people use (past the pilot)",
@@ -468,10 +465,10 @@ export const site: SiteContent = {
       title: "Selected work",
     },
     approach: {
-      title: "How I work",
+      title: "How I think",
     },
     contact: {
-      title: "Looking for product, strategy, or AI roles.",
+      title: "Say hello.",
     },
   },
   knowsAbout: [
@@ -495,7 +492,7 @@ export const site: SiteContent = {
     resumeHref: "/resume.pdf",
     resumeFilename: "Jarrod-Tran-Resume.pdf",
     intro:
-      "Growth-stage tech, consulting, early-stage startups, or an operating role at a VC firm. Based in Houston.",
+      "I am always up for swapping notes on AI adoption. Based in Houston.",
   },
   outreach: {
     linkedin:
