@@ -35,6 +35,7 @@ jobs:
       - run: pnpm test:height
       - run: pnpm test:images
       - run: pnpm test:theme
+      - run: pnpm test:theme-toggle
       - run: pnpm test:tokens
       - run: pnpm a11y
       - run: pnpm size
@@ -57,5 +58,8 @@ jobs:
         env:
           BASE_PATH: /Personal-Website
       - run: pnpm test:theme
+        env:
+          BASE_PATH: /Personal-Website
+      - run: pnpm test:theme-toggle
         env:
           BASE_PATH: /Personal-Website

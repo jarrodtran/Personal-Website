@@ -26,7 +26,7 @@ describe("theme toggle state", () => {
     expect(render()).toContain('aria-pressed="false"');
   });
 
-  it("does not claim dark before the theme resolves", () => {
+  it("does not claim dark from resolvedTheme alone before it resolves (SSR)", () => {
     theme.resolvedTheme = undefined;
     expect(render()).toContain('aria-pressed="false"');
   });
