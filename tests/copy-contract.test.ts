@@ -24,7 +24,7 @@ describe("visitor-facing copy contract", () => {
   it("imports the shipped content module, not a duplicate fixture", () => {
     expect(copy).toContain(site.positioning.headline);
     expect(copy).toContain(site.positioning.valueProp);
-    expect(copy).toContain(site.contact.intro);
+    expect(site.contact.intro).toBe("");
     expect(copy).toContain(site.about.bio[0]);
     expect(copy).toContain(site.about.lookingForIntro);
     expect(copy).toContain("1,000+");
@@ -35,22 +35,17 @@ describe("visitor-facing copy contract", () => {
     );
   });
 
-  it("states corporate operator / product & strategy positioning, AI product, leadership, impact, and the four audiences", () => {
+  it("keeps product and strategy positioning without a public audience pitch", () => {
     const lower = copy.toLowerCase();
-    expect(
-      lower.includes("corporate operator") ||
-        lower.includes("product & strategy"),
-    ).toBe(true);
+    expect(lower).toContain("product & strategy");
     expect(lower).toContain("ai product");
     expect(lower).toContain("cross-functional leadership");
-    expect(
-      lower.includes("structured problem-solving") ||
-        lower.includes("organizational impact"),
-    ).toBe(true);
-    expect(lower).toContain("growth-stage tech");
-    expect(lower).toContain("consulting");
-    expect(lower).toContain("early-stage startup");
-    expect(lower).toContain("operating role at a vc firm");
+    expect(lower).toContain("structured problem-solving");
+    expect(lower).not.toContain("corporate operator");
+    expect(lower).not.toContain("growth-stage tech");
+    expect(lower).not.toContain("early-stage startup");
+    expect(lower).not.toContain("operating role at a vc firm");
+    expect(lower).not.toContain("open to the right role");
   });
 
   // rule:one-public-narrative
@@ -160,7 +155,8 @@ describe("visitor-facing copy contract", () => {
     }
 
     const hero = readSiteFile("components/sections/hero.tsx");
-    expect(hero).toContain("site.positioning.name");
+    expect(hero).not.toContain("site.positioning.name");
+    expect(hero).not.toContain("<h1");
     expect(hero).not.toContain("site.positioning.headline");
     expect(hero).not.toContain("headlineVariants");
     expect(hero).not.toContain("site.outreach");
@@ -223,7 +219,7 @@ describe("visitor-facing copy contract", () => {
 
   it("renders section headings from the same content module", () => {
     const files = [
-      ["components/sections/hero.tsx", "site.positioning.name"],
+      ["app/layout.tsx", "name={site.positioning.name}"],
       ["components/sections/writing.tsx", "site.substack.name"],
       ["components/sections/about.tsx", "site.about.bio"],
       ["components/sections/about.tsx", "site.sections.about"],

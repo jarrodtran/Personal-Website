@@ -168,10 +168,11 @@ describe("writing-first home", () => {
     return layout;
   }
 
-  it("uses the name as the only home h1 and puts Writing second", async () => {
+  it("keeps the name in the header and does not repeat it as a home h1", async () => {
     const layout = await readHomeLayout(1280, 800);
-    expect(layout.h1).toBe(site.positioning.name);
+    expect(layout.h1).toBe("");
     expect(layout.h1).not.toBe(site.positioning.headline);
+    expect(layout.h1Left).toBe(-1);
     expect(layout.introParagraphCount).toBe(0);
     expect(layout.sectionOrder.slice(0, 2)).toEqual(["top", "writing"]);
   });
@@ -186,10 +187,11 @@ describe("writing-first home", () => {
     }
   });
 
-  it("aligns the home h1 left edge with the header brand at 768 and 1280", async () => {
+  it("does not render a home h1 beside the header name at 768 and 1280", async () => {
     for (const width of [768, 1280] as const) {
       const layout = await readHomeLayout(width, VIEWPORT_HEIGHT[width]);
-      expect(layout.h1Left, `${width}px h1 left`).toBe(layout.brandLeft);
+      expect(layout.h1Left, `${width}px h1 left`).toBe(-1);
+      expect(layout.brandLeft, `${width}px header name`).toBeGreaterThan(0);
     }
   });
 

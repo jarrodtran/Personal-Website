@@ -213,7 +213,7 @@ describe("hero headline layout", () => {
     };
   }
 
-  it("has exactly one h1 on every route, and the home h1 is the headline", async () => {
+  it("keeps a single h1 off the home page until there is a writing line", async () => {
     for (const path of ROUTES) {
       const { browser, page } = await openPage(path, 390, 844, 100, "light");
       const headings = await page.evaluate(() =>
@@ -222,10 +222,13 @@ describe("hero headline layout", () => {
         ),
       );
       await browser.close();
-      expect(headings, `${path} h1 count`).toHaveLength(1);
-      if (path === "/") {
-        expect(headings[0], "home h1").toBe(site.positioning.name);
+      // /work/ and /writing/ refresh to the home page, so they share its heading.
+      if (path === "/" || path === "/work/" || path === "/writing/") {
+        expect(headings, `${path} h1 count`).toEqual([]);
+        continue;
       }
+      expect(headings, `${path} h1 count`).toHaveLength(1);
+      expect(headings[0], `${path} h1`).not.toBe(site.positioning.name);
     }
   }, 120_000);
 
@@ -290,6 +293,10 @@ describe("hero headline layout", () => {
             continue;
           }
           expect(
+            layout.h1Font,
+            `${width} ${textPercent}% ${colorScheme} home h1`,
+          ).toBe(-1);
+          expect(
             layout.singles,
             `${width} ${textPercent}% ${colorScheme} one-word h1 lines`,
           ).toEqual([]);
@@ -340,10 +347,7 @@ describe("hero headline layout", () => {
           `${width} ${textPercent}%: h1=${layout.h1Font} body=${layout.bodyFont} main=${MAIN_TOP_HEIGHT[width][textPercent]} pr=${layout.topHeight} one-word=${JSON.stringify(layout.singles.map((row) => row.line[0]))}\n`,
         );
         await browser.close();
-        expect(
-          layout.h1Font,
-          `${width} ${textPercent}% h1 vs body`,
-        ).toBeGreaterThanOrEqual(layout.bodyFont);
+        expect(layout.h1Font, `${width} ${textPercent}% home h1`).toBe(-1);
       }
     }
   }, 180_000);

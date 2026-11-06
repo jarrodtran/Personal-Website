@@ -82,15 +82,14 @@ const SECTION_DESCRIPTIONS = [
   "The skills I use most, grouped by area.",
 ] as const;
 
-const CONTACT_INTRO =
-  "Growth-stage tech, consulting, early-stage startups, or an operating role at a VC firm. Based in Houston.";
-
 describe("hero", () => {
   const html = renderToStaticMarkup(<Hero />);
 
-  it("shows the name only", () => {
-    expect(textOf(html)).toBe(site.positioning.name);
-    expect(headings(html, "h1")).toEqual([site.positioning.name]);
+  it("does not repeat the name as a page heading", () => {
+    expect(html).toContain('id="top"');
+    expect(html).not.toContain("<h1");
+    expect(textOf(html)).toBe("");
+    expect(html).not.toContain(site.positioning.name);
     expect(html).not.toContain(site.positioning.headline);
   });
 
@@ -101,12 +100,9 @@ describe("hero", () => {
     expect(html).not.toMatch(/coming soon/i);
   });
 
-  it("sizes the headline with the shared display classes", () => {
-    expect(html).toContain(
-      "measure font-display text-[min(1.75rem,15cqi)] leading-[1.15] tracking-tight text-balance sm:text-[min(2.25rem,9cqi)]",
-    );
-    expect(html).not.toContain("text-lg");
-    expect(html).not.toContain("text-[1.0625rem]");
+  it("does not leave a display heading in the page body", () => {
+    expect(html).not.toContain("font-display");
+    expect(html).not.toContain("text-[min(1.75rem,15cqi)]");
   });
 });
 
@@ -116,7 +112,7 @@ const threeXml = readFileSync(
 );
 
 describe("writing", () => {
-  it("shows the launching-soon line and subscribe link when there are 0 posts", () => {
+  it("shows No essays yet and the subscribe link when there are 0 posts", () => {
     const html = renderToStaticMarkup(<Writing posts={[]} />);
     const text = textOf(html);
     const paragraphs = [...html.matchAll(/<p\b[^>]*>([\s\S]*?)<\/p>/g)].map(
@@ -125,9 +121,8 @@ describe("writing", () => {
     expect(text).toContain(site.substack.name);
     expect(text).not.toContain("01 / Essays");
     expect(text).not.toContain("Posts from my Substack.");
-    expect(paragraphs).toContain(
-      "First post coming soon. Subscribe to get it by email.",
-    );
+    expect(paragraphs).toContain("No essays yet.");
+    expect(text).not.toContain("First post coming soon");
     expect(text).not.toContain("Nothing published yet");
     expect(text).not.toContain("Subscribe and the first post");
     expect(text).not.toContain("First post soon");
@@ -381,7 +376,7 @@ describe("section headings", () => {
     expect(contact).toContain("mb-10");
     expect(contact).toContain("max-w-2xl");
     expect(contact).toContain("sm:mb-12");
-    expect(contact).toMatch(/<h2\b[^>]*>[\s\S]*?<\/h2>\s*<p\b[^>]*\bmt-4\b/);
+    expect(contact).not.toMatch(/<h2\b[^>]*>[\s\S]*?<\/h2>\s*<p\b/);
   });
 });
 
@@ -458,25 +453,16 @@ describe("experience", () => {
 describe("contact", () => {
   const html = renderToStaticMarkup(<Contact />);
 
-  it("names all four audiences Jarrod is talking to", () => {
+  it("is a Contact heading plus the actions, with no audience pitch", () => {
+    expect(site.sections.contact.title).toBe("Contact");
+    expect(site.contact.intro).toBe("");
+    expect(headings(html, "h2")).toEqual(["Contact"]);
+    expect(html).not.toMatch(/<h2\b[^>]*>[\s\S]*?<\/h2>\s*<p\b/);
     const text = textOf(html);
-    for (const audience of [
-      "Growth-stage tech",
-      "consulting",
-      "early-stage startups",
-      "operating role at a VC firm",
-    ]) {
-      expect(text).toContain(audience);
-    }
-  });
-
-  it("renders the contact intro under the Contact h2", () => {
-    expect(site.contact.intro).toBe(CONTACT_INTRO);
-    expect(html).toMatch(
-      new RegExp(
-        `<h2\\b[^>]*>${site.sections.contact.title.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}</h2>\\s*<p\\b[^>]*>${CONTACT_INTRO.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}</p>`,
-      ),
-    );
+    expect(text).not.toContain("Growth-stage tech");
+    expect(text).not.toContain("early-stage startups");
+    expect(text).not.toContain("operating role at a VC firm");
+    expect(text).not.toContain("Looking for");
   });
 
   it("offers email with a copy button, LinkedIn, a speaking invite, the résumé, and the calendar when set, and no form", () => {

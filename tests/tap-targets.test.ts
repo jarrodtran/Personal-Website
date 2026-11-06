@@ -282,13 +282,13 @@ describe("390px tap targets and first screen", () => {
       };
     });
     await browser.close();
-    expect(view.hero).toEqual([site.positioning.name]);
+    expect(view.hero).toEqual([]);
     expect(view.writingTitle).toBe(site.substack.name);
     expect(view.writingBottom).toBeGreaterThan(0);
     expect(view.writingBottom).toBeLessThanOrEqual(view.viewport);
   });
 
-  it("aligns the hero name with the nav column at 1280px", async () => {
+  it("keeps the header name on the prose column and does not repeat it in #top", async () => {
     const browser = await chromium.launch();
     const page = await browser.newPage({
       viewport: { width: 1280, height: 800 },
@@ -304,7 +304,7 @@ describe("390px tap targets and first screen", () => {
       };
     });
     await browser.close();
-    expect(left.h1).toBe(160);
+    expect(left.h1).toBeNull();
     expect(left.brand).toBe(160);
   });
 

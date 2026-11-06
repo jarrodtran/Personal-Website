@@ -124,8 +124,8 @@ export const site: SiteContent = {
     },
     documentTitle: "Jarrod Tran · Product & strategy · Tesla, Apple, Waymo",
     valueProp:
-      "Unclear brief, real P&L. At Tesla Energy I lead AI enablement: a product and engineering team whose tools are in production. Before that: Apple and Waymo.",
-    status: "Open to the right role",
+      "I lead AI enablement at Tesla Energy. The tools are in use by 1,000+ people. Before that: Apple and Waymo.",
+    status: "Houston, TX",
     location: "Houston, TX",
     currentRole: currentTitle,
   },
@@ -183,27 +183,49 @@ export const site: SiteContent = {
         {
           title: currentTitle,
           dates: "Aug 2023 - Present",
-          summary:
-            "I own Tesla Energy’s AI enablement strategy and the product team that ships it: roadmap, rules, and what I report to leadership.",
           bullets: [
             {
-              text: "Built and lead a forward-deployed AI product and engineering org at Tesla Energy, scaling adoption to 1,000+ active users across 20+ production AI solutions: RAG troubleshooting, automated reporting, workflow automation, and decision-support.",
+              text: "Stood up a forward-deployed product and engineering team. The team shipped 20+ production AI solutions.",
+              metric: "20+",
+              audiences: ["tech", "startup"],
+            },
+            {
+              text: "Reported weekly adoption for those solutions. Active users reached 1,000+.",
               metric: "1,000+",
               audiences: ["tech", "startup"],
             },
             {
-              text: "Modeled AI productivity at roughly 540 hours reclaimed per week and $1.6M in annualized value, with more upside as automation adoption grows.",
+              text: "Led AI enablement for 10,000 Tesla Energy employees, from the current workflow through handoff to a sustaining team.",
+              metric: "10,000",
+              audiences: ["tech", "consulting"],
+            },
+            {
+              text: "Modeled about 540 hours reclaimed per week. Annualized value of that estimate: $1.6M.",
               metric: "$1.6M",
               audiences: ["tech", "vc"],
             },
             {
-              text: "Owned the global investment roadmap across California, Texas, and Shanghai: scaled Megapack 3.2×, allocated $23M across 50+ initiatives for $156M in incremental annual profit, and led a separate program that delivered $260M in annualized savings.",
+              text: "Sequenced a $23M portfolio of 50+ initiatives. Incremental annual profit: $156M.",
               metric: "$156M",
               audiences: ["vc", "consulting"],
             },
             {
-              text: "Mitigated $550M in projected tariff exposure by redesigning the product and investment plan, then built and promoted successors so I could focus on AI enablement.",
+              text: "Kept annualized savings as a separate line on that portfolio. The line is $260M.",
+              metric: "$260M",
+              audiences: ["vc", "consulting"],
+            },
+            {
+              text: "Sequenced the portfolio through launch. Megapack scale reached 3.2×.",
+              metric: "3.2×",
+              audiences: ["vc", "consulting"],
+            },
+            {
+              text: "Redesigned the build plans for the tariff program. Projected tariff exposure mitigated: $550M.",
               metric: "$550M",
+              audiences: ["consulting", "startup"],
+            },
+            {
+              text: "Handed the portfolio playbooks to sustaining owners. The review now sits with them.",
               audiences: ["consulting", "startup"],
             },
           ],
@@ -211,20 +233,18 @@ export const site: SiteContent = {
         {
           title: "Program Manager, Special Projects",
           dates: "Jun 2018 - Jun 2021",
-          summary:
-            "I ran new programs at Tesla, including the 4680 launch and the Model 3 and Model Y scale-up.",
           bullets: [
             {
-              text: "Advanced Project Roadrunner, Tesla's 4680 program, from early pilot to a launch-ready platform. Stage gates, readiness reviews, and cross-functional ownership through Battery Day.",
+              text: "Took Project Roadrunner, the 4680 program, from early pilot to a launch-ready platform. Stage gates and launch ownership then moved to engineering and production.",
               audiences: ["startup", "tech"],
             },
             {
-              text: "Designed and launched a $3.5M/month coordination platform (“Warehouse on Wheels”) to protect product availability during rapid scale-up.",
-              metric: "$3.5M/month",
+              text: "Designed and launched Warehouse on Wheels, a $3.5M/month coordination platform. It protected battery and drivetrain flow during scale-up.",
+              metric: "$3.5M",
               audiences: ["startup", "tech"],
             },
             {
-              text: "Led planning and recovery across Model 3 and Model Y programs through demand surges and supply disruptions.",
+              text: "Sustained Model 3 and Model Y rates through demand surges and supply disruptions.",
               audiences: ["startup", "tech"],
             },
           ],
@@ -239,16 +259,12 @@ export const site: SiteContent = {
           dates: "Oct 2022 - May 2023",
           bullets: [
             {
-              text: "Led annual planning, OKRs, and quarterly business reviews for Engineering Operations. Turned org priorities into resource plans, targets, and milestones.",
+              text: "Replaced ad-hoc Engineering Operations reporting with one decision system. Hardware, software, fleet, product, and legal work from it.",
               audiences: ["consulting", "tech"],
             },
             {
-              text: "Got hardware, software, fleet, Product, Legal, and Engineering onto the same facts, including safety and regulatory work for commercial autonomous-vehicle deployment.",
+              text: "Set the cadence on that system: annual planning, OKRs, resource plans, business reviews, and decision milestones.",
               audiences: ["consulting", "startup"],
-            },
-            {
-              text: "Built leadership dashboards for performance, fleet health, and program milestones so senior leaders weren't stuck in ad-hoc reporting.",
-              audiences: ["tech", "vc"],
             },
           ],
         },
@@ -262,17 +278,26 @@ export const site: SiteContent = {
           dates: "Jun 2021 - Jun 2022",
           bullets: [
             {
-              text: "Led the 0→1 iPhone India launch from market entry and partner qualification through readiness and scaled delivery, under tight quality, regulatory, and timing requirements.",
+              text: "Built the 0→1 iPhone India launch plan. Quality, regulatory, and timing requirements stayed in that plan.",
               audiences: ["startup", "tech"],
             },
             {
-              text: "Supported 293% year-over-year growth (4.3M → 16.9M units) and a program whose reported revenue grew from $2B to $10B by translating demand into investment and readiness plans.",
+              text: "Shipped the volume ramp. Units grew 293% year over year, from 4.3M to 16.9M.",
               metric: "293%",
               audiences: ["tech", "vc"],
             },
             {
-              text: "Expanded iPhone India exports from 6 to 40+ countries, building a second-source network that reduced geographic concentration risk.",
+              text: "Shipped the revenue ramp on that same launch. Reported program revenue grew from $2B to $10B.",
+              metric: "$10B",
+              audiences: ["tech", "vc"],
+            },
+            {
+              text: "Expanded iPhone India exports from 6 countries to 40+ countries.",
               metric: "40+",
+              audiences: ["consulting", "tech"],
+            },
+            {
+              text: "Handed the running launch to the plant teams.",
               audiences: ["consulting", "tech"],
             },
           ],
@@ -326,7 +351,7 @@ export const site: SiteContent = {
       contribution:
         "I built Python and Tableau models linking investment, labor, cost, and timing. We funded the work with the best return and killed the rest. The same logic ranks AI use cases today.",
       outcome:
-        "3.2× scale on Megapack, $260M in annualized savings, and $550M in tariff exposure mitigated.",
+        "Yearly profit on the funded set: $156M.",
       panel: {
         kicker: "Tesla Energy",
         value: "$156M",
@@ -347,7 +372,7 @@ export const site: SiteContent = {
           "Reuse the ranking method later when sequencing AI use cases",
         ],
         outcomeDetail:
-          "The funded set delivered $156M in incremental annual profit, with 3.2× Megapack scale, $260M in annualized savings, and $550M in tariff exposure mitigated.",
+          "The $23M portfolio of 50+ initiatives returned $156M in incremental annual profit. Annualized savings on that portfolio were $260M, counted on their own line. Megapack scale reached 3.2×. A separate plan mitigated $550M in projected tariff exposure.",
         role: [
           "Owned the Energy investment roadmap and review cadence",
           "Built the models executives used to compare asks",
@@ -361,9 +386,9 @@ export const site: SiteContent = {
       problem:
         "India had to go from plan to scaled launch while market entry, partner readiness, and demand were all still moving.",
       contribution:
-        "I drove market-entry decisions, partner qualification, and launch readiness, and kept demand, quality, and geopolitical risk in one plan.",
+        "I led market-entry decisions, partner qualification, and launch readiness, and kept demand, quality, and timing risk in one plan.",
       outcome:
-        "Program revenue grew from $2B to $10B, and exports expanded from 6 to 40+ countries.",
+        "Revenue on the India launch moved from $2B to $10B. Exports went from 6 countries to 40+.",
       panel: {
         kicker: "Apple",
         value: "293%",
@@ -384,7 +409,7 @@ export const site: SiteContent = {
           "Build second sources so exports weren't pinned to one geography",
         ],
         outcomeDetail:
-          "Reported program revenue moved from $2B to $10B while volume grew 293% year over year (4.3M → 16.9M units). Exports reached 40+ countries.",
+          "Reported program revenue moved from $2B to $10B. Volume grew 293% year over year, from 4.3M to 16.9M units. Exports reached 40+ countries.",
         role: [
           "Led the India launch program end to end",
           "Kept entry, partners, and readiness on one schedule",
@@ -432,29 +457,19 @@ export const site: SiteContent = {
   ],
   principles: [
     {
-      title: "Get the facts first",
+      title: "Count users every week",
       description:
-        "Get the outcome, constraints, economics, and assumptions on the table before anyone spends. Structured problem-solving starts there.",
+        "Training ships with the tool, and leadership sees the weekly adoption count.",
     },
     {
-      title: "Find where work stalls",
+      title: "Fund in one ranked review",
       description:
-        "Follow the dependencies, incentives, and bottlenecks. Problems usually show up where one team hands work to another.",
+        "Every request goes on one list. The highest return stays. The rest stop in that same meeting.",
     },
     {
-      title: "Cut what doesn't matter",
+      title: "Leave a sustaining owner",
       description:
-        "Cut work that doesn't serve the outcome. On Megapack that was 50+ requests down to a ranked $23M portfolio.",
-    },
-    {
-      title: "Name an owner",
-      description:
-        "Name the tradeoff, the owner, and the next move. A plan only counts once each step has an owner.",
-    },
-    {
-      title: "Keep improving it",
-      description:
-        "Add the feedback (and the automation) that makes the system better as it grows. I add AI where it clearly saves time.",
+        "The person who keeps the result gets the playbook before the next build starts.",
     },
   ],
   sections: {
@@ -471,7 +486,7 @@ export const site: SiteContent = {
       title: "How I work",
     },
     contact: {
-      title: "Looking for product, strategy, or AI roles.",
+      title: "Contact",
     },
   },
   knowsAbout: [
@@ -494,8 +509,7 @@ export const site: SiteContent = {
     github: "https://github.com/jarrodtran",
     resumeHref: "/resume.pdf",
     resumeFilename: "Jarrod-Tran-Resume.pdf",
-    intro:
-      "Growth-stage tech, consulting, early-stage startups, or an operating role at a VC firm. Based in Houston.",
+    intro: "",
   },
   outreach: {
     linkedin:
