@@ -99,7 +99,7 @@ export default function RootLayout({
         <Providers>
           <a
             href="#content"
-            className="focus:bg-card focus:text-foreground sr-only focus:not-sr-only focus:absolute focus:top-3 focus:left-3 focus:z-[60] focus:inline-flex focus:min-h-11 focus:items-center focus:px-4"
+            className="focus:border-border focus:bg-card focus:text-foreground sr-only font-medium focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[60] focus:inline-flex focus:min-h-11 focus:items-center focus:border focus:px-4"
           >
             Skip to content
           </a>
@@ -109,7 +109,9 @@ export default function RootLayout({
             resumeHref={site.contact.resumeHref}
             resumeFilename={site.contact.resumeFilename}
           />
-          <main id="content">{children}</main>
+          <main id="content" tabIndex={-1} className="scroll-mt-24 focus:outline-none">
+            {children}
+          </main>
           <Footer />
         </Providers>
       </body>
