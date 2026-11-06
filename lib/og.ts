@@ -10,8 +10,14 @@ const fontsRoot = join(process.cwd(), "lib/fonts");
 export function loadOgFonts() {
   return [
     {
-      name: "Instrument Serif",
-      data: readFileSync(join(fontsRoot, "InstrumentSerif-Regular.ttf")),
+      name: "Newsreader",
+      data: readFileSync(join(fontsRoot, "Newsreader-Regular.ttf")),
+      style: "normal" as const,
+      weight: 400 as const,
+    },
+    {
+      name: "ArrowFallback",
+      data: readFileSync(join(fontsRoot, "ArrowFallback.ttf")),
       style: "normal" as const,
       weight: 400 as const,
     },
