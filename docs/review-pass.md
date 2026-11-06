@@ -1,6 +1,6 @@
 # Review PASS
 
-FE Designer and Preview QA fill this in for every PASS. Copy the blank template into the PR or a review comment.
+FE Designer and Preview QA fill this in for every PASS. Copy the blank template into the PR, then post the three `GATE ... PASS <head sha>` comments described in [AGENTS.md](../AGENTS.md). The filled template does not turn the gate green by itself.
 
 ## Template
 
