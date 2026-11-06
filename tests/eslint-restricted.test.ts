@@ -45,6 +45,13 @@ describe("no reading .github or scripts as text in tests", () => {
     expect(messages).toHaveLength(1);
   });
 
+  it("rejects a relative workflow path", () => {
+    const messages = lint(
+      'const ci = readFileSync(path.resolve(__dirname, "../.github/workflows/ci.yml"), "utf8");',
+    );
+    expect(messages).toHaveLength(1);
+  });
+
   it("leaves site reads alone", () => {
     const messages = lint(
       'readFileSync("out/index.html", "utf8");\nreadFileSync(join(root, "content", "site.ts"), "utf8");',
