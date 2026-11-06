@@ -71,10 +71,23 @@ export function Nav({
     const onResize = () => {
       if (toggleRef.current?.offsetParent === null) setOpen(false);
     };
+    // The page behind the panel cannot scroll while the menu is open, so Tab
+    // must not reach it either: without this, focus lands thousands of pixels
+    // below the viewport with no visible indicator.
+    const behind = [
+      document.getElementById("content"),
+      document.querySelector("footer"),
+    ].filter((element): element is HTMLElement => element !== null);
+    behind.forEach((element) => {
+      element.inert = true;
+    });
     document.body.style.overflow = "hidden";
     document.addEventListener("keydown", onKeyDown);
     window.addEventListener("resize", onResize);
     return () => {
+      behind.forEach((element) => {
+        element.inert = false;
+      });
       document.body.style.overflow = "";
       document.removeEventListener("keydown", onKeyDown);
       window.removeEventListener("resize", onResize);
