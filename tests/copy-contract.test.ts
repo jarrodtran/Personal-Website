@@ -153,10 +153,16 @@ describe("visitor-facing copy contract", () => {
     expect(site.positioning.valueProp.length).toBeGreaterThan(0);
     expect(site.about.bio.length).toBeGreaterThan(0);
 
-    const variants = Object.values(site.positioning.headlineVariants);
-    expect(variants).toHaveLength(4);
-    for (const variant of variants) {
-      expect(copy).not.toContain(variant);
+    // The four audience headlines and the per-bullet audience tags were
+    // never shipped. They are deleted rather than kept as dead data, so a
+    // single narrative cannot drift into four.
+    expect(site.positioning).not.toHaveProperty("headlineVariants");
+    for (const employer of site.experience) {
+      for (const role of employer.roles) {
+        for (const bullet of role.bullets) {
+          expect(bullet).not.toHaveProperty("audiences");
+        }
+      }
     }
 
     const hero = readSiteFile("components/sections/hero.tsx");

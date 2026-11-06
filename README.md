@@ -14,7 +14,6 @@ Almost everything you will change lives in two places:
    - Highlight stats, bio, experience (roles grouped under each employer), selected work (with its proof panel), principles
    - Section eyebrows, titles, and descriptions on `site.sections` (numbered in page order)
    - Contact links, résumé path and download filename, and `calendar` (the contact panel shows a booking link only when it is set)
-   - `headlineVariants` and `audiences` tags are unused internal data — do not ship four public versions
 2. **Accent color** — [`app/globals.css`](app/globals.css)
    - Change `--accent` (and `--ring`) under `:root` and `.dark`
 
