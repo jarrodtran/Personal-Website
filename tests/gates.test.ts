@@ -146,6 +146,56 @@ describe("evaluateGates", () => {
     expect(result.summary).toMatch(/touches: dns|missing touches: none/);
   });
 
+  it("keeps a head PASS green when a stale PASS arrives later", () => {
+    const comments = [
+      ...threePasses(HEAD),
+      comment(gateLine("design", "PASS", OLD), {
+        created_at: "2026-11-05T00:00:09Z",
+      }),
+    ];
+
+    const result = evaluateGates(comments, HEAD);
+
+    expect(result.pass).toBe(true);
+    expect(result.summary).toContain(`design PASS ${HEAD}`);
+  });
+
+  it("a stale PASS cannot clear a FAIL at the head", () => {
+    const comments = [
+      ...twoPasses(HEAD),
+      comment(`${gateLine("review", "PASS", HEAD)} touches: none`, {
+        created_at: "2026-11-05T00:00:02Z",
+      }),
+      comment(gateLine("design", "FAIL", HEAD), {
+        created_at: "2026-11-05T00:00:03Z",
+      }),
+      comment(gateLine("design", "PASS", OLD), {
+        created_at: "2026-11-05T00:00:09Z",
+      }),
+    ];
+
+    const result = evaluateGates(comments, HEAD);
+
+    expect(result.pass).toBe(false);
+    expect(result.summary).toContain(`design FAIL ${HEAD}`);
+  });
+
+  it("a head PASS wins over an older stale FAIL", () => {
+    const comments = [
+      comment(gateLine("design", "FAIL", OLD)),
+      ...threePasses(HEAD).map((entry, index) => ({
+        ...entry,
+        created_at: `2026-11-05T00:00:0${index + 1}Z`,
+        updated_at: `2026-11-05T00:00:0${index + 1}Z`,
+      })),
+    ];
+
+    const result = evaluateGates(comments, HEAD);
+
+    expect(result.pass).toBe(true);
+    expect(result.summary).toContain(`design PASS ${HEAD}`);
+  });
+
   it("a PASS for an older sha is stale at the current head", () => {
     const result = evaluateGates(threePasses(OLD), HEAD);
 
