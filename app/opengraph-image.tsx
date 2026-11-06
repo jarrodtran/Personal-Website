@@ -46,8 +46,8 @@ export default function OpenGraphImage() {
         <div
           style={{
             display: "flex",
-            fontFamily: "Instrument Serif",
-            fontSize: 64,
+            fontFamily: "Newsreader",
+            fontSize: 56,
             letterSpacing: -1.6,
             lineHeight: 1.05,
           }}

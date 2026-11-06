@@ -221,6 +221,28 @@ describe("visitor-facing copy contract", () => {
     expect(layout.match(/from "next\/font\/google"/g) ?? []).toHaveLength(1);
   });
 
+  it("draws social cards in the same display face as the site", () => {
+    const files = [
+      "lib/og.ts",
+      "app/opengraph-image.tsx",
+      "app/work/[slug]/opengraph-image.tsx",
+    ] as const;
+
+    for (const file of files) {
+      const source = readSiteFile(file);
+      expect(source, file).toContain("Newsreader");
+      expect(source, file).not.toContain("Instrument Serif");
+      expect(source, file).not.toContain("InstrumentSerif");
+    }
+
+    expect(
+      existsSync(path.join(root, "lib/fonts/Newsreader-Regular.ttf")),
+    ).toBe(true);
+    expect(
+      existsSync(path.join(root, "lib/fonts/InstrumentSerif-Regular.ttf")),
+    ).toBe(false);
+  });
+
   it("renders section headings from the same content module", () => {
     const files = [
       ["components/sections/hero.tsx", "site.positioning.name"],
