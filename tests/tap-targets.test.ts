@@ -682,7 +682,7 @@ describe("390px tap targets and first screen", () => {
   );
 
   it.each([390, 640, 1280])(
-    "keeps highlights borders single-line at %ipx",
+    "keeps the 2x2 highlights strip and its one source caption single-line at %ipx",
     async (width) => {
       const browser = await chromium.launch();
       const page = await browser.newPage({
@@ -690,52 +690,55 @@ describe("390px tap targets and first screen", () => {
         colorScheme: "light",
       });
       await page.goto(`${origin}/`, { waitUntil: "networkidle" });
-      const cells = await page.evaluate(() => {
-        const strip = document.querySelector(
+      const strip = await page.evaluate(() => {
+        const root = document.querySelector(
           '[aria-label="Impact highlights"]',
         );
-        return [...(strip?.children ?? [])].map((cell) => {
+        const cells = [
+          ...(root?.querySelectorAll(":scope > div > div") ?? []),
+        ].map((cell) => {
           const style = getComputedStyle(cell);
-          const source = cell.querySelector(".font-mono-label");
-          let sourceLines = 0;
-          if (source?.firstChild) {
-            const range = document.createRange();
-            range.selectNodeContents(source.firstChild);
-            sourceLines = range.getClientRects().length;
-          }
           return {
             borderBottom: style.borderBottomWidth,
             borderRight: style.borderRightWidth,
-            sourceLines,
           };
         });
+        const captions = [...(root?.querySelectorAll("p") ?? [])].filter(
+          (node) => node.classList.contains("font-mono-label"),
+        );
+        const caption = captions[0];
+        let captionLines = 0;
+        if (caption?.firstChild) {
+          const range = document.createRange();
+          range.selectNodeContents(caption.firstChild);
+          captionLines = range.getClientRects().length;
+        }
+        return {
+          cells,
+          captionCount: captions.length,
+          captionOutsideGrid: caption?.parentElement === root,
+          captionText: caption?.textContent?.trim() ?? "",
+          captionLines,
+        };
       });
       await browser.close();
 
-      expect(cells).toHaveLength(4);
-      // 640 inner cells wrap "Tesla Energy" once padding matches main.
-      const expected =
-        width < 640
-          ? [
-              { borderBottom: "1px", borderRight: "0px", sourceLines: 1 },
-              { borderBottom: "1px", borderRight: "0px", sourceLines: 1 },
-              { borderBottom: "0px", borderRight: "0px", sourceLines: 1 },
-              { borderBottom: "0px", borderRight: "0px", sourceLines: 1 },
-            ]
-          : width === 640
-            ? [
-                { borderBottom: "0px", borderRight: "1px", sourceLines: 1 },
-                { borderBottom: "0px", borderRight: "1px", sourceLines: 2 },
-                { borderBottom: "0px", borderRight: "1px", sourceLines: 2 },
-                { borderBottom: "0px", borderRight: "0px", sourceLines: 1 },
-              ]
-            : [
-                { borderBottom: "0px", borderRight: "1px", sourceLines: 1 },
-                { borderBottom: "0px", borderRight: "1px", sourceLines: 1 },
-                { borderBottom: "0px", borderRight: "1px", sourceLines: 1 },
-                { borderBottom: "0px", borderRight: "0px", sourceLines: 1 },
-              ];
-      expect(cells, `${width}px highlights cells`).toEqual(expected);
+      expect(strip.cells).toHaveLength(4);
+      // 2x2 at every width: the first row carries the bottom hairline, the
+      // left column carries the right one from 640 up.
+      const rightBorder = width < 640 ? "0px" : "1px";
+      expect(strip.cells).toEqual([
+        { borderBottom: "1px", borderRight: rightBorder },
+        { borderBottom: "1px", borderRight: "0px" },
+        { borderBottom: "0px", borderRight: rightBorder },
+        { borderBottom: "0px", borderRight: "0px" },
+      ]);
+
+      // The four per-cell source labels collapse into one caption below the strip.
+      expect(strip.captionCount, `${width}px source captions`).toBe(1);
+      expect(strip.captionOutsideGrid, `${width}px caption placement`).toBe(true);
+      expect(strip.captionText, `${width}px caption text`).toBe("Tesla Energy");
+      expect(strip.captionLines, `${width}px caption lines`).toBe(1);
     },
   );
 });
