@@ -2,6 +2,10 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { CaseStudyBody } from "@/components/sections/case-study";
 import {
+  breadcrumbJsonLd,
+  caseStudyCrumbs,
+} from "@/lib/structured-data";
+import {
   getSelectedWorkBySlug,
   selectedWorkSlugs,
   site,
@@ -53,5 +57,14 @@ export default async function CaseStudyPage({
   const { slug } = await params;
   const item = getSelectedWorkBySlug(slug);
   if (!item) notFound();
-  return <CaseStudyBody item={item} />;
+  const breadcrumb = breadcrumbJsonLd(caseStudyCrumbs(item));
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
+      />
+      <CaseStudyBody item={item} />
+    </>
+  );
 }
