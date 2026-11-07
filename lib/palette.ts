@@ -26,7 +26,7 @@ export const palette = {
 
 export type PaletteMode = keyof typeof palette;
 
-function hexRgb(hex: string): readonly [number, number, number] {
+export function hexRgb(hex: string): readonly [number, number, number] {
   const value = Number.parseInt(hex.slice(1), 16);
   return [(value >> 16) & 255, (value >> 8) & 255, value & 255];
 }
