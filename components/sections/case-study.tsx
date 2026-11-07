@@ -59,15 +59,6 @@ export function CaseStudyBody({ item }: { item: SelectedWorkItem }) {
         </p>
       </div>
 
-      {next ? (
-        <Link
-          href={`/work/${next.slug}/`}
-          className={`${textAction} mt-4 w-full sm:w-auto`}
-        >
-          Next: {next.title}
-        </Link>
-      ) : null}
-
       <div className="mt-12">
         <Block label="Context">
           <p className="text-muted-foreground measure text-lg leading-relaxed text-pretty">
@@ -107,6 +98,14 @@ export function CaseStudyBody({ item }: { item: SelectedWorkItem }) {
         >
           Back to selected work
         </Link>
+        {next ? (
+          <Link
+            href={`/work/${next.slug}/`}
+            className={`${textAction} max-w-full sm:ml-auto`}
+          >
+            Next: {next.title}
+          </Link>
+        ) : null}
       </div>
     </article>
   );
