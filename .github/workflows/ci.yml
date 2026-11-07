@@ -30,6 +30,7 @@ jobs:
       - run: pnpm test:banned
       - run: pnpm test:redirects
       - run: pnpm test:titles
+      - run: pnpm test:robots
       - run: pnpm test:tap
       - run: pnpm test:writing-output
       - run: pnpm test:height
@@ -51,6 +52,7 @@ jobs:
       - run: pnpm test:titles
         env:
           BASE_PATH: /Personal-Website
+      - run: pnpm test:robots
       - run: pnpm a11y
         env:
           BASE_PATH: /Personal-Website

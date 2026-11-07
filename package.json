@@ -15,6 +15,7 @@
     "test:writing-output": "vitest run tests/writing-output.test.ts",
     "test:images": "vitest run tests/generated-images.test.ts tests/no-photo.test.ts",
     "test:redirects": "vitest run tests/legacy-redirects.test.ts",
+    "test:robots": "ROBOTS_REQUIRE_EXPORT=1 vitest run tests/robots.test.ts",
     "test:titles": "vitest run tests/page-titles.test.ts",
     "test:theme": "vitest run tests/theme-no-js.test.ts",
     "test:theme-toggle": "vitest run tests/theme-toggle-pressed.test.ts",
