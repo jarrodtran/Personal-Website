@@ -265,7 +265,7 @@ describe("390px tap targets and first screen", () => {
     expect(outlines?.articleOutlineWidth).toBe("2px");
   });
 
-  it("shows the hero, then the Writing heading, on the first screen", async () => {
+  it("shows the Writing heading on the first screen", async () => {
     const { browser, page } = await open("/");
     const view = await page.evaluate(() => {
       const hero = document.getElementById("top");
@@ -282,13 +282,13 @@ describe("390px tap targets and first screen", () => {
       };
     });
     await browser.close();
-    expect(view.hero).toEqual([site.positioning.name]);
+    expect(view.hero).toEqual([]);
     expect(view.writingTitle).toBe(site.substack.name);
     expect(view.writingBottom).toBeGreaterThan(0);
     expect(view.writingBottom).toBeLessThanOrEqual(view.viewport);
   });
 
-  it("aligns the hero name with the nav column at 1280px", async () => {
+  it("aligns the prose column with the header brand at 1280px", async () => {
     const browser = await chromium.launch();
     const page = await browser.newPage({
       viewport: { width: 1280, height: 800 },
@@ -296,15 +296,20 @@ describe("390px tap targets and first screen", () => {
     });
     await page.goto(`${origin}/`, { waitUntil: "networkidle" });
     const left = await page.evaluate(() => {
-      const h1 = document.querySelector("#top h1");
+      const prose = document.querySelector("[data-testid='home-prose'] > div");
+      const writing = document.querySelector("#writing h2");
       const brand = document.querySelector("header a");
       return {
-        h1: h1 ? Math.round(h1.getBoundingClientRect().left) : null,
+        prose: prose ? Math.round(prose.getBoundingClientRect().left) : null,
+        writing: writing
+          ? Math.round(writing.getBoundingClientRect().left)
+          : null,
         brand: brand ? Math.round(brand.getBoundingClientRect().left) : null,
       };
     });
     await browser.close();
-    expect(left.h1).toBe(160);
+    expect(left.prose).toBe(160);
+    expect(left.writing).toBe(160);
     expect(left.brand).toBe(160);
   });
 
