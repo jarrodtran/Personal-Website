@@ -144,34 +144,60 @@ describe("writing-first home", () => {
     textPercent: 100 | 200 = 100,
   ) {
     const { browser, page } = await openHome(width, height, textPercent);
-    const layout = await page.evaluate((sectionIds) => {
-      const sections = sectionIds.map((id) => document.getElementById(id));
-      const h1 = document.querySelector("#top h1");
-      const brand = document.querySelector("header a");
-      const headerNav = document.querySelector('header nav[aria-label="Primary"]');
-      return {
-        h1: h1?.textContent?.trim() ?? "",
-        h1Left: h1 ? Math.round(h1.getBoundingClientRect().left) : -1,
-        brandLeft: brand ? Math.round(brand.getBoundingClientRect().left) : -1,
-        introParagraphCount: document.querySelectorAll("#top p").length,
-        sectionOrder: sections.map((section) => section?.id ?? ""),
-        sectionWidths: sections.map(
-          (section) => section?.getBoundingClientRect().width ?? -1,
-        ),
-        homeHeight: document.getElementById("content")?.scrollHeight ?? -1,
-        scrollWidth: document.documentElement.scrollWidth,
-        clientWidth: document.documentElement.clientWidth,
-        desktopNavDisplay: headerNav ? getComputedStyle(headerNav).display : "",
-      };
-    }, [...HOME_SECTION_IDS]);
+    const layout = await page.evaluate(
+      (sectionIds) => {
+        const sections = sectionIds.map((id) => document.getElementById(id));
+        const top = document.getElementById("top");
+        const prose = document.querySelector(
+          "[data-testid='home-prose'] > div",
+        );
+        const writingHeading = document.querySelector("#writing h2");
+        const brand = document.querySelector("header a");
+        const headerNav = document.querySelector(
+          'header nav[aria-label="Primary"]',
+        );
+        return {
+          topText: top?.textContent?.trim() ?? "",
+          homeH1s: [...document.querySelectorAll("h1")].map((el) =>
+            (el.textContent ?? "").trim(),
+          ),
+          proseLeft: prose
+            ? Math.round(prose.getBoundingClientRect().left)
+            : -1,
+          writingLeft: writingHeading
+            ? Math.round(writingHeading.getBoundingClientRect().left)
+            : -1,
+          writingTitle: writingHeading?.textContent?.trim() ?? "",
+          brandLeft: brand
+            ? Math.round(brand.getBoundingClientRect().left)
+            : -1,
+          brandText: brand?.textContent?.trim() ?? "",
+          introParagraphCount: document.querySelectorAll("#top p").length,
+          sectionOrder: sections.map((section) => section?.id ?? ""),
+          sectionWidths: sections.map(
+            (section) => section?.getBoundingClientRect().width ?? -1,
+          ),
+          homeHeight: document.getElementById("content")?.scrollHeight ?? -1,
+          scrollWidth: document.documentElement.scrollWidth,
+          clientWidth: document.documentElement.clientWidth,
+          desktopNavDisplay: headerNav
+            ? getComputedStyle(headerNav).display
+            : "",
+        };
+      },
+      [...HOME_SECTION_IDS],
+    );
     await browser.close();
     return layout;
   }
 
-  it("uses the name as the only home h1 and puts Writing second", async () => {
+  it("does not repeat the name above Writing", async () => {
     const layout = await readHomeLayout(1280, 800);
-    expect(layout.h1).toBe(site.positioning.name);
-    expect(layout.h1).not.toBe(site.positioning.headline);
+    expect(layout.topText).toBe("");
+    expect(layout.homeH1s).toEqual([]);
+    expect(layout.brandText).toBe(site.positioning.name);
+    expect(layout.writingTitle).toBe(site.substack.name);
+    expect(layout.writingTitle).not.toBe(site.positioning.headline);
     expect(layout.introParagraphCount).toBe(0);
     expect(layout.sectionOrder.slice(0, 2)).toEqual(["top", "writing"]);
   });
@@ -186,10 +212,13 @@ describe("writing-first home", () => {
     }
   });
 
-  it("aligns the home h1 left edge with the header brand at 768 and 1280", async () => {
+  it("aligns the prose column with the header brand at 768 and 1280", async () => {
     for (const width of [768, 1280] as const) {
       const layout = await readHomeLayout(width, VIEWPORT_HEIGHT[width]);
-      expect(layout.h1Left, `${width}px h1 left`).toBe(layout.brandLeft);
+      expect(layout.proseLeft, `${width}px prose left`).toBe(layout.brandLeft);
+      expect(layout.writingLeft, `${width}px writing heading left`).toBe(
+        layout.brandLeft,
+      );
     }
   });
 

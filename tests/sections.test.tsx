@@ -88,10 +88,13 @@ const CONTACT_INTRO =
 describe("hero", () => {
   const html = renderToStaticMarkup(<Hero />);
 
-  it("shows the name only", () => {
-    expect(textOf(html)).toBe(site.positioning.name);
-    expect(headings(html, "h1")).toEqual([site.positioning.name]);
+  it("keeps an empty #top target and does not repeat the name", () => {
+    expect(html).toContain('id="top"');
+    expect(textOf(html)).toBe("");
+    expect(headings(html, "h1")).toEqual([]);
+    expect(html).not.toContain(site.positioning.name);
     expect(html).not.toContain(site.positioning.headline);
+    expect(html).not.toContain("Placeholder");
   });
 
   it("does not invent posts, links, or a subscribe placeholder", () => {
@@ -101,12 +104,11 @@ describe("hero", () => {
     expect(html).not.toMatch(/coming soon/i);
   });
 
-  it("sizes the headline with the shared display classes", () => {
-    expect(html).toContain(
-      "measure font-display text-[min(1.75rem,15cqi)] leading-[1.15] tracking-tight text-balance sm:text-[min(2.25rem,9cqi)]",
-    );
-    expect(html).not.toContain("text-lg");
-    expect(html).not.toContain("text-[1.0625rem]");
+  it("does not keep the removed display heading", () => {
+    expect(html).not.toContain("font-display");
+    expect(html).not.toContain("text-[min(1.75rem,15cqi)]");
+    expect(html).not.toContain("sm:text-[min(2.25rem,9cqi)]");
+    expect(html).not.toMatch(/<h1\b/);
   });
 });
 

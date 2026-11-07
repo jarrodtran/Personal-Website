@@ -145,86 +145,27 @@ describe("hero headline layout", () => {
     return { browser, page };
   }
 
-  function readHome() {
-    const top = document.getElementById("top");
-    const h1 = document.querySelector("#top h1");
-    const paragraph =
-      document.querySelector("#writing p") ??
-      document.querySelector("main p") ??
-      document.body;
-    const nodes: Text[] = [];
-    if (h1) {
-      const walker = document.createTreeWalker(h1, NodeFilter.SHOW_TEXT);
-      let node = walker.nextNode();
-      while (node) {
-        nodes.push(node as Text);
-        node = walker.nextNode();
-      }
-    }
-    const content = nodes.map((node) => node.data).join("");
-    const full = document.createRange();
-    if (h1) full.selectNodeContents(h1);
-    const lineRects = h1 ? [...full.getClientRects()] : [];
-    const lines: string[][] = lineRects.map(() => []);
-    const re = /\S+/g;
-    let match: RegExpExecArray | null;
-    while ((match = re.exec(content))) {
-      let seen = 0;
-      const wordRange = document.createRange();
-      let started = false;
-      for (const node of nodes) {
-        const len = node.data.length;
-        if (!started && match.index < seen + len) {
-          wordRange.setStart(node, match.index - seen);
-          started = true;
-        }
-        if (started && match.index + match[0].length <= seen + len) {
-          wordRange.setEnd(node, match.index + match[0].length - seen);
-          break;
-        }
-        seen += len;
-      }
-      const wordRect = wordRange.getBoundingClientRect();
-      const midY = wordRect.top + wordRect.height / 2;
-      let index = lineRects.findIndex(
-        (line) => midY >= line.top - 0.5 && midY <= line.bottom + 0.5,
-      );
-      if (index < 0) {
-        let best = Infinity;
-        lineRects.forEach((line, lineIndex) => {
-          const distance = Math.abs(midY - (line.top + line.height / 2));
-          if (distance < best) {
-            best = distance;
-            index = lineIndex;
-          }
-        });
-      }
-      if (index >= 0) lines[index].push(match[0]);
-    }
-    const filled = lines.filter((line) => line.length > 0);
-    return {
-      topHeight: top?.getBoundingClientRect().height ?? -1,
-      h1Font: h1 ? parseFloat(getComputedStyle(h1).fontSize) : -1,
-      bodyFont: parseFloat(getComputedStyle(paragraph).fontSize),
-      lines: filled,
-      singles: filled
-        .map((line, index) => ({ index, line }))
-        .filter((row) => row.line.length === 1),
-    };
-  }
-
-  it("has exactly one h1 on every route, and the home h1 is the headline", async () => {
+  it("keeps one h1 on real routes, and no repeated name on home", async () => {
     for (const path of ROUTES) {
       const { browser, page } = await openPage(path, 390, 844, 100, "light");
-      const headings = await page.evaluate(() =>
-        [...document.querySelectorAll("h1")].map((el) =>
+      const { headings, brand, href } = await page.evaluate(() => ({
+        headings: [...document.querySelectorAll("h1")].map((el) =>
           (el.textContent ?? "").trim(),
         ),
-      );
+        brand: document.querySelector("header a")?.textContent?.trim() ?? "",
+        href: location.href,
+      }));
       await browser.close();
-      expect(headings, `${path} h1 count`).toHaveLength(1);
-      if (path === "/") {
-        expect(headings[0], "home h1").toBe(site.positioning.name);
+      // /work/ and /writing/ meta-refresh onto home, so they showed this h1 too.
+      if (path === "/" || path === "/work/" || path === "/writing/") {
+        expect(headings, `${path} h1 count`).toEqual([]);
+        expect(brand, `${path} header brand`).toBe(site.positioning.name);
+        if (path !== "/") {
+          const hash = path.slice(1, -1);
+          expect(href, `${path} refresh target`).toContain(`/#${hash}`);
+        }
+      } else {
+        expect(headings, `${path} h1 count`).toHaveLength(1);
       }
     }
   }, 120_000);
@@ -242,10 +183,8 @@ describe("hero headline layout", () => {
           );
           const layout = await page.evaluate(() => {
             const top = document.getElementById("top");
-            const h1 = document.querySelector("#top h1");
             return {
               topHeight: top?.getBoundingClientRect().height ?? -1,
-              fontSize: h1 ? parseFloat(getComputedStyle(h1).fontSize) : -1,
               scrollWidth: document.documentElement.scrollWidth,
               clientWidth: document.documentElement.clientWidth,
             };
@@ -253,46 +192,11 @@ describe("hero headline layout", () => {
           process.stdout.write(
             `#top height ${width} ${textPercent}% ${colorScheme}: ${layout.topHeight}\n`,
           );
-          if (width === 320) {
-            process.stdout.write(
-              `h1 font size 320 ${textPercent}% ${colorScheme}: ${layout.fontSize}\n`,
-            );
-          }
           await browser.close();
           expect(
             layout.scrollWidth,
             `${width} ${textPercent}% ${colorScheme} scrollWidth`,
           ).toBeLessThanOrEqual(layout.clientWidth);
-        }
-      }
-    }
-  }, 180_000);
-
-  it("does not wrap the home h1 onto a one-word line", async () => {
-    for (const [width, height] of VIEWPORTS) {
-      for (const textPercent of [100, 200] as const) {
-        for (const colorScheme of ["light", "dark"] as const) {
-          const { browser, page } = await openPage(
-            "/",
-            width,
-            height,
-            textPercent,
-            colorScheme,
-          );
-          const layout = await page.evaluate(readHome);
-          process.stdout.write(
-            `#top height ${width} ${textPercent}% ${colorScheme}: ${layout.topHeight}\n`,
-          );
-          await browser.close();
-          // 320 at 200% text: the heading must stay at least body size in a
-          // 240px column, so a one-word wrap is allowed only in that case.
-          if (width === 320 && textPercent === 200) {
-            continue;
-          }
-          expect(
-            layout.singles,
-            `${width} ${textPercent}% ${colorScheme} one-word h1 lines`,
-          ).toEqual([]);
         }
       }
     }
@@ -325,28 +229,43 @@ describe("hero headline layout", () => {
     }
   }, 180_000);
 
-  it("keeps the home h1 at least as large as body text", async () => {
-    for (const [width, height] of HEIGHT_VIEWPORTS) {
-      for (const textPercent of [100, 200] as const) {
-        const { browser, page } = await openPage(
-          "/",
-          width,
-          height,
-          textPercent,
-          "light",
-        );
-        const layout = await page.evaluate(readHome);
-        process.stdout.write(
-          `${width} ${textPercent}%: h1=${layout.h1Font} body=${layout.bodyFont} main=${MAIN_TOP_HEIGHT[width][textPercent]} pr=${layout.topHeight} one-word=${JSON.stringify(layout.singles.map((row) => row.line[0]))}\n`,
-        );
-        await browser.close();
-        expect(
-          layout.h1Font,
-          `${width} ${textPercent}% h1 vs body`,
-        ).toBeGreaterThanOrEqual(layout.bodyFont);
-      }
+  it("keeps the writing heading below the sticky header when jumping to #top", async () => {
+    const browser = await chromium.launch();
+    const page = await browser.newPage({
+      viewport: { width: 1280, height: 800 },
+      reducedMotion: "reduce",
+    });
+    try {
+      await page.goto(`${origin}/`, { waitUntil: "networkidle" });
+      await page.evaluate(() =>
+        window.scrollTo(0, document.documentElement.scrollHeight),
+      );
+      const before = await page.evaluate(
+        () =>
+          document.querySelector("#writing h2")?.getBoundingClientRect().top ??
+          0,
+      );
+      expect(before).toBeLessThan(0);
+      await page.locator("header a").first().click();
+      await page.waitForFunction(() => location.hash === "#top");
+      const boxes = await page.evaluate(() => {
+        const header = document.querySelector("header");
+        const heading = document.querySelector("#writing h2");
+        const top = document.getElementById("top");
+        return {
+          headingTop: heading?.getBoundingClientRect().top ?? -1,
+          headerBottom: header?.getBoundingClientRect().bottom ?? 0,
+          topId: top?.id ?? "",
+          topText: (top?.textContent ?? "").trim(),
+        };
+      });
+      expect(boxes.topId).toBe("top");
+      expect(boxes.topText).toBe("");
+      expect(boxes.headingTop).toBeGreaterThanOrEqual(boxes.headerBottom);
+    } finally {
+      await browser.close();
     }
-  }, 180_000);
+  });
 
   it("reads the About section heading as About", async () => {
     const { browser, page } = await openPage("/", 390, 844, 100, "light");
