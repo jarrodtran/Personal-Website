@@ -339,6 +339,24 @@ if (!focusReturned) {
   failures.push("phone menu: focus does not return to the menu button");
 }
 await toggle.click();
+await page.locator("#mobile-nav").waitFor({ state: "visible" });
+await page.mouse.click(195, 600);
+const closedOnOutsideClick = await page
+  .waitForFunction(
+    () =>
+      !document.getElementById("mobile-nav") &&
+      getComputedStyle(document.body).overflow !== "hidden",
+    null,
+    { timeout: 1000 },
+  )
+  .then(
+    () => true,
+    () => false,
+  );
+if (!closedOnOutsideClick) {
+  failures.push("phone menu: clicking outside does not close the menu");
+}
+await toggle.click();
 await page.setViewportSize(viewports.desktop);
 const released = await page
   .waitForFunction(
@@ -414,7 +432,7 @@ console.log(
     "nothing scrolls sideways at 390px",
     "page title within 60 characters",
     "reveals never hide content and stay still under reduced motion",
-    "phone menu closes on Escape, returns focus, and closes at desktop width",
+    "phone menu closes on Escape, outside click, returns focus, and closes at desktop width",
     "header controls stay on screen at 200% text",
     "phone menu stays reachable on a short viewport at 200% text",
     "copy email announces success and failure",

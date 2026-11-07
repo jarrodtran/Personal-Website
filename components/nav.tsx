@@ -71,12 +71,21 @@ export function Nav({
     const onResize = () => {
       if (toggleRef.current?.offsetParent === null) setOpen(false);
     };
+    const onPointerDown = (event: PointerEvent) => {
+      const target = event.target as Node | null;
+      if (!target) return;
+      const header = toggleRef.current?.closest("header");
+      if (header?.contains(target)) return;
+      setOpen(false);
+    };
     document.body.style.overflow = "hidden";
     document.addEventListener("keydown", onKeyDown);
+    document.addEventListener("pointerdown", onPointerDown);
     window.addEventListener("resize", onResize);
     return () => {
       document.body.style.overflow = "";
       document.removeEventListener("keydown", onKeyDown);
+      document.removeEventListener("pointerdown", onPointerDown);
       window.removeEventListener("resize", onResize);
     };
   }, [open]);
