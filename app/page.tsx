@@ -6,20 +6,31 @@ import { HowIWork } from "@/components/sections/how-i-work";
 import { SelectedWork } from "@/components/sections/selected-work";
 import { Writing } from "@/components/sections/writing";
 import { site } from "@/content/site";
-import { loadWriting } from "@/lib/writing";
+import { loadWritingResult } from "@/lib/writing";
 
 export default async function Home() {
-  const posts = await loadWriting(site.substack);
+  const result = await loadWritingResult(site.substack);
+  if (!result.ok) {
+    // Build-time visibility: a dead feed otherwise ships silently as the
+    // empty Writing state.
+    console.error(`writing feed: ${result.reason}; Writing renders its empty state`);
+  }
+  const posts = result.posts;
 
   return (
-    <>
-      <Hero />
-      <Writing posts={posts} />
-      <About />
-      <Experience />
-      <SelectedWork />
-      <HowIWork />
-      <Contact />
-    </>
+    <div
+      data-testid="home-prose"
+      className="mx-auto w-full max-w-5xl px-5 sm:px-8"
+    >
+      <div className="w-full max-w-[var(--container-prose)] [&_#top>div]:px-0 [&_section>div]:px-0">
+        <Hero />
+        <Writing posts={posts} />
+        <About />
+        <Experience />
+        <SelectedWork />
+        <HowIWork />
+        <Contact />
+      </div>
+    </div>
   );
 }

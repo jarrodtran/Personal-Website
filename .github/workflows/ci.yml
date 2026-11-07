@@ -21,6 +21,7 @@ jobs:
           node-version: 22
           cache: pnpm
       - run: pnpm install --frozen-lockfile
+      - run: pnpm audit --prod --audit-level high
       - run: npx playwright install --with-deps chromium
       - run: pnpm lint
       - run: pnpm check
@@ -29,10 +30,13 @@ jobs:
       - run: pnpm test:banned
       - run: pnpm test:redirects
       - run: pnpm test:titles
+      - run: pnpm test:robots
       - run: pnpm test:tap
       - run: pnpm test:writing-output
+      - run: pnpm test:height
       - run: pnpm test:images
       - run: pnpm test:theme
+      - run: pnpm test:tokens
       - run: pnpm a11y
       - run: pnpm size
       - run: pnpm build
@@ -47,6 +51,7 @@ jobs:
       - run: pnpm test:titles
         env:
           BASE_PATH: /Personal-Website
+      - run: pnpm test:robots
       - run: pnpm a11y
         env:
           BASE_PATH: /Personal-Website
