@@ -3,7 +3,7 @@ import { site } from "@/content/site";
 
 export function HowIWork() {
   return (
-    <Section id="approach" className="bg-muted/50">
+    <Section id="approach">
       <SectionHeading title={site.sections.approach.title} />
 
       <ul>
