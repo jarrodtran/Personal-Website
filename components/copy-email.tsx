@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { textAction } from "@/lib/ui";
 
 const results = {
@@ -14,6 +14,8 @@ type Result = keyof typeof results;
 export function CopyEmail({ email }: { email: string }) {
   const [result, setResult] = useState<Result>("idle");
   const resetTimer = useRef<number>(undefined);
+
+  useEffect(() => () => window.clearTimeout(resetTimer.current), []);
 
   async function copy() {
     let next: Result = "copied";
@@ -32,7 +34,12 @@ export function CopyEmail({ email }: { email: string }) {
       <button type="button" onClick={copy} className={textAction}>
         {results[result].label}
       </button>
-      <span role="status" className="sr-only">
+      <span
+        role="status"
+        aria-live="polite"
+        aria-atomic="true"
+        className="sr-only"
+      >
         {results[result].status}
       </span>
     </>
