@@ -11,70 +11,76 @@ export function Contact() {
 
   return (
     <Section id="contact" className="bg-muted/50">
-      <div className="grid items-start gap-x-14 lg:grid-cols-2">
-        <SectionHeading title={site.sections.contact.title}>
-          <p className="text-muted-foreground measure mt-4 text-lg leading-relaxed text-pretty">
-            {site.contact.intro}
-          </p>
-        </SectionHeading>
-        <ul className="border-border divide-border divide-y border-y">
-          <li className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1 py-3">
-            <a
-              href={`mailto:${email}`}
-              className={`${tap} min-w-0 font-medium break-all`}
-            >
-              {email}
-            </a>
-            <CopyEmail email={email} />
-          </li>
-          <li className="py-3">
-            <a
-              href={linkedin}
-              target="_blank"
-              rel="noopener noreferrer"
-              className={`${tap} min-w-0 gap-1 font-medium break-all`}
-            >
-              {linkedin.replace(/^https?:\/\/(?:www\.)?|\/$/g, "")}
-              <ArrowUpRight
-                className="size-[16px] shrink-0"
-                aria-hidden="true"
-              />
-            </a>
-          </li>
-          <li className="py-3">
-            <a
-              href={`mailto:${email}?subject=Speaking%20invitation`}
-              className={textAction}
-            >
-              Invite me to speak
-            </a>
-          </li>
-          <li className="py-3">
-            <a
-              href={withBasePath(resumeHref)}
-              download={resumeFilename}
-              className={textAction}
-            >
-              Résumé
-            </a>
-          </li>
-          {calendar ? (
+      {/* Two columns only after this area is wider than the 40rem prose
+          column (640px at the default root size). The lg breakpoint
+          followed the viewport and split that column. A rem query would
+          grow with 200% text and stack there too, past the height rule. */}
+      <div className="@container">
+        <div className="grid items-start gap-x-14 @[641px]:grid-cols-2">
+          <SectionHeading title={site.sections.contact.title}>
+            <p className="text-muted-foreground measure mt-4 text-lg leading-relaxed text-pretty">
+              {site.contact.intro}
+            </p>
+          </SectionHeading>
+          <ul className="border-border divide-border divide-y border-y">
+            <li className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1 py-3">
+              <a
+                href={`mailto:${email}`}
+                className={`${tap} min-w-0 font-medium break-all`}
+              >
+                {email}
+              </a>
+              <CopyEmail email={email} />
+            </li>
             <li className="py-3">
               <a
-                href={calendar}
+                href={linkedin}
                 target="_blank"
                 rel="noopener noreferrer"
-                className={textAction}
+                className={`${tap} min-w-0 gap-1 font-medium break-all`}
               >
-                Book a call
+                {linkedin.replace(/^https?:\/\/(?:www\.)?|\/$/g, "")}
                 <ArrowUpRight
                   className="size-[16px] shrink-0"
                   aria-hidden="true"
                 />
               </a>
             </li>
-          ) : null}
-        </ul>
+            <li className="py-3">
+              <a
+                href={`mailto:${email}?subject=Speaking%20invitation`}
+                className={textAction}
+              >
+                Invite me to speak
+              </a>
+            </li>
+            <li className="py-3">
+              <a
+                href={withBasePath(resumeHref)}
+                download={resumeFilename}
+                className={textAction}
+              >
+                Résumé
+              </a>
+            </li>
+            {calendar ? (
+              <li className="py-3">
+                <a
+                  href={calendar}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={textAction}
+                >
+                  Book a call
+                  <ArrowUpRight
+                    className="size-[16px] shrink-0"
+                    aria-hidden="true"
+                  />
+                </a>
+              </li>
+            ) : null}
+          </ul>
+        </div>
       </div>
     </Section>
   );

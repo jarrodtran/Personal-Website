@@ -229,6 +229,46 @@ describe("writing-first home", () => {
     }
   });
 
+  it("stacks contact in one column at 1280", async () => {
+    const { browser, page } = await openHome(1280, VIEWPORT_HEIGHT[1280]);
+    const layout = await page.evaluate(() => {
+      const contact = document.getElementById("contact");
+      const grid = contact?.querySelector(".grid");
+      const gridBox = grid?.getBoundingClientRect();
+      const children = [...(grid?.children ?? [])].map((node) => {
+        const box = node.getBoundingClientRect();
+        return { left: box.left, width: box.width };
+      });
+      const email = contact?.querySelector('a[href^="mailto:"]');
+      const copy = [...(contact?.querySelectorAll("button") ?? [])].find(
+        (node) => (node.textContent ?? "").includes("Copy email"),
+      );
+      return {
+        gridWidth: gridBox?.width ?? -1,
+        children,
+        emailTop: email?.getBoundingClientRect().top ?? -1,
+        copyTop: copy?.getBoundingClientRect().top ?? -1,
+      };
+    });
+    await browser.close();
+
+    expect(layout.children, "contact columns").toHaveLength(2);
+    for (const child of layout.children) {
+      expect(
+        Math.abs(child.left - layout.children[0].left),
+        "contact child left",
+      ).toBeLessThanOrEqual(1);
+      expect(
+        Math.abs(child.width - layout.gridWidth),
+        "contact child width",
+      ).toBeLessThanOrEqual(1);
+    }
+    expect(
+      Math.abs(layout.emailTop - layout.copyTop),
+      "email and copy email share a row",
+    ).toBeLessThanOrEqual(1);
+  });
+
   it("keeps the #140 desktop nav breakpoint at 1280", async () => {
     const layout = await readHomeLayout(1280, 800);
     expect(layout.desktopNavDisplay).toBe("flex");
