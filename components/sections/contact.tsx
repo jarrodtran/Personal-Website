@@ -12,11 +12,7 @@ export function Contact() {
   return (
     <Section id="contact" className="bg-muted/50">
       <div className="grid items-start gap-x-14 lg:grid-cols-2">
-        <SectionHeading title={site.sections.contact.title}>
-          <p className="text-muted-foreground measure mt-4 text-lg leading-relaxed text-pretty">
-            {site.contact.intro}
-          </p>
-        </SectionHeading>
+        <SectionHeading title={site.sections.contact.title} />
         <ul className="border-border divide-border divide-y border-y">
           <li className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1 py-3">
             <a

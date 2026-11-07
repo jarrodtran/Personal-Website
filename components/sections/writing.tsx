@@ -10,8 +10,7 @@ import {
   type WritingPost,
 } from "@/lib/writing";
 
-const EMPTY_COPY =
-  "First post coming soon. Subscribe to get it by email.";
+const EMPTY_COPY = "No essays yet.";
 
 function SubscribeLink({
   href,
