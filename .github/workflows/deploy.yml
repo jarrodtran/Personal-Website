@@ -33,6 +33,7 @@ jobs:
       - run: pnpm test
       - run: pnpm build
       - run: pnpm test:tap
+      - run: pnpm test:theme-toggle
       - run: pnpm test:writing-output
       - run: pnpm test:height
       - run: pnpm a11y
