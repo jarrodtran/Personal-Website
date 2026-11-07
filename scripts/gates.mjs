@@ -10,24 +10,12 @@ const GATE_LINE =
 export function evaluateGates(comments, headSha) {
   const head = String(headSha ?? "").toLowerCase();
   const latest = { design: null, qa: null, review: null };
-  const stale = { design: null, qa: null, review: null };
 
-  // Only verdicts for the head commit count. A later comment about an older
-  // commit is informational: it must not clear a PASS at the head, nor hide a
-  // FAIL at the head. When a gate has no head verdict at all, the newest stale
-  // line is still reported so the reviewer can see it was recorded for the
-  // wrong commit.
   for (const line of parseLines(comments)) {
-    if (line.sha === head) {
-      latest[line.gate] = line;
-    } else {
-      stale[line.gate] = line;
-    }
+    latest[line.gate] = line;
   }
 
-  const rows = GATE_NAMES.map((gate) =>
-    describeGate(gate, latest[gate] ?? stale[gate], head),
-  );
+  const rows = GATE_NAMES.map((gate) => describeGate(gate, latest[gate], head));
 
   return {
     pass: rows.every((row) => row.ok),
