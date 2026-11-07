@@ -52,4 +52,34 @@ describe("checkPrBody", () => {
   it("the PR template line passes", () => {
     expect(checkPrBody("Keep `Head SHA:` current.", HEAD_SHA)).toEqual([]);
   });
+
+  it("ignores a stale SHA above a current description that passes", () => {
+    const body = [
+      "Head SHA: 0000000000000000000000000000000000000000",
+      "<!-- CURSOR_AGENT_PR_BODY_BEGIN -->",
+      `Head SHA: ${HEAD_SHA}`,
+      "<!-- CURSOR_AGENT_PR_BODY_END -->",
+    ].join("\n");
+    expect(checkPrBody(body, HEAD_SHA)).toEqual([]);
+  });
+
+  it("a stale SHA inside the current description still fails", () => {
+    const body = [
+      `Head SHA: ${HEAD_SHA}`,
+      "<!-- CURSOR_AGENT_PR_BODY_BEGIN -->",
+      "Head SHA: 0000000000000000000000000000000000000000",
+      "<!-- CURSOR_AGENT_PR_BODY_END -->",
+    ].join("\n");
+    expect(checkPrBody(body, HEAD_SHA).length).toBeGreaterThan(0);
+  });
+
+  it("an empty current description does not hide a stale SHA", () => {
+    const body = [
+      "Head SHA: 0000000000000000000000000000000000000000",
+      "<!-- CURSOR_AGENT_PR_BODY_BEGIN -->",
+      "No head line here.",
+      "<!-- CURSOR_AGENT_PR_BODY_END -->",
+    ].join("\n");
+    expect(checkPrBody(body, HEAD_SHA).length).toBeGreaterThan(0);
+  });
 });

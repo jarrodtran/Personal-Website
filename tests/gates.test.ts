@@ -53,6 +53,7 @@ function threePasses(sha: string): Comment[] {
   ];
 }
 
+// rule:gates-at-head
 describe("evaluateGates", () => {
   it("2 of 3 passes is red and lists the missing review", () => {
     const result = evaluateGates(twoPasses(HEAD), HEAD);
