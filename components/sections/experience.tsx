@@ -39,7 +39,7 @@ export function Experience() {
                       {role.summary}
                     </p>
                   ) : null}
-                  <ul className="measure mt-5 space-y-3">
+                  <ul className="measure marker:text-muted-foreground/60 mt-5 list-disc space-y-3 pl-5">
                     {role.bullets.map((bullet) => (
                       <li
                         key={bullet.text}

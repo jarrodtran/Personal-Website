@@ -14,10 +14,10 @@ export default function NotFound() {
   return (
     <div className="mx-auto max-w-5xl px-5 py-28 sm:px-8">
       <p className="text-accent font-mono-label">404</p>
-      <h1 className="font-display mt-3 text-4xl tracking-tight">
+      <h1 className="font-display mt-3 text-[2rem] leading-tight tracking-tight text-balance sm:text-5xl">
         This page doesn’t exist.
       </h1>
-      <p className="text-muted-foreground measure mt-3">
+      <p className="text-muted-foreground measure mt-3 text-lg leading-relaxed">
         Head back to {site.positioning.name}&apos;s home page.
       </p>
       <Link href="/" className={`${btnPrimary} mt-8`}>
