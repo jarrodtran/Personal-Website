@@ -34,10 +34,12 @@ if (!existsSync(join(process.cwd(), "out/index.html"))) {
 // 2x2 strip inside the #143 40rem prose column (#148 flattening): each cell
 // is half the column, the four repeated source labels collapse into one
 // caption, and every label fits on one line from 640px up. Figures are
-// capped by the same 2.15rem token as before at >=768.
+// capped by the same 2.15rem token as before at >=768. Padding stays py-6
+// at every width: two rows of the old sm:py-7 made #content 8px taller than
+// the main baseline at 1280 with 200% text (rule:home-height).
 const MAIN_100 = {
   1280: {
-    height: 299.609375,
+    height: 283.609375,
     fontSize: 34.4,
     figureFontSizes: [34.4, 34.4, 34.4, 34.4] as const,
     figureLineHeights: [41.28, 41.28, 41.28, 41.28] as const,
@@ -45,7 +47,7 @@ const MAIN_100 = {
     lines: [1, 1, 1, 1],
   },
   768: {
-    height: 299.609375,
+    height: 283.609375,
     fontSize: 34.4,
     figureFontSizes: [34.4, 34.4, 34.4, 34.4] as const,
     figureLineHeights: [41.28, 41.28, 41.28, 41.28] as const,

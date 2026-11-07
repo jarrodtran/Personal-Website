@@ -15,7 +15,7 @@ export function Highlights() {
           <div
             key={item.label}
             className={cn(
-              "@container border-border min-w-0 py-6 sm:py-7",
+              "@container border-border min-w-0 py-6",
               index < 2 && "border-b",
               index % 2 === 0 ? "sm:border-r sm:pr-6" : "sm:pl-6",
             )}
