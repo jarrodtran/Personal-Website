@@ -5,7 +5,7 @@ import {
   statSync,
   writeFileSync,
 } from "node:fs";
-import { basename, join, resolve } from "node:path";
+import { basename, dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const out = "out";
@@ -78,6 +78,11 @@ function run() {
     const name = basename(path);
     if (name === "opengraph-image" || name === "icon" || name === "apple-icon") {
       copyFileSync(path, `${path}.png`);
+    }
+    // Browsers request /favicon.ico even when link tags point at PNGs;
+    // serve the generated icon at the conventional path.
+    if (name === "icon") {
+      copyFileSync(path, join(dirname(path), "favicon.ico"));
     }
   });
 

@@ -142,6 +142,24 @@ describe("built icon and OG images stay on palette A", () => {
     expect(exported).toEqual([]);
   });
 
+  // rule:favicon-served
+  it("serves /favicon.ico as the generated icon", () => {
+    const favicon = path.join(root, "out", "favicon.ico");
+    expect(existsSync(favicon), "favicon.ico missing from the export").toBe(
+      true,
+    );
+    const bytes = readFileSync(favicon);
+    expect(bytes.subarray(0, 8).toString("hex")).toBe("89504e470d0a1a0a");
+    const iconPng = readFileSync(
+      readdirSync(path.join(root, "out"), {
+        encoding: "utf8",
+      })
+        .filter((file) => file === "icon.png")
+        .map((file) => path.join(root, "out", file))[0] ?? "",
+    );
+    expect(bytes.equals(iconPng)).toBe(true);
+  });
+
   it("rejects tinted pixels and leftover navy or cream", () => {
     const problems: string[] = [];
 
