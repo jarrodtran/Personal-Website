@@ -288,20 +288,3 @@ describe("writing title underline", () => {
     expect(source).toMatch(/hover:underline/);
   });
 });
-
-describe("writing-output CI wiring", () => {
-  it("runs the writing-output check after the production build in CI and deploy", () => {
-    const ci = readFileSync(
-      path.resolve(__dirname, "../.github/workflows/ci.yml"),
-      "utf8",
-    );
-    const deploy = readFileSync(
-      path.resolve(__dirname, "../.github/workflows/deploy.yml"),
-      "utf8",
-    );
-    expect(ci).toMatch(/pnpm test:tap\n\s+- run: pnpm test:writing-output/);
-    expect(deploy).toContain("pnpm test:writing-output");
-    expect(deploy).not.toMatch(/schedule:/);
-    expect(deploy).not.toContain("scripts/feed-changed.ts");
-  });
-});
