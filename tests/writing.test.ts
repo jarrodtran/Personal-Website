@@ -17,7 +17,6 @@ import {
 } from "@/lib/writing";
 import {
   WRITING_FIXTURE_BASE,
-  WRITING_FIXTURE_LONG_BLURB,
   WRITING_FIXTURE_SECRET_BODY,
   WRITING_FIXTURE_TITLES,
 } from "./fixtures/writing/titles";
@@ -82,9 +81,7 @@ describe("parseFeed", () => {
     ]);
     expect(posts).toHaveLength(3);
     expect(posts[0]?.href).toBe(`${WRITING_FIXTURE_BASE}/p/zxq-aurora`);
-    expect(posts[0]?.summary).toBe(
-      WRITING_FIXTURE_LONG_BLURB.slice(0, WRITING_BLURB_MAX_CHARS).trimEnd(),
-    );
+    expect(posts[0]?.summary.endsWith("…")).toBe(true);
     expect(posts[0]?.summary.length).toBeLessThanOrEqual(
       WRITING_BLURB_MAX_CHARS,
     );
@@ -98,6 +95,24 @@ describe("parseFeed", () => {
       false,
     );
     expect(posts.some((post) => post.href.startsWith("http://"))).toBe(false);
+  });
+
+  it("keeps surrogate pairs whole when an emoji sits on the truncation boundary", () => {
+    const blurb = "😀".repeat(110) + " End of the room.";
+    const xml = `<item><title>Emoji boundary</title><link>${WRITING_FIXTURE_BASE}/p/emoji</link><description>${blurb}</description></item>`;
+    const [post] = parseFeed(xml, WRITING_FIXTURE_BASE);
+    expect(post?.summary).toBeDefined();
+    const loneSurrogate =
+      /[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?<![\uD800-\uDBFF])[\uDC00-\uDFFF]/;
+    expect(loneSurrogate.test(post?.summary ?? "")).toBe(false);
+  });
+
+  it("falls back to a hard cut with ellipsis when the window has no spaces", () => {
+    const blurb = "a".repeat(300);
+    const xml = `<item><title>No spaces</title><link>${WRITING_FIXTURE_BASE}/p/solid</link><description>${blurb}</description></item>`;
+    const [post] = parseFeed(xml, WRITING_FIXTURE_BASE);
+    expect(post?.summary.length).toBe(WRITING_BLURB_MAX_CHARS);
+    expect(post?.summary.endsWith("…")).toBe(true);
   });
 
   it("reads Atom entries on the own host and ignores entry bodies", () => {

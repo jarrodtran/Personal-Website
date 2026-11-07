@@ -77,7 +77,10 @@ function decode(text: string): string {
 
 function capBlurb(text: string): string {
   if (text.length <= WRITING_BLURB_MAX_CHARS) return text;
-  return text.slice(0, WRITING_BLURB_MAX_CHARS).trimEnd();
+  const window = Array.from(text).slice(0, WRITING_BLURB_MAX_CHARS - 1).join("");
+  const cut = window.lastIndexOf(" ");
+  const base = cut > WRITING_BLURB_MAX_CHARS / 2 ? window.slice(0, cut) : window;
+  return `${base.trimEnd()}…`;
 }
 
 function tag(block: string, name: string): string {
