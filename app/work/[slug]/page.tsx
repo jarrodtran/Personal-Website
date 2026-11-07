@@ -36,6 +36,8 @@ export async function generateMetadata({
       url: `${siteUrl}${path}`,
       title: `${title} · ${site.positioning.name}`,
       description,
+      siteName: site.positioning.name,
+      locale: "en_US",
     },
     twitter: {
       card: "summary_large_image",

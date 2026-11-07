@@ -80,6 +80,8 @@ export default async function OpenGraphImage({
         <div
           style={{
             display: "flex",
+            flexWrap: "wrap",
+            alignItems: "baseline",
             fontFamily: "Instrument Serif",
             fontSize: 52,
             letterSpacing: -1.2,
@@ -87,7 +89,26 @@ export default async function OpenGraphImage({
             maxWidth: 960,
           }}
         >
-          {title}
+          {title.split("→").map((part, index) => (
+            <span
+              key={part}
+              style={{ display: "flex", alignItems: "baseline" }}
+            >
+              {index > 0 ? (
+                <span
+                  style={{
+                    fontFamily: "IBM Plex Sans",
+                    fontSize: 38,
+                    marginLeft: 6,
+                    marginRight: 6,
+                  }}
+                >
+                  →
+                </span>
+              ) : null}
+              <span>{part}</span>
+            </span>
+          ))}
         </div>
         <div
           style={{
