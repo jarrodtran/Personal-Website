@@ -11,6 +11,9 @@
 # testing
 /coverage
 
+# local review scratch
+/.audit/
+
 # next.js
 /.next/
 /out/
