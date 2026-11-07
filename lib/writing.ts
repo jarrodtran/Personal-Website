@@ -62,17 +62,41 @@ export function formatPostDate(iso: string): string {
   }).format(date);
 }
 
+const NAMED_ENTITIES: Record<string, string> = {
+  "&nbsp;": " ",
+  "&apos;": "'",
+  "&quot;": '"',
+  "&lsquo;": "\u2018",
+  "&rsquo;": "\u2019",
+  "&ldquo;": "\u201c",
+  "&rdquo;": "\u201d",
+  "&hellip;": "\u2026",
+  "&lt;": "<",
+  "&gt;": ">",
+  "&amp;": "&",
+};
+
+function decodeEntities(text: string): string {
+  return text
+    .replace(/&#(\d+);/g, (_, dec) => {
+      const code = Number.parseInt(dec, 10);
+      return Number.isNaN(code) ? _ : String.fromCodePoint(code);
+    })
+    .replace(/&#x([0-9a-fA-F]+);/g, (_, hex) => {
+      const code = Number.parseInt(hex, 16);
+      return Number.isNaN(code) ? _ : String.fromCodePoint(code);
+    })
+    .replace(
+      /&(?:nbsp|apos|quot|lsquo|rsquo|ldquo|rdquo|hellip|lt|gt|amp);/g,
+      (entity) => NAMED_ENTITIES[entity] ?? entity,
+    );
+}
+
 function decode(text: string): string {
-  return oneLine(
-    text
-      .replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, "$1")
-      .replace(/<[^>]+>/g, " ")
-      .replace(/&amp;/g, "&")
-      .replace(/&lt;/g, "<")
-      .replace(/&gt;/g, ">")
-      .replace(/&quot;/g, '"')
-      .replace(/&#39;/g, "'"),
+  const unescaped = decodeEntities(
+    text.replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, "$1"),
   );
+  return oneLine(decodeEntities(unescaped.replace(/<[^>]+>/g, " ")));
 }
 
 function capBlurb(text: string): string {
