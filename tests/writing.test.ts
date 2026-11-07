@@ -3,10 +3,8 @@ import path from "node:path";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { site } from "@/content/site";
 import {
-  fetchSubstackPosts,
   formatPostDate,
   isOwnWritingUrl,
-  isSubstackUrl,
   loadWriting,
   parseFeed,
   writingFeedUrl,
@@ -42,14 +40,6 @@ function stubFeed(body: string, ok = true) {
     }),
   );
 }
-
-describe("isSubstackUrl", () => {
-  it("accepts only Substack hosts", () => {
-    expect(isSubstackUrl("https://example.substack.com")).toBe(true);
-    expect(isSubstackUrl("https://example.com")).toBe(false);
-    expect(isSubstackUrl("not-a-url")).toBe(false);
-  });
-});
 
 describe("isOwnWritingUrl", () => {
   it("keeps only https links on the configured base host", () => {
@@ -137,14 +127,14 @@ describe("formatPostDate", () => {
   });
 });
 
-describe("fetchSubstackPosts and loadWriting", () => {
+describe("loadWriting", () => {
   afterEach(() => {
     vi.unstubAllGlobals();
     vi.restoreAllMocks();
   });
 
   it("returns [] when the feed URL is empty", async () => {
-    expect(await fetchSubstackPosts({ name: "", url: "" })).toEqual([]);
+    expect(await loadWriting({ name: "", url: "" })).toEqual([]);
   });
 
   it("returns [] quietly on non-200, throw, timeout, or malformed XML", async () => {
@@ -152,10 +142,10 @@ describe("fetchSubstackPosts and loadWriting", () => {
     const timeout = vi.spyOn(AbortSignal, "timeout");
 
     stubFeed(threeXml, false);
-    expect(await fetchSubstackPosts(ownFeed)).toEqual([]);
+    expect(await loadWriting(ownFeed)).toEqual([]);
 
     vi.stubGlobal("fetch", vi.fn().mockRejectedValue(new Error("offline")));
-    expect(await fetchSubstackPosts(ownFeed)).toEqual([]);
+    expect(await loadWriting(ownFeed)).toEqual([]);
 
     vi.stubGlobal(
       "fetch",
@@ -165,10 +155,10 @@ describe("fetchSubstackPosts and loadWriting", () => {
           Object.assign(new Error("aborted"), { name: "TimeoutError" }),
         ),
     );
-    expect(await fetchSubstackPosts(ownFeed)).toEqual([]);
+    expect(await loadWriting(ownFeed)).toEqual([]);
 
     stubFeed("<html>not a feed</html>");
-    expect(await fetchSubstackPosts(ownFeed)).toEqual([]);
+    expect(await loadWriting(ownFeed)).toEqual([]);
 
     expect(timeout).toHaveBeenCalledWith(WRITING_FEED_TIMEOUT_MS);
     expect(

@@ -28,15 +28,6 @@ export function writingFeedUrl(config: Pick<SubstackConfig, "url">): string {
   return base ? `${base}/feed` : "";
 }
 
-export function isSubstackUrl(url: string): boolean {
-  try {
-    const host = new URL(url).hostname;
-    return host === "substack.com" || host.endsWith(".substack.com");
-  } catch {
-    return false;
-  }
-}
-
 export function isOwnWritingUrl(url: string, baseUrl: string): boolean {
   try {
     const parsed = new URL(url);
@@ -176,13 +167,6 @@ export async function loadWritingResult(
     const reason = error instanceof Error ? error.message : "fetch failed";
     return { ok: false, posts: [], reason };
   }
-}
-
-export async function fetchSubstackPosts(
-  config: SubstackConfig,
-): Promise<WritingPost[]> {
-  const result = await loadWritingResult(config);
-  return result.posts;
 }
 
 export async function loadWriting(
