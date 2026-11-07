@@ -1,10 +1,11 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { IBM_Plex_Sans, Newsreader } from "next/font/google";
 import { Footer } from "@/components/footer";
 import { Nav } from "@/components/nav";
 import { Providers } from "@/components/providers";
 import { site, siteUrl } from "@/content/site";
 import { withBasePath } from "@/lib/base-path";
+import { palette } from "@/lib/palette";
 import "./globals.css";
 
 const plexSans = IBM_Plex_Sans({
@@ -58,11 +59,19 @@ export const metadata: Metadata = {
   },
 };
 
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: palette.light.bg },
+    { media: "(prefers-color-scheme: dark)", color: palette.dark.bg },
+  ],
+};
+
 const personJsonLd = {
   "@context": "https://schema.org",
   "@type": "Person",
   name: site.positioning.name,
   url: siteUrl,
+  image: `${siteUrl}/opengraph-image.png`,
   jobTitle: site.positioning.currentRole,
   worksFor: { "@type": "Organization", name: site.experience[0].company },
   description: site.positioning.valueProp,
