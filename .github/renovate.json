@@ -1,0 +1,28 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended"],
+  "description": "Weekly dependency PRs. The site rides latest Next.js; keep the advisory exposure window short without churning test tooling majors.",
+  "timezone": "America/Chicago",
+  "schedule": ["before 9am on Monday"],
+  "prHourlyLimit": 1,
+  "prConcurrentLimit": 2,
+  "labels": ["deps"],
+  "rangeStrategy": "replace",
+  "lockFileMaintenance": {
+    "enabled": true,
+    "schedule": ["before 9am on Monday"]
+  },
+  "packageRules": [
+    {
+      "description": "Leave deliberate majors (eslint, typescript, vitest, prettier plugin majors) for humans",
+      "matchDepTypes": ["devDependencies"],
+      "matchUpdateTypes": ["major"],
+      "automerge": false
+    },
+    {
+      "description": "Next.js security is load-bearing; never auto-merge and let CI gate it",
+      "matchPackageNames": ["next", "eslint-config-next", "react", "react-dom"],
+      "automerge": false
+    }
+  ]
+}
