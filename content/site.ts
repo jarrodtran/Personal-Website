@@ -462,12 +462,12 @@ export const site: SiteContent = {
         "Training ships with the tool, and leadership sees the weekly adoption count.",
     },
     {
-      title: "Fund in one ranked review",
+      title: "One ranked review",
       description:
         "Every request goes on one list. The highest return stays. The rest stop in that same meeting.",
     },
     {
-      title: "Leave a sustaining owner",
+      title: "A sustaining owner",
       description:
         "The person who keeps the result gets the playbook before the next build starts.",
     },
