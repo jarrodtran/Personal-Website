@@ -52,4 +52,24 @@ describe("checkPrBody", () => {
   it("the PR template line passes", () => {
     expect(checkPrBody("Keep `Head SHA:` current.", HEAD_SHA)).toEqual([]);
   });
+
+  it("ignores a stale SHA before the agent body marker when the section has the current SHA", () => {
+    const body = [
+      "Head SHA: da1d9db34d9f8a95e736bd163ce2c29055c1566f",
+      "<!-- CURSOR_AGENT_PR_BODY_BEGIN -->",
+      `Head SHA: ${HEAD_SHA}`,
+      "<!-- CURSOR_AGENT_PR_BODY_END -->",
+    ].join("\n");
+    expect(checkPrBody(body, HEAD_SHA)).toEqual([]);
+  });
+
+  it("still fails a stale SHA inside the agent body section", () => {
+    const body = [
+      `Head SHA: ${HEAD_SHA}`,
+      "<!-- CURSOR_AGENT_PR_BODY_BEGIN -->",
+      "Head SHA: 0000000000000000000000000000000000000000",
+      "<!-- CURSOR_AGENT_PR_BODY_END -->",
+    ].join("\n");
+    expect(checkPrBody(body, HEAD_SHA).length).toBeGreaterThan(0);
+  });
 });

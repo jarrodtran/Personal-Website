@@ -151,7 +151,13 @@ body {
 }
 
 .measure {
-  max-width: 34rem;
+  /*
+   * Line length is governed by the prose column, not a second cap: the home
+   * wraps every section in --container-prose (40rem), and a 34rem cap here
+   * left a 96px dead band on the right edge of text while dividers and
+   * headings spanned the full column.
+   */
+  max-width: var(--container-prose);
 }
 
 .tabular {
