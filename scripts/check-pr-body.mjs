@@ -4,15 +4,6 @@ import { fileURLToPath } from "node:url";
 const HEAD_SHA_LINE = /head sha:[*_`\s]*([0-9a-z]+)\b/i;
 const AGENT_BODY_BEGIN = "<!-- CURSOR_AGENT_PR_BODY_BEGIN -->";
 
-/** Head SHA lines before the agent marker are preserved and not graded. */
-function gradedBody(body) {
-  const markerAt = body.indexOf(AGENT_BODY_BEGIN);
-  if (markerAt === -1) {
-    return body;
-  }
-  return body.slice(markerAt + AGENT_BODY_BEGIN.length);
-}
-
 export function checkPrBody(body, headSha) {
   if (body == null || body === "") {
     return [];
@@ -20,8 +11,9 @@ export function checkPrBody(body, headSha) {
 
   const expected = String(headSha ?? "").toLowerCase();
   const errors = [];
+  const maintained = maintainedBody(String(body));
 
-  for (const line of gradedBody(String(body)).split(/\r?\n/)) {
+  for (const line of maintained.split(/\r?\n/)) {
     const match = line.match(HEAD_SHA_LINE);
     if (!match) {
       continue;
@@ -39,6 +31,14 @@ export function checkPrBody(body, headSha) {
   }
 
   return errors;
+}
+
+function maintainedBody(body) {
+  const markerAt = body.indexOf(AGENT_BODY_BEGIN);
+  if (markerAt === -1) {
+    return body;
+  }
+  return body.slice(markerAt + AGENT_BODY_BEGIN.length);
 }
 
 function main() {
