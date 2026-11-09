@@ -64,6 +64,16 @@ describe("checkPrBody", () => {
     expect(checkPrBody(body, HEAD_SHA)).toEqual([]);
   });
 
+  it("ignores a stale SHA before the agent marker when the maintained line matches", () => {
+    const body = [
+      "Head SHA: 0000000000000000000000000000000000000000",
+      "<!-- CURSOR_AGENT_PR_BODY_BEGIN -->",
+      `Head SHA: ${HEAD_SHA}`,
+      "<!-- CURSOR_AGENT_PR_BODY_END -->",
+    ].join("\n");
+    expect(checkPrBody(body, HEAD_SHA)).toEqual([]);
+  });
+
   it("fails a wrong SHA inside the agent body marker", () => {
     const body = [
       "Head SHA: 4567162",
@@ -78,5 +88,17 @@ describe("checkPrBody", () => {
   it("still rejects a short prefix after the agent body marker", () => {
     const body = `${AGENT_BODY_BEGIN}\nHead SHA: 785`;
     expect(checkPrBody(body, HEAD_SHA).length).toBeGreaterThan(0);
+  });
+
+  it("still fails a stale SHA after the agent marker", () => {
+    const body = [
+      `Head SHA: ${HEAD_SHA}`,
+      "<!-- CURSOR_AGENT_PR_BODY_BEGIN -->",
+      "Head SHA: 0000000000000000000000000000000000000000",
+      "<!-- CURSOR_AGENT_PR_BODY_END -->",
+    ].join("\n");
+    const errors = checkPrBody(body, HEAD_SHA);
+    expect(errors.length).toBeGreaterThan(0);
+    expect(errors.join("\n")).toContain("0000000");
   });
 });

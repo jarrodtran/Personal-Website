@@ -11,14 +11,9 @@ export function checkPrBody(body, headSha) {
 
   const expected = String(headSha ?? "").toLowerCase();
   const errors = [];
-  const text = String(body);
-  const markerAt = text.indexOf(AGENT_BODY_BEGIN);
-  // A preserved description above the marker can name an older head.
-  // Grade only the lines after the marker. Bodies without it stay whole.
-  const graded =
-    markerAt === -1 ? text : text.slice(markerAt + AGENT_BODY_BEGIN.length);
+  const maintained = maintainedBody(String(body));
 
-  for (const line of graded.split(/\r?\n/)) {
+  for (const line of maintained.split(/\r?\n/)) {
     const match = line.match(HEAD_SHA_LINE);
     if (!match) {
       continue;
@@ -36,6 +31,14 @@ export function checkPrBody(body, headSha) {
   }
 
   return errors;
+}
+
+function maintainedBody(body) {
+  const markerAt = body.indexOf(AGENT_BODY_BEGIN);
+  if (markerAt === -1) {
+    return body;
+  }
+  return body.slice(markerAt + AGENT_BODY_BEGIN.length);
 }
 
 function main() {

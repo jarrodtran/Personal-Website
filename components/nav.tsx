@@ -96,45 +96,43 @@ export function Nav({
           <span className="min-w-0 text-wrap">{name}</span>
         </a>
 
-        <nav
-          className="hidden flex-nowrap items-center gap-1 @[43rem]:flex"
-          aria-label="Primary"
-        >
-          {items.map((item) => (
+        <div className="ml-auto flex shrink-0 items-center gap-2">
+          <nav
+            className="hidden flex-nowrap items-center gap-1 @[43rem]:flex"
+            aria-label="Primary"
+          >
+            {items.map((item) => (
+              <a
+                key={item.href}
+                href={sectionHref(item.href)}
+                aria-current={current === item.href ? "location" : undefined}
+                className={cn(
+                  tap,
+                  "px-2.5 text-[0.9375rem] whitespace-nowrap transition-colors",
+                  current === item.href
+                    ? "text-foreground"
+                    : "text-muted-foreground hover:text-foreground",
+                )}
+              >
+                {item.label}
+              </a>
+            ))}
             <a
-              key={item.href}
-              href={sectionHref(item.href)}
-              aria-current={current === item.href ? "location" : undefined}
+              href={withBasePath(resumeHref)}
+              download={resumeFilename}
               className={cn(
                 tap,
-                "px-2.5 text-[0.9375rem] whitespace-nowrap transition-colors",
-                current === item.href
-                  ? "text-foreground"
-                  : "text-muted-foreground hover:text-foreground",
+                "text-muted-foreground hover:text-foreground px-2.5 text-[0.9375rem] whitespace-nowrap",
               )}
             >
-              {item.label}
+              Résumé
             </a>
-          ))}
-          <a
-            href={withBasePath(resumeHref)}
-            download={resumeFilename}
-            className={cn(
-              tap,
-              "text-muted-foreground hover:text-foreground px-2.5 text-[0.9375rem] whitespace-nowrap",
-            )}
-          >
-            Résumé
-          </a>
-          <ThemeToggle />
-        </nav>
-
-        <div className="ml-auto flex shrink-0 items-center gap-2 @[43rem]:hidden">
+          </nav>
           <ThemeToggle />
           <button
             ref={toggleRef}
             type="button"
-            className="border-border bg-card inline-flex size-[44px] items-center justify-center border"
+            className="border-border bg-card @[43rem]:hidden inline-flex size-[44px] items-center justify-center border"
             aria-expanded={open}
             aria-controls="mobile-nav"
             aria-label={open ? "Close menu" : "Open menu"}
