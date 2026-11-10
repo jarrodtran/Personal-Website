@@ -1,14 +1,11 @@
 import { MetricText } from "@/components/metric-text";
 import { Section, SectionHeading } from "@/components/section";
-import { Highlights } from "@/components/sections/highlights";
 import { site } from "@/content/site";
 
 export function Experience() {
   return (
     <Section id="experience" className="bg-muted/50">
       <SectionHeading title={site.sections.experience.title} />
-      <Highlights />
-
       <ol className="space-y-12">
         {site.experience.map((employer) => (
           <li
