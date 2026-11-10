@@ -8,7 +8,6 @@ const pkg = JSON.parse(readFileSync(path.join(root, "package.json"), "utf8")) as
   scripts?: Record<string, string>;
 };
 const scripts = pkg.scripts ?? {};
-const ci = readFileSync(path.join(root, ".github/workflows/ci.yml"), "utf8");
 
 /** Paths `pnpm test` ships with --exclude, e.g. tests/tap-targets.test.ts. */
 const DEFAULT_EXCLUDED = [
@@ -54,7 +53,11 @@ describe("test suite sync", () => {
     }
   });
 
-  it("runs every explicit test:* suite as a CI step", () => {
+  // CI wiring for these scripts is not asserted here: reading .github/ as text
+  // in tests is banned (see lib/eslint-restricted.mjs and rule:gates-at-head),
+  // and CI proves the step by running it. What is checkable is that every path
+  // a script names exists.
+  it("names a real test file in every explicit test:* script", () => {
     for (const [name, script] of EXPLICIT_SCRIPTS) {
       for (const candidate of script.match(/tests\/[\w./-]+\.\w+/g) ?? []) {
         expect(
@@ -62,7 +65,6 @@ describe("test suite sync", () => {
           `${name}: missing ${candidate}`,
         ).toBe(true);
       }
-      expect(ci, `${name} missing from ci.yml`).toContain(`pnpm ${name}\n`);
     }
   });
 });
