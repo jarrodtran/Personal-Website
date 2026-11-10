@@ -16,7 +16,7 @@ Reviewers: fill in [docs/review-pass.md](docs/review-pass.md) for your PASS. Do 
 
 `main` requires the `gates` status. Grading uses `scripts/gates.mjs` from the PR base ref, the copy on main after #136. It turns green only when Design, Preview QA, and Review Poteto all PASS that same head, and Review Poteto includes `touches: none`.
 
-Post each verdict as its own plain PR comment. A review body and the PR description do not count. One line each, using the current 40-character head SHA:
+The Cursor reviewer app (`cursor[bot]`) posts the three verdicts when it approves a PR; a person on the allowlist can post them by hand instead. Post each verdict as its own plain PR comment. A review body and the PR description do not count. One line each, using the current 40-character head SHA:
 
 ```
 GATE design PASS <40-character head sha>
@@ -26,7 +26,7 @@ GATE review PASS <40-character head sha> touches: none
 
 - `design` is Design, `qa` is Preview QA, and `review` is Review Poteto.
 - Review Poteto passes only with `touches: none`. `touches: data`, `touches: dns`, and `touches: money` stay red on purpose. A review PASS with no touches value stays red (`missing touches: none`).
-- Only comments from `jarrodtran` or `cursor[bot]` count. Any other author is ignored.
+- Only comments from `jarrodtran` or `cursor[bot]` count. Any other author is ignored, including an agent that reviews under its own account.
 - Do not edit a gate comment after posting. An edited comment is ignored.
 - The newest countable line for a gate is the one that decides. A later line about an older commit replaces a verdict at the head, and the status marks it `stale`.
 - A line passes only when its SHA equals the PR head. Any new commit makes all three stale, so post them again for the new SHA. `gh pr view <number> --json headRefOid --jq .headRefOid` prints it.
