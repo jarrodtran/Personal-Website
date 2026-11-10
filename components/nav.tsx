@@ -23,11 +23,7 @@ export function Nav({
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [active, setActive] = useState<string>("");
-  const [compact, setCompact] = useState(false);
-  const compactRef = useRef(false);
   const toggleRef = useRef<HTMLButtonElement>(null);
-  const barRef = useRef<HTMLDivElement>(null);
-  const navRef = useRef<HTMLElement>(null);
   const pathname = usePathname();
   const onHome = pathname === "/" || pathname === "";
   const sectionHref = (href: string) =>
@@ -66,95 +62,22 @@ export function Nav({
   }, [items, onHome]);
 
   useEffect(() => {
-    const bar = barRef.current;
-    const nav = navRef.current;
-    if (!bar || !nav) return;
-
-    let frame = 0;
-    const apply = (next: boolean) => {
-      // Widening past the compact threshold restores the desktop links, so a
-      // menu opened in compact mode has to close with it.
-      if (compactRef.current && !next) setOpen(false);
-      compactRef.current = next;
-      setCompact(next);
-    };
-    const measure = () => {
-      const header = bar.parentElement;
-      const bottom = Math.ceil(bar.getBoundingClientRect().bottom);
-      if (header) {
-        header.style.setProperty("--header-bar", `${bottom}px`);
-        header.style.setProperty(
-          "--header-panel",
-          `${Math.max(0, window.innerHeight - bottom)}px`,
-        );
-      }
-      if (!window.matchMedia("(width >= 48rem)").matches) {
-        apply(false);
-        return;
-      }
-
-      // At 200% text the desktop links no longer fit beside the name. Measure
-      // the nav off-canvas so the header can fall back to the phone menu.
-      const clone = nav.cloneNode(true) as HTMLElement;
-      Object.assign(clone.style, {
-        position: "absolute",
-        top: "0",
-        left: "-9999px",
-        visibility: "hidden",
-        display: "flex",
-      });
-      document.body.append(clone);
-      const navWidth = clone.getBoundingClientRect().width;
-      clone.remove();
-
-      const style = getComputedStyle(bar);
-      const available =
-        bar.clientWidth -
-        Number.parseFloat(style.paddingLeft) -
-        Number.parseFloat(style.paddingRight);
-      const nameWidth =
-        bar.firstElementChild?.getBoundingClientRect().width ?? 0;
-      apply(nameWidth + navWidth + 16 > available);
-    };
-    let cancelled = false;
-    const schedule = () => {
-      if (cancelled) return;
-      cancelAnimationFrame(frame);
-      frame = requestAnimationFrame(measure);
-    };
-
-    schedule();
-    const observer = new ResizeObserver(schedule);
-    observer.observe(bar);
-    window.addEventListener("resize", schedule);
-    document.fonts.ready.then(schedule).catch(() => {});
-
-    return () => {
-      cancelled = true;
-      cancelAnimationFrame(frame);
-      observer.disconnect();
-      window.removeEventListener("resize", schedule);
-    };
-  }, []);
-
-  useEffect(() => {
     if (!open) return;
-    const desktop = window.matchMedia("(width >= 48rem)");
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key !== "Escape") return;
       setOpen(false);
       toggleRef.current?.focus();
     };
-    const onDesktop = () => {
-      if (desktop.matches) setOpen(false);
+    const onResize = () => {
+      if (toggleRef.current?.offsetParent === null) setOpen(false);
     };
     document.body.style.overflow = "hidden";
     document.addEventListener("keydown", onKeyDown);
-    desktop.addEventListener("change", onDesktop);
+    window.addEventListener("resize", onResize);
     return () => {
       document.body.style.overflow = "";
       document.removeEventListener("keydown", onKeyDown);
-      desktop.removeEventListener("change", onDesktop);
+      window.removeEventListener("resize", onResize);
     };
   }, [open]);
 
@@ -165,10 +88,7 @@ export function Nav({
         scrolled ? "border-border" : "border-transparent",
       )}
     >
-      <div
-        ref={barRef}
-        className="mx-auto flex min-h-14 max-w-5xl items-center justify-between gap-x-4 px-5 sm:px-8"
-      >
+      <div className="@container mx-auto flex min-h-14 max-w-5xl items-center justify-between gap-x-4 px-5 sm:px-8">
         <a
           href={homeHref}
           className={cn(tap, "min-w-0 font-medium tracking-tight")}
@@ -176,54 +96,43 @@ export function Nav({
           <span className="min-w-0 text-wrap">{name}</span>
         </a>
 
-        <nav
-          ref={navRef}
-          className={cn(
-            "items-center gap-1",
-            compact ? "hidden" : "hidden md:flex",
-          )}
-          aria-label="Primary"
-        >
-          {items.map((item) => (
+        <div className="ml-auto flex shrink-0 items-center gap-2">
+          <nav
+            className="hidden flex-nowrap items-center gap-1 @[43rem]:flex"
+            aria-label="Primary"
+          >
+            {items.map((item) => (
+              <a
+                key={item.href}
+                href={sectionHref(item.href)}
+                aria-current={current === item.href ? "location" : undefined}
+                className={cn(
+                  tap,
+                  "px-2.5 text-[0.9375rem] whitespace-nowrap transition-colors",
+                  current === item.href
+                    ? "text-foreground"
+                    : "text-muted-foreground hover:text-foreground",
+                )}
+              >
+                {item.label}
+              </a>
+            ))}
             <a
-              key={item.href}
-              href={sectionHref(item.href)}
-              aria-current={current === item.href ? "location" : undefined}
+              href={withBasePath(resumeHref)}
+              download={resumeFilename}
               className={cn(
                 tap,
-                "px-2.5 text-[0.9375rem] transition-colors",
-                current === item.href
-                  ? "text-foreground"
-                  : "text-muted-foreground hover:text-foreground",
+                "text-muted-foreground hover:text-foreground px-2.5 text-[0.9375rem] whitespace-nowrap",
               )}
             >
-              {item.label}
+              Résumé
             </a>
-          ))}
-          <a
-            href={withBasePath(resumeHref)}
-            download={resumeFilename}
-            className={cn(
-              tap,
-              "text-muted-foreground hover:text-foreground px-2.5 text-[0.9375rem]",
-            )}
-          >
-            Résumé
-          </a>
-          <ThemeToggle />
-        </nav>
-
-        <div
-          className={cn(
-            "ml-auto flex shrink-0 items-center gap-2",
-            !compact && "md:hidden",
-          )}
-        >
+          </nav>
           <ThemeToggle />
           <button
             ref={toggleRef}
             type="button"
-            className="border-border bg-card inline-flex size-[44px] items-center justify-center border"
+            className="border-border bg-card @[43rem]:hidden inline-flex size-[44px] items-center justify-center border"
             aria-expanded={open}
             aria-controls="mobile-nav"
             aria-label={open ? "Close menu" : "Open menu"}
@@ -241,14 +150,7 @@ export function Nav({
       {open ? (
         <div
           id="mobile-nav"
-          className={cn(
-            "border-border bg-background overflow-y-auto overscroll-contain border-t",
-            !compact && "md:hidden",
-          )}
-          style={{
-            maxHeight:
-              "var(--header-panel, calc(100dvh - var(--header-bar, 0px)))",
-          }}
+          className="border-border bg-background max-h-[calc(100dvh-3.5rem)] overflow-y-auto overscroll-contain border-t @[43rem]:hidden"
         >
           <nav
             className="mx-auto flex max-w-5xl flex-col px-5 py-3"

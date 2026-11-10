@@ -7,11 +7,7 @@ export function Footer() {
         <p>
           © {new Date().getFullYear()} {site.positioning.name}
         </p>
-        <p>
-          {site.positioning.location}
-          <span aria-hidden="true"> · </span>
-          Tesla · Apple · Waymo
-        </p>
+        <p>{site.positioning.location}</p>
       </div>
     </footer>
   );

@@ -64,6 +64,21 @@
   --color-ring: var(--ring);
 }
 
+@theme static {
+  --container-prose: 40rem;
+  --text-body: 1.0625rem;
+  --text-small: 0.875rem;
+  --text-h3: 1.25rem;
+  --text-h2: 1.5rem;
+  --text-h1: clamp(2rem, 1.5rem + 2.5vw, 2.75rem);
+  --leading-body: 1.65;
+  --leading-heading: 1.2;
+  --spacing-section: 4rem;
+  --spacing-block: 1.5rem;
+  --spacing-gutter: 1.25rem;
+  --spacing-tap: 2.75rem;
+}
+
 html {
   scroll-behavior: smooth;
   overflow-x: clip;
@@ -103,8 +118,8 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans);
-  font-size: 1.0625rem;
-  line-height: 1.65;
+  font-size: var(--text-body);
+  line-height: var(--leading-body);
   overflow-x: clip;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -114,9 +129,11 @@ body {
   background: color-mix(in srgb, var(--accent) 22%, transparent);
 }
 
-:focus-visible {
-  outline: 2px solid var(--ring);
-  outline-offset: 2px;
+@layer base {
+  :focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
 }
 
 .font-display {

@@ -1,39 +1,26 @@
 import { execFileSync } from "node:child_process";
-import { cpSync, existsSync, rmSync } from "node:fs";
-import { readFile } from "node:fs/promises";
-import { createServer } from "node:http";
-import { extname, join, normalize } from "node:path";
-import { chromium } from "playwright-core";
+import { cpSync, rmSync } from "node:fs";
+import { join } from "node:path";
+import { chromium, type Browser } from "playwright-core";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { site } from "@/content/site";
+import {
+  COLOR_SCHEMES,
+  LAYOUT_WIDTHS,
+  TEXT_SCALES,
+  collectLayoutViolations,
+  formatLayoutFailure,
+  listTopLevelPageRoutes,
+  requireOutBuild,
+  settleLayoutPage,
+  startOutServer,
+} from "./browser-layout";
 import { WRITING_FIXTURE_TITLES } from "./fixtures/writing/titles";
 
-const types: Record<string, string> = {
-  ".css": "text/css",
-  ".html": "text/html; charset=utf-8",
-  ".js": "text/javascript",
-  ".pdf": "application/pdf",
-  ".png": "image/png",
-  ".webp": "image/webp",
-  ".woff2": "font/woff2",
-};
-
-const basePath = (process.env.BASE_PATH ?? "").replace(/\/$/, "");
-
-function withoutBasePath(pathname: string): string {
-  if (!basePath) return pathname;
-  if (pathname === basePath) return "/";
-  if (pathname.startsWith(`${basePath}/`)) {
-    return pathname.slice(basePath.length);
-  }
-  return pathname;
-}
-
-const built = existsSync(join(process.cwd(), "out/index.html"));
-
-if (!built) {
-  throw new Error("tap-targets test needs a production build in out/");
-}
+const outDir = requireOutBuild(
+  "tap-targets test needs a production build in out/",
+);
+const layoutRoutes = listTopLevelPageRoutes(outDir);
 
 function buildWritingFixtureOut(): () => void {
   const root = process.cwd();
@@ -64,39 +51,106 @@ function buildWritingFixtureOut(): () => void {
 describe("390px tap targets and first screen", () => {
   let origin = "";
   let close = async () => {};
+  let browser: Browser;
 
   beforeAll(async () => {
-    const server = createServer(async (request, response) => {
-      const { pathname } = new URL(request.url ?? "/", "http://localhost");
-      const stripped = withoutBasePath(pathname);
-      const path = stripped.endsWith("/") ? `${stripped}index.html` : stripped;
-      const file = join("out", normalize(decodeURIComponent(path)));
-      try {
-        const body = await readFile(file);
-        response.writeHead(200, {
-          "content-type": types[extname(file)] ?? "",
-        });
-        response.end(body);
-      } catch {
-        response.writeHead(404).end();
-      }
-    });
-    await new Promise<void>((resolve) => {
-      server.listen(0, "127.0.0.1", () => resolve());
-    });
-    const address = server.address();
-    if (!address || typeof address === "string") {
-      throw new Error("test server did not bind");
-    }
-    origin = `http://127.0.0.1:${address.port}${basePath}`;
-    close = () =>
-      new Promise<void>((resolve, reject) => {
-        server.close((error) => (error ? reject(error) : resolve()));
-      });
+    const server = await startOutServer();
+    origin = server.origin;
+    close = server.close;
+    browser = await chromium.launch();
   });
 
   afterAll(async () => {
+    await browser.close();
     await close();
+  });
+
+  // rule:tap-targets-44px
+  // rule:no-horizontal-overflow
+  it("keeps built pages inside the viewport with 44 by 44 tap targets", async () => {
+    expect(layoutRoutes.length).toBeGreaterThan(0);
+    const failures: string[] = [];
+    for (const route of layoutRoutes) {
+      for (const width of LAYOUT_WIDTHS) {
+        for (const textScale of TEXT_SCALES) {
+          for (const colorScheme of COLOR_SCHEMES) {
+            const page = await browser.newPage({
+              viewport: { width, height: width },
+              colorScheme,
+            });
+            try {
+              await page.goto(`${origin}${route}`, {
+                waitUntil: "networkidle",
+              });
+              await settleLayoutPage(page, colorScheme, textScale);
+              const violations = await page.evaluate(collectLayoutViolations);
+              for (const violation of violations) {
+                failures.push(
+                  formatLayoutFailure(
+                    route,
+                    width,
+                    textScale,
+                    colorScheme,
+                    violation,
+                  ),
+                );
+              }
+            } finally {
+              await page.close();
+            }
+          }
+        }
+      }
+    }
+    expect(failures).toEqual([]);
+  }, 360_000);
+
+  it("skips inline prose links, skip links, and sr-only controls", async () => {
+    const page = await browser.newPage({
+      viewport: { width: 390, height: 390 },
+      colorScheme: "light",
+    });
+    try {
+      await page.setContent(`
+        <style>
+          .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+          }
+        </style>
+        <p>Read the <a href="/prose">inline note</a> in this sentence.</p>
+        <a class="sr-only" href="#content">Skip to content</a>
+        <a class="sr-only" href="/hidden">hidden control</a>
+        <a href="/ok" style="display:flex;width:48px;height:48px">ok</a>
+      `);
+      expect(await page.evaluate(collectLayoutViolations)).toEqual([]);
+    } finally {
+      await page.close();
+    }
+  });
+
+  it("fails a too-wide box and a too-small tap target", async () => {
+    const page = await browser.newPage({
+      viewport: { width: 390, height: 390 },
+      colorScheme: "light",
+    });
+    try {
+      await page.setContent(`
+        <div data-layout-probe="wide" style="width:200vw">wide box</div>
+        <a data-layout-probe="tiny" href="#tiny" style="display:flex;width:12px;height:10px">tiny tap</a>
+      `);
+      const kinds = (await page.evaluate(collectLayoutViolations)).map(
+        (violation) => violation.kind,
+      );
+      expect(kinds).toContain("page-overflow");
+      expect(kinds).toContain("element-overflow");
+      expect(kinds).toContain("tap-target");
+    } finally {
+      await page.close();
+    }
   });
 
   async function open(path: string) {
@@ -108,25 +162,6 @@ describe("390px tap targets and first screen", () => {
     await page.goto(`${origin}${path}`, { waitUntil: "networkidle" });
     return { browser, page };
   }
-
-  it("keeps the writing subscribe link and post titles at least 44px tall", async () => {
-    const { browser, page } = await open("/");
-    const writing = await page.evaluate(() => {
-      const section = document.getElementById("writing");
-      return [...(section?.querySelectorAll("a") ?? [])].map((control) => ({
-        name: control.textContent?.replace(/\s+/g, " ").trim() ?? "",
-        height: control.getBoundingClientRect().height,
-      }));
-    });
-    await browser.close();
-    expect(writing.length).toBeGreaterThan(0);
-    expect(
-      writing.some((link) => link.name.includes("Subscribe on Substack")),
-    ).toBe(true);
-    for (const link of writing) {
-      expect(link.height, link.name).toBeGreaterThanOrEqual(44);
-    }
-  });
 
   it("underlines the first writing title only while hovered", async () => {
     const restore = buildWritingFixtureOut();
@@ -152,44 +187,82 @@ describe("390px tap targets and first screen", () => {
     }
   }, 180_000);
 
-  // rule:tap-targets-44px
-  it("keeps every visible link and button at least 44px tall", async () => {
-    for (const path of ["/", "/work/tesla-energy-ai-product/"]) {
-      const { browser, page } = await open(path);
-      const short = await page.evaluate(() => {
-        return [...document.querySelectorAll("a, button")]
-          .filter((control) => {
-            const style = getComputedStyle(control);
-            const box = control.getBoundingClientRect();
-            return (
-              style.display !== "none" &&
-              style.visibility !== "hidden" &&
-              box.width > 1 &&
-              box.height > 1
-            );
-          })
-          .filter((control) => control.getBoundingClientRect().height < 44)
-          .map((control) => {
-            const name =
-              control.getAttribute("aria-label") ||
-              control.textContent?.trim() ||
-              control.getAttribute("href") ||
-              control.tagName;
-            return `${name}: ${control.getBoundingClientRect().height.toFixed(1)}px`;
-          });
-      });
-      await browser.close();
-      expect(short, `${path} short controls`).toEqual([]);
+  it("makes each selected work title link cover its card with a 44px tap box", async () => {
+    const { browser, page } = await open("/");
+    const cards = await page.evaluate(
+      (slugs) => {
+        const section = document.getElementById("work");
+        return [...(section?.querySelectorAll("article") ?? [])].map(
+          (article, index) => {
+            const link = article.querySelector("a");
+            const after = link ? getComputedStyle(link, "::after") : null;
+            const articleBox = article.getBoundingClientRect();
+            const afterWidth = after ? parseFloat(after.width) : 0;
+            const afterHeight = after ? parseFloat(after.height) : 0;
+            return {
+              slug: slugs[index],
+              href: link?.getAttribute("href") ?? "",
+              linkCount: article.querySelectorAll("a").length,
+              afterWidth,
+              afterHeight,
+              articleWidth: articleBox.width,
+              articleHeight: articleBox.height,
+            };
+          },
+        );
+      },
+      site.selectedWork.map((item) => item.slug),
+    );
+    await browser.close();
+
+    expect(cards).toHaveLength(site.selectedWork.length);
+    for (const card of cards) {
+      expect(card.linkCount, card.slug).toBe(1);
+      expect(card.href, card.slug).toMatch(new RegExp(`/work/${card.slug}/?$`));
+      expect(card.afterWidth, `${card.slug} tap width`).toBeGreaterThanOrEqual(
+        44,
+      );
+      expect(
+        card.afterHeight,
+        `${card.slug} tap height`,
+      ).toBeGreaterThanOrEqual(44);
+      expect(
+        card.afterWidth,
+        `${card.slug} overlay width`,
+      ).toBeGreaterThanOrEqual(card.articleWidth - 4);
+      expect(
+        card.afterHeight,
+        `${card.slug} overlay height`,
+      ).toBeGreaterThanOrEqual(card.articleHeight - 4);
     }
   });
 
-  it("does not scroll sideways at 390px", async () => {
+  it("puts the selected work card ring on the article, not the title link", async () => {
     const { browser, page } = await open("/");
-    const overflow = await page.evaluate(
-      () => document.documentElement.scrollWidth > window.innerWidth,
-    );
+    const title = page.locator("#work article a").first();
+    await title.scrollIntoViewIfNeeded();
+    await page.keyboard.press("Tab");
+    await title.focus();
+
+    const outlines = await title.evaluate((link) => {
+      const article = link.closest("article");
+      if (!article) return null;
+      const linkStyle = getComputedStyle(link);
+      const articleStyle = getComputedStyle(article);
+      return {
+        linkMatches: link.matches(":focus-visible"),
+        linkOutlineStyle: linkStyle.outlineStyle,
+        articleOutlineStyle: articleStyle.outlineStyle,
+        articleOutlineWidth: articleStyle.outlineWidth,
+      };
+    });
     await browser.close();
-    expect(overflow).toBe(false);
+
+    expect(outlines).not.toBeNull();
+    expect(outlines?.linkMatches).toBe(true);
+    expect(outlines?.linkOutlineStyle).toBe("none");
+    expect(outlines?.articleOutlineStyle).toBe("solid");
+    expect(outlines?.articleOutlineWidth).toBe("2px");
   });
 
   it("shows the hero, then the Writing heading, on the first screen", async () => {
@@ -209,10 +282,7 @@ describe("390px tap targets and first screen", () => {
       };
     });
     await browser.close();
-    expect(view.hero).toEqual([
-      site.positioning.name,
-      site.positioning.headline,
-    ]);
+    expect(view.hero).toEqual([site.positioning.name]);
     expect(view.writingTitle).toBe(site.substack.name);
     expect(view.writingBottom).toBeGreaterThan(0);
     expect(view.writingBottom).toBeLessThanOrEqual(view.viewport);
@@ -608,6 +678,64 @@ describe("390px tap targets and first screen", () => {
         expect(icon.width, `${icon.name} width`).toBe(16);
         expect(icon.height, `${icon.name} height`).toBe(16);
       }
+    },
+  );
+
+  it.each([390, 640, 1280])(
+    "keeps highlights borders single-line at %ipx",
+    async (width) => {
+      const browser = await chromium.launch();
+      const page = await browser.newPage({
+        viewport: { width, height: 844 },
+        colorScheme: "light",
+      });
+      await page.goto(`${origin}/`, { waitUntil: "networkidle" });
+      const cells = await page.evaluate(() => {
+        const strip = document.querySelector(
+          '[aria-label="Impact highlights"]',
+        );
+        return [...(strip?.children ?? [])].map((cell) => {
+          const style = getComputedStyle(cell);
+          const source = cell.querySelector(".font-mono-label");
+          let sourceLines = 0;
+          if (source?.firstChild) {
+            const range = document.createRange();
+            range.selectNodeContents(source.firstChild);
+            sourceLines = range.getClientRects().length;
+          }
+          return {
+            borderBottom: style.borderBottomWidth,
+            borderRight: style.borderRightWidth,
+            sourceLines,
+          };
+        });
+      });
+      await browser.close();
+
+      expect(cells).toHaveLength(4);
+      // 640 inner cells wrap "Tesla Energy" once padding matches main.
+      const expected =
+        width < 640
+          ? [
+              { borderBottom: "1px", borderRight: "0px", sourceLines: 1 },
+              { borderBottom: "1px", borderRight: "0px", sourceLines: 1 },
+              { borderBottom: "0px", borderRight: "0px", sourceLines: 1 },
+              { borderBottom: "0px", borderRight: "0px", sourceLines: 1 },
+            ]
+          : width === 640
+            ? [
+                { borderBottom: "0px", borderRight: "1px", sourceLines: 1 },
+                { borderBottom: "0px", borderRight: "1px", sourceLines: 2 },
+                { borderBottom: "0px", borderRight: "1px", sourceLines: 2 },
+                { borderBottom: "0px", borderRight: "0px", sourceLines: 1 },
+              ]
+            : [
+                { borderBottom: "0px", borderRight: "1px", sourceLines: 1 },
+                { borderBottom: "0px", borderRight: "1px", sourceLines: 1 },
+                { borderBottom: "0px", borderRight: "1px", sourceLines: 1 },
+                { borderBottom: "0px", borderRight: "0px", sourceLines: 1 },
+              ];
+      expect(cells, `${width}px highlights cells`).toEqual(expected);
     },
   );
 });
