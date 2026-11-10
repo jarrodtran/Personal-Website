@@ -93,6 +93,14 @@ describe("print stylesheet", () => {
       const external = document.querySelector<HTMLAnchorElement>(
         'main a[href^="http"]',
       );
+      const contact = document.getElementById("contact");
+      const breaks = (
+        selector: string,
+        property: "breakAfter" | "breakInside",
+      ) =>
+        [...document.querySelectorAll(selector)].map(
+          (element) => getComputedStyle(element)[property],
+        );
       return {
         bodyBackground: body.backgroundColor,
         bodyColor: body.color,
@@ -106,6 +114,12 @@ describe("print stylesheet", () => {
         mainVisible:
           (document.querySelector("main")?.getBoundingClientRect().height ??
             0) > 0,
+        h2BreakAfter: breaks("h2", "breakAfter"),
+        h3BreakAfter: breaks("h3", "breakAfter"),
+        approachBreakInside: breaks("#approach li", "breakInside"),
+        contactBreakBefore: contact
+          ? getComputedStyle(contact).breakBefore
+          : "missing",
       };
     });
     await page.emulateMedia({ media: "screen" });
@@ -143,6 +157,23 @@ describe("print stylesheet", () => {
     const { screen } = await readPrint("/", "dark");
     expect(screen.headerDisplay).not.toBe("none");
     expect(screen.bodyBackground).not.toBe("rgb(255, 255, 255)");
+  });
+
+  it("keeps headings with the next block, keeps approach rows whole, and starts contact on a new page", async () => {
+    const { print } = await readPrint("/", "light");
+    const filled = (values: string[], expected: string) =>
+      values.length === 0 ? ["missing"] : values.map(() => expected);
+    expect({
+      h2BreakAfter: print.h2BreakAfter,
+      h3BreakAfter: print.h3BreakAfter,
+      approachBreakInside: print.approachBreakInside,
+      contactBreakBefore: print.contactBreakBefore,
+    }).toEqual({
+      h2BreakAfter: filled(print.h2BreakAfter, "avoid"),
+      h3BreakAfter: filled(print.h3BreakAfter, "avoid"),
+      approachBreakInside: filled(print.approachBreakInside, "avoid"),
+      contactBreakBefore: "page",
+    });
   });
 
   it("covers every built page", async () => {
