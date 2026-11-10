@@ -236,10 +236,20 @@ footer a {
     animation: none !important;
   }
 
+  h2,
+  h3 {
+    break-after: avoid;
+  }
+
   #experience li,
   #work article,
-  article section {
+  article section,
+  #approach li {
     break-inside: avoid;
+  }
+
+  #contact {
+    break-before: page;
   }
 
   main a[href^="http"]::after {
