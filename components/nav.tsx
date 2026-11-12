@@ -108,7 +108,7 @@ export function Nav({
                 aria-current={current === item.href ? "location" : undefined}
                 className={cn(
                   tap,
-                  "px-2.5 text-[0.9375rem] whitespace-nowrap transition-colors",
+                  "px-2.5 text-small whitespace-nowrap transition-colors",
                   current === item.href
                     ? "text-foreground"
                     : "text-muted-foreground hover:text-foreground",
@@ -122,7 +122,7 @@ export function Nav({
               download={resumeFilename}
               className={cn(
                 tap,
-                "text-muted-foreground hover:text-foreground px-2.5 text-[0.9375rem] whitespace-nowrap",
+                "text-muted-foreground hover:text-foreground px-2.5 text-small whitespace-nowrap",
               )}
             >
               Résumé

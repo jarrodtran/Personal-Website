@@ -16,7 +16,7 @@ export function Experience() {
               {employer.company}
             </h3>
             {employer.note ? (
-              <p className="text-muted-foreground mt-1 text-[0.9375rem]">
+              <p className="text-muted-foreground mt-1 text-small">
                 {employer.note}
               </p>
             ) : null}
@@ -24,7 +24,7 @@ export function Experience() {
               {employer.roles.map((role) => (
                 <div key={role.dates}>
                   <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
-                    <h4 className="text-accent text-[0.9375rem] font-medium">
+                    <h4 className="text-accent text-small font-medium">
                       {role.title}
                     </h4>
                     <p className="text-muted-foreground font-mono-label">
