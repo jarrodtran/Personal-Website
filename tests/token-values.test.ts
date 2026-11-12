@@ -87,14 +87,15 @@ const EXCEPTIONS: Exception[] = [
     audit: "H1 bg-muted/50",
     pr: "PR 3",
     match: (finding) =>
-      finding.kind === "background" &&
-      /#(experience|approach|contact)\b/.test(finding.name),
+      finding.kind === "background" && finding.off === "bg-muted/50",
   },
   {
     audit: "13 mono label",
     pr: "Spec B",
     match: (finding) =>
-      finding.kind === "font-size" && finding.off === "0.75rem",
+      finding.kind === "font-size" &&
+      finding.off === "0.75rem" &&
+      finding.name.includes("font-mono-label"),
   },
 ];
 
@@ -292,8 +293,23 @@ function collectPage(): PageSample {
         ),
       )
       .slice(0, 5);
+    if (
+      el.closest(".font-mono-label") &&
+      !classes.includes("font-mono-label")
+    ) {
+      classes.push("font-mono-label");
+    }
     return `${el.tagName}${id}${classes.length ? `.${classes.join(".")}` : ""}`;
   };
+
+  const mutedHalfProbe = document.createElement("div");
+  mutedHalfProbe.className = "bg-muted/50";
+  mutedHalfProbe.setAttribute("data-token-probe", "");
+  document.body.append(mutedHalfProbe);
+  const mutedHalf = normalizeColor(
+    getComputedStyle(mutedHalfProbe).backgroundColor,
+  );
+  mutedHalfProbe.remove();
 
   const closeTo = (actual: number, expected: number) =>
     Math.abs(actual - expected) <= 0.75;
@@ -370,13 +386,16 @@ function collectPage(): PageSample {
       });
     }
     const background = normalizeColor(style.backgroundColor);
+    const mutedPanel =
+      background === mutedHalf &&
+      /^(experience|approach|contact)$/.test(el.id);
     if (!allowedColors.has(background)) {
       add({
         audit: "T5",
         kind: "background",
         name,
         detail: `${name} background ${style.backgroundColor}`,
-        off: "",
+        off: mutedPanel ? "bg-muted/50" : "",
         ratio: null,
       });
     }
