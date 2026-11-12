@@ -235,7 +235,6 @@ function collectPage(): PageSample {
     "--text-small--line-height",
     "--leading-title",
     "--leading-copy",
-    "--leading-meta",
     "--leading-hero",
     "--leading-figure",
     "--leading-404",
@@ -272,10 +271,6 @@ function collectPage(): PageSample {
 
   const offSizes: Array<[string, number]> = [
     ["0.75rem", fontOf("font-size: 0.75rem")],
-    ["1.75rem", fontOf("font-size: 1.75rem")],
-    ["2.25rem", fontOf("font-size: 2.25rem")],
-    ["3rem", fontOf("font-size: 3rem")],
-    ["3.75rem", fontOf("font-size: 3.75rem")],
   ];
 
   const hidden = (el: Element) => {
@@ -497,8 +492,7 @@ function collectPage(): PageSample {
     css,
     ...measured,
     textSmall: smallFont,
-    smallLineRatio:
-      Number.isFinite(smallLine) && smallFont ? smallLine / smallFont : null,
+    smallLineRatio,
     heroFont: hero ? parseFloat(getComputedStyle(hero).fontSize) : null,
     headingFonts: [...document.querySelectorAll("main h2")]
       .filter((el) => !hidden(el))

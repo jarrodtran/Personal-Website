@@ -37,7 +37,7 @@ export function SelectedWork() {
                   </p>
                   <p
                     className={cn(
-                      "text-muted-foreground mt-3 text-[0.9375rem] leading-[var(--leading-meta)]",
+                      "text-muted-foreground mt-3 text-small",
                       featured ? "measure" : "max-w-xs",
                     )}
                   >

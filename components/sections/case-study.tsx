@@ -54,7 +54,7 @@ export function CaseStudyBody({ item }: { item: SelectedWorkItem }) {
             {item.panel.value}
           </p>
         </div>
-        <p className="text-muted-foreground max-w-sm min-w-0 text-[0.9375rem] leading-[var(--leading-meta)] @[450px]:min-w-min">
+        <p className="text-muted-foreground text-small max-w-sm min-w-0 @[450px]:min-w-min">
           {item.panel.label}
         </p>
       </div>
