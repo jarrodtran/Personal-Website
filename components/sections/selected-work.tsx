@@ -29,7 +29,7 @@ export function SelectedWork() {
                 <div>
                   <p
                     className={cn(
-                      "tabular font-display text-[min(3rem,30cqi)] leading-none sm:text-[min(3.75rem,30cqi)]",
+                      "tabular font-display text-[length:min(var(--text-figure),30cqi)] leading-[var(--leading-figure)] sm:text-[length:min(var(--text-figure-lg),30cqi)]",
                       featured && "measure",
                     )}
                   >
@@ -37,7 +37,7 @@ export function SelectedWork() {
                   </p>
                   <p
                     className={cn(
-                      "text-muted-foreground mt-3 text-[0.9375rem] leading-snug",
+                      "text-muted-foreground mt-3 text-[0.9375rem] leading-[var(--leading-meta)]",
                       featured ? "measure" : "max-w-xs",
                     )}
                   >
@@ -46,7 +46,7 @@ export function SelectedWork() {
                 </div>
               </div>
               <div className="flex min-w-0 flex-1 flex-col p-5 sm:p-7">
-                <h3 className="font-display text-2xl leading-tight tracking-tight sm:text-[1.75rem]">
+                <h3 className="font-display text-[length:var(--text-h3)] leading-[var(--leading-title)] tracking-tight sm:text-[length:var(--text-title-step)]">
                   <Link
                     href={`/work/${item.slug}/`}
                     className="underline-offset-4 group-hover:underline after:absolute after:inset-0 after:content-[''] focus-visible:outline-none"
@@ -55,13 +55,13 @@ export function SelectedWork() {
                   </Link>
                 </h3>
                 <div className="mt-4 space-y-3">
-                  <p className="text-muted-foreground text-lg leading-relaxed">
+                  <p className="text-muted-foreground text-[length:var(--text-body)] leading-[var(--leading-copy)]">
                     {item.problem}
                   </p>
-                  <p className="text-muted-foreground text-lg leading-relaxed">
+                  <p className="text-muted-foreground text-[length:var(--text-body)] leading-[var(--leading-copy)]">
                     {item.contribution}
                   </p>
-                  <p className="text-muted-foreground text-lg leading-relaxed">
+                  <p className="text-muted-foreground text-[length:var(--text-body)] leading-[var(--leading-copy)]">
                     {item.outcome}
                   </p>
                 </div>

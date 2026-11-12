@@ -31,7 +31,7 @@ export function SectionHeading({
 }) {
   return (
     <div className="mb-10 max-w-2xl sm:mb-12">
-      <h2 className="font-display text-[length:var(--text-h2)] leading-tight tracking-tight text-balance">
+      <h2 className="font-display text-[length:var(--text-h2)] leading-[var(--leading-title)] tracking-tight text-balance">
         {title}
       </h2>
       {children}

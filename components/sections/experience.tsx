@@ -12,7 +12,7 @@ export function Experience() {
             key={employer.company}
             className="reveal border-border border-t pt-8"
           >
-            <h3 className="font-display text-2xl leading-tight tracking-tight sm:text-[1.75rem]">
+            <h3 className="font-display text-[length:var(--text-h3)] leading-[var(--leading-title)] tracking-tight sm:text-[length:var(--text-title-step)]">
               {employer.company}
             </h3>
             {employer.note ? (
@@ -32,7 +32,7 @@ export function Experience() {
                     </p>
                   </div>
                   {role.summary ? (
-                    <p className="text-muted-foreground measure mt-3 text-lg leading-relaxed">
+                    <p className="text-muted-foreground measure mt-3 text-[length:var(--text-body)] leading-[var(--leading-copy)]">
                       {role.summary}
                     </p>
                   ) : null}
@@ -40,7 +40,7 @@ export function Experience() {
                     {role.bullets.map((bullet) => (
                       <li
                         key={bullet.text}
-                        className="text-muted-foreground text-lg leading-relaxed"
+                        className="text-muted-foreground text-[length:var(--text-body)] leading-[var(--leading-copy)]"
                       >
                         <MetricText text={bullet.text} metric={bullet.metric} />
                       </li>

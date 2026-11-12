@@ -44,7 +44,7 @@ export function Writing({ posts }: { posts: WritingPost[] }) {
       <SectionHeading title={site.substack.name} />
       {empty ? (
         <div className="@container flex max-w-3xl flex-col gap-5 sm:flex-row sm:items-center sm:gap-6">
-          <p className="text-muted-foreground measure min-w-0 text-lg leading-relaxed">
+          <p className="text-muted-foreground measure min-w-0 text-[length:var(--text-body)] leading-[var(--leading-copy)]">
             {EMPTY_COPY}
           </p>
           {canSubscribe ? (
@@ -83,7 +83,7 @@ export function Writing({ posts }: { posts: WritingPost[] }) {
                     </time>
                   ) : null}
                   {post.summary ? (
-                    <p className="text-muted-foreground measure mt-1 line-clamp-2 text-lg leading-relaxed">
+                    <p className="text-muted-foreground measure mt-1 line-clamp-2 text-[length:var(--text-body)] leading-[var(--leading-copy)]">
                       {post.summary}
                     </p>
                   ) : null}

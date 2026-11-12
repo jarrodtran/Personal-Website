@@ -53,6 +53,17 @@
   --text-h1: 2.5rem;
   --leading-body: 1.65;
   --spacing-section: 4rem;
+  /* Audit item 13. Each value is the size or line height the page already renders. */
+  --text-title-step: 1.75rem; /* audit item 13 */
+  --text-404: 2.25rem; /* audit item 13 */
+  --text-figure: 3rem; /* audit item 13 */
+  --text-figure-lg: 3.75rem; /* audit item 13 */
+  --leading-title: 1.25; /* audit item 13 */
+  --leading-copy: 1.625; /* audit item 13 */
+  --leading-meta: 1.375; /* audit item 13 */
+  --leading-hero: 1.15; /* audit item 13 */
+  --leading-figure: 1; /* audit item 13 */
+  --leading-404: calc(2.5 / 2.25); /* audit item 13 */
 }
 
 @media (min-width: 40rem) {
@@ -125,6 +136,7 @@ body {
   letter-spacing: -0.02em;
 }
 
+/* Audit item 13. Spec B moves .font-mono-label to var(--text-small). */
 .font-mono-label {
   font-family: var(--font-sans);
   font-size: 0.75rem;

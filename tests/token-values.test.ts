@@ -82,15 +82,6 @@ type Exception = {
   match: (finding: Finding) => boolean;
 };
 
-const LINE_EXCEPTIONS: Array<[string, number]> = [
-  ["heading leading-tight", 1.25],
-  ["body leading-relaxed", 1.625],
-  ["meta leading-snug", 1.375],
-  ["hero leading 1.15", 1.15],
-  ["figure leading-none", 1],
-  ["404 title leading", 1.111],
-];
-
 const EXCEPTIONS: Exception[] = [
   {
     audit: "H1 bg-muted/50",
@@ -100,42 +91,11 @@ const EXCEPTIONS: Exception[] = [
       /#(experience|approach|contact)\b/.test(finding.name),
   },
   {
-    audit: "mono label",
-    pr: "PR 4",
+    audit: "13 mono label",
+    pr: "Spec B",
     match: (finding) =>
       finding.kind === "font-size" && finding.off === "0.75rem",
   },
-  {
-    audit: "sm title step",
-    pr: "PR 4",
-    match: (finding) =>
-      finding.kind === "font-size" && finding.off === "1.75rem",
-  },
-  {
-    audit: "404 title",
-    pr: "PR 4",
-    match: (finding) =>
-      finding.kind === "font-size" &&
-      finding.off === "2.25rem" &&
-      finding.name.startsWith("H1"),
-  },
-  {
-    audit: "display figures",
-    pr: "PR 4",
-    match: (finding) =>
-      finding.kind === "font-size" &&
-      (finding.off === "3rem" ||
-        finding.off === "3.75rem" ||
-        finding.name.includes("leading-none")),
-  },
-  ...LINE_EXCEPTIONS.map(([audit, ratio]): Exception => ({
-    audit,
-    pr: "PR 4",
-    match: (finding) =>
-      finding.kind === "line-height" &&
-      finding.ratio != null &&
-      Math.abs(finding.ratio - ratio) < 0.02,
-  })),
 ];
 
 requireOutBuild("token values test needs a production build in out/");
@@ -247,15 +207,42 @@ function collectPage(): PageSample {
   };
 
   const allowedFont = [
-    fontOf("font-size: var(--text-body)"),
-    fontOf("font-size: var(--text-small)"),
-    fontOf("font-size: var(--text-h1)"),
-    fontOf("font-size: var(--text-h2)"),
-    fontOf("font-size: var(--text-h3)"),
-  ];
-  const bodyLine = probe("font-size: 16px; line-height: var(--leading-body)");
-  const bodyLinePx = parseFloat(getComputedStyle(bodyLine).lineHeight);
-  const allowedRatios = [bodyLinePx / 16, 1.5];
+    "--text-body",
+    "--text-small",
+    "--text-h1",
+    "--text-h2",
+    "--text-h3",
+    "--text-title-step",
+    "--text-404",
+    "--text-figure",
+    "--text-figure-lg",
+  ].map((name) => fontOf(`font-size: var(${name})`));
+  // Audit item 13. Figures keep min(token, 30cqi), so the probe has to
+  // resolve that expression inside the same container as the figure.
+  for (const container of document.querySelectorAll("*")) {
+    if (getComputedStyle(container).containerType === "normal") continue;
+    for (const name of ["--text-figure", "--text-figure-lg"]) {
+      const el = document.createElement("div");
+      el.setAttribute("data-token-probe", "");
+      el.style.cssText = `position:absolute;font-size:min(var(${name}), 30cqi)`;
+      container.append(el);
+      allowedFont.push(parseFloat(getComputedStyle(el).fontSize));
+      el.remove();
+    }
+  }
+  const allowedRatios = [
+    "--leading-body",
+    "--text-small--line-height",
+    "--leading-title",
+    "--leading-copy",
+    "--leading-meta",
+    "--leading-hero",
+    "--leading-figure",
+    "--leading-404",
+  ].map((name) => {
+    const el = probe(`font-size: 16px; line-height: var(${name})`);
+    return parseFloat(getComputedStyle(el).lineHeight) / 16;
+  });
   const allowedColors = new Set<string>(["transparent"]);
   for (const name of [
     "--background",

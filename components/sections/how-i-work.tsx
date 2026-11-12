@@ -12,10 +12,10 @@ export function HowIWork() {
             key={principle.title}
             className="reveal border-border grid gap-2 border-t py-7 sm:grid-cols-[minmax(0,min(15rem,40%))_minmax(0,1fr)] sm:items-baseline sm:gap-x-8"
           >
-            <h3 className="font-display text-[1.5rem] leading-tight tracking-tight text-balance">
+            <h3 className="font-display text-[length:var(--text-h3)] leading-[var(--leading-title)] tracking-tight text-balance">
               {principle.title}
             </h3>
-            <p className="text-muted-foreground measure text-lg leading-relaxed">
+            <p className="text-muted-foreground measure text-[length:var(--text-body)] leading-[var(--leading-copy)]">
               {principle.description}
             </p>
           </li>
