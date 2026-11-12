@@ -344,25 +344,22 @@ function collectPage(): PageSample {
         ratio,
       });
     }
-    // Panel labels stay on --leading-meta, and .font-mono-label stays the
-    // Spec B exception. Every other element at --text-small uses its line height.
-    const panelLabel = (el.getAttribute("class") ?? "").includes(
-      "--leading-meta",
-    );
+    // --text-small is 15px at 100% text and 30px at 200%. Its line height
+    // must be 1.5x that size. .font-mono-label stays the Spec B exception.
     const monoLabel = Boolean(el.closest(".font-mono-label"));
     if (
       closeTo(font, smallFont) &&
-      !panelLabel &&
       !monoLabel &&
       (smallLineRatio == null ||
         ratio == null ||
         Math.abs(ratio - smallLineRatio) >= 0.02)
     ) {
+      const snippet = (el.textContent ?? "").replace(/\s+/g, " ").trim().slice(0, 48);
       add({
         audit: "T3",
         kind: "line-height",
         name,
-        detail: `${name} at --text-small line-height ${ratio == null ? "missing" : ratio.toFixed(3)}`,
+        detail: `${name} "${snippet}" at --text-small line-height ${ratio == null ? "missing" : ratio.toFixed(3)}`,
         off: "text-small",
         ratio,
       });
