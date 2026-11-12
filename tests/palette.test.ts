@@ -20,6 +20,7 @@ const CSS_TO_PALETTE = [
   ["accent", "accent"],
   ["accent-hover", "accentHover"],
   ["accent-foreground", "accentForeground"],
+  ["ring", "fg"],
 ] as const;
 
 function readSiteFile(relativePath: string): string {

@@ -51,6 +51,7 @@ const LEDGER = [
   ["accent", "accent"],
   ["accent-hover", "accentHover"],
   ["accent-foreground", "accentForeground"],
+  ["ring", "foreground"],
 ] as const;
 
 describe("theme contrast", () => {
