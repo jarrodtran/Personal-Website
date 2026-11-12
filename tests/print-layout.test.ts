@@ -4,6 +4,7 @@ import { createServer } from "node:http";
 import { extname, join, normalize } from "node:path";
 import { chromium } from "playwright-core";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import { selectedWorkSlugs } from "@/content/site";
 
 const types: Record<string, string> = {
   ".css": "text/css",
@@ -15,7 +16,10 @@ const types: Record<string, string> = {
   ".woff2": "font/woff2",
 };
 
-const ROUTES = ["/", "/work/tesla-energy-ai-product/"];
+const builtPages = [
+  "/",
+  ...selectedWorkSlugs().map((slug) => `/work/${slug}/`),
+];
 
 if (!existsSync(join(process.cwd(), "out/index.html"))) {
   throw new Error("print layout test needs a production build in out/");
@@ -177,7 +181,7 @@ describe("print stylesheet", () => {
   });
 
   it("covers every built page", async () => {
-    for (const path of ROUTES) {
+    for (const path of builtPages) {
       const { print } = await readPrint(path, "light");
       expect(print.headerDisplay, path).toBe("none");
     }
