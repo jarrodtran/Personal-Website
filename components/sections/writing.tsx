@@ -10,8 +10,7 @@ import {
   type WritingPost,
 } from "@/lib/writing";
 
-const EMPTY_COPY =
-  "First post coming soon. Subscribe to get it by email.";
+const EMPTY_COPY = "First post coming soon. Subscribe to get it by email.";
 
 function SubscribeLink({
   href,
@@ -41,7 +40,7 @@ export function Writing({ posts }: { posts: WritingPost[] }) {
   const empty = latest.length === 0;
 
   return (
-    <Section id="writing" compact={empty}>
+    <Section id="writing">
       <SectionHeading title={site.substack.name} />
       {empty ? (
         <div className="@container flex max-w-3xl flex-col gap-5 sm:flex-row sm:items-center sm:gap-6">

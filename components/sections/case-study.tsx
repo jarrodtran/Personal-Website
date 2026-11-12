@@ -10,7 +10,7 @@ function Block({
   children: React.ReactNode;
 }) {
   return (
-    <section className="border-border border-t py-8 first:border-t-0 first:pt-0">
+    <section className="border-border border-t py-[var(--spacing-section)] first:border-t-0">
       <h2 className="text-accent font-mono-label mb-3">{label}</h2>
       {children}
     </section>

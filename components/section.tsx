@@ -4,19 +4,16 @@ export function Section({
   id,
   children,
   className,
-  compact = false,
 }: {
   id: string;
   children: React.ReactNode;
   className?: string;
-  compact?: boolean;
 }) {
   return (
     <section
       id={id}
       className={cn(
-        "border-border scroll-mt-24 border-t",
-        compact ? "py-10 sm:py-12" : "py-16 sm:py-20",
+        "border-border scroll-mt-24 border-t py-[var(--spacing-section)]",
         className,
       )}
     >
@@ -34,7 +31,7 @@ export function SectionHeading({
 }) {
   return (
     <div className="mb-10 max-w-2xl sm:mb-12">
-      <h2 className="font-display text-[2rem] leading-tight tracking-tight text-balance sm:text-4xl">
+      <h2 className="font-display text-[length:var(--text-h2)] leading-tight tracking-tight text-balance">
         {title}
       </h2>
       {children}

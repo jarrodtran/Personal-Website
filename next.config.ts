@@ -17,6 +17,13 @@ const nextConfig: NextConfig = {
   turbopack: {
     root: process.cwd(),
   },
+  experimental: {
+    // Lightning CSS rewrites light-dark() inside custom properties into a
+    // broken var() pair. Leave the function in the shipped CSS.
+    lightningCssFeatures: {
+      exclude: ["light-dark"],
+    },
+  },
 };
 
 export default nextConfig;

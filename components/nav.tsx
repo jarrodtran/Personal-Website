@@ -132,7 +132,7 @@ export function Nav({
           <button
             ref={toggleRef}
             type="button"
-            className="border-border bg-card @[43rem]:hidden inline-flex size-[44px] items-center justify-center border"
+            className="border-border-control bg-card inline-flex size-[44px] items-center justify-center border @[43rem]:hidden"
             aria-expanded={open}
             aria-controls="mobile-nav"
             aria-label={open ? "Close menu" : "Open menu"}

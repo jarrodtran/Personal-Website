@@ -14,6 +14,8 @@ const CSS_TO_PALETTE = [
   ["muted", "muted"],
   ["muted-foreground", "mutedForeground"],
   ["border", "border"],
+  ["border-control", "borderControl"],
+  ["surface", "surface"],
   ["card", "card"],
   ["accent", "accent"],
   ["accent-hover", "accentHover"],
@@ -24,13 +26,19 @@ function readSiteFile(relativePath: string): string {
   return readFileSync(path.join(root, relativePath), "utf8");
 }
 
-function cssBlock(css: string, start: string, end: string): string {
-  return css.slice(css.indexOf(start), css.indexOf(end));
-}
-
-function cssToken(block: string, name: string): string | undefined {
-  const match = block.match(new RegExp(`--${name}:\\s*(#[0-9a-fA-F]{6})`));
-  return match?.[1]?.toLowerCase();
+function lightDarkPairs(
+  css: string,
+): Map<string, { light: string; dark: string }> {
+  const pairs = new Map<string, { light: string; dark: string }>();
+  const pattern =
+    /--([a-z0-9-]+):\s*light-dark\(\s*(#[0-9a-fA-F]{6})\s*,\s*(#[0-9a-fA-F]{6})\s*\)/g;
+  for (const match of css.matchAll(pattern)) {
+    pairs.set(match[1], {
+      light: match[2].toLowerCase(),
+      dark: match[3].toLowerCase(),
+    });
+  }
+  return pairs;
 }
 
 describe("shared palette lock", () => {
@@ -45,39 +53,25 @@ describe("shared palette lock", () => {
 
   it("keeps globals.css palette tokens in lockstep with the palette module", async () => {
     const { palette } = await import("@/lib/palette");
-    const css = readSiteFile("app/globals.css");
-    const rootBlock = cssBlock(css, "\n:root", "\n.dark");
-    const darkBlock = cssBlock(css, "\n.dark", "\n@media");
+    const pairs = lightDarkPairs(readSiteFile("app/globals.css"));
 
     for (const [cssName, paletteKey] of CSS_TO_PALETTE) {
-      expect(cssToken(rootBlock, cssName), `light ${cssName}`).toBe(
+      const pair = pairs.get(cssName);
+      expect(pair?.light, `light ${cssName}`).toBe(
         palette.light[paletteKey].toLowerCase(),
       );
-      expect(cssToken(darkBlock, cssName), `dark ${cssName}`).toBe(
+      expect(pair?.dark, `dark ${cssName}`).toBe(
         palette.dark[paletteKey].toLowerCase(),
       );
     }
   });
 
-  it("paints the dark palette from prefers-color-scheme without a .dark class", async () => {
-    const { palette } = await import("@/lib/palette");
+  it("paints both themes from light-dark() and leaves class overrides as color-scheme", () => {
     const css = readSiteFile("app/globals.css");
-    expect(css).toMatch(/@media \(prefers-color-scheme:\s*dark\)/);
-    expect(css).toMatch(/html:not\(\.light\)/);
-
-    const mediaBlock = cssBlock(
-      css,
-      "@media (prefers-color-scheme: dark)",
-      "\n@theme",
-    );
-    expect(mediaBlock).toContain("html:not(.light)");
-    expect(mediaBlock).not.toContain(".dark");
-
-    for (const [cssName, paletteKey] of CSS_TO_PALETTE) {
-      expect(cssToken(mediaBlock, cssName), `system-dark ${cssName}`).toBe(
-        palette.dark[paletteKey].toLowerCase(),
-      );
-    }
+    expect(css).not.toMatch(/prefers-color-scheme/);
+    expect(css).toMatch(/color-scheme:\s*light dark/);
+    expect(css).toMatch(/\.light\s*\{\s*color-scheme:\s*light;\s*\}/);
+    expect(css).toMatch(/\.dark\s*\{\s*color-scheme:\s*dark;\s*\}/);
   });
 
   it("maps icon and OG colors to the same pixels as before the extract", async () => {

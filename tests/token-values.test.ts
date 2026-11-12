@@ -586,18 +586,32 @@ async function openSample(
   await page.waitForFunction((expected) => {
     return document.documentElement.classList.contains(expected);
   }, scheme);
-  // next-themes writes html.style.colorScheme during hydration and can drop
-  // an earlier inline font-size. A stylesheet rule survives that write.
-  await page.addStyleTag({
-    content:
-      scale === 200
-        ? "html{font-size:200% !important}"
-        : "html{font-size:100% !important}",
-  });
-  const rootPx = scale === 200 ? "32px" : "16px";
+  // Set this after the theme class. next-themes writes colorScheme onto
+  // html.style during hydration and drops a font-size set before that.
+  await page.evaluate(
+    (percent) => {
+      document.documentElement.style.fontSize = percent;
+    },
+    scale === 200 ? "200%" : "",
+  );
+  // Root percentage font-size updates a frame before inherited font:inherit
+  // controls. Wait until body type and the menu button have both caught up.
+  const expectedFont =
+    scale === 200
+      ? { root: "32px", body: "36px" }
+      : { root: "16px", body: "18px" };
   await page.waitForFunction((expected) => {
-    return getComputedStyle(document.documentElement).fontSize === expected;
-  }, rootPx);
+    const rootSize = getComputedStyle(document.documentElement).fontSize;
+    const bodySize = getComputedStyle(document.body).fontSize;
+    if (rootSize !== expected.root || bodySize !== expected.body) return false;
+    const button = document.querySelector(
+      'button[aria-label="Open menu"], button[aria-label="Close menu"]',
+    );
+    if (!button) return true;
+    const box = button.getBoundingClientRect();
+    if (box.width <= 1 || box.height <= 1) return true;
+    return getComputedStyle(button).fontSize === expected.body;
+  }, expectedFont);
   await page.evaluate(
     () =>
       new Promise<void>((resolve) => {

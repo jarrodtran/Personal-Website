@@ -93,7 +93,7 @@ describe("design tokens on :root", () => {
     await browser.close();
 
     expect(parseFloat(metrics.probeWidth)).toBe(640);
-    expect(metrics.fontSize).toBe("17px");
-    expect(parseFloat(metrics.lineHeight)).toBeCloseTo(28.05, 2);
+    expect(metrics.fontSize).toBe("18px");
+    expect(parseFloat(metrics.lineHeight)).toBeCloseTo(29.7, 2);
   });
 });

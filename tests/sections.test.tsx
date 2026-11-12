@@ -103,7 +103,7 @@ describe("hero", () => {
 
   it("sizes the headline with the shared display classes", () => {
     expect(html).toContain(
-      "measure font-display text-[min(1.75rem,15cqi)] leading-[1.15] tracking-tight text-balance sm:text-[min(2.25rem,9cqi)]",
+      "measure font-display text-[length:var(--text-h1)] leading-[1.15] tracking-tight text-balance",
     );
     expect(html).not.toContain("text-lg");
     expect(html).not.toContain("text-[1.0625rem]");
@@ -147,17 +147,19 @@ describe("writing", () => {
     expect(html).toMatch(/sm:flex-row[\s\S]*Subscribe on Substack/);
   });
 
-  it("compacts the empty section so About starts on the first screen", () => {
+  it("gives the empty and filled writing sections the same section padding", () => {
     const empty = renderToStaticMarkup(<Writing posts={[]} />);
-    expect(empty).toContain("py-10 sm:py-12");
-    expect(empty).not.toContain("py-16 sm:py-20");
+    expect(empty).toContain("py-[var(--spacing-section)]");
+    expect(empty).not.toContain("py-10");
+    expect(empty).not.toContain("py-16");
     expect(empty).not.toContain("mt-6");
 
     const filled = renderToStaticMarkup(
       <Writing posts={parseFeed(threeXml, WRITING_FIXTURE_BASE)} />,
     );
-    expect(filled).toContain("py-16 sm:py-20");
-    expect(filled).not.toContain("py-10 sm:py-12");
+    expect(filled).toContain("py-[var(--spacing-section)]");
+    expect(filled).not.toContain("py-10");
+    expect(filled).not.toContain("py-16");
     expect(filled).toMatch(
       /mt-6[\s\S]*Subscribe on Substack|Subscribe on Substack[\s\S]*mt-6/,
     );
@@ -329,7 +331,10 @@ describe("section headings", () => {
   });
 
   it("has no Capabilities section and still renders How I work", () => {
-    const page = readFileSync(path.resolve(__dirname, "../app/page.tsx"), "utf8");
+    const page = readFileSync(
+      path.resolve(__dirname, "../app/page.tsx"),
+      "utf8",
+    );
     expect(page).not.toMatch(/\bCapabilities\b/);
     expect(page).not.toMatch(/sections\/capabilities/);
     expect(page).toContain("HowIWork");
