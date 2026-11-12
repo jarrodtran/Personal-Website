@@ -63,7 +63,7 @@ export function Writing({ posts }: { posts: WritingPost[] }) {
                 <li key={post.href} className="border-border border-b py-4">
                   <a
                     href={post.href}
-                    className={`${tap} text-foreground max-w-full gap-1 text-lg font-medium no-underline hover:underline`}
+                    className={`${tap} text-foreground text-body leading-[var(--leading-title)] max-w-full gap-1 font-medium no-underline hover:underline`}
                     target="_blank"
                     rel="noopener noreferrer"
                   >
