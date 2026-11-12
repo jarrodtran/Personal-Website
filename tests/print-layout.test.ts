@@ -15,7 +15,7 @@ const types: Record<string, string> = {
   ".woff2": "font/woff2",
 };
 
-const ROUTES = ["/", "/work/tesla-energy-ai-product/"];
+const ROUTES = ["/", "/work/tesla-energy-ai-product/", "/404.html"];
 
 if (!existsSync(join(process.cwd(), "out/index.html"))) {
   throw new Error("print layout test needs a production build in out/");
