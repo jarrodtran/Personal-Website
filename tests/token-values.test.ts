@@ -344,15 +344,14 @@ function collectPage(): PageSample {
         ratio,
       });
     }
-    // --text-small is 15px at 100% text and 30px at 200%. Its line height
-    // must be 1.5x that size. .font-mono-label stays the Spec B exception.
+    // --text-small is 15px at 100% text and 30px at 200%. The line height
+    // is 1.5 times that font size, not whatever --text-small--line-height
+    // currently holds. .font-mono-label stays the Spec B exception.
     const monoLabel = Boolean(el.closest(".font-mono-label"));
     if (
       closeTo(font, smallFont) &&
       !monoLabel &&
-      (smallLineRatio == null ||
-        ratio == null ||
-        Math.abs(ratio - smallLineRatio) >= 0.02)
+      (ratio == null || Math.abs(ratio - 1.5) >= 0.02)
     ) {
       const snippet = (el.textContent ?? "").replace(/\s+/g, " ").trim().slice(0, 48);
       add({
