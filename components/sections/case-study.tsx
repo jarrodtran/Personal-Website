@@ -47,7 +47,7 @@ export function CaseStudyBody({ item }: { item: SelectedWorkItem }) {
         {item.problem}
       </p>
 
-      <div className="border-border bg-muted @container mt-8 flex flex-col justify-between gap-4 border p-5 sm:flex-row sm:items-end sm:p-7">
+      <div className="border-border bg-surface @container mt-8 flex flex-col justify-between gap-4 border p-5 sm:flex-row sm:items-end sm:p-7">
         <div className="min-w-0 @[450px]:min-w-min">
           <p className="text-accent font-mono-label">{item.panel.kicker}</p>
           <p className="tabular font-display mt-3 text-[length:var(--text-figure)] leading-[var(--leading-figure)] sm:text-[length:var(--text-figure-lg)]">

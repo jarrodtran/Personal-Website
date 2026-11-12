@@ -21,7 +21,7 @@ export function SelectedWork() {
             >
               <div
                 className={cn(
-                  "border-border bg-muted @container flex aspect-[3/2] w-full min-w-0 flex-col justify-end border-b p-[20px] sm:p-[28px]",
+                  "border-border bg-surface @container flex aspect-[3/2] w-full min-w-0 flex-col justify-end border-b p-[20px] sm:p-[28px]",
                   featured &&
                     "sm:order-last sm:aspect-auto sm:min-h-0 sm:justify-start sm:border-t sm:border-b-0",
                 )}
