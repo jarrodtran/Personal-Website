@@ -243,6 +243,14 @@ function collectPage(): PageSample {
     const el = probe(`font-size: 16px; line-height: var(${name})`);
     return parseFloat(getComputedStyle(el).lineHeight) / 16;
   });
+  const smallType = probe(
+    "font-size: var(--text-small); line-height: var(--text-small--line-height)",
+  );
+  const smallTypeStyle = getComputedStyle(smallType);
+  const smallFont = parseFloat(smallTypeStyle.fontSize);
+  const smallLine = parseFloat(smallTypeStyle.lineHeight);
+  const smallLineRatio =
+    Number.isFinite(smallLine) && smallFont ? smallLine / smallFont : null;
   const allowedColors = new Set<string>(["transparent"]);
   for (const name of [
     "--background",
@@ -333,6 +341,29 @@ function collectPage(): PageSample {
         name,
         detail: `${name} line-height ${ratio.toFixed(3)}`,
         off: "",
+        ratio,
+      });
+    }
+    // Panel labels stay on --leading-meta, and .font-mono-label stays the
+    // Spec B exception. Every other element at --text-small uses its line height.
+    const panelLabel = (el.getAttribute("class") ?? "").includes(
+      "--leading-meta",
+    );
+    const monoLabel = Boolean(el.closest(".font-mono-label"));
+    if (
+      closeTo(font, smallFont) &&
+      !panelLabel &&
+      !monoLabel &&
+      (smallLineRatio == null ||
+        ratio == null ||
+        Math.abs(ratio - smallLineRatio) >= 0.02)
+    ) {
+      add({
+        audit: "T3",
+        kind: "line-height",
+        name,
+        detail: `${name} at --text-small line-height ${ratio == null ? "missing" : ratio.toFixed(3)}`,
+        off: "text-small",
         ratio,
       });
     }
@@ -441,12 +472,6 @@ function collectPage(): PageSample {
     },
   );
 
-  const smallProbe = probe(
-    "font-size: var(--text-small); line-height: var(--text-small--line-height)",
-  );
-  const smallStyle = getComputedStyle(smallProbe);
-  const smallFont = parseFloat(smallStyle.fontSize);
-  const smallLine = parseFloat(smallStyle.lineHeight);
   const measured = {
     textBody: fontOf("font-size: var(--text-body)"),
     remBody: fontOf("font-size: 1.125rem"),
@@ -652,11 +677,12 @@ function contractLines(
         );
       }
       if (
+        sample.smallLineRatio == null ||
         control.lineRatio == null ||
-        Math.abs(control.lineRatio - 1.5) > 0.02
+        Math.abs(control.lineRatio - sample.smallLineRatio) > 0.02
       ) {
         lines.push(
-          `T3 ${where}: ${control.name} line-height is ${control.lineRatio ?? "missing"}, not 1.5`,
+          `T3 ${where}: ${control.name} line-height is ${control.lineRatio ?? "missing"}, not --text-small ${sample.smallLineRatio ?? "missing"}`,
         );
       }
     }
@@ -673,13 +699,8 @@ function contractLines(
       `T3 ${where}: --text-small ${sample.textSmall}px is not 0.9375rem ${sample.remSmall}px`,
     );
   }
-  if (
-    sample.smallLineRatio == null ||
-    Math.abs(sample.smallLineRatio - 1.5) > 0.02
-  ) {
-    lines.push(
-      `T3 ${where}: --text-small line-height is ${sample.smallLineRatio ?? "missing"}, not 1.5`,
-    );
+  if (sample.smallLineRatio == null) {
+    lines.push(`T3 ${where}: --text-small line-height is missing`);
   }
   if (!near(sample.textH3, sample.remH3)) {
     lines.push(
