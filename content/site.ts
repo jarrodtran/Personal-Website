@@ -73,7 +73,6 @@ export interface SiteContent {
     name: string;
     url: string;
   };
-  highlights: { value: string; label: string; source?: string }[];
   about: {
     bio: string[];
     lookingFor: string[];
@@ -133,28 +132,6 @@ export const site: SiteContent = {
     name: "Worth Mulling",
     url: "https://jarrodtran.substack.com",
   },
-  highlights: [
-    {
-      value: "1,000+",
-      label: "Active users on AI tools I shipped",
-      source: "Tesla Energy",
-    },
-    {
-      value: "20+",
-      label: "Production AI solutions",
-      source: "Tesla Energy",
-    },
-    {
-      value: "$156M",
-      label: "Incremental annual profit",
-      source: "Tesla Energy",
-    },
-    {
-      value: "$260M",
-      label: "Annualized savings",
-      source: "Tesla Energy",
-    },
-  ],
   about: {
     bio: [
       `I work at Tesla Energy as ${currentTitle}. I built the team that ships our AI tools, got people using them, and put reporting in place so leadership can see whether the tools move the business. Before that: Apple's 0→1 iPhone launch in India, Engineering Operations planning at Waymo, and Tesla Special Projects through the 4680 launch.`,
