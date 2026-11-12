@@ -772,3 +772,52 @@ function sectionLines(sample: PageSample, where: string): string[] {
   }
   return lines;
 }
+
+it("paints figure tiles and case-study panels with --surface", async () => {
+  const { origin, close } = await startOutServer();
+  const browser = await chromium.launch();
+  try {
+    const page = await browser.newPage();
+    const routes = [
+      "/",
+      ...site.selectedWork.map((item) => `/work/${item.slug}/`),
+    ];
+    for (const scheme of SCHEMES) {
+      for (const route of routes) {
+        await page.setViewportSize({ width: 1280, height: 900 });
+        await page.emulateMedia({
+          colorScheme: scheme,
+          reducedMotion: "reduce",
+        });
+        await page.goto(`${origin}${route}`, { waitUntil: "load" });
+        await page.waitForFunction(
+          (expected) => document.documentElement.classList.contains(expected),
+          scheme,
+        );
+        const painted = await page.evaluate((home) => {
+          const probe = document.createElement("div");
+          probe.setAttribute("data-token-probe", "");
+          probe.style.backgroundColor = "var(--surface)";
+          document.body.append(probe);
+          const surface = getComputedStyle(probe).backgroundColor;
+          probe.remove();
+          const selector = home
+            ? "#work article > div:first-child"
+            : "article > div.border";
+          return {
+            surface,
+            colors: [...document.querySelectorAll(selector)].map(
+              (el) => getComputedStyle(el).backgroundColor,
+            ),
+          };
+        }, route === "/");
+        expect(painted.colors, `${route} ${scheme}`).toEqual(
+          Array.from({ length: route === "/" ? 4 : 1 }, () => painted.surface),
+        );
+      }
+    }
+  } finally {
+    await browser.close();
+    await close();
+  }
+}, 120_000);
