@@ -170,3 +170,92 @@ footer a {
 #writing li a:not(:hover) {
   text-decoration: none;
 }
+
+/*
+ * Print: one light sheet. Recruiters print the home page or save a case study
+ * as PDF, so drop the sticky header, the footer, and every button, keep ink on
+ * white even when the screen theme is dark, and never split an employer or a
+ * case-study block across pages.
+ */
+@media print {
+  html,
+  html.dark,
+  html:not(.light) {
+    --background: #ffffff;
+    --foreground: #111111;
+    --muted: #ffffff;
+    --muted-foreground: #555555;
+    --border: #e5e5e5;
+    --card: #ffffff;
+    --accent: #111111;
+    --accent-hover: #333333;
+    --accent-foreground: #ffffff;
+    --ring: #111111;
+    color-scheme: light;
+  }
+
+  html {
+    scroll-behavior: auto;
+  }
+
+  header,
+  footer,
+  button,
+  [role="status"] {
+    display: none !important;
+  }
+
+  body {
+    background: #ffffff;
+    color: #111111;
+    font-size: 11pt;
+    overflow: visible;
+  }
+
+  main,
+  #experience,
+  #approach,
+  #contact {
+    background: none !important;
+  }
+
+  section {
+    padding-block: 1.25rem;
+    border-color: #e5e5e5;
+  }
+
+  #top {
+    padding-block: 0 1rem;
+  }
+
+  #top h1 {
+    font-size: 24pt;
+  }
+
+  .reveal {
+    animation: none !important;
+  }
+
+  h2,
+  h3 {
+    break-after: avoid;
+  }
+
+  #experience li,
+  #work article,
+  article section,
+  #approach li {
+    break-inside: avoid;
+  }
+
+  #contact {
+    break-before: page;
+  }
+
+  main a[href^="http"]::after {
+    content: " (" attr(href) ")";
+    color: #555555;
+    font-size: 0.8em;
+    overflow-wrap: anywhere;
+  }
+}

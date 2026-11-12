@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { checkPrBody } from "../scripts/check-pr-body.mjs";
 
 const HEAD_SHA = "78597ac6167e053591da38e12322dce4b71c4c65";
+const AGENT_BODY_BEGIN = "<!-- CURSOR_AGENT_PR_BODY_BEGIN -->";
 
 describe("checkPrBody", () => {
   it("the full head SHA passes", () => {
@@ -53,6 +54,16 @@ describe("checkPrBody", () => {
     expect(checkPrBody("Keep `Head SHA:` current.", HEAD_SHA)).toEqual([]);
   });
 
+  it("ignores a stale SHA before the agent body marker", () => {
+    const body = [
+      "Head SHA: 0000000000000000000000000000000000000000",
+      AGENT_BODY_BEGIN,
+      "Keep `Head SHA:` current.",
+      `Head SHA: ${HEAD_SHA}`,
+    ].join("\n");
+    expect(checkPrBody(body, HEAD_SHA)).toEqual([]);
+  });
+
   it("ignores a stale SHA before the agent marker when the maintained line matches", () => {
     const body = [
       "Head SHA: 0000000000000000000000000000000000000000",
@@ -61,6 +72,22 @@ describe("checkPrBody", () => {
       "<!-- CURSOR_AGENT_PR_BODY_END -->",
     ].join("\n");
     expect(checkPrBody(body, HEAD_SHA)).toEqual([]);
+  });
+
+  it("fails a wrong SHA inside the agent body marker", () => {
+    const body = [
+      "Head SHA: 4567162",
+      AGENT_BODY_BEGIN,
+      "Head SHA: 0000000",
+    ].join("\n");
+    expect(checkPrBody(body, HEAD_SHA)).toEqual([
+      "Head SHA: 0000000 is not a current prefix of the PR head",
+    ]);
+  });
+
+  it("still rejects a short prefix after the agent body marker", () => {
+    const body = `${AGENT_BODY_BEGIN}\nHead SHA: 785`;
+    expect(checkPrBody(body, HEAD_SHA).length).toBeGreaterThan(0);
   });
 
   it("still fails a stale SHA after the agent marker", () => {
