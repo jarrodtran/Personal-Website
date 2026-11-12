@@ -60,7 +60,7 @@
   --text-figure-lg: 3.75rem; /* audit item 13 */
   --leading-title: 1.25; /* audit item 13 */
   --leading-copy: 1.625; /* audit item 13 */
-  --leading-meta: 1.375; /* audit item 13 */
+  --leading-meta: 1.5; /* audit item 13 */
   --leading-hero: 1.15; /* audit item 13 */
   --leading-figure: 1; /* audit item 13 */
   --leading-404: calc(2.5 / 2.25); /* audit item 13 */
