@@ -314,6 +314,16 @@ function collectPage(): PageSample {
   const closeTo = (actual: number, expected: number) =>
     Math.abs(actual - expected) <= 0.75;
 
+  // SVG shapes paint no text. Their font-size lags the menu button at 200%.
+  const svgTextTag = new Set(["text", "tspan", "textPath"]);
+  const isSvgShape = (el: Element) => {
+    if (el.namespaceURI !== "http://www.w3.org/2000/svg") return false;
+    const tag = el.localName;
+    if (svgTextTag.has(tag)) return false;
+    if (tag === "svg") return el.querySelector("text, tspan, textPath") == null;
+    return true;
+  };
+
   const findings: Finding[] = [];
   const seen = new Set<string>();
   const add = (finding: Finding) => {
@@ -330,7 +340,8 @@ function collectPage(): PageSample {
     const line = parseFloat(style.lineHeight);
     const ratio = Number.isFinite(line) && font ? line / font : null;
     const name = nameOf(el);
-    if (!allowedFont.some((size) => closeTo(font, size))) {
+    const svgShape = isSvgShape(el);
+    if (!svgShape && !allowedFont.some((size) => closeTo(font, size))) {
       const off = offSizes.find(([, size]) => closeTo(font, size))?.[0] ?? "";
       const heroTitle = el.tagName === "H1" && Boolean(el.closest("#top"));
       add({
@@ -343,6 +354,7 @@ function collectPage(): PageSample {
       });
     }
     if (
+      !svgShape &&
       ratio != null &&
       !allowedRatios.some((allowed) => Math.abs(ratio - allowed) < 0.02)
     ) {
@@ -360,6 +372,7 @@ function collectPage(): PageSample {
     // currently holds. .font-mono-label stays the Spec B exception.
     const monoLabel = Boolean(el.closest(".font-mono-label"));
     if (
+      !svgShape &&
       closeTo(font, smallFont) &&
       !monoLabel &&
       (ratio == null || Math.abs(ratio - 1.5) >= 0.02)
