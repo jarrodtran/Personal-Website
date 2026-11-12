@@ -584,14 +584,20 @@ async function openSample(
   await page.emulateMedia({ colorScheme: scheme, reducedMotion: "reduce" });
   await page.goto(`${origin}${route}`, { waitUntil: "load" });
   await page.waitForFunction((expected) => {
-    const dark = document.documentElement.classList.contains("dark");
-    return expected === "dark" ? dark : !dark;
+    return document.documentElement.classList.contains(expected);
   }, scheme);
-  if (scale === 200) {
-    await page.evaluate(() => {
-      document.documentElement.style.fontSize = "200%";
-    });
-  }
+  // next-themes writes html.style.colorScheme during hydration and can drop
+  // an earlier inline font-size. A stylesheet rule survives that write.
+  await page.addStyleTag({
+    content:
+      scale === 200
+        ? "html{font-size:200% !important}"
+        : "html{font-size:100% !important}",
+  });
+  const rootPx = scale === 200 ? "32px" : "16px";
+  await page.waitForFunction((expected) => {
+    return getComputedStyle(document.documentElement).fontSize === expected;
+  }, rootPx);
   await page.evaluate(
     () =>
       new Promise<void>((resolve) => {
