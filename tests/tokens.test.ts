@@ -1,4 +1,4 @@
-import { existsSync } from "node:fs";
+import { existsSync, readdirSync } from "node:fs";
 import { readFile } from "node:fs/promises";
 import { createServer } from "node:http";
 import { extname, join, normalize } from "node:path";
@@ -96,4 +96,46 @@ describe("design tokens on :root", () => {
     expect(metrics.fontSize).toBe("18px");
     expect(parseFloat(metrics.lineHeight)).toBeCloseTo(29.7, 2);
   });
+
+  it("writes each hex once inside :root", async () => {
+    const chunks = join(process.cwd(), "out/_next/static/chunks");
+    const file = readdirSync(chunks).find((name) => name.endsWith(".css"));
+    expect(file, "built stylesheet").toBeTruthy();
+    const css = await readFile(join(chunks, file ?? ""), "utf8");
+    const counts = new Map<string, number>();
+    for (const block of rootBlocks(css)) {
+      for (const match of block.matchAll(/#(?:[0-9a-fA-F]{3,8})\b/g)) {
+        const hex = normalizeHex(match[0]);
+        counts.set(hex, (counts.get(hex) ?? 0) + 1);
+      }
+    }
+    const repeated = [...counts.entries()].filter(([, count]) => count > 1);
+    expect(repeated).toEqual([]);
+  });
 });
+
+function rootBlocks(css: string): string[] {
+  const blocks: string[] = [];
+  for (const match of css.matchAll(/:root\s*\{/g)) {
+    const start = (match.index ?? 0) + match[0].length;
+    let depth = 1;
+    let index = start;
+    while (index < css.length && depth > 0) {
+      const char = css[index];
+      if (char === "{") depth += 1;
+      else if (char === "}") depth -= 1;
+      index += 1;
+    }
+    blocks.push(css.slice(start, index - 1));
+  }
+  return blocks;
+}
+
+function normalizeHex(hex: string): string {
+  let body = hex.slice(1).toLowerCase();
+  if (body.length === 3 || body.length === 4) {
+    body = [...body].map((char) => `${char}${char}`).join("");
+  }
+  if (body.length === 8) body = body.slice(0, 6);
+  return `#${body}`;
+}
