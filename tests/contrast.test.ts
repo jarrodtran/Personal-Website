@@ -9,14 +9,34 @@ function tokenPair(
   source: string,
   name: string,
 ): { light: string; dark: string } | undefined {
-  const match = source.match(
-    new RegExp(
-      `--${name}:\\s*light-dark\\(\\s*(#[0-9a-fA-F]{6})\\s*,\\s*(#[0-9a-fA-F]{6})\\s*\\)`,
-      "i",
-    ),
-  );
-  if (!match?.[1] || !match[2]) return undefined;
-  return { light: match[1].toLowerCase(), dark: match[2].toLowerCase() };
+  const direct = new Map<string, { light: string; dark: string }>();
+  const alias = new Map<string, string>();
+  for (const match of source.matchAll(
+    /--([a-z0-9-]+):\s*light-dark\(\s*(#[0-9a-fA-F]{6})\s*,\s*(#[0-9a-fA-F]{6})\s*\)/gi,
+  )) {
+    direct.set(match[1].toLowerCase(), {
+      light: (match[2] ?? "").toLowerCase(),
+      dark: (match[3] ?? "").toLowerCase(),
+    });
+  }
+  for (const match of source.matchAll(
+    /--([a-z0-9-]+):\s*var\(\s*--([a-z0-9-]+)\s*\)/gi,
+  )) {
+    alias.set(match[1].toLowerCase(), (match[2] ?? "").toLowerCase());
+  }
+  const resolve = (
+    token: string,
+    seen = new Set<string>(),
+  ): { light: string; dark: string } | undefined => {
+    if (seen.has(token)) return undefined;
+    seen.add(token);
+    const pair = direct.get(token);
+    if (pair) return pair;
+    const next = alias.get(token);
+    if (!next) return undefined;
+    return resolve(next, seen);
+  };
+  return resolve(name.toLowerCase());
 }
 
 const LEDGER = [

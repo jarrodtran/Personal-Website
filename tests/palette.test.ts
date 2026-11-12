@@ -29,14 +29,36 @@ function readSiteFile(relativePath: string): string {
 function lightDarkPairs(
   css: string,
 ): Map<string, { light: string; dark: string }> {
-  const pairs = new Map<string, { light: string; dark: string }>();
-  const pattern =
+  const direct = new Map<string, { light: string; dark: string }>();
+  const alias = new Map<string, string>();
+  const written =
     /--([a-z0-9-]+):\s*light-dark\(\s*(#[0-9a-fA-F]{6})\s*,\s*(#[0-9a-fA-F]{6})\s*\)/g;
-  for (const match of css.matchAll(pattern)) {
-    pairs.set(match[1], {
+  for (const match of css.matchAll(written)) {
+    direct.set(match[1], {
       light: match[2].toLowerCase(),
       dark: match[3].toLowerCase(),
     });
+  }
+  const referenced = /--([a-z0-9-]+):\s*var\(\s*--([a-z0-9-]+)\s*\)/g;
+  for (const match of css.matchAll(referenced)) {
+    alias.set(match[1], match[2]);
+  }
+  const resolve = (
+    name: string,
+    seen = new Set<string>(),
+  ): { light: string; dark: string } | undefined => {
+    if (seen.has(name)) return undefined;
+    seen.add(name);
+    const pair = direct.get(name);
+    if (pair) return pair;
+    const next = alias.get(name);
+    if (!next) return undefined;
+    return resolve(next, seen);
+  };
+  const pairs = new Map<string, { light: string; dark: string }>();
+  for (const name of new Set([...direct.keys(), ...alias.keys()])) {
+    const pair = resolve(name);
+    if (pair) pairs.set(name, pair);
   }
   return pairs;
 }
