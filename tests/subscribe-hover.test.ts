@@ -3,16 +3,16 @@ import { chromium } from "playwright-core";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { requireOutBuild, startOutServer } from "./browser-layout";
 
-async function foregroundBorder(page: Page): Promise<string> {
-  return page.evaluate(() => {
+async function tokenBorder(page: Page, token: string): Promise<string> {
+  return page.evaluate((name) => {
     const probe = document.createElement("div");
     probe.setAttribute("data-token-probe", "");
-    probe.style.borderTopColor = "var(--foreground)";
+    probe.style.borderTopColor = `var(${name})`;
     document.body.append(probe);
     const color = getComputedStyle(probe).borderTopColor;
     probe.remove();
     return color;
-  });
+  }, token);
 }
 
 describe("ghost Subscribe hover", () => {
@@ -51,7 +51,11 @@ describe("ghost Subscribe hover", () => {
           .getByRole("link", { name: "Subscribe on Substack" })
           .first();
         await link.scrollIntoViewIfNeeded();
-        const foreground = await foregroundBorder(page);
+        const resting = await link.evaluate(
+          (el) => getComputedStyle(el).borderTopColor,
+        );
+        expect(resting).toBe(await tokenBorder(page, "--border-control"));
+        const foreground = await tokenBorder(page, "--foreground");
         await link.hover();
         await expect
           .poll(
