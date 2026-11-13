@@ -14,4 +14,4 @@ Run from the repository root. The deployed artifact is `out/`, served at the sit
 
 Use the browser and built output to verify changes. Record the commit SHA, theme, viewport, text scale, route, and actual result. Screenshots support design findings. Capture behavior evidence such as destination URLs, focused controls, or clipboard contents for interaction findings. Save working screenshots outside the checkout.
 
-For PRs, follow the current review requirements in [AGENTS.md](../../../AGENTS.md) and use [docs/review-pass.md](../../../docs/review-pass.md) to record findings.
+For PRs, record the verification results in the PR description.
