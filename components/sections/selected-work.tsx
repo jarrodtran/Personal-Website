@@ -14,10 +14,10 @@ export function SelectedWork() {
           <li key={slug}>
             <Link
               href={`/work/${slug}/`}
-              className={`${tap} group w-full gap-3 py-3`}
+              className={`${tap} w-full gap-3 py-3`}
             >
               <span className="min-w-0 flex-1">
-                <span className="block font-medium underline-offset-4 group-hover:underline">
+                <span className="block font-medium underline underline-offset-4">
                   {title}
                 </span>
                 <span className="text-muted-foreground text-small mt-1 block">
