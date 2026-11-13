@@ -134,7 +134,7 @@ export const site: SiteContent = {
             "I own Tesla Energy’s AI enablement strategy and the product team that ships it: roadmap, rules, and what I report to leadership.",
           bullets: [
             {
-              text: "Built and lead a product and engineering team at Tesla Energy, scaling adoption to 1,000+ active users across 20+ production AI tools: RAG troubleshooting, automated reporting, workflow automation, and decision support.",
+              text: "Hired the team I now lead at Tesla Energy. Its 20+ production AI tools serve 1,000+ active users and include RAG troubleshooting, automated reporting, workflow automation, and decision support.",
               metric: "1,000+",
             },
             {
@@ -311,7 +311,7 @@ export const site: SiteContent = {
       link: { label: "Apple India", href: "https://www.apple.com/in/" },
       caseStudy: {
         context:
-          "Launching iPhone in India meant qualifying local partners, clearing regulatory gates, and scaling volume at the same time instead of in sequence.",
+          "Launching iPhone in India meant getting partners ready and meeting quality and regulatory requirements as demand shifted.",
         constraints: [
           "Quality and regulatory bars could not slip to buy speed",
           "Partner readiness trailed the volume curve",
@@ -349,7 +349,7 @@ export const site: SiteContent = {
       link: { label: "Waymo", href: "https://waymo.com/" },
       caseStudy: {
         context:
-          "Each function tracked goals in its own spreadsheets, turning leadership reviews into debates over whose numbers were right.",
+          "Teams planned separately, leaving leaders to reconcile conflicting numbers in reviews.",
         constraints: [
           "Every plan had to account for safety and regulatory work",
           "Six functions needed shared targets without private scorekeeping",
