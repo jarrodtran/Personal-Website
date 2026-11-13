@@ -3,11 +3,10 @@ import path from "node:path";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { site } from "@/content/site";
 import {
-  fetchSubstackPosts,
   formatPostDate,
   isOwnWritingUrl,
   isSubstackUrl,
-  loadWriting,
+  loadWritingResult,
   parseFeed,
   writingFeedUrl,
   WRITING_BLURB_MAX_CHARS,
@@ -136,25 +135,32 @@ describe("formatPostDate", () => {
   });
 });
 
-describe("fetchSubstackPosts and loadWriting", () => {
+describe("loadWritingResult", () => {
   afterEach(() => {
     vi.unstubAllGlobals();
     vi.restoreAllMocks();
   });
 
-  it("returns [] when the feed URL is empty", async () => {
-    expect(await fetchSubstackPosts({ name: "", url: "" })).toEqual([]);
+  it("returns ok with [] when the feed URL is empty", async () => {
+    expect(await loadWritingResult({ name: "", url: "" })).toEqual({
+      ok: true,
+      posts: [],
+    });
   });
 
-  it("returns [] quietly on non-200, throw, timeout, or malformed XML", async () => {
+  it("returns ok: false quietly on non-200, throw, timeout, or malformed XML", async () => {
     const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
     const timeout = vi.spyOn(AbortSignal, "timeout");
 
     stubFeed(threeXml, false);
-    expect(await fetchSubstackPosts(ownFeed)).toEqual([]);
+    const non200 = await loadWritingResult(ownFeed);
+    expect(non200.ok).toBe(false);
+    expect(non200.posts).toEqual([]);
 
     vi.stubGlobal("fetch", vi.fn().mockRejectedValue(new Error("offline")));
-    expect(await fetchSubstackPosts(ownFeed)).toEqual([]);
+    const offline = await loadWritingResult(ownFeed);
+    expect(offline.ok).toBe(false);
+    expect(offline.posts).toEqual([]);
 
     vi.stubGlobal(
       "fetch",
@@ -164,10 +170,14 @@ describe("fetchSubstackPosts and loadWriting", () => {
           Object.assign(new Error("aborted"), { name: "TimeoutError" }),
         ),
     );
-    expect(await fetchSubstackPosts(ownFeed)).toEqual([]);
+    const timedOut = await loadWritingResult(ownFeed);
+    expect(timedOut.ok).toBe(false);
+    expect(timedOut.posts).toEqual([]);
 
     stubFeed("<html>not a feed</html>");
-    expect(await fetchSubstackPosts(ownFeed)).toEqual([]);
+    const malformed = await loadWritingResult(ownFeed);
+    expect(malformed.ok).toBe(false);
+    expect(malformed.posts).toEqual([]);
 
     expect(timeout).toHaveBeenCalledWith(WRITING_FEED_TIMEOUT_MS);
     expect(
@@ -178,7 +188,7 @@ describe("fetchSubstackPosts and loadWriting", () => {
   it("loads a live fixture newest first without inventing posts", async () => {
     const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
     stubFeed(threeXml);
-    const posts = await loadWriting(ownFeed);
+    const { posts } = await loadWritingResult(ownFeed);
     expect(posts.map((post) => post.title)).toEqual([
       ...WRITING_FIXTURE_TITLES,
     ]);
@@ -190,7 +200,7 @@ describe("fetchSubstackPosts and loadWriting", () => {
 
   it("caps shown posts at 5 from a larger fixture", async () => {
     stubFeed(sixXml);
-    const posts = await loadWriting(ownFeed);
+    const { posts } = await loadWritingResult(ownFeed);
     expect(WRITING_POST_LIMIT).toBe(5);
     expect(posts).toHaveLength(5);
     expect(posts.map((post) => post.title)).toEqual([
@@ -205,7 +215,7 @@ describe("fetchSubstackPosts and loadWriting", () => {
   it("treats a valid empty feed as zero posts and does not warn", async () => {
     const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
     stubFeed(emptyXml);
-    expect(await loadWriting(ownFeed)).toEqual([]);
+    expect(await loadWritingResult(ownFeed)).toEqual({ ok: true, posts: [] });
     expect(warn).not.toHaveBeenCalled();
   });
 
@@ -218,7 +228,7 @@ describe("fetchSubstackPosts and loadWriting", () => {
     vi.stubGlobal("fetch", fetchMock);
     const alt = { name: "", url: "https://altname.substack.com" };
     expect(writingFeedUrl(alt)).toBe("https://altname.substack.com/feed");
-    await loadWriting(alt);
+    await loadWritingResult(alt);
     expect(fetchMock).toHaveBeenCalledWith(
       "https://altname.substack.com/feed",
       expect.objectContaining({
