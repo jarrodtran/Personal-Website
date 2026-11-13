@@ -13,7 +13,7 @@ export function Contact() {
     <Section id="contact" className="bg-muted/50">
       <div className="grid items-start gap-x-14 lg:grid-cols-2">
         <SectionHeading title={site.sections.contact.title}>
-          <p className="text-muted-foreground measure mt-4 text-lg leading-relaxed text-pretty">
+          <p className="text-muted-foreground measure mt-4 text-[length:var(--text-body)] leading-[var(--leading-copy)] text-pretty">
             {site.contact.intro}
           </p>
         </SectionHeading>

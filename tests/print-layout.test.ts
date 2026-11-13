@@ -19,6 +19,7 @@ const types: Record<string, string> = {
 const builtPages = [
   "/",
   ...selectedWorkSlugs().map((slug) => `/work/${slug}/`),
+  "/404.html",
 ];
 
 if (!existsSync(join(process.cwd(), "out/index.html"))) {

@@ -32,6 +32,11 @@ jobs:
       - run: pnpm test:titles
       - run: pnpm test:robots
       - run: pnpm test:tap
+      - run: pnpm build
+        env:
+          WRITING_FEED_PATH: tests/fixtures/writing/three-posts.xml
+      - run: pnpm test:tap
+      - run: pnpm build
       - run: pnpm test:writing-output
       - run: pnpm test:height
       - run: pnpm test:images

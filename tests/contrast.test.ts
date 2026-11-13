@@ -5,46 +5,66 @@ import { contrastRatio, themes } from "@/lib/theme";
 
 const css = readFileSync(path.resolve(__dirname, "../app/globals.css"), "utf8");
 
-function hasToken(block: string, name: string, hex: string): boolean {
-  const pattern = new RegExp(
-    `--${name}:\\s*${hex.replace("#", "#").toLowerCase()}`,
-    "i",
-  );
-  return pattern.test(block);
+function tokenPair(
+  source: string,
+  name: string,
+): { light: string; dark: string } | undefined {
+  const direct = new Map<string, { light: string; dark: string }>();
+  const alias = new Map<string, string>();
+  for (const match of source.matchAll(
+    /--([a-z0-9-]+):\s*light-dark\(\s*(#[0-9a-fA-F]{6})\s*,\s*(#[0-9a-fA-F]{6})\s*\)/gi,
+  )) {
+    direct.set(match[1].toLowerCase(), {
+      light: (match[2] ?? "").toLowerCase(),
+      dark: (match[3] ?? "").toLowerCase(),
+    });
+  }
+  for (const match of source.matchAll(
+    /--([a-z0-9-]+):\s*var\(\s*--([a-z0-9-]+)\s*\)/gi,
+  )) {
+    alias.set(match[1].toLowerCase(), (match[2] ?? "").toLowerCase());
+  }
+  const resolve = (
+    token: string,
+    seen = new Set<string>(),
+  ): { light: string; dark: string } | undefined => {
+    if (seen.has(token)) return undefined;
+    seen.add(token);
+    const pair = direct.get(token);
+    if (pair) return pair;
+    const next = alias.get(token);
+    if (!next) return undefined;
+    return resolve(next, seen);
+  };
+  return resolve(name.toLowerCase());
 }
+
+const LEDGER = [
+  ["background", "background"],
+  ["foreground", "foreground"],
+  ["muted", "muted"],
+  ["muted-foreground", "mutedForeground"],
+  ["border", "border"],
+  ["border-control", "borderControl"],
+  ["surface", "surface"],
+  ["card", "card"],
+  ["accent", "accent"],
+  ["accent-hover", "accentHover"],
+  ["accent-foreground", "accentForeground"],
+  ["ring", "foreground"],
+] as const;
 
 describe("theme contrast", () => {
   it("keeps CSS tokens aligned with the contrast ledger", () => {
-    const root = css.slice(css.indexOf("\n:root"), css.indexOf("\n.dark"));
-    const dark = css.slice(css.indexOf("\n.dark"), css.indexOf("\n@media"));
-
-    expect(hasToken(root, "background", themes.light.background)).toBe(true);
-    expect(hasToken(root, "foreground", themes.light.foreground)).toBe(true);
-    expect(hasToken(root, "muted", themes.light.muted)).toBe(true);
-    expect(
-      hasToken(root, "muted-foreground", themes.light.mutedForeground),
-    ).toBe(true);
-    expect(hasToken(root, "border", themes.light.border)).toBe(true);
-    expect(hasToken(root, "card", themes.light.card)).toBe(true);
-    expect(hasToken(root, "accent", themes.light.accent)).toBe(true);
-    expect(hasToken(root, "accent-hover", themes.light.accentHover)).toBe(true);
-    expect(
-      hasToken(root, "accent-foreground", themes.light.accentForeground),
-    ).toBe(true);
-
-    expect(hasToken(dark, "background", themes.dark.background)).toBe(true);
-    expect(hasToken(dark, "foreground", themes.dark.foreground)).toBe(true);
-    expect(hasToken(dark, "muted", themes.dark.muted)).toBe(true);
-    expect(
-      hasToken(dark, "muted-foreground", themes.dark.mutedForeground),
-    ).toBe(true);
-    expect(hasToken(dark, "border", themes.dark.border)).toBe(true);
-    expect(hasToken(dark, "card", themes.dark.card)).toBe(true);
-    expect(hasToken(dark, "accent", themes.dark.accent)).toBe(true);
-    expect(hasToken(dark, "accent-hover", themes.dark.accentHover)).toBe(true);
-    expect(
-      hasToken(dark, "accent-foreground", themes.dark.accentForeground),
-    ).toBe(true);
+    for (const [cssName, themeKey] of LEDGER) {
+      const pair = tokenPair(css, cssName);
+      expect(pair?.light, `light ${cssName}`).toBe(
+        themes.light[themeKey].toLowerCase(),
+      );
+      expect(pair?.dark, `dark ${cssName}`).toBe(
+        themes.dark[themeKey].toLowerCase(),
+      );
+    }
   });
 
   // rule:contrast-aa
@@ -64,6 +84,33 @@ describe("theme contrast", () => {
       ).toBeGreaterThanOrEqual(4.5);
       expect(
         contrastRatio(theme.foreground, theme.background),
+      ).toBeGreaterThanOrEqual(3);
+    }
+  });
+
+  it("keeps --border-control at least 3:1 in both themes", () => {
+    const border = tokenPair(css, "border-control");
+    const background = tokenPair(css, "background");
+    const card = tokenPair(css, "card");
+    if (!border || !background || !card) {
+      throw new Error("missing border-control, background, or card token");
+    }
+    for (const mode of ["light", "dark"] as const) {
+      expect(
+        contrastRatio(border[mode], background[mode]),
+        `${mode} control on background`,
+      ).toBeGreaterThanOrEqual(3);
+      expect(
+        contrastRatio(border[mode], card[mode]),
+        `${mode} control on card`,
+      ).toBeGreaterThanOrEqual(3);
+      expect(
+        contrastRatio(themes[mode].borderControl, themes[mode].background),
+        `${mode} ledger on background`,
+      ).toBeGreaterThanOrEqual(3);
+      expect(
+        contrastRatio(themes[mode].borderControl, themes[mode].card),
+        `${mode} ledger on card`,
       ).toBeGreaterThanOrEqual(3);
     }
   });

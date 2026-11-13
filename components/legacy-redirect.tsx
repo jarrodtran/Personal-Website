@@ -26,7 +26,7 @@ export function LegacyRedirect({ hash }: { hash: LegacyHash }) {
     <>
       <meta httpEquiv="refresh" content={`0;url=${href}`} />
       <div className="mx-auto max-w-5xl px-5 py-28 sm:px-8">
-        <p className="measure text-lg leading-relaxed">
+        <p className="measure text-[length:var(--text-body)] leading-[var(--leading-copy)]">
           <a href={href} className={tap}>
             {COPY[hash].label}
           </a>

@@ -14,7 +14,7 @@ export default function NotFound() {
   return (
     <div className="mx-auto max-w-5xl px-5 py-28 sm:px-8">
       <p className="text-accent font-mono-label">404</p>
-      <h1 className="font-display mt-3 text-4xl tracking-tight">
+      <h1 className="font-display mt-3 text-[length:var(--text-404)] leading-[var(--leading-404)] tracking-tight">
         This page doesn’t exist.
       </h1>
       <p className="text-muted-foreground measure mt-3">

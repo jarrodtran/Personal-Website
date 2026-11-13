@@ -10,8 +10,7 @@ import {
   type WritingPost,
 } from "@/lib/writing";
 
-const EMPTY_COPY =
-  "First post coming soon. Subscribe to get it by email.";
+const EMPTY_COPY = "First post coming soon. Subscribe to get it by email.";
 
 function SubscribeLink({
   href,
@@ -41,11 +40,11 @@ export function Writing({ posts }: { posts: WritingPost[] }) {
   const empty = latest.length === 0;
 
   return (
-    <Section id="writing" compact={empty}>
+    <Section id="writing">
       <SectionHeading title={site.substack.name} />
       {empty ? (
         <div className="@container flex max-w-3xl flex-col gap-5 sm:flex-row sm:items-center sm:gap-6">
-          <p className="text-muted-foreground measure min-w-0 text-lg leading-relaxed">
+          <p className="text-muted-foreground measure min-w-0 text-[length:var(--text-body)] leading-[var(--leading-copy)]">
             {EMPTY_COPY}
           </p>
           {canSubscribe ? (
@@ -64,7 +63,7 @@ export function Writing({ posts }: { posts: WritingPost[] }) {
                 <li key={post.href} className="border-border border-b py-4">
                   <a
                     href={post.href}
-                    className={`${tap} text-foreground max-w-full gap-1 text-lg font-medium no-underline hover:underline`}
+                    className={`${tap} text-foreground text-body leading-[var(--leading-title)] max-w-full gap-1 font-medium no-underline hover:underline`}
                     target="_blank"
                     rel="noopener noreferrer"
                   >
@@ -84,7 +83,7 @@ export function Writing({ posts }: { posts: WritingPost[] }) {
                     </time>
                   ) : null}
                   {post.summary ? (
-                    <p className="text-muted-foreground measure mt-1 line-clamp-2 text-lg leading-relaxed">
+                    <p className="text-muted-foreground measure mt-1 line-clamp-2 text-[length:var(--text-body)] leading-[var(--leading-copy)]">
                       {post.summary}
                     </p>
                   ) : null}

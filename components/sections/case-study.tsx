@@ -10,7 +10,7 @@ function Block({
   children: React.ReactNode;
 }) {
   return (
-    <section className="border-border border-t py-8 first:border-t-0 first:pt-0">
+    <section className="border-border border-t py-[var(--spacing-section)] first:border-t-0">
       <h2 className="text-accent font-mono-label mb-3">{label}</h2>
       {children}
     </section>
@@ -19,7 +19,7 @@ function Block({
 
 function BulletList({ items }: { items: string[] }) {
   return (
-    <ul className="text-muted-foreground measure space-y-3 text-lg leading-relaxed">
+    <ul className="text-muted-foreground measure space-y-3 text-[length:var(--text-body)] leading-[var(--leading-copy)]">
       {items.map((item) => (
         <li key={item}>{item}</li>
       ))}
@@ -40,21 +40,21 @@ export function CaseStudyBody({ item }: { item: SelectedWorkItem }) {
         <span aria-hidden="true"> / </span>
         {item.panel.kicker}
       </p>
-      <h1 className="font-display mt-4 text-[2rem] leading-tight tracking-tight text-balance sm:text-5xl">
+      <h1 className="font-display mt-4 text-[length:var(--text-h2)] leading-[var(--leading-title)] tracking-tight text-balance sm:text-[length:var(--text-figure)]">
         {item.title}
       </h1>
-      <p className="text-muted-foreground measure mt-5 text-lg leading-relaxed text-pretty">
+      <p className="text-muted-foreground measure mt-5 text-[length:var(--text-body)] leading-[var(--leading-copy)] text-pretty">
         {item.problem}
       </p>
 
-      <div className="border-border bg-muted @container mt-8 flex flex-col justify-between gap-4 border p-5 sm:flex-row sm:items-end sm:p-7">
+      <div className="border-border bg-surface @container mt-8 flex flex-col justify-between gap-4 border p-5 sm:flex-row sm:items-end sm:p-7">
         <div className="min-w-0 @[450px]:min-w-min">
           <p className="text-accent font-mono-label">{item.panel.kicker}</p>
-          <p className="tabular font-display mt-3 text-5xl sm:text-6xl">
+          <p className="tabular font-display mt-3 text-[length:var(--text-figure)] leading-[var(--leading-figure)] sm:text-[length:var(--text-figure-lg)]">
             {item.panel.value}
           </p>
         </div>
-        <p className="text-muted-foreground max-w-sm min-w-0 text-[0.9375rem] leading-snug @[450px]:min-w-min">
+        <p className="text-muted-foreground text-small max-w-sm min-w-0 @[450px]:min-w-min">
           {item.panel.label}
         </p>
       </div>
@@ -70,7 +70,7 @@ export function CaseStudyBody({ item }: { item: SelectedWorkItem }) {
 
       <div className="mt-12">
         <Block label="Context">
-          <p className="text-muted-foreground measure text-lg leading-relaxed text-pretty">
+          <p className="text-muted-foreground measure text-[length:var(--text-body)] leading-[var(--leading-copy)] text-pretty">
             {caseStudy.context}
           </p>
         </Block>
@@ -81,7 +81,7 @@ export function CaseStudyBody({ item }: { item: SelectedWorkItem }) {
           <BulletList items={caseStudy.decisions} />
         </Block>
         <Block label="Outcome">
-          <p className="text-muted-foreground measure text-lg leading-relaxed text-pretty">
+          <p className="text-muted-foreground measure text-[length:var(--text-body)] leading-[var(--leading-copy)] text-pretty">
             {caseStudy.outcomeDetail}
           </p>
         </Block>
