@@ -7,7 +7,7 @@ description: "Drive the public jarrodtran.com Next.js site (the static export) i
 
 The visitor surface is the static export of jarrodtran.com (package `jarrodtran-com`). Production is `pnpm build` with an empty `BASE_PATH`, then the files in `out/`. This skill builds that export, serves it on `127.0.0.1`, and drives it with Playwright through the `verify-site` helper.
 
-There is no account, database, or seed script. Page copy is compiled from `content/site.ts`. The Writing section is filled at build time from `https://jarrodtran.substack.com/feed` (`lib/writing.ts`). A failed feed still ships the home page, with the empty sentence `First post coming soon. Subscribe to get it by email.`
+There is no account, database, or seed script. Page copy is compiled from `content/site.ts`. The Writing section is filled at build time by `loadWriting` in `lib/writing.ts`, which requests `writingFeedUrl(site.substack)`: `site.substack.url` plus `/feed`. A failed feed still ships the home page, with the empty sentence `First post coming soon. Subscribe to get it by email.`
 
 Do not deploy, and do not edit DNS, the custom domain, or GitHub Pages. Do not invent employers, titles, dates, or figures. Quote only strings the page already renders.
 
