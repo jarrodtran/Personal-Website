@@ -17,14 +17,21 @@ export const WRITING_BLURB_MAX_CHARS = 220;
 export const WRITING_FEED_TIMEOUT_MS = 10_000;
 export const WRITING_DATE_TIME_ZONE = "America/Chicago";
 
-export function writingSubscribeUrl(
+export function writingPublicationUrl(
   config: Pick<SubstackConfig, "url">,
 ): string {
   return config.url.trim().replace(/\/+$/, "");
 }
 
+export function writingSubscribeUrl(
+  config: Pick<SubstackConfig, "url">,
+): string {
+  const base = writingPublicationUrl(config);
+  return base ? `${base}/subscribe` : "";
+}
+
 export function writingFeedUrl(config: Pick<SubstackConfig, "url">): string {
-  const base = writingSubscribeUrl(config);
+  const base = writingPublicationUrl(config);
   return base ? `${base}/feed` : "";
 }
 
@@ -40,7 +47,7 @@ export function isSubstackUrl(url: string): boolean {
 export function isOwnWritingUrl(url: string, baseUrl: string): boolean {
   try {
     const parsed = new URL(url);
-    const base = new URL(writingSubscribeUrl({ url: baseUrl }));
+    const base = new URL(writingPublicationUrl({ url: baseUrl }));
     return parsed.protocol === "https:" && parsed.hostname === base.hostname;
   } catch {
     return false;

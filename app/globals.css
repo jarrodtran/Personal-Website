@@ -175,7 +175,7 @@ body {
 }
 
 main p a,
-main li a,
+main li a:not(#work a),
 main dd a,
 footer a {
   text-decoration: underline;

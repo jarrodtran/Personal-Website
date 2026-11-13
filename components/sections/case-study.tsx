@@ -50,14 +50,11 @@ export function CaseStudyBody({ item }: { item: SelectedWorkItem }) {
         {item.problem}
       </p>
 
-      <div className="border-border bg-surface @container mt-8 flex flex-col justify-between gap-4 border p-5 sm:flex-row sm:items-end sm:p-7">
-        <div className="min-w-0 @[450px]:min-w-min">
-          <p className="text-accent font-mono-label">{item.panel.kicker}</p>
-          <p className="tabular font-display mt-3 text-[length:var(--text-figure)] leading-[var(--leading-figure)] sm:text-[length:var(--text-figure-lg)]">
-            {item.panel.value}
-          </p>
-        </div>
-        <p className="text-muted-foreground text-small max-w-sm min-w-0 @[450px]:min-w-min">
+      <div className="border-border bg-surface mt-8 border p-5 sm:p-7">
+        <p className="tabular font-display text-[length:var(--text-figure)] leading-[var(--leading-figure)] sm:text-[length:var(--text-figure-lg)]">
+          {item.panel.value}
+        </p>
+        <p className="text-muted-foreground text-small mt-2 max-w-sm">
           {item.panel.label}
         </p>
       </div>
