@@ -121,7 +121,7 @@ export const site: SiteContent = {
   },
   about: {
     bio: [
-      `I work at Tesla Energy as ${currentTitle}. I built the team that ships our AI tools, got people using them, and put reporting in place so leadership can see whether the tools move the business. Before that: Apple's 0→1 iPhone launch in India, Engineering Operations planning at Waymo, and Tesla Special Projects through the 4680 launch.`,
+      `My official title at Tesla Energy is ${currentTitle}. I brought product and engineering together and set up reporting to see which tools people use and where they save time. Before that, I helped launch iPhone in India at Apple and led Engineering Operations planning at Waymo.`,
     ],
   },
   experience: [
