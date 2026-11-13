@@ -9,23 +9,25 @@ export function SelectedWork() {
     <Section id="work">
       <span id="experience" className="block scroll-mt-24" />
       <SectionHeading title={site.sections.work.title} />
-      <p className="text-muted-foreground measure text-body leading-[var(--leading-copy)]">
-        These case studies cover the AI tools we put into production at Tesla
-        Energy, how we allocated investment, and earlier work at Apple and
-        Waymo.
-      </p>
-      <ul
-        role="list"
-        className="border-border divide-border mt-4 divide-y border-y"
-      >
-        {site.selectedWork.map(({ slug, title }) => (
+      <ul role="list" className="border-border divide-border divide-y border-y">
+        {site.selectedWork.map(({ slug, title, preview }) => (
           <li key={slug}>
             <Link
               href={`/work/${slug}/`}
-              className={`${tap} w-full gap-3 py-2 font-medium underline-offset-4 hover:underline`}
+              className={`${tap} w-full gap-3 py-3`}
             >
-              <span className="min-w-0 flex-1">{title}</span>
-              <ArrowUpRight className="size-[16px] shrink-0" aria-hidden="true" />
+              <span className="min-w-0 flex-1">
+                <span className="block font-medium underline underline-offset-4">
+                  {title}
+                </span>
+                <span className="text-muted-foreground text-small mt-1 block">
+                  {preview}
+                </span>
+              </span>
+              <ArrowUpRight
+                className="size-[16px] shrink-0"
+                aria-hidden="true"
+              />
             </Link>
           </li>
         ))}

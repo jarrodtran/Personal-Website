@@ -42,6 +42,7 @@ export interface SelectedWorkItem {
   /** Stable URL segment under /work/[slug]. */
   slug: string;
   title: string;
+  preview: string;
   problem: string;
   contribution: string;
   outcome: string;
@@ -219,6 +220,8 @@ export const site: SiteContent = {
   selectedWork: [
     {
       slug: "tesla-energy-ai-product",
+      preview:
+        "Turning scattered AI experiments into tools teams use every week.",
       title: "Tesla Energy: AI product that got used",
       problem:
         "Tesla Energy needed AI tools people would actually use. Priorities were scattered, nobody owned the use cases, and we couldn't tell if adoption changed results.",
@@ -256,6 +259,7 @@ export const site: SiteContent = {
     },
     {
       slug: "tesla-energy-portfolio",
+      preview: "Ranking investment requests by their expected return.",
       title: "Tesla Energy: which dollar moves the P&L",
       problem:
         "Demand outran what we could fund. 50+ asks. $23M to spend. Which dollar moved the P&L?",
@@ -293,6 +297,8 @@ export const site: SiteContent = {
     },
     {
       slug: "apple-iphone-india",
+      preview:
+        "Balancing demand, partner readiness, and risk during a new market launch.",
       title: "Apple: 0→1 iPhone India",
       problem:
         "India had to go from plan to scaled launch while market entry, partner readiness, and demand were all still moving.",
@@ -330,6 +336,7 @@ export const site: SiteContent = {
     },
     {
       slug: "waymo-engineering-ops",
+      preview: "Getting six teams to plan and report from the same numbers.",
       title: "Waymo: one plan, six functions",
       problem:
         "Each function ran its own planning, and leadership settled conflicts with data nobody else trusted.",

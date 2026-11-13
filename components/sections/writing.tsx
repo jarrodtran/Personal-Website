@@ -6,6 +6,7 @@ import { btnGhost, tap } from "@/lib/ui";
 import {
   formatPostDate,
   isOwnWritingUrl,
+  writingPublicationUrl,
   writingSubscribeUrl,
   type WritingPost,
 } from "@/lib/writing";
@@ -40,9 +41,9 @@ export function Writing({
   unavailable?: boolean;
 }) {
   const latest = posts.slice(0, 5);
+  const publication = writingPublicationUrl(site.substack);
   const subscribe = writingSubscribeUrl(site.substack);
-  const canSubscribe =
-    Boolean(subscribe) && isOwnWritingUrl(subscribe, site.substack.url);
+  const canSubscribe = isOwnWritingUrl(subscribe, site.substack.url);
   const empty = latest.length === 0;
 
   return (
@@ -51,16 +52,16 @@ export function Writing({
       {empty ? (
         <div className="@container flex max-w-3xl flex-col gap-5 sm:flex-row sm:items-center sm:gap-6">
           <p className="text-muted-foreground measure min-w-0 text-[length:var(--text-body)] leading-[var(--leading-copy)]">
-            {unavailable ? "Recent posts are unavailable here." : EMPTY_COPY}
             {unavailable && canSubscribe ? (
-              <>
-                {" "}
-                <a href={subscribe} className="underline underline-offset-4">
-                  Read Worth Mulling on Substack
-                </a>
-                .
-              </>
-            ) : null}
+              <a
+                href={publication}
+                className={`${tap} underline underline-offset-4`}
+              >
+                Read {site.substack.name} on Substack
+              </a>
+            ) : (
+              EMPTY_COPY
+            )}
           </p>
           {canSubscribe ? (
             <SubscribeLink

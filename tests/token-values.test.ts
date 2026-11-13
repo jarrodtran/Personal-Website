@@ -66,6 +66,7 @@ type PageSample = {
   rem2: number;
   rem225: number;
   spacing: number;
+  homeSpacing: number;
   surface: string;
   borderControl: string;
   heroFont: number | null;
@@ -491,6 +492,18 @@ function collectPage(): PageSample {
     rem2: fontOf("font-size: 2rem"),
     rem225: fontOf("font-size: 2.25rem"),
     spacing: px(probe("padding-top: var(--spacing-section)"), "paddingTop"),
+    homeSpacing: (() => {
+      const home = document.querySelector("[data-testid=home-prose] > div");
+      if (!home) return 0;
+      return px(
+        probe(
+          matchMedia("(width < 40rem)").matches
+            ? "padding-top: 2.5rem"
+            : "padding-top: 4rem",
+        ),
+        "paddingTop",
+      );
+    })(),
     surface: tokenColor("--surface"),
     borderControl: tokenColor("--border-control"),
   };
@@ -775,9 +788,12 @@ function sectionLines(sample: PageSample, where: string): string[] {
     const topZero = near(section.top, 0);
     const bottomZero = near(section.bottom, 0);
     if (section.home) {
-      if (!topToken || !bottomToken) {
+      if (
+        !near(section.top, sample.homeSpacing) ||
+        !near(section.bottom, sample.homeSpacing)
+      ) {
         lines.push(
-          `T2 ${where}: #${section.id} padding ${section.top}/${section.bottom} is not --spacing-section ${sample.spacing}`,
+          `T2 ${where}: #${section.id} padding ${section.top}/${section.bottom} does not match the homepage spacing ${sample.homeSpacing}`,
         );
       }
       continue;

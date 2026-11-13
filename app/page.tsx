@@ -20,7 +20,7 @@ export default async function Home() {
       data-testid="home-prose"
       className="mx-auto w-full max-w-5xl px-5 sm:px-8"
     >
-      <div className="w-full max-w-[var(--container-prose)] [&_#top>div]:px-0 [&_section>div]:px-0">
+      <div className="w-full max-w-[var(--container-prose)] max-sm:[--spacing-section:2.5rem] [&_#top>div]:px-0 [&_section>div]:px-0">
         <Hero />
         <Writing posts={result.posts} unavailable={!result.ok} />
         <About />
