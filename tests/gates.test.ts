@@ -146,6 +146,7 @@ describe("evaluateGates", () => {
     expect(result.summary).toMatch(/touches: dns|missing touches: none/);
   });
 
+  // rule:gates-at-head
   it("keeps a head PASS green when a stale PASS arrives later", () => {
     const comments = [
       ...threePasses(HEAD),

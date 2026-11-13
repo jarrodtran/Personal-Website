@@ -1,6 +1,6 @@
 # Review PASS
 
-FE Designer and Preview QA fill this in for every PASS. Copy the blank template into the PR or a review comment.
+Design, Preview QA, and Review Poteto each PASS the same head. Copy the blank template into the PR or a review comment, then post the three `GATE ... PASS <head sha>` comments described in [AGENTS.md](../AGENTS.md). Review Poteto's line ends with `touches: none`. The filled template does not turn the gate green by itself.
 
 ## Template
 
