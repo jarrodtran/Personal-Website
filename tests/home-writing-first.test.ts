@@ -144,26 +144,35 @@ describe("writing-first home", () => {
     textPercent: 100 | 200 = 100,
   ) {
     const { browser, page } = await openHome(width, height, textPercent);
-    const layout = await page.evaluate((sectionIds) => {
-      const sections = sectionIds.map((id) => document.getElementById(id));
-      const h1 = document.querySelector("#top h1");
-      const brand = document.querySelector("header a");
-      const headerNav = document.querySelector('header nav[aria-label="Primary"]');
-      return {
-        h1: h1?.textContent?.trim() ?? "",
-        h1Left: h1 ? Math.round(h1.getBoundingClientRect().left) : -1,
-        brandLeft: brand ? Math.round(brand.getBoundingClientRect().left) : -1,
-        introParagraphCount: document.querySelectorAll("#top p").length,
-        sectionOrder: sections.map((section) => section?.id ?? ""),
-        sectionWidths: sections.map(
-          (section) => section?.getBoundingClientRect().width ?? -1,
-        ),
-        homeHeight: document.getElementById("content")?.scrollHeight ?? -1,
-        scrollWidth: document.documentElement.scrollWidth,
-        clientWidth: document.documentElement.clientWidth,
-        desktopNavDisplay: headerNav ? getComputedStyle(headerNav).display : "",
-      };
-    }, [...HOME_SECTION_IDS]);
+    const layout = await page.evaluate(
+      (sectionIds) => {
+        const sections = sectionIds.map((id) => document.getElementById(id));
+        const h1 = document.querySelector("#top h1");
+        const brand = document.querySelector("header a");
+        const headerNav = document.querySelector(
+          'header nav[aria-label="Primary"]',
+        );
+        return {
+          h1: h1?.textContent?.trim() ?? "",
+          h1Left: h1 ? Math.round(h1.getBoundingClientRect().left) : -1,
+          brandLeft: brand
+            ? Math.round(brand.getBoundingClientRect().left)
+            : -1,
+          introParagraphCount: document.querySelectorAll("#top p").length,
+          sectionOrder: sections.map((section) => section?.id ?? ""),
+          sectionWidths: sections.map(
+            (section) => section?.getBoundingClientRect().width ?? -1,
+          ),
+          homeHeight: document.getElementById("content")?.scrollHeight ?? -1,
+          scrollWidth: document.documentElement.scrollWidth,
+          clientWidth: document.documentElement.clientWidth,
+          desktopNavDisplay: headerNav
+            ? getComputedStyle(headerNav).display
+            : "",
+        };
+      },
+      [...HOME_SECTION_IDS],
+    );
     await browser.close();
     return layout;
   }
@@ -232,5 +241,66 @@ describe("writing-first home", () => {
   it("keeps the #140 desktop nav breakpoint at 1280", async () => {
     const layout = await readHomeLayout(1280, 800);
     expect(layout.desktopNavDisplay).toBe("flex");
+  });
+
+  it("reads contact and how I work down the prose column at 1280", async () => {
+    const { browser, page } = await openHome(1280, 800);
+    const layout = await page.evaluate(() => {
+      const heading = document.querySelector("#contact h2");
+      const list = document.querySelector("#contact ul");
+      const headingBox = heading?.getBoundingClientRect();
+      const listBox = list?.getBoundingClientRect();
+      const lineHeight = heading
+        ? parseFloat(getComputedStyle(heading).lineHeight)
+        : 0;
+      const bands = ["experience", "approach", "contact"].map((id) => {
+        const section = document.getElementById(id);
+        return {
+          id,
+          background: section ? getComputedStyle(section).backgroundColor : "",
+        };
+      });
+      const rows = [...document.querySelectorAll("#approach li")].map((row) => {
+        const title = row.querySelector("h3");
+        const body = row.querySelector("p");
+        return {
+          titleLeft: title
+            ? Math.round(title.getBoundingClientRect().left)
+            : -1,
+          bodyLeft: body ? Math.round(body.getBoundingClientRect().left) : -1,
+          titleTop: title ? Math.round(title.getBoundingClientRect().top) : -1,
+          bodyTop: body ? Math.round(body.getBoundingClientRect().top) : -1,
+        };
+      });
+      return {
+        headingLeft: headingBox ? Math.round(headingBox.left) : -1,
+        headingBottom: headingBox ? Math.round(headingBox.bottom) : -1,
+        headingLines:
+          headingBox && lineHeight
+            ? Math.round(headingBox.height / lineHeight)
+            : -1,
+        listLeft: listBox ? Math.round(listBox.left) : -1,
+        listTop: listBox ? Math.round(listBox.top) : -1,
+        bands,
+        rows,
+      };
+    });
+    await browser.close();
+
+    expect(layout.headingLines, "contact heading lines").toBe(1);
+    expect(layout.listLeft, "contact list left").toBe(layout.headingLeft);
+    expect(layout.listTop, "contact list below the heading").toBeGreaterThan(
+      layout.headingBottom,
+    );
+    for (const band of layout.bands) {
+      expect(band.background, `${band.id} background`).toBe("rgba(0, 0, 0, 0)");
+    }
+    expect(layout.rows).toHaveLength(site.principles.length);
+    for (const row of layout.rows) {
+      expect(row.bodyLeft, "principle body left").toBe(row.titleLeft);
+      expect(row.bodyTop, "principle body below its title").toBeGreaterThan(
+        row.titleTop,
+      );
+    }
   });
 });

@@ -4,7 +4,7 @@ import { site } from "@/content/site";
 
 export function Experience() {
   return (
-    <Section id="experience" className="bg-muted/50">
+    <Section id="experience">
       <SectionHeading title={site.sections.experience.title} />
       <ol className="space-y-12">
         {site.experience.map((employer) => (
