@@ -53,7 +53,10 @@ export function Writing({
         <div className="@container flex max-w-3xl flex-col gap-5 sm:flex-row sm:items-center sm:gap-6">
           <p className="text-muted-foreground measure min-w-0 text-[length:var(--text-body)] leading-[var(--leading-copy)]">
             {unavailable && canSubscribe ? (
-              <a href={publication} className="underline underline-offset-4">
+              <a
+                href={publication}
+                className={`${tap} underline underline-offset-4`}
+              >
                 Read {site.substack.name} on Substack
               </a>
             ) : (

@@ -364,7 +364,7 @@ describe("section headings", () => {
     for (const file of readdirSync(sectionDir)) {
       if (!file.endsWith(".tsx")) continue;
       const source = readFileSync(path.join(sectionDir, file), "utf8");
-      if (source.includes("mb-10 max-w-2xl sm:mb-12")) {
+      if (source.includes("mb-6 max-w-2xl sm:mb-12")) {
         leftover.push(`components/sections/${file}`);
       }
     }
@@ -375,15 +375,15 @@ describe("section headings", () => {
       path.join(root, "components/section.tsx"),
       "utf8",
     );
-    expect(shared.match(/mb-10 max-w-2xl sm:mb-12/g) ?? []).toHaveLength(1);
+    expect(shared.match(/mb-6 max-w-2xl sm:mb-12/g) ?? []).toHaveLength(1);
 
     const heading = renderToStaticMarkup(<SectionHeading title="Experience" />);
-    expect(heading).toContain("mb-10");
+    expect(heading).toContain("mb-6");
     expect(heading).toContain("max-w-2xl");
     expect(heading).toContain("sm:mb-12");
 
     const contact = renderToStaticMarkup(<Contact />);
-    expect(contact).toContain("mb-10");
+    expect(contact).toContain("mb-6");
     expect(contact).toContain("max-w-2xl");
     expect(contact).toContain("sm:mb-12");
     expect(contact).toMatch(/<h2\b[^>]*>[\s\S]*?<\/h2>\s*<p\b[^>]*\bmt-4\b/);
@@ -396,9 +396,9 @@ describe("selected work", () => {
     expect(html).toContain('role="list"');
     expect(html).not.toContain("<article");
     expect(links(html)).toEqual(
-      site.selectedWork.map(({ slug, title }) => ({
+      site.selectedWork.map(({ slug, title, preview }) => ({
         href: expect.stringMatching(new RegExp(`^/work/${slug}/?$`)),
-        text: title,
+        text: `${title} ${preview}`,
       })),
     );
   });
