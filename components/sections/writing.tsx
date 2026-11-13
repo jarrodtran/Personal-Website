@@ -10,7 +10,7 @@ import {
   type WritingPost,
 } from "@/lib/writing";
 
-const EMPTY_COPY = "First post coming soon. Subscribe to get it by email.";
+const EMPTY_COPY = "Get new essays by email.";
 
 function SubscribeLink({
   href,
@@ -32,7 +32,13 @@ function SubscribeLink({
   );
 }
 
-export function Writing({ posts }: { posts: WritingPost[] }) {
+export function Writing({
+  posts,
+  unavailable = false,
+}: {
+  posts: WritingPost[];
+  unavailable?: boolean;
+}) {
   const latest = posts.slice(0, 5);
   const subscribe = writingSubscribeUrl(site.substack);
   const canSubscribe =
@@ -45,7 +51,16 @@ export function Writing({ posts }: { posts: WritingPost[] }) {
       {empty ? (
         <div className="@container flex max-w-3xl flex-col gap-5 sm:flex-row sm:items-center sm:gap-6">
           <p className="text-muted-foreground measure min-w-0 text-[length:var(--text-body)] leading-[var(--leading-copy)]">
-            {EMPTY_COPY}
+            {unavailable ? "Recent posts are unavailable here." : EMPTY_COPY}
+            {unavailable && canSubscribe ? (
+              <>
+                {" "}
+                <a href={subscribe} className="underline underline-offset-4">
+                  Read Worth Mulling on Substack
+                </a>
+                .
+              </>
+            ) : null}
           </p>
           {canSubscribe ? (
             <SubscribeLink
@@ -56,14 +71,14 @@ export function Writing({ posts }: { posts: WritingPost[] }) {
         </div>
       ) : (
         <div className="max-w-2xl">
-          <ol className="border-border border-t">
+          <ol role="list" className="border-border border-t">
             {latest.map((post) => {
               const dateLabel = post.date ? formatPostDate(post.date) : "";
               return (
                 <li key={post.href} className="border-border border-b py-4">
                   <a
                     href={post.href}
-                    className={`${tap} text-foreground text-body leading-[var(--leading-title)] max-w-full gap-1 font-medium no-underline hover:underline`}
+                    className={`${tap} text-foreground text-body max-w-full gap-1 leading-[var(--leading-title)] font-medium no-underline hover:underline`}
                     target="_blank"
                     rel="noopener noreferrer"
                   >

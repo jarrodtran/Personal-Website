@@ -191,10 +191,7 @@ footer a {
     overflow: visible;
   }
 
-  main,
-  #experience,
-  #approach,
-  #contact {
+  main {
     background: none !important;
   }
 
@@ -220,15 +217,9 @@ footer a {
     break-after: avoid;
   }
 
-  #experience li,
-  #work article,
-  article section,
-  #approach li {
+  #work li,
+  article section {
     break-inside: avoid;
-  }
-
-  #contact {
-    break-before: page;
   }
 
   main a[href^="http"]::after {

@@ -26,7 +26,6 @@ describe("visitor-facing copy contract", () => {
     expect(copy).toContain(site.positioning.valueProp);
     expect(copy).toContain(site.contact.intro);
     expect(copy).toContain(site.about.bio[0]);
-    expect(copy).toContain(site.about.lookingForIntro);
     expect(copy).toContain("1,000+");
     expect(copy).toContain("$1.6M");
     expect(copy.includes("$156M") || copy.includes("$260M")).toBe(true);
@@ -35,22 +34,10 @@ describe("visitor-facing copy contract", () => {
     );
   });
 
-  it("states corporate operator / product & strategy positioning, AI product, leadership, impact, and the four audiences", () => {
-    const lower = copy.toLowerCase();
-    expect(
-      lower.includes("corporate operator") ||
-        lower.includes("product & strategy"),
-    ).toBe(true);
-    expect(lower).toContain("ai product");
-    expect(lower).toContain("cross-functional leadership");
-    expect(
-      lower.includes("structured problem-solving") ||
-        lower.includes("organizational impact"),
-    ).toBe(true);
-    expect(lower).toContain("growth-stage tech");
-    expect(lower).toContain("consulting");
-    expect(lower).toContain("early-stage startup");
-    expect(lower).toContain("operating role at a vc firm");
+  it("uses one writing-led introduction and contact invitation", () => {
+    expect(copy).toContain(site.positioning.intro);
+    expect(site.positioning.documentTitle).toContain(site.substack.name);
+    expect(site.contact.intro).toContain("something I’ve written");
   });
 
   // rule:one-public-narrative
@@ -152,12 +139,6 @@ describe("visitor-facing copy contract", () => {
     expect(site.positioning.headline.length).toBeGreaterThan(0);
     expect(site.positioning.valueProp.length).toBeGreaterThan(0);
     expect(site.about.bio.length).toBeGreaterThan(0);
-
-    const variants = Object.values(site.positioning.headlineVariants);
-    expect(variants).toHaveLength(4);
-    for (const variant of variants) {
-      expect(copy).not.toContain(variant);
-    }
 
     const hero = readSiteFile("components/sections/hero.tsx");
     expect(hero).toContain("site.positioning.name");

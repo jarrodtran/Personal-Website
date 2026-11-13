@@ -62,7 +62,7 @@ function headings(html: string, tag: string): string[] {
   ].map(([, inner]) => textOf(inner));
 }
 
-const { email, linkedin, resumeHref, resumeFilename } = site.contact;
+const { email, linkedin } = site.contact;
 
 const SECTION_EYEBROWS = [
   "01 / Essays",
@@ -82,14 +82,13 @@ const SECTION_DESCRIPTIONS = [
   "The skills I use most, grouped by area.",
 ] as const;
 
-const CONTACT_INTRO =
-  "Growth-stage tech, consulting, early-stage startups, or an operating role at a VC firm. Based in Houston.";
+const CONTACT_INTRO = site.contact.intro;
 
 describe("hero", () => {
   const html = renderToStaticMarkup(<Hero />);
 
-  it("shows the name only", () => {
-    expect(textOf(html)).toBe(site.positioning.name);
+  it("shows one name heading and the introduction", () => {
+    expect(textOf(html)).toContain(site.positioning.intro);
     expect(headings(html, "h1")).toEqual([site.positioning.name]);
     expect(html).not.toContain(site.positioning.headline);
   });
@@ -116,7 +115,17 @@ const threeXml = readFileSync(
 );
 
 describe("writing", () => {
-  it("shows the launching-soon line and subscribe link when there are 0 posts", () => {
+  it("offers a direct publication link when the feed cannot load", () => {
+    const html = renderToStaticMarkup(<Writing posts={[]} unavailable />);
+    expect(textOf(html)).toContain("Recent posts are unavailable here.");
+    expect(textOf(html)).not.toContain("Get new essays by email.");
+    expect(links(html)).toContainEqual({
+      href: site.substack.url,
+      text: "Read Worth Mulling on Substack",
+    });
+  });
+
+  it("shows the email invitation and subscribe link when there are 0 posts", () => {
     const html = renderToStaticMarkup(<Writing posts={[]} />);
     const text = textOf(html);
     const paragraphs = [...html.matchAll(/<p\b[^>]*>([\s\S]*?)<\/p>/g)].map(
@@ -125,9 +134,7 @@ describe("writing", () => {
     expect(text).toContain(site.substack.name);
     expect(text).not.toContain("01 / Essays");
     expect(text).not.toContain("Posts from my Substack.");
-    expect(paragraphs).toContain(
-      "First post coming soon. Subscribe to get it by email.",
-    );
+    expect(paragraphs).toContain("Get new essays by email.");
     expect(text).not.toContain("Nothing published yet");
     expect(text).not.toContain("Subscribe and the first post");
     expect(text).not.toContain("First post soon");
@@ -330,25 +337,14 @@ describe("section headings", () => {
     expect(heading.match(/<h2\b/g) ?? []).toHaveLength(1);
   });
 
-  it("has no Capabilities section and still renders How I work", () => {
+  it("keeps the homepage focused on Writing, About, Work, and Contact", () => {
     const page = readFileSync(
       path.resolve(__dirname, "../app/page.tsx"),
       "utf8",
     );
     expect(page).not.toMatch(/\bCapabilities\b/);
     expect(page).not.toMatch(/sections\/capabilities/);
-    expect(page).toContain("HowIWork");
-    expect(page).toContain("@/components/sections/how-i-work");
-    expect(page).toContain("<HowIWork");
-
-    const html = renderToStaticMarkup(<HowIWork />);
-    expect(headings(html, "h2")).toEqual([site.sections.approach.title]);
-    expect(html).toContain('id="approach"');
-    expect(textOf(html)).toContain("How I work");
-    for (const principle of site.principles) {
-      expect(textOf(html)).toContain(principle.title);
-    }
-
+    expect(page).not.toMatch(/<HowIWork|<Experience/);
     expect(
       existsSync(
         path.resolve(__dirname, "../components/sections/capabilities.tsx"),
@@ -390,47 +386,17 @@ describe("section headings", () => {
   });
 });
 
-function markupById(html: string, id: string): string {
-  const idAttr = `id="${id}"`;
-  const idAt = html.indexOf(idAttr);
-  expect(idAt, `missing #${id}`).toBeGreaterThan(-1);
-  return html.slice(html.lastIndexOf("<", idAt));
-}
-
-describe("selected work cards", () => {
-  it("makes each card title the only link and drops kickers, meta labels, and the case-study row", () => {
+describe("selected work", () => {
+  it("renders a compact list of all four case studies", () => {
     const html = renderToStaticMarkup(<SelectedWork />);
-    const work = markupById(html, "work");
-    const workText = textOf(work);
-    const articles = [
-      ...work.matchAll(/<article\b[^>]*>[\s\S]*?<\/article>/g),
-    ].map(([article]) => article);
-
-    expect(articles).toHaveLength(site.selectedWork.length);
-
-    site.selectedWork.forEach((item, index) => {
-      const article = articles[index];
-      const articleLinks = links(article);
-      expect(articleLinks).toHaveLength(1);
-      expect(articleLinks[0].href).toMatch(
-        new RegExp(`^/work/${item.slug}/?$`),
-      );
-      expect(articleLinks[0].text).toBe(item.title);
-
-      const paragraphs = [
-        ...article.matchAll(/<p\b[^>]*>([\s\S]*?)<\/p>/g),
-      ].map(([, inner]) => textOf(inner));
-      expect(paragraphs).not.toContain(item.panel.kicker);
-    });
-
-    expect(workText).not.toContain("Read the case study");
-
-    const workParagraphs = [...work.matchAll(/<p\b[^>]*>([\s\S]*?)<\/p>/g)].map(
-      ([, inner]) => textOf(inner),
+    expect(html).toContain('role="list"');
+    expect(html).not.toContain("<article");
+    expect(links(html)).toEqual(
+      site.selectedWork.map(({ slug, title }) => ({
+        href: expect.stringMatching(new RegExp(`^/work/${slug}/?$`)),
+        text: title,
+      })),
     );
-    expect(workParagraphs).not.toContain("Problem");
-    expect(workParagraphs).not.toContain("What I did");
-    expect(workParagraphs).not.toContain("Outcome");
   });
 });
 
@@ -463,18 +429,6 @@ describe("experience", () => {
 describe("contact", () => {
   const html = renderToStaticMarkup(<Contact />);
 
-  it("names all four audiences Jarrod is talking to", () => {
-    const text = textOf(html);
-    for (const audience of [
-      "Growth-stage tech",
-      "consulting",
-      "early-stage startups",
-      "operating role at a VC firm",
-    ]) {
-      expect(text).toContain(audience);
-    }
-  });
-
   it("renders the contact intro under the Contact h2", () => {
     expect(site.contact.intro).toBe(CONTACT_INTRO);
     expect(html).toMatch(
@@ -484,7 +438,7 @@ describe("contact", () => {
     );
   });
 
-  it("offers email with a copy button, LinkedIn, a speaking invite, the résumé, and the calendar when set, and no form", () => {
+  it("offers email with a copy button, LinkedIn, a speaking invite and the calendar when set, and no form", () => {
     const { calendar } = site.contact;
     expect(links(html)).toEqual([
       { href: `mailto:${email}`, text: email },
@@ -496,11 +450,6 @@ describe("contact", () => {
       {
         href: `mailto:${email}?subject=Speaking%20invitation`,
         text: "Invite me to speak",
-      },
-      {
-        href: resumeHref,
-        text: "Résumé",
-        download: resumeFilename,
       },
       ...(calendar
         ? [{ href: calendar, text: "Book a call", target: "_blank" }]
