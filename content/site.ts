@@ -123,7 +123,7 @@ export const site: SiteContent = {
     },
     documentTitle: "Jarrod Tran · Product & strategy · Tesla, Apple, Waymo",
     valueProp:
-      "Unclear brief, real P&L. At Tesla Energy I lead AI enablement: a product and engineering team whose tools are in production. Before that: Apple and Waymo.",
+      "Unclear brief, real P&L. At Tesla Energy I lead AI enablement for a product and engineering team whose tools are in production. Before that, Apple and Waymo.",
     status: "Open to the right role",
     location: "Houston, TX",
     currentRole: currentTitle,
@@ -134,7 +134,7 @@ export const site: SiteContent = {
   },
   about: {
     bio: [
-      `I work at Tesla Energy as ${currentTitle}. I built the team that ships our AI tools, got people using them, and put reporting in place so leadership can see whether the tools move the business. Before that: Apple's 0→1 iPhone launch in India, Engineering Operations planning at Waymo, and Tesla Special Projects through the 4680 launch.`,
+      `I work at Tesla Energy as ${currentTitle}. I built the team that ships our AI tools and the reporting that shows whether they move the business. Before that, Apple's 0→1 iPhone launch in India, Engineering Operations planning at Waymo, and Tesla Special Projects through the 4680 launch.`,
     ],
     lookingForIntro:
       "I want a seat where my judgment changes the outcome, not just the deck.",
@@ -161,25 +161,30 @@ export const site: SiteContent = {
           title: currentTitle,
           dates: "Aug 2023 - Present",
           summary:
-            "I own Tesla Energy’s AI enablement strategy and the product team that ships it: roadmap, rules, and what I report to leadership.",
+            "I own Tesla Energy’s AI enablement strategy and the product team that ships it.",
           bullets: [
             {
-              text: "Built and lead a forward-deployed AI product and engineering org at Tesla Energy, scaling adoption to 1,000+ active users across 20+ production AI solutions: RAG troubleshooting, automated reporting, workflow automation, and decision-support.",
+              text: "Built and lead the AI product and engineering team at Tesla Energy. Adoption reached 1,000+ active users across 20+ production AI solutions.",
               metric: "1,000+",
               audiences: ["tech", "startup"],
             },
             {
-              text: "Modeled AI productivity at roughly 540 hours reclaimed per week and $1.6M in annualized value, with more upside as automation adoption grows.",
+              text: "Modeled about 540 hours reclaimed per week. Annualized value of that estimate is $1.6M.",
               metric: "$1.6M",
               audiences: ["tech", "vc"],
             },
             {
-              text: "Owned the global investment roadmap across California, Texas, and Shanghai: scaled Megapack 3.2×, allocated $23M across 50+ initiatives for $156M in incremental annual profit, and led a separate program that delivered $260M in annualized savings.",
+              text: "Owned the investment roadmap across California, Texas, and Shanghai. Allocated $23M across 50+ initiatives for $156M in incremental annual profit. Megapack scale reached 3.2×.",
               metric: "$156M",
               audiences: ["vc", "consulting"],
             },
             {
-              text: "Mitigated $550M in projected tariff exposure by redesigning the product and investment plan, then built and promoted successors so I could focus on AI enablement.",
+              text: "Led a separate program that delivered $260M in annualized savings.",
+              metric: "$260M",
+              audiences: ["vc", "consulting"],
+            },
+            {
+              text: "Mitigated $550M in projected tariff exposure by redesigning the product and investment plan.",
               metric: "$550M",
               audiences: ["consulting", "startup"],
             },
@@ -192,11 +197,11 @@ export const site: SiteContent = {
             "I ran new programs at Tesla, including the 4680 launch and the Model 3 and Model Y scale-up.",
           bullets: [
             {
-              text: "Advanced Project Roadrunner, Tesla's 4680 program, from early pilot to a launch-ready platform. Stage gates, readiness reviews, and cross-functional ownership through Battery Day.",
+              text: "Advanced Project Roadrunner, Tesla's 4680 program, from early pilot to a launch-ready platform through Battery Day.",
               audiences: ["startup", "tech"],
             },
             {
-              text: "Designed and launched a $3.5M/month coordination platform (“Warehouse on Wheels”) to protect product availability during rapid scale-up.",
+              text: "Designed and launched Warehouse on Wheels, a $3.5M/month coordination platform, to protect product availability during scale-up.",
               metric: "$3.5M/month",
               audiences: ["startup", "tech"],
             },
@@ -220,11 +225,11 @@ export const site: SiteContent = {
               audiences: ["consulting", "tech"],
             },
             {
-              text: "Got hardware, software, fleet, Product, Legal, and Engineering onto the same facts, including safety and regulatory work for commercial autonomous-vehicle deployment.",
+              text: "Got hardware, software, fleet, Product, Legal, and Engineering onto the same facts, including safety and regulatory work.",
               audiences: ["consulting", "startup"],
             },
             {
-              text: "Built leadership dashboards for performance, fleet health, and program milestones so senior leaders weren't stuck in ad-hoc reporting.",
+              text: "Built leadership dashboards for performance, fleet health, and program milestones.",
               audiences: ["tech", "vc"],
             },
           ],
@@ -239,16 +244,16 @@ export const site: SiteContent = {
           dates: "Jun 2021 - Jun 2022",
           bullets: [
             {
-              text: "Led the 0→1 iPhone India launch from market entry and partner qualification through readiness and scaled delivery, under tight quality, regulatory, and timing requirements.",
+              text: "Led the 0→1 iPhone India launch from market entry through scaled delivery, under tight quality, regulatory, and timing requirements.",
               audiences: ["startup", "tech"],
             },
             {
-              text: "Supported 293% year-over-year growth (4.3M → 16.9M units) and a program whose reported revenue grew from $2B to $10B by translating demand into investment and readiness plans.",
+              text: "Supported 293% year-over-year growth, from 4.3M to 16.9M units. Reported program revenue grew from $2B to $10B.",
               metric: "293%",
               audiences: ["tech", "vc"],
             },
             {
-              text: "Expanded iPhone India exports from 6 to 40+ countries, building a second-source network that reduced geographic concentration risk.",
+              text: "Expanded iPhone India exports from 6 to 40+ countries.",
               metric: "40+",
               audiences: ["consulting", "tech"],
             },
@@ -262,9 +267,9 @@ export const site: SiteContent = {
       slug: "tesla-energy-ai-product",
       title: "Tesla Energy: AI product that got used",
       problem:
-        "Tesla Energy needed AI tools people would actually use. Priorities were scattered, nobody owned the use cases, and we couldn't tell if adoption changed results.",
+        "Tesla Energy needed AI tools people would use. Nobody owned the use cases, so we couldn't tell if adoption changed results.",
       contribution:
-        "I stood up the product and engineering team, ranked the use cases, and set up training and adoption reporting for everything we shipped.",
+        "I stood up the product and engineering team and reported adoption for what we shipped.",
       outcome:
         "Modeled at ~540 hours reclaimed per week and $1.6M in annualized productivity value.",
       panel: {
@@ -303,7 +308,7 @@ export const site: SiteContent = {
       contribution:
         "I built Python and Tableau models linking investment, labor, cost, and timing. We funded the work with the best return and killed the rest. The same logic ranks AI use cases today.",
       outcome:
-        "3.2× scale on Megapack, $260M in annualized savings, and $550M in tariff exposure mitigated.",
+        "The $23M portfolio returned $156M in incremental annual profit and took Megapack to 3.2× scale. A separate program delivered $260M in annualized savings. The tariff program mitigated $550M in projected exposure.",
       panel: {
         kicker: "Tesla Energy",
         value: "$156M",
@@ -324,7 +329,7 @@ export const site: SiteContent = {
           "Reuse the ranking method later when sequencing AI use cases",
         ],
         outcomeDetail:
-          "The funded set delivered $156M in incremental annual profit, with 3.2× Megapack scale, $260M in annualized savings, and $550M in tariff exposure mitigated.",
+          "The funded portfolio delivered $156M in incremental annual profit. Scale on Megapack reached 3.2×. A separate program delivered $260M in annualized savings. That tariff program mitigated $550M in projected exposure.",
         role: [
           "Owned the Energy investment roadmap and review cadence",
           "Built the models executives used to compare asks",
@@ -448,7 +453,7 @@ export const site: SiteContent = {
       title: "How I work",
     },
     contact: {
-      title: "Looking for product, strategy, or AI roles.",
+      title: "Contact",
     },
   },
   knowsAbout: [
