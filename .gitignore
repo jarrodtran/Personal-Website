@@ -40,4 +40,4 @@ next-env.d.ts
 .lighthouseci/
 
 # test scratch dirs
-out.tap-empty/
+/out.writing-fixture/

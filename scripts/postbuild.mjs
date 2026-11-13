@@ -8,7 +8,8 @@ import {
 import { basename, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
-const out = "out";
+const out =
+  process.env.WRITING_FIXTURE_EXPORT === "1" ? "out.writing-fixture" : "out";
 
 export function normalizeDeployBasePath(value) {
   if (!value) return "";
@@ -76,7 +77,11 @@ function patchHtml(path) {
 function run() {
   walk(out, (path) => {
     const name = basename(path);
-    if (name === "opengraph-image" || name === "icon" || name === "apple-icon") {
+    if (
+      name === "opengraph-image" ||
+      name === "icon" ||
+      name === "apple-icon"
+    ) {
       copyFileSync(path, `${path}.png`);
     }
   });

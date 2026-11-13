@@ -76,7 +76,7 @@ export function listTopLevelPageRoutes(outDir: string): string[] {
   return routes.sort();
 }
 
-export async function startOutServer(): Promise<{
+export async function startOutServer(outDir = "out"): Promise<{
   origin: string;
   close: () => Promise<void>;
 }> {
@@ -85,7 +85,7 @@ export async function startOutServer(): Promise<{
     const { pathname } = new URL(request.url ?? "/", "http://localhost");
     const stripped = withoutBasePath(pathname, basePath);
     const path = stripped.endsWith("/") ? `${stripped}index.html` : stripped;
-    const file = join("out", normalize(decodeURIComponent(path)));
+    const file = join(outDir, normalize(decodeURIComponent(path)));
     try {
       const body = await readFile(file);
       response.writeHead(200, {
