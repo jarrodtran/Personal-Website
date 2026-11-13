@@ -27,17 +27,8 @@ jobs:
           node-version: 22
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      - run: npx playwright install --with-deps chromium
-      - run: pnpm lint
-      - run: pnpm check
-      - run: pnpm test
-      - run: pnpm build
-      - run: pnpm test:tap
-      - run: pnpm test:theme-toggle
-      - run: pnpm test:writing-output
-      - run: pnpm test:height
-      - run: pnpm a11y
-      - run: pnpm size
+      - run: pnpm exec playwright install --with-deps chromium
+      - run: pnpm verify
       - uses: actions/upload-pages-artifact@v3
         with:
           path: out

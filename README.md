@@ -46,8 +46,8 @@ After a build:
 
 ## CI and deploy
 
-- [`.github/workflows/ci.yml`](.github/workflows/ci.yml) runs lint, typecheck, tests, build, the 390px tap-target check (`pnpm test:tap`), the accessibility check (`pnpm a11y`, axe and page checks in Chrome against `out/`), and the JS budget (`pnpm size`) on every pull request.
-- [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml) runs the same gate on every push to `main`, then publishes `out/` to GitHub Pages. A failing check blocks the deploy. Production builds with an empty `BASE_PATH` so assets stay `/_next/...` at `https://jarrodtran.com`. Pull-request CI also rebuilds with `BASE_PATH=/Personal-Website` so a path-prefixed build still works. Pull requests do not deploy a preview.
+- [`.github/workflows/ci.yml`](.github/workflows/ci.yml) runs `pnpm verify` on every pull request, then runs the additional path-prefixed build checks.
+- [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml) runs `pnpm verify` on every push to `main`, then publishes `out/` to GitHub Pages. A failing check blocks the deploy. The shared command runs the production dependency audit, lint, type checks, tests, static build, export checks, browser accessibility, and size budget. It builds with an empty `BASE_PATH` so assets stay `/_next/...` at `https://jarrodtran.com`. Pull requests do not deploy a preview.
 - [`.github/workflows/lighthouse.yml`](.github/workflows/lighthouse.yml) builds the static export and runs [Lighthouse CI](https://github.com/GoogleChrome/lighthouse-ci) against `out/` on pull requests and `main`. Config lives in [`.lighthouserc.cjs`](.lighthouserc.cjs). Reports upload as the `lighthouse-results` workflow artifact.
 
 ### Lighthouse locally

@@ -21,30 +21,8 @@ jobs:
           node-version: 22
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      - run: pnpm audit --prod --audit-level high
-      - run: npx playwright install --with-deps chromium
-      - run: pnpm lint
-      - run: pnpm check
-      - run: pnpm test
-      - run: pnpm build
-      - run: pnpm test:banned
-      - run: pnpm test:redirects
-      - run: pnpm test:titles
-      - run: pnpm test:robots
-      - run: pnpm test:tap
-      - run: pnpm build
-        env:
-          WRITING_FEED_PATH: tests/fixtures/writing/three-posts.xml
-      - run: pnpm test:tap
-      - run: pnpm build
-      - run: pnpm test:writing-output
-      - run: pnpm test:height
-      - run: pnpm test:images
-      - run: pnpm test:theme
-      - run: pnpm test:theme-toggle
-      - run: pnpm test:tokens
-      - run: pnpm a11y
-      - run: pnpm size
+      - run: pnpm exec playwright install --with-deps chromium
+      - run: pnpm verify
       - run: pnpm build
         env:
           BASE_PATH: /Personal-Website
