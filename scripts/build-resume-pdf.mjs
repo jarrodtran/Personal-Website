@@ -13,7 +13,7 @@ const PAGE_W = 612;
 const PAGE_H = 792;
 const LEFT = 50;
 const RIGHT = 50;
-const TOP = 42;
+const TOP = 32;
 const BOTTOM = 42;
 const WIDTH = PAGE_W - LEFT - RIGHT;
 
@@ -26,7 +26,7 @@ const BOLD = widths(
 
 const resume = {
   name: "Jarrod Tran",
-  title: TITLE,
+  title: "AI Product & Strategy Leader",
   contact: [
     { text: "Houston, TX" },
     {
@@ -41,55 +41,46 @@ const resume = {
     { text: "github.com/jarrodtran", href: "https://github.com/jarrodtran" },
   ],
   summary: [
-    "I lead AI enablement at Tesla Energy and the product and engineering team whose tools are in production.",
-    "Earlier work covers Apple's 0-to-1 iPhone launch in India, Waymo Engineering Operations, and the 4680 program.",
+    "AI product and strategy leader who builds teams, brings AI tools into daily use, and measures their impact. Experience spans capital allocation at Tesla, engineering planning at Waymo, and market entry at Apple.",
   ],
   roles: [
     {
       heading: `Tesla | ${TITLE} | Aug 2023 - Present`,
       note: "Rejoined in 2023 after Apple and Waymo.",
       bullets: [
-        "Built and lead a forward-deployed AI product and engineering org, with 1,000+ active users on 20+ production AI solutions: RAG troubleshooting, automated reporting, workflow automation, and decision support.",
-        "Own the AI enablement strategy and the reporting leadership sees. Enablement covers 10,000 employees.",
-        "Modeled AI productivity at roughly 540 hours reclaimed per week and $1.6M in annualized value.",
-        "Owned the global investment roadmap across California, Texas, and Shanghai. Scaled Megapack 3.2\u00d7.",
-        "Built Python and Tableau models linking investment, labor, cost, and timing. We funded the work with the best return and killed the rest.",
-        "Allocated $23M across 50+ initiatives for $156M in incremental annual profit.",
-        "A separate program delivered $260M in annualized savings.",
-        "Mitigated $550M in projected tariff exposure by redesigning the product and investment plan, then built and promoted successors so I could focus on AI enablement.",
+        "Built and lead an AI product and engineering team that serves 1,000+ active users across 20+ production AI solutions, including RAG troubleshooting, automated reporting, workflow automation, and decision support.",
+        "Set the AI roadmap, adoption metrics, and leadership reporting for an enablement program covering 10,000 employees. Modeled roughly 540 hours reclaimed per week and $1.6M in annualized productivity value.",
+        "Built Python and Tableau models to rank investments by return. Allocated $23M across 50+ initiatives for $156M in incremental annual profit.",
+        "Led the investment roadmap across California, Texas, and Shanghai and scaled Megapack 3.2\u00d7. A separate program delivered $260M in annualized savings.",
+        "Mitigated $550M in projected tariff exposure by redesigning the product and investment plan.",
       ],
     },
     {
       heading: "Waymo | Strategy & Operations Manager | Oct 2022 - May 2023",
       bullets: [
-        "Led annual planning, OKRs, and quarterly business reviews for Engineering Operations. Turned org priorities into resource plans, targets, and milestones.",
-        "Got hardware, software, fleet, Product, Legal, and Engineering onto the same facts, including safety and regulatory work for commercial autonomous-vehicle deployment.",
-        "Built leadership dashboards for performance, fleet health, and program milestones so senior leaders weren't stuck in ad-hoc reporting.",
+        "Led annual planning, OKRs, and quarterly business reviews for Engineering Operations. Turned leadership priorities into resource plans, targets, and milestones.",
+        "Aligned six functions on commercial deployment priorities, including safety and regulatory work. Built dashboards for performance, fleet health, and program milestones.",
       ],
     },
     {
       heading:
         "Apple | Strategic Operations Program Manager | Jun 2021 - Jun 2022",
       bullets: [
-        "Led the 0-to-1 iPhone India launch from market entry and partner qualification through readiness and scaled delivery, under tight quality, regulatory, and timing requirements.",
-        "Supported 293% year-over-year growth (4.3M to 16.9M units) and a program whose reported revenue grew from $2B to $10B by turning demand into investment and readiness plans.",
-        "Expanded iPhone India exports from 6 to 40+ countries and built a second-source network that reduced geographic concentration risk.",
+        "Led the 0-to-1 iPhone launch in India, from market entry and partner qualification through launch readiness and scaled delivery.",
+        "Supported 293% year-over-year growth (4.3M to 16.9M units) and a program whose reported revenue grew from $2B to $10B. Expanded exports from 6 to 40+ countries.",
       ],
     },
     {
       heading:
         "Tesla | Program Manager, Special Projects | Jun 2018 - Jun 2021",
       bullets: [
-        "Advanced Project Roadrunner, Tesla's 4680 program, from early pilot to a launch-ready platform, with stage gates, readiness reviews, and cross-functional ownership through Battery Day.",
-        "Designed and launched a $3.5M per month coordination platform (Warehouse on Wheels) to protect product availability during rapid scale-up.",
-        "Led Model 3 and Model Y planning and recovery through demand surges and supply disruptions.",
+        "Advanced Project Roadrunner, Tesla's 4680 program, from pilot to launch readiness through Battery Day. Led Model 3 and Model Y planning and recovery.",
+        "Launched Warehouse on Wheels, a $3.5M per month coordination platform that protected product availability during scale-up.",
       ],
     },
     {
       heading: "Amazon | Operations Area Manager | Mar 2017 - Apr 2018",
-      bullets: [
-        "Led a team of 100+ associates in a high-volume fulfillment center.",
-      ],
+      bullets: ["Led 100+ associates in a high-volume fulfillment center."],
     },
   ],
   education:
@@ -253,11 +244,11 @@ function assertCopy(blocks) {
 const styles = {
   name: {
     font: "bold",
-    size: 16,
-    leading: 19,
+    size: 25,
+    leading: 29,
     color: INK,
     gapBefore: 0,
-    gapAfter: 2,
+    gapAfter: 4,
   },
   title: {
     font: "regular",
@@ -269,27 +260,27 @@ const styles = {
   },
   section: {
     font: "bold",
-    size: 10.5,
-    leading: 13,
+    size: 12,
+    leading: 15,
     color: INK,
-    gapBefore: 9,
-    gapAfter: 2,
+    gapBefore: 10,
+    gapAfter: 3,
   },
   prose: {
     font: "regular",
-    size: 10,
-    leading: 13,
+    size: 10.5,
+    leading: 14,
     color: INK,
     gapBefore: 0,
     gapAfter: 0,
   },
   role: {
     font: "bold",
-    size: 10,
-    leading: 13,
+    size: 10.5,
+    leading: 14,
     color: INK,
-    gapBefore: 6,
-    gapAfter: 1,
+    gapBefore: 7,
+    gapAfter: 2,
   },
   note: {
     font: "regular",
@@ -301,11 +292,11 @@ const styles = {
   },
   bullet: {
     font: "regular",
-    size: 10,
-    leading: 12.6,
+    size: 10.5,
+    leading: 13.5,
     color: INK,
     gapBefore: 0,
-    gapAfter: 1.4,
+    gapAfter: 2,
   },
 };
 
