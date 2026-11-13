@@ -48,3 +48,6 @@ jobs:
       - run: pnpm test:theme-toggle
         env:
           BASE_PATH: /Personal-Website
+      - run: pnpm exec vitest run tests/internal-links.test.ts
+        env:
+          BASE_PATH: /Personal-Website
