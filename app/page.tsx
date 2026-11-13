@@ -4,7 +4,10 @@ import { Hero } from "@/components/sections/hero";
 import { SelectedWork } from "@/components/sections/selected-work";
 import { Writing } from "@/components/sections/writing";
 import { site } from "@/content/site";
+import { homeMetadata } from "@/lib/metadata";
 import { loadWritingResult } from "@/lib/writing";
+
+export const metadata = homeMetadata;
 
 export default async function Home() {
   const result = await loadWritingResult(site.substack);
