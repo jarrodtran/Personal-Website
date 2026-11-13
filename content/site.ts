@@ -308,7 +308,7 @@ export const site: SiteContent = {
       contribution:
         "I built Python and Tableau models linking investment, labor, cost, and timing. We funded the work with the best return and killed the rest. The same logic ranks AI use cases today.",
       outcome:
-        "The $23M portfolio returned $156M in incremental annual profit and took Megapack to 3.2× scale. A separate program delivered $260M in annualized savings. The tariff program mitigated $550M in projected exposure.",
+        "$260M annualized savings is separate. 3.2× Megapack scale. $550M tariff exposure mitigated.",
       panel: {
         kicker: "Tesla Energy",
         value: "$156M",
