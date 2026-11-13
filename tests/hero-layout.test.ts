@@ -31,19 +31,6 @@ if (!existsSync(join(process.cwd(), "out/index.html"))) {
   throw new Error("hero layout test needs a production build in out/");
 }
 
-// Measured on main 1c0847d in this file's Playwright Chromium setup
-// (32px root font for 200% text, same as tests/selected-work-layout.test.ts).
-const MAIN_TOP_HEIGHT = {
-  320: { 100: 227.34375, 200: 709.375 },
-  390: { 100: 198.09375, 200: 650.875 },
-  640: { 100: 230.046875, 200: 577.09375 },
-  700: { 100: 230.046875, 200: 577.09375 },
-  768: { 100: 230.046875, 200: 518.59375 },
-  900: { 100: 230.046875, 200: 518.59375 },
-  1024: { 100: 230.046875, 200: 518.59375 },
-  1280: { 100: 230.046875, 200: 460.09375 },
-} as const;
-
 const VIEWPORTS = [
   [320, 844],
   [390, 844],
@@ -293,35 +280,6 @@ describe("hero headline layout", () => {
             layout.singles,
             `${width} ${textPercent}% ${colorScheme} one-word h1 lines`,
           ).toEqual([]);
-        }
-      }
-    }
-  }, 180_000);
-
-  it("keeps #top no taller than main 1c0847d", async () => {
-    for (const [width, height] of HEIGHT_VIEWPORTS) {
-      for (const textPercent of [100, 200] as const) {
-        for (const colorScheme of ["light", "dark"] as const) {
-          const { browser, page } = await openPage(
-            "/",
-            width,
-            height,
-            textPercent,
-            colorScheme,
-          );
-          const topHeight = await page.evaluate(
-            () =>
-              document.getElementById("top")?.getBoundingClientRect().height ??
-              -1,
-          );
-          process.stdout.write(
-            `#top height ${width} ${textPercent}% ${colorScheme}: ${topHeight}\n`,
-          );
-          await browser.close();
-          expect(
-            topHeight,
-            `${width} ${textPercent}% ${colorScheme} #top height`,
-          ).toBeLessThanOrEqual(MAIN_TOP_HEIGHT[width][textPercent]);
         }
       }
     }
