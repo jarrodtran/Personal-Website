@@ -658,8 +658,17 @@ function contractLines(
     if (!sample.css.includes("light-dark(")) {
       lines.push("T6 shipped CSS has no light-dark()");
     }
-    if (sample.css.includes("prefers-color-scheme")) {
-      lines.push("T6 shipped CSS still has a prefers-color-scheme fallback");
+    const nonIconCss = sample.css.replace(
+      /@media\s*\(prefers-color-scheme:\s*dark\)\s*\{(?:[^{}]|\{[^{}]*\})*\}/g,
+      (rule) =>
+        rule.includes(".theme-sun") &&
+        rule.includes(".theme-moon") &&
+        !rule.includes("--")
+          ? ""
+          : rule,
+    );
+    if (nonIconCss.includes("prefers-color-scheme")) {
+      lines.push("T6 only the theme icons may use prefers-color-scheme");
     }
     if (!/color-scheme:\s*light dark/.test(sample.css)) {
       lines.push("T6 shipped CSS does not set color-scheme: light dark");
