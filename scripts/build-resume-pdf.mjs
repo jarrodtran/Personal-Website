@@ -26,7 +26,7 @@ const BOLD = widths(
 
 const resume = {
   name: "Jarrod Tran",
-  title: "AI Product & Strategy Leader",
+  title: "AI Product Leadership | Enterprise Deployment",
   contact: [
     { text: "Houston, TX" },
     {
@@ -41,25 +41,25 @@ const resume = {
     { text: "github.com/jarrodtran", href: "https://github.com/jarrodtran" },
   ],
   summary: [
-    "AI product and strategy leader who builds teams, brings AI tools into daily use, and measures their impact. Experience spans capital allocation at Tesla, engineering planning at Waymo, and market entry at Apple.",
+    "I turn enterprise AI pilots into products people use. At Tesla Energy, I built the team that ships AI tools and set up the training and measurement that support adoption.",
   ],
   roles: [
     {
       heading: `Tesla | ${TITLE} | Aug 2023 - Present`,
       note: "Rejoined in 2023 after Apple and Waymo.",
       bullets: [
-        "Built and lead an AI product and engineering team that serves 1,000+ active users across 20+ production AI solutions, including RAG troubleshooting, automated reporting, workflow automation, and decision support.",
-        "Set the AI roadmap, adoption metrics, and leadership reporting for an enablement program covering 10,000 employees. Modeled roughly 540 hours reclaimed per week and $1.6M in annualized productivity value.",
-        "Built Python and Tableau models to rank investments by return. Allocated $23M across 50+ initiatives for $156M in incremental annual profit.",
-        "Led the investment roadmap across California, Texas, and Shanghai and scaled Megapack 3.2\u00d7. A separate program delivered $260M in annualized savings.",
-        "Mitigated $550M in projected tariff exposure by redesigning the product and investment plan.",
+        "Lead the product and engineering team I hired. Its 20+ production AI solutions serve 1,000+ active users and include RAG troubleshooting, automated reporting, workflow automation, and decision support.",
+        "Own the AI roadmap and rollout for an enablement program covering 10,000 employees. Rank use cases by time savings and decision quality, assign owners, and pair releases with training and weekly adoption reporting.",
+        "Modeled roughly 540 hours reclaimed per week and $1.6M in annualized productivity value from AI tools.",
+        "Built Python and Tableau models to rank investment requests by return. Allocated $23M across 50+ initiatives for $156M in incremental annual profit.",
+        "Scaled Megapack 3.2\u00d7 and redesigned the investment plan to mitigate $550M in projected tariff exposure. A separate program delivered $260M in annualized savings.",
       ],
     },
     {
       heading: "Waymo | Strategy & Operations Manager | Oct 2022 - May 2023",
       bullets: [
         "Led annual planning, OKRs, and quarterly business reviews for Engineering Operations. Turned leadership priorities into resource plans, targets, and milestones.",
-        "Aligned six functions on commercial deployment priorities, including safety and regulatory work. Built dashboards for performance, fleet health, and program milestones.",
+        "Aligned hardware, software, fleet, Product, Legal, and Engineering on priorities for commercial deployment. Built leadership dashboards for fleet health, performance, and milestones.",
       ],
     },
     {

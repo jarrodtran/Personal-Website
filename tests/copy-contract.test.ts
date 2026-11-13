@@ -239,7 +239,7 @@ describe("visitor-facing copy contract", () => {
   it("pins the committed resume to the one-page file bytes", () => {
     const pdf = readFileSync(path.join(root, "public/resume.pdf"));
     expect(createHash("sha256").update(pdf).digest("hex")).toBe(
-      "5bd74e76953f9c175694876759adc71b1462ffdcf2248a77d89d16a937658522",
+      "87d50ac0f615129efc197bd7b8845bb42c0dfcf2a7296deac3cdcd9b71f921b8",
     );
   });
 
