@@ -36,7 +36,7 @@ export function CaseStudyBody({ item }: { item: SelectedWorkItem }) {
   const next = nextSelectedWork(item.slug);
 
   return (
-    <article className="mx-auto max-w-3xl px-5 py-12 sm:px-8 sm:py-20">
+    <article className="lg:max-w-study mx-auto max-w-3xl px-5 py-12 sm:px-8 sm:py-20">
       <p className="font-mono-label text-muted-foreground">
         <Link href="/#work" className={tap}>
           Selected work

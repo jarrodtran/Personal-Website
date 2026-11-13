@@ -185,13 +185,10 @@ describe("writing-first home", () => {
     expect(layout.sectionOrder).toEqual(HOME_SECTION_IDS);
   });
 
-  it("keeps each home section no wider than the prose column at 1280", async () => {
+  it("gives homepage sections an 864px column at 1280", async () => {
     const layout = await readHomeLayout(1280, 800);
     for (const [index, width] of layout.sectionWidths.entries()) {
-      expect(
-        width,
-        `${HOME_SECTION_IDS[index]} width at 1280`,
-      ).toBeLessThanOrEqual(640);
+      expect(width, `${HOME_SECTION_IDS[index]} width at 1280`).toBe(864);
     }
   });
 

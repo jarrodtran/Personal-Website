@@ -211,8 +211,8 @@ describe("390px tap targets and first screen", () => {
       };
     });
     await browser.close();
-    expect(left.h1).toBe(160);
-    expect(left.brand).toBe(160);
+    expect(left.h1).toBe(96);
+    expect(left.brand).toBe(96);
   });
 
   async function headerLayout(width: number, colorScheme: "light" | "dark") {
@@ -285,7 +285,7 @@ describe("390px tap targets and first screen", () => {
     async (colorScheme) => {
       const layout = await headerLayout(1280, colorScheme);
       expect(layout.nameWidth).toBeGreaterThanOrEqual(80);
-      expect(layout.nameLeft).toBe(160);
+      expect(layout.nameLeft).toBe(96);
       expect(layout.themeLeft).toBeGreaterThanOrEqual(layout.headerMid);
       expect(layout.menuLeft).toBeNull();
     },
