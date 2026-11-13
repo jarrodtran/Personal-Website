@@ -414,7 +414,9 @@ function annot(link) {
 }
 
 function assemble(stream, links) {
-  const compressed = deflateSync(Buffer.from(stream, "latin1"));
+  // Store the short stream in a zlib wrapper without compression so the bytes
+  // remain stable across Node runtimes that bundle different deflate encoders.
+  const compressed = deflateSync(Buffer.from(stream, "latin1"), { level: 0 });
   const font = (base) =>
     `<< /Type /Font /Subtype /Type1 /BaseFont /${base} /Encoding /WinAnsiEncoding >>`;
   const annots = links.length ? ` /Annots [${links.map(annot).join(" ")}]` : "";

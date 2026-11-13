@@ -1,6 +1,12 @@
 import { execFileSync } from "node:child_process";
 import { createHash } from "node:crypto";
-import { existsSync, readdirSync, readFileSync } from "node:fs";
+import {
+  existsSync,
+  mkdtempSync,
+  readdirSync,
+  readFileSync,
+  rmSync,
+} from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
@@ -233,19 +239,27 @@ describe("visitor-facing copy contract", () => {
   it("pins the committed resume to the one-page file bytes", () => {
     const pdf = readFileSync(path.join(root, "public/resume.pdf"));
     expect(createHash("sha256").update(pdf).digest("hex")).toBe(
-      "63be0cffa45293debeb6cd4b2b0333da1ecf0bb8c878a02c850cb49dcebc3c3c",
+      "27ebe3dfe8b3a7327e895b1eafc628dc4a555b96e378261b778ec55341e41cb9",
     );
   });
 
   it("ships the résumé the builder writes", () => {
-    const destination = path.join(tmpdir(), `jarrod-resume-${process.pid}.pdf`);
-    execFileSync(process.execPath, [
-      path.join(root, "scripts/build-resume-pdf.mjs"),
-      destination,
-    ]);
-    expect(readFileSync(destination)).toEqual(
-      readFileSync(path.join(root, "public/resume.pdf")),
-    );
+    const directory = mkdtempSync(path.join(tmpdir(), "jarrod-resume-"));
+    try {
+      const destination = path.join(directory, "resume.pdf");
+      execFileSync(
+        process.execPath,
+        [path.join(root, "scripts/build-resume-pdf.mjs"), destination],
+        { stdio: "pipe" },
+      );
+      const generated = readFileSync(destination);
+      const committed = readFileSync(path.join(root, "public/resume.pdf"));
+      expect(createHash("sha256").update(generated).digest("hex")).toBe(
+        createHash("sha256").update(committed).digest("hex"),
+      );
+    } finally {
+      rmSync(directory, { recursive: true, force: true });
+    }
   });
 
   // rule:no-em-dashes
