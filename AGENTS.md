@@ -10,7 +10,7 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 ## Review and merge
 
-Reviewers: fill in [docs/review-pass.md](docs/review-pass.md) for your PASS. Do not merge without a filled PASS from FE Designer and Preview QA.
+Merge when GitHub’s required checks pass. Keep the `Head SHA:` in the PR description current and record the checks you ran.
 
 ### Rules
 

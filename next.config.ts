@@ -5,6 +5,10 @@ const basePath = normalizeBasePath(process.env.BASE_PATH);
 
 const nextConfig: NextConfig = {
   output: "export",
+  distDir:
+    process.env.WRITING_FIXTURE_EXPORT === "1"
+      ? "out.writing-fixture"
+      : ".next",
   trailingSlash: true,
   basePath,
   assetPrefix: basePath,

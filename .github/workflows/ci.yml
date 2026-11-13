@@ -14,37 +14,15 @@ jobs:
   verify:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: 22
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      - run: pnpm audit --prod --audit-level high
-      - run: npx playwright install --with-deps chromium
-      - run: pnpm lint
-      - run: pnpm check
-      - run: pnpm test
-      - run: pnpm build
-      - run: pnpm test:banned
-      - run: pnpm test:redirects
-      - run: pnpm test:titles
-      - run: pnpm test:robots
-      - run: pnpm test:tap
-      - run: pnpm build
-        env:
-          WRITING_FEED_PATH: tests/fixtures/writing/three-posts.xml
-      - run: pnpm test:tap
-      - run: pnpm build
-      - run: pnpm test:writing-output
-      - run: pnpm test:height
-      - run: pnpm test:images
-      - run: pnpm test:theme
-      - run: pnpm test:theme-toggle
-      - run: pnpm test:tokens
-      - run: pnpm a11y
-      - run: pnpm size
+      - run: pnpm exec playwright install --with-deps chromium
+      - run: pnpm verify
       - run: pnpm build
         env:
           BASE_PATH: /Personal-Website
@@ -68,5 +46,8 @@ jobs:
         env:
           BASE_PATH: /Personal-Website
       - run: pnpm test:theme-toggle
+        env:
+          BASE_PATH: /Personal-Website
+      - run: pnpm exec vitest run tests/internal-links.test.ts
         env:
           BASE_PATH: /Personal-Website

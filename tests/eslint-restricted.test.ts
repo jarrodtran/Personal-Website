@@ -41,7 +41,7 @@ describe("no reading .github or scripts as text in tests", () => {
   });
 
   it("rejects an absolute literal under the repo root", () => {
-    const messages = lint('readFileSync(resolve(root, "/scripts/gates.mjs"), "utf8");');
+    const messages = lint('readFileSync(resolve(root, "/scripts/check-pr-body.mjs"), "utf8");');
     expect(messages).toHaveLength(1);
   });
 
