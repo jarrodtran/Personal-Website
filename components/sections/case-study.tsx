@@ -1,3 +1,4 @@
+import { ArrowUpRight } from "lucide-react";
 import Link from "next/link";
 import { nextSelectedWork, type SelectedWorkItem } from "@/content/site";
 import { tap, textAction } from "@/lib/ui";
@@ -95,9 +96,10 @@ export function CaseStudyBody({ item }: { item: SelectedWorkItem }) {
             href={item.link.href}
             className={textAction}
             target="_blank"
-            rel="noreferrer"
+            rel="noopener noreferrer"
           >
             {item.link.label}
+            <ArrowUpRight className="size-[16px] shrink-0" aria-hidden="true" />
           </a>
         ) : null}
         <Link
