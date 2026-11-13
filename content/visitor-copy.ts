@@ -75,11 +75,10 @@ export function stripOfficialTitles(text: string): string {
 
 /** Every claim-bearing surface: numbers here must trace to the résumé. */
 export function getProofCopy(): string {
-  const { experience, selectedWork, principles, about, positioning } = site;
+  const { experience, selectedWork, about, positioning } = site;
   return collectStrings({
     experience,
     selectedWork,
-    principles,
     about,
     positioning,
   }).join("\n");

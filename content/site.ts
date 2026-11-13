@@ -76,12 +76,9 @@ export interface SiteContent {
   };
   experience: Employer[];
   selectedWork: SelectedWorkItem[];
-  principles: { title: string; description: string }[];
   sections: {
-    experience: { title: string };
     work: { title: string };
     about: { title: string };
-    approach: { title: string };
     contact: { title: string };
   };
   knowsAbout: string[];
@@ -373,45 +370,12 @@ export const site: SiteContent = {
       },
     },
   ],
-  principles: [
-    {
-      title: "Get the facts first",
-      description:
-        "Get the outcome, constraints, economics, and assumptions on the table before anyone spends. Structured problem-solving starts there.",
-    },
-    {
-      title: "Find where work stalls",
-      description:
-        "Follow the dependencies, incentives, and bottlenecks. Problems usually show up where one team hands work to another.",
-    },
-    {
-      title: "Cut what doesn't matter",
-      description:
-        "Cut work that doesn't serve the outcome. On Megapack that was 50+ requests down to a ranked $23M portfolio.",
-    },
-    {
-      title: "Name an owner",
-      description:
-        "Name the tradeoff, the owner, and the next move. A plan only counts once each step has an owner.",
-    },
-    {
-      title: "Keep improving it",
-      description:
-        "Add the feedback (and the automation) that makes the system better as it grows. I add AI where it clearly saves time.",
-    },
-  ],
   sections: {
     about: {
       title: "About",
     },
-    experience: {
-      title: "Experience",
-    },
     work: {
       title: "Selected work",
-    },
-    approach: {
-      title: "How I work",
     },
     contact: {
       title: "Contact",
