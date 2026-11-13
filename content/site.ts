@@ -103,12 +103,12 @@ export interface SiteContent {
 export const site: SiteContent = {
   positioning: {
     name: "Jarrod Tran",
-    headline: "Notes on AI, judgment, and building",
+    headline: "How teams build and use AI",
     intro:
-      "I lead an AI product team at Tesla Energy. I write about how teams decide what to build and learn whether it helps.",
+      "I lead an AI product team at Tesla Energy. I write about choosing which problems to solve with AI and measuring what changes after launch.",
     documentTitle: "Jarrod Tran · Worth Mulling",
     valueProp:
-      "Worth Mulling is my publication about AI products, judgment, and how teams make decisions.",
+      "Worth Mulling is Jarrod Tran’s publication on AI product decisions, from picking a use case to measuring adoption.",
     status: "Worth Mulling",
     location: "Houston, TX",
     currentRole: currentTitle,
@@ -119,7 +119,7 @@ export const site: SiteContent = {
   },
   about: {
     bio: [
-      `My official title at Tesla Energy is ${currentTitle}. I brought product and engineering together and set up reporting to see which tools people use and where they save time. Before that, I helped launch iPhone in India at Apple and led Engineering Operations planning at Waymo.`,
+      `As ${currentTitle} at Tesla Energy, I hired the team behind our AI tools and set up adoption reporting. At Apple, I led the iPhone launch program in India. At Waymo, I led planning for Engineering Operations.`,
     ],
   },
   experience: [
@@ -217,11 +217,10 @@ export const site: SiteContent = {
   selectedWork: [
     {
       slug: "tesla-energy-ai-product",
-      preview:
-        "Turning scattered AI experiments into tools teams use every week.",
-      title: "Tesla Energy: AI product that got used",
+      preview: "How we chose use cases, trained users, and tracked adoption.",
+      title: "Tesla Energy: From AI pilots to daily use",
       problem:
-        "Tesla Energy needed AI tools people would actually use. Priorities were scattered, nobody owned the use cases, and we couldn't tell if adoption changed results.",
+        "Tesla Energy had AI pilots, but teams lacked a shared way to choose which ones to ship or measure their value after launch.",
       contribution:
         "I stood up the product and engineering team, ranked the use cases, and set up training and adoption reporting for everything we shipped.",
       outcome:
@@ -234,21 +233,21 @@ export const site: SiteContent = {
       link: { label: "Tesla Energy", href: "https://www.tesla.com/energy" },
       caseStudy: {
         context:
-          'Scattered experiments sat next to real Energy work with no shared bar for "done." Leaders wanted tools people used in their daily work.',
+          "Some pilots showed promise. The harder question was whether they would help with work people already did.",
         constraints: [
-          "Adoption was measured by use in real workflows",
-          "Finite roadmap capacity meant every use case needed a named owner",
-          "Security and data boundaries could not bend for release speed",
+          "We measured adoption by use in day-to-day work",
+          "The team had limited capacity, so each use case needed an owner",
+          "Releases had to meet security and data requirements",
         ],
         decisions: [
           "Build a dedicated product and engineering team",
-          "Sequence the backlog by hours reclaimed and decision quality",
-          "Ship training plus weekly adoption reporting with each release",
+          "Prioritize tools that save time or improve decisions",
+          "Pair releases with training and track adoption each week",
         ],
         outcomeDetail:
-          "We reached 1,000+ active users across 20+ production AI tools, modeling roughly 540 hours saved each week and $1.6M in annualized productivity value.",
+          "We used adoption data to track usage. Our productivity model estimated about 540 hours saved per week and $1.6M in annualized value.",
         role: [
-          "Owned the enablement roadmap and what leadership saw each week",
+          "Owned the AI roadmap and reported adoption to leadership",
           "Hired and led the AI product and engineering team",
           "Set prioritization rules, governance, and adoption metrics",
         ],
@@ -256,10 +255,10 @@ export const site: SiteContent = {
     },
     {
       slug: "tesla-energy-portfolio",
-      preview: "Ranking investment requests by their expected return.",
-      title: "Tesla Energy: which dollar moves the P&L",
+      preview: "How we compared competing investments and chose what to fund.",
+      title: "Tesla Energy: Choosing what to fund",
       problem:
-        "50+ initiatives competed for a $23M budget, and leadership needed a clear rule for which dollars moved the P&L.",
+        "50+ initiatives competed for a $23M budget. Leadership needed a way to compare their expected returns.",
       contribution:
         "I built Python and Tableau models linking investment, labor, cost, and timing. We funded the work with the best return and killed the rest. The same logic ranks AI use cases today.",
       outcome:
@@ -272,23 +271,23 @@ export const site: SiteContent = {
       link: { label: "Tesla Megapack", href: "https://www.tesla.com/megapack" },
       caseStudy: {
         context:
-          "Capital asks ran ahead of the budget. Dozens of initiatives fought for the same dollars with weak ties to profit.",
+          "The funding decision depended on how each proposal would affect profit, what it would cost, and when it could deliver.",
         constraints: [
           "Only $23M was available against 50+ competing requests",
-          "Leaders needed one clear rule for what got funded and what got cut",
-          "Labor, cost, and timing had to live in one decision model",
+          "Leaders needed a common basis for funding decisions",
+          "The model had to account for labor, cost, and timing",
         ],
         decisions: [
-          "Tie each ask to return and risk in Python and Tableau models",
-          "Fund the highest-return work and stop the rest in public reviews",
+          "Use Python and Tableau to compare expected returns and risks",
+          "Use funding reviews to choose the highest-return work",
           "Reuse the ranking method later when sequencing AI use cases",
         ],
         outcomeDetail:
           "The funded portfolio delivered $156M in incremental annual profit. Megapack scaled 3.2×. A separate program delivered $260M in annualized savings. Changes to what we built and where we invested mitigated $550M in projected tariff exposure.",
         role: [
-          "Owned the Energy investment roadmap and review cadence",
-          "Built the models executives used to compare asks",
-          "Ran the tradeoff meetings that killed low-return work",
+          "Owned the Energy investment roadmap and scheduled funding reviews",
+          "Built the models executives used to compare proposals",
+          "Led the reviews that cut low-return proposals",
         ],
       },
     },
@@ -296,9 +295,9 @@ export const site: SiteContent = {
       slug: "apple-iphone-india",
       preview:
         "Balancing demand, partner readiness, and risk during a new market launch.",
-      title: "Apple: 0→1 iPhone India",
+      title: "Apple: Launching iPhone in India",
       problem:
-        "India had to go from plan to scaled launch while market entry, partner readiness, and demand were all still moving.",
+        "Apple needed to prepare partners for the iPhone launch in India while demand and readiness were changing.",
       contribution:
         "I drove market-entry decisions, partner qualification, and launch readiness, and kept demand, quality, and geopolitical risk in one plan.",
       outcome:
@@ -311,19 +310,19 @@ export const site: SiteContent = {
       link: { label: "Apple India", href: "https://www.apple.com/in/" },
       caseStudy: {
         context:
-          "Launching iPhone in India meant getting partners ready and meeting quality and regulatory requirements as demand shifted.",
+          "Launch planning had to account for partner qualification, quality requirements, and regulatory approvals.",
         constraints: [
-          "Quality and regulatory bars could not slip to buy speed",
-          "Partner readiness trailed the volume curve",
-          "Geopolitical risk had to sit inside the same plan as demand",
+          "The schedule had to meet quality and regulatory requirements",
+          "Partner readiness lagged expected volume",
+          "Demand forecasts and geopolitical risk both shaped readiness decisions",
         ],
         decisions: [
-          "Treat entry calls, partner checks, and go-live gates as one program",
-          "Convert volume signals into funding and readiness plans leaders could run weekly",
-          "Build second sources so exports weren't pinned to one geography",
+          "Use one schedule for market entry, partner checks, and launch readiness",
+          "Turn demand forecasts into funding and readiness plans for weekly review",
+          "Qualify additional sources to reduce dependence on one geography",
         ],
         outcomeDetail:
-          "Reported program revenue moved from $2B to $10B while volume grew 293% year over year (4.3M → 16.9M units). Exports reached 40+ countries.",
+          "Reported program revenue grew from $2B to $10B, and exports expanded from 6 to 40+ countries.",
         role: [
           "Led the India launch program end to end",
           "Kept entry, partners, and readiness on one schedule",
@@ -333,10 +332,10 @@ export const site: SiteContent = {
     },
     {
       slug: "waymo-engineering-ops",
-      preview: "Getting six teams to plan and report from the same numbers.",
+      preview: "How we gave engineering leaders a shared view of progress.",
       title: "Waymo: one plan, six functions",
       problem:
-        "Each function ran its own planning, and leadership settled conflicts with data nobody else trusted.",
+        "Six functions planned separately. When their numbers differed, leadership had to reconcile them before making decisions.",
       contribution:
         "I built the annual planning, OKR, resource-plan, QBR, and dashboard rhythm that every function worked from.",
       outcome:
@@ -349,22 +348,22 @@ export const site: SiteContent = {
       link: { label: "Waymo", href: "https://waymo.com/" },
       caseStudy: {
         context:
-          "Teams planned separately, leaving leaders to reconcile conflicting numbers in reviews.",
+          "Engineering Operations needed one plan that brought commercial deployment, safety, and regulatory priorities together.",
         constraints: [
           "Every plan had to account for safety and regulatory work",
-          "Six functions needed shared targets without private scorekeeping",
-          "Senior leaders spent too much time on one-off decks",
+          "Teams needed shared targets and a common way to track them",
+          "One-off reporting took time away from planning",
         ],
         decisions: [
-          "Set one rhythm for OKRs, resources, QBRs, and dashboards",
-          "Move tradeoffs into scheduled reviews instead of private escalations",
+          "Put goals, resource plans, and quarterly reviews on one schedule",
+          "Bring decisions about priorities and resources into scheduled reviews",
           "Publish dashboards covering performance, vehicle health, and milestones",
         ],
         outcomeDetail:
-          "Plans finally shared one calendar and one set of numbers. Escalations moved into scheduled reviews, and one-off reporting requests dropped.",
+          "Teams used the same calendar and figures to make tradeoffs in scheduled reviews. One-off reporting requests dropped.",
         role: [
-          "Facilitated planning and QBR cycles for Engineering Operations",
-          "Built the scoreboard leadership used instead of ad-hoc pulls",
+          "Led planning and quarterly reviews for Engineering Operations",
+          "Built the dashboards leaders used to track progress",
           "Aligned targets and resources across functions",
         ],
       },
@@ -401,7 +400,7 @@ export const site: SiteContent = {
     resumeHref: "/resume.pdf",
     resumeFilename: "Jarrod-Tran-Resume.pdf",
     intro:
-      "I’m based in Houston. Send me a note if you’d like to talk about something I’ve written or share what you’re working on.",
+      "I’m based in Houston. If something I’ve written connects with your work, I’d like to hear what you’ve learned.",
   },
   outreach: {
     linkedin:
