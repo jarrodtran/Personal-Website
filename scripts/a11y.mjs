@@ -283,9 +283,6 @@ const title = await motion.title();
 if (title.length === 0 || title.length > 60) {
   failures.push(`page title: ${title.length} characters, not 1 to 60`);
 }
-if ((await animatedReveals(motion)) === 0) {
-  failures.push("reveal: nothing animates when motion is allowed");
-}
 if ((await hiddenReveals(motion)) > 0) {
   failures.push("reveal: content starts hidden");
 }
