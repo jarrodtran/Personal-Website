@@ -22,8 +22,7 @@ describe("contact restraint and section simplicity", () => {
       expect(html).not.toContain(redundantLabel);
     }
 
-    // "Résumé" appears once as the download link text, not twice as label + link.
-    expect(html.match(/Résumé/g) ?? []).toHaveLength(1);
+    expect(html).not.toContain("download=");
   });
 
   it("keeps Section on a single contained path without an unused contained prop", () => {

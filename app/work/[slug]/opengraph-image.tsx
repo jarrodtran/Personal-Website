@@ -80,9 +80,9 @@ export default async function OpenGraphImage({
         <div
           style={{
             display: "flex",
-            fontFamily: "Instrument Serif",
-            fontSize: 52,
-            letterSpacing: -1.2,
+            fontFamily: "Newsreader, ArrowFallback",
+            fontSize: 44,
+            letterSpacing: -1,
             lineHeight: 1.1,
             maxWidth: 960,
           }}
@@ -99,8 +99,8 @@ export default async function OpenGraphImage({
           <div
             style={{
               display: "flex",
-              fontFamily: "Instrument Serif",
-              fontSize: 72,
+              fontFamily: "Newsreader, ArrowFallback",
+              fontSize: 64,
               color: ogColors.accent,
               lineHeight: 1,
             }}
@@ -110,7 +110,7 @@ export default async function OpenGraphImage({
           <div
             style={{
               display: "flex",
-              fontFamily: "IBM Plex Sans",
+              fontFamily: "IBM Plex Sans, ArrowFallback",
               fontSize: 24,
               color: ogColors.muted,
               maxWidth: 560,

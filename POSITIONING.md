@@ -1,77 +1,15 @@
-# Positioning — keep this narrative
+# jarrodtran.com
 
-Single public story for [jarrodtran.com](https://jarrodtran.com). Do not fragment it into audience-specific pages, headlines, or toggles.
+Jarrod Tran’s personal site leads with Worth Mulling, a publication about AI products, judgment, and how teams decide what to build. The homepage introduces Jarrod, gives readers a way to read or subscribe, provides a brief work history with links to four case studies, and invites conversation.
 
-## Core Direction
+Use one public narrative. Keep the prose personal and specific. Work examples should explain the decision Jarrod owned, how he made it, and what happened. Keep employers, dates, and official titles factual. The current role is Lead, AI Enablement & Factory Strategy. Use the official title as written and avoid factory and heavy operational framing elsewhere in visitor copy.
 
-Position Jarrod Tran as a high-signal **corporate operator / product & strategy** professional.
+## Publishing
 
-Emphasize:
+The homepage reads the Substack feed when the static site builds. After publishing on Substack, run the GitHub Pages deployment workflow to refresh the site. The site shows up to five recent posts. When the feed is empty, visitors can subscribe. When the feed is unavailable, visitors can open the publication directly.
 
-- AI product work
-- Cross-functional leadership
-- Structured problem-solving
-- Organizational impact
+The résumé is a supporting download in About and the footer. Each figure used in the site’s case studies must appear in the committed résumé or have a recorded source in the metric ledger. The current PDF SHA-256 is `27ebe3dfe8b3a7327e895b1eafc628dc4a555b96e378261b778ec55341e41cb9`. Update the PDF, this hash, and its test assertion together.
 
-Tone: polished, confident, corporate. Company names, official job titles, and proven impact numbers stay factual.
+## Design
 
-Target conversations at:
-
-1. Growth-stage tech
-2. Consulting
-3. Early-stage startups
-4. VC-adjacent operator seats
-
-## Single coherent narrative
-
-There is one headline, one value proposition, and one About story. `headlineVariants` and per-bullet `audiences` tags are unused internal data — never ship four public versions.
-
-Keep improving that one story. Do not create Tech / VC / Consulting / Startup forks of the page.
-
-Say each thing once. `pnpm test` fails when a five-word phrase without a figure appears in more than one visitor-facing string.
-
-## Factory-language ban
-
-Visitor-facing copy must not use factory, manufacturing, or heavy operational framing.
-
-Banned tokens (case-insensitive): `factory`, `manufacturing`, `manufactured`, `mass production`, `shop floor`, `GWh`, `unit cost`, `cost per unit`, `supplier`, `logistics`, `battery-cell`, `Energy Manufacturing`.
-
-`operator` is requested positioning, not a ban. Official titles (e.g. Lead, AI Enablement & Factory Strategy) stay; the current one is set once as `currentTitle` in `content/site.ts`. Recast mechanisms as product, strategy, investment, and organizational decisions. Keep the proof points; change the language around them.
-
-Copy lives in [`content/site.ts`](content/site.ts) and section headings on `site.sections`. The contract is enforced by `pnpm test`.
-
-## Number ledger
-
-Every figure on the site (role bullets, case studies, principles, bio) must appear in the committed résumé, [`public/resume.pdf`](public/resume.pdf). `tests/metric-ledger.test.ts` reads the text in that PDF and fails on any figure it does not contain, except figures with a recorded source. `tests/copy-contract.test.ts` pins the file to sha256 `0933308be9e1d33db155a2eb0c0dc2a2494311f1b3f926dae2ba3f5c1796e164`, so a new résumé means updating that pin in the same PR. To add a number, put it in the résumé PDF first.
-
----
-
-## Plan-mode prompt (paste into Cursor)
-
-```
-Plan a change to this personal site. Do not implement until the plan is approved.
-
-Core Direction: Position Jarrod Tran as a high-signal corporate operator / product & strategy professional. Emphasize AI product work, cross-functional leadership, structured problem-solving, and organizational impact. Tone: polished, confident, corporate. Target growth-stage tech, consulting, early-stage startups, and VC-adjacent operator seats.
-
-Working style: one coherent public narrative — not four audience-specific stories or pages. Prefer concrete copy rewrites in content/site.ts (and site.sections for headings). Keep employers, official titles, and impact numbers; recast mechanisms as product, strategy, investment, and organizational decisions.
-
-Factory-language ban: do not use factory, manufacturing, manufactured, mass production, shop floor, GWh, unit cost, cost per unit, supplier, logistics, battery-cell, or Energy Manufacturing in visitor-facing copy. Flag any drift back toward operational/factory language.
-
-Non-goals unless I ask: visual redesign, new routes, audience-switcher UI, rewriting the résumé PDF, DNS, or Formspree.
-
-Read POSITIONING.md and content/site.ts first. Propose the smallest copy (and only necessary code) change that keeps the live site aligned with this brief.
-```
-
-## Build prompt (paste after plan approval)
-
-```
-Implement the approved plan against this personal site.
-
-Keep a single coherent corporate operator / product & strategy narrative for growth-stage tech, consulting, early-stage startups, and VC-adjacent operator seats. Emphasize AI product work, cross-functional leadership, structured problem-solving, and organizational impact. Polished, confident, corporate tone.
-
-Edit content/site.ts (and site.sections) in place. Do not ship headlineVariants or per-bullet audiences as public UI. Do not invent employers, titles, or metrics.
-
-Factory-language ban — visitor-facing copy must not contain: factory, manufacturing, manufactured, mass production, shop floor, GWh, unit cost, cost per unit, supplier, logistics, battery-cell, Energy Manufacturing.
-
-After copy changes: pnpm test (copy-contract), pnpm check, pnpm build. Fix anything that fails before you stop.
-```
+Keep the monochrome palette, Newsreader and IBM Plex Sans, and one readable prose column. Keep controls reachable by keyboard and touch, including at narrow widths and doubled text size. The four case-study URLs and legacy writing and work redirects remain part of the public site.

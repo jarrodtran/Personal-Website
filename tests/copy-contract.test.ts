@@ -1,5 +1,13 @@
+import { execFileSync } from "node:child_process";
 import { createHash } from "node:crypto";
-import { existsSync, readdirSync, readFileSync } from "node:fs";
+import {
+  existsSync,
+  mkdtempSync,
+  readdirSync,
+  readFileSync,
+  rmSync,
+} from "node:fs";
+import { tmpdir } from "node:os";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
 import { site } from "@/content/site";
@@ -26,7 +34,6 @@ describe("visitor-facing copy contract", () => {
     expect(copy).toContain(site.positioning.valueProp);
     expect(copy).toContain(site.contact.intro);
     expect(copy).toContain(site.about.bio[0]);
-    expect(copy).toContain(site.about.lookingForIntro);
     expect(copy).toContain("1,000+");
     expect(copy).toContain("$1.6M");
     expect(copy.includes("$156M") || copy.includes("$260M")).toBe(true);
@@ -35,22 +42,10 @@ describe("visitor-facing copy contract", () => {
     );
   });
 
-  it("states corporate operator / product & strategy positioning, AI product, leadership, impact, and the four audiences", () => {
-    const lower = copy.toLowerCase();
-    expect(
-      lower.includes("corporate operator") ||
-        lower.includes("product & strategy"),
-    ).toBe(true);
-    expect(lower).toContain("ai product");
-    expect(lower).toContain("cross-functional leadership");
-    expect(
-      lower.includes("structured problem-solving") ||
-        lower.includes("organizational impact"),
-    ).toBe(true);
-    expect(lower).toContain("growth-stage tech");
-    expect(lower).toContain("consulting");
-    expect(lower).toContain("early-stage startup");
-    expect(lower).toContain("operating role at a vc firm");
+  it("uses one writing-led introduction and contact invitation", () => {
+    expect(copy).toContain(site.positioning.intro);
+    expect(site.positioning.documentTitle).toContain(site.substack.name);
+    expect(site.contact.intro).toContain("something I’ve written");
   });
 
   // rule:one-public-narrative
@@ -153,12 +148,6 @@ describe("visitor-facing copy contract", () => {
     expect(site.positioning.valueProp.length).toBeGreaterThan(0);
     expect(site.about.bio.length).toBeGreaterThan(0);
 
-    const variants = Object.values(site.positioning.headlineVariants);
-    expect(variants).toHaveLength(4);
-    for (const variant of variants) {
-      expect(copy).not.toContain(variant);
-    }
-
     const hero = readSiteFile("components/sections/hero.tsx");
     expect(hero).toContain("site.positioning.name");
     expect(hero).not.toContain("site.positioning.headline");
@@ -243,13 +232,34 @@ describe("visitor-facing copy contract", () => {
     expect(pdf.subarray(0, 5).toString("latin1")).toBe("%PDF-");
     expect(pdf.byteLength).toBeGreaterThan(3_000);
     expect(pdf.toString("latin1")).toContain("/Count 1");
+    expect(pdf.includes("/Subtype /Image")).toBe(false);
+    expect(pdf.includes("/XObject")).toBe(false);
   });
 
   it("pins the committed resume to the one-page file bytes", () => {
     const pdf = readFileSync(path.join(root, "public/resume.pdf"));
     expect(createHash("sha256").update(pdf).digest("hex")).toBe(
-      "0933308be9e1d33db155a2eb0c0dc2a2494311f1b3f926dae2ba3f5c1796e164",
+      "27ebe3dfe8b3a7327e895b1eafc628dc4a555b96e378261b778ec55341e41cb9",
     );
+  });
+
+  it("ships the résumé the builder writes", () => {
+    const directory = mkdtempSync(path.join(tmpdir(), "jarrod-resume-"));
+    try {
+      const destination = path.join(directory, "resume.pdf");
+      execFileSync(
+        process.execPath,
+        [path.join(root, "scripts/build-resume-pdf.mjs"), destination],
+        { stdio: "pipe" },
+      );
+      const generated = readFileSync(destination);
+      const committed = readFileSync(path.join(root, "public/resume.pdf"));
+      expect(createHash("sha256").update(generated).digest("hex")).toBe(
+        createHash("sha256").update(committed).digest("hex"),
+      );
+    } finally {
+      rmSync(directory, { recursive: true, force: true });
+    }
   });
 
   // rule:no-em-dashes

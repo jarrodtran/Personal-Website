@@ -1,22 +1,14 @@
 # jarrodtran.com
 
-Personal site for [Jarrod Tran](https://jarrodtran.com) — product and strategy operator. Built with Next.js 16 (App Router), TypeScript, and Tailwind CSS v4. Statically exported to GitHub Pages.
+Personal site for [Jarrod Tran](https://jarrodtran.com) and his publication, Worth Mulling. Built with Next.js 16 (App Router), TypeScript, and Tailwind CSS v4. Statically exported to GitHub Pages.
 
 ## Customize
 
-Positioning rules, the factory-language ban, the number ledger, and ready-to-paste Plan / Build prompts live in [`POSITIONING.md`](POSITIONING.md). Keep one public narrative.
+[POSITIONING.md](POSITIONING.md) describes the site's editorial direction and the rules for factual claims.
 
-Almost everything you will change lives in two places:
-
-1. **Copy and data** — [`content/site.ts`](content/site.ts)
-   - Official current title: `currentTitle` at the top of the file. It feeds the hero, bio, Experience, and JSON-LD.
-   - Name, headline, page title (`documentTitle`, 60 characters at most), status badge
-   - Highlight stats, bio, experience (roles grouped under each employer), selected work (with its proof panel), principles
-   - Section eyebrows, titles, and descriptions on `site.sections` (numbered in page order)
-   - Contact links, résumé path and download filename, and `calendar` (the contact panel shows a booking link only when it is set)
-   - `headlineVariants` and `audiences` tags are unused internal data — do not ship four public versions
-2. **Accent color** — [`app/globals.css`](app/globals.css)
-   - Change `--accent` (and `--ring`) under `:root` and `.dark`
+- [content/site.ts](content/site.ts) holds the introduction, biography, case studies, contact details, résumé link, and Substack URL.
+- [app/globals.css](app/globals.css) and [lib/palette.ts](lib/palette.ts) define the type scale, spacing, and shared colors.
+- Publish essays on Substack, then run the GitHub Pages deployment workflow to update the static homepage.
 
 Every figure on the site must also appear in the résumé source. Add numbers to the résumé first; `pnpm test` fails otherwise.
 
@@ -40,7 +32,7 @@ After a build:
   - a reveal animation hides content, or runs under reduced motion
   - the phone menu ignores Escape, drops focus, or stays open at desktop width
   - the phone menu cannot reach its last link on a short viewport
-  - at 320x256 with 200% text the header grows past 184px, or Résumé sits outside the panel
+  - at 320x256 with 200% text the header grows past 184px, or Contact sits outside the panel
   - the copy-email button does not announce success or failure
 - `pnpm size` prints the JS and HTML bytes the home page loads, raw and gzip, and fails when the JS is over 150 kB gzip. Raise the budget in `scripts/js-size.mjs` only on purpose.
 

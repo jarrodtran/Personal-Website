@@ -1,21 +1,19 @@
 import { About } from "@/components/sections/about";
 import { Contact } from "@/components/sections/contact";
-import { Experience } from "@/components/sections/experience";
 import { Hero } from "@/components/sections/hero";
-import { HowIWork } from "@/components/sections/how-i-work";
 import { SelectedWork } from "@/components/sections/selected-work";
 import { Writing } from "@/components/sections/writing";
 import { site } from "@/content/site";
+import { homeMetadata } from "@/lib/metadata";
 import { loadWritingResult } from "@/lib/writing";
+
+export const metadata = homeMetadata;
 
 export default async function Home() {
   const result = await loadWritingResult(site.substack);
   if (!result.ok) {
-    // Build-time visibility: a dead feed otherwise ships silently as the
-    // empty Writing state.
-    console.error(`writing feed: ${result.reason}; Writing renders its empty state`);
+    console.error(`writing feed: ${result.reason}`);
   }
-  const posts = result.posts;
 
   return (
     <div
@@ -24,11 +22,9 @@ export default async function Home() {
     >
       <div className="w-full max-w-[var(--container-prose)] [&_#top>div]:px-0 [&_section>div]:px-0">
         <Hero />
-        <Writing posts={posts} />
+        <Writing posts={result.posts} unavailable={!result.ok} />
         <About />
-        <Experience />
         <SelectedWork />
-        <HowIWork />
         <Contact />
       </div>
     </div>

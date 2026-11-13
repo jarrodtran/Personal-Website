@@ -1,0 +1,30 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended"],
+  "description": "Weekly dependency PRs for jarrodtran.com.",
+  "timezone": "America/Chicago",
+  "schedule": ["before 9am on Monday"],
+  "prHourlyLimit": 1,
+  "prConcurrentLimit": 2,
+  "labels": ["deps"],
+  "rangeStrategy": "replace",
+  "lockFileMaintenance": {
+    "enabled": true,
+    "schedule": ["before 9am on Monday"]
+  },
+  "packageRules": [
+    {
+      "description": "Keep major tooling upgrades manual",
+      "matchPackageNames": [
+        "eslint",
+        "typescript",
+        "vitest",
+        "prettier",
+        "prettier-plugin-tailwindcss"
+      ],
+      "matchUpdateTypes": ["major"],
+      "enabled": false
+    }
+  ],
+  "automerge": false
+}

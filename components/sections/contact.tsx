@@ -2,22 +2,23 @@ import { ArrowUpRight } from "lucide-react";
 import { CopyEmail } from "@/components/copy-email";
 import { Section, SectionHeading } from "@/components/section";
 import { site } from "@/content/site";
-import { withBasePath } from "@/lib/base-path";
 import { tap, textAction } from "@/lib/ui";
 
 export function Contact() {
-  const { email, linkedin, resumeHref, resumeFilename, calendar } =
-    site.contact;
+  const { email, linkedin, calendar } = site.contact;
 
   return (
-    <Section id="contact" className="bg-muted/50">
-      <div className="grid items-start gap-x-14 lg:grid-cols-2">
+    <Section id="contact">
+      <div className="space-y-4">
         <SectionHeading title={site.sections.contact.title}>
           <p className="text-muted-foreground measure mt-4 text-[length:var(--text-body)] leading-[var(--leading-copy)] text-pretty">
             {site.contact.intro}
           </p>
         </SectionHeading>
-        <ul className="border-border divide-border divide-y border-y">
+        <ul
+          role="list"
+          className="border-border divide-border divide-y border-y"
+        >
           <li className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1 py-3">
             <a
               href={`mailto:${email}`}
@@ -47,15 +48,6 @@ export function Contact() {
               className={textAction}
             >
               Invite me to speak
-            </a>
-          </li>
-          <li className="py-3">
-            <a
-              href={withBasePath(resumeHref)}
-              download={resumeFilename}
-              className={textAction}
-            >
-              Résumé
             </a>
           </li>
           {calendar ? (

@@ -86,6 +86,18 @@ function run() {
     }
   });
 
+  // ICO supports embedding the existing PNG as its single image entry.
+  const icon = readFileSync(join(out, "icon.png"));
+  const directory = Buffer.alloc(22);
+  directory.writeUInt16LE(1, 2); // Resource type: icon
+  directory.writeUInt16LE(1, 4); // Image count
+  directory[6] = directory[7] = 32;
+  directory.writeUInt16LE(1, 10); // Color planes
+  directory.writeUInt16LE(32, 12); // Bits per pixel
+  directory.writeUInt32LE(icon.length, 14);
+  directory.writeUInt32LE(directory.length, 18);
+  writeFileSync(join(out, "favicon.ico"), Buffer.concat([directory, icon]));
+
   const bad = [];
   walk(out, (path) => {
     if (!path.endsWith(".html")) return;

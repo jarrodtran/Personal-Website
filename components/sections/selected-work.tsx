@@ -1,75 +1,35 @@
+import { ArrowUpRight } from "lucide-react";
 import Link from "next/link";
 import { Section, SectionHeading } from "@/components/section";
 import { site } from "@/content/site";
-import { cn } from "@/lib/cn";
+import { tap } from "@/lib/ui";
 
 export function SelectedWork() {
   return (
     <Section id="work">
+      <span id="experience" className="block scroll-mt-24" />
       <SectionHeading title={site.sections.work.title} />
-
-      <div className="grid gap-6 sm:grid-cols-2">
-        {site.selectedWork.map((item, index) => {
-          const featured = index === 0;
-          return (
-            <article
-              key={item.slug}
-              className={cn(
-                "reveal border-border bg-card group has-[a:focus-visible]:outline-ring relative flex min-w-0 flex-col overflow-hidden border has-[a:focus-visible]:outline-2 has-[a:focus-visible]:outline-offset-2",
-                featured && "sm:col-span-2",
-              )}
+      <p className="text-muted-foreground measure text-body leading-[var(--leading-copy)]">
+        These case studies cover the AI tools we put into production at Tesla
+        Energy, how we allocated investment, and earlier work at Apple and
+        Waymo.
+      </p>
+      <ul
+        role="list"
+        className="border-border divide-border mt-4 divide-y border-y"
+      >
+        {site.selectedWork.map(({ slug, title }) => (
+          <li key={slug}>
+            <Link
+              href={`/work/${slug}/`}
+              className={`${tap} w-full gap-3 py-2 font-medium underline-offset-4 hover:underline`}
             >
-              <div
-                className={cn(
-                  "border-border bg-surface @container flex aspect-[3/2] w-full min-w-0 flex-col justify-end border-b p-[20px] sm:p-[28px]",
-                  featured &&
-                    "sm:order-last sm:aspect-auto sm:min-h-0 sm:justify-start sm:border-t sm:border-b-0",
-                )}
-              >
-                <div>
-                  <p
-                    className={cn(
-                      "tabular font-display text-[length:min(var(--text-figure),30cqi)] leading-[var(--leading-figure)] sm:text-[length:min(var(--text-figure-lg),30cqi)]",
-                      featured && "measure",
-                    )}
-                  >
-                    {item.panel.value}
-                  </p>
-                  <p
-                    className={cn(
-                      "text-muted-foreground mt-3 text-small",
-                      featured ? "measure" : "max-w-xs",
-                    )}
-                  >
-                    {item.panel.label}
-                  </p>
-                </div>
-              </div>
-              <div className="flex min-w-0 flex-1 flex-col p-5 sm:p-7">
-                <h3 className="font-display text-[length:var(--text-h3)] leading-[var(--leading-title)] tracking-tight sm:text-[length:var(--text-title-step)]">
-                  <Link
-                    href={`/work/${item.slug}/`}
-                    className="underline-offset-4 group-hover:underline after:absolute after:inset-0 after:content-[''] focus-visible:outline-none"
-                  >
-                    {item.title}
-                  </Link>
-                </h3>
-                <div className="mt-4 space-y-3">
-                  <p className="text-muted-foreground text-[length:var(--text-body)] leading-[var(--leading-copy)]">
-                    {item.problem}
-                  </p>
-                  <p className="text-muted-foreground text-[length:var(--text-body)] leading-[var(--leading-copy)]">
-                    {item.contribution}
-                  </p>
-                  <p className="text-muted-foreground text-[length:var(--text-body)] leading-[var(--leading-copy)]">
-                    {item.outcome}
-                  </p>
-                </div>
-              </div>
-            </article>
-          );
-        })}
-      </div>
+              <span className="min-w-0 flex-1">{title}</span>
+              <ArrowUpRight className="size-[16px] shrink-0" aria-hidden="true" />
+            </Link>
+          </li>
+        ))}
+      </ul>
     </Section>
   );
 }

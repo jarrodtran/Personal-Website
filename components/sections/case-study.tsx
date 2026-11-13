@@ -19,7 +19,10 @@ function Block({
 
 function BulletList({ items }: { items: string[] }) {
   return (
-    <ul className="text-muted-foreground measure space-y-3 text-[length:var(--text-body)] leading-[var(--leading-copy)]">
+    <ul
+      role="list"
+      className="text-muted-foreground measure space-y-3 text-[length:var(--text-body)] leading-[var(--leading-copy)]"
+    >
       {items.map((item) => (
         <li key={item}>{item}</li>
       ))}
@@ -59,15 +62,6 @@ export function CaseStudyBody({ item }: { item: SelectedWorkItem }) {
         </p>
       </div>
 
-      {next ? (
-        <Link
-          href={`/work/${next.slug}/`}
-          className={`${textAction} mt-4 w-full sm:w-auto`}
-        >
-          Next: {next.title}
-        </Link>
-      ) : null}
-
       <div className="mt-12">
         <Block label="Context">
           <p className="text-muted-foreground measure text-[length:var(--text-body)] leading-[var(--leading-copy)] text-pretty">
@@ -91,6 +85,14 @@ export function CaseStudyBody({ item }: { item: SelectedWorkItem }) {
       </div>
 
       <div className="border-border mt-10 flex flex-col gap-1 border-t pt-6 sm:flex-row sm:flex-wrap sm:items-center sm:gap-4">
+        {next ? (
+          <Link
+            href={`/work/${next.slug}/`}
+            className={`${textAction} w-full sm:w-auto`}
+          >
+            Next: {next.title}
+          </Link>
+        ) : null}
         {item.link ? (
           <a
             href={item.link.href}

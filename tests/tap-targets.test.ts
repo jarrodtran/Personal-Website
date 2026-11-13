@@ -172,84 +172,6 @@ describe("390px tap targets and first screen", () => {
     }
   }, 180_000);
 
-  it("makes each selected work title link cover its card with a 44px tap box", async () => {
-    const { browser, page } = await open("/");
-    const cards = await page.evaluate(
-      (slugs) => {
-        const section = document.getElementById("work");
-        return [...(section?.querySelectorAll("article") ?? [])].map(
-          (article, index) => {
-            const link = article.querySelector("a");
-            const after = link ? getComputedStyle(link, "::after") : null;
-            const articleBox = article.getBoundingClientRect();
-            const afterWidth = after ? parseFloat(after.width) : 0;
-            const afterHeight = after ? parseFloat(after.height) : 0;
-            return {
-              slug: slugs[index],
-              href: link?.getAttribute("href") ?? "",
-              linkCount: article.querySelectorAll("a").length,
-              afterWidth,
-              afterHeight,
-              articleWidth: articleBox.width,
-              articleHeight: articleBox.height,
-            };
-          },
-        );
-      },
-      site.selectedWork.map((item) => item.slug),
-    );
-    await browser.close();
-
-    expect(cards).toHaveLength(site.selectedWork.length);
-    for (const card of cards) {
-      expect(card.linkCount, card.slug).toBe(1);
-      expect(card.href, card.slug).toMatch(new RegExp(`/work/${card.slug}/?$`));
-      expect(card.afterWidth, `${card.slug} tap width`).toBeGreaterThanOrEqual(
-        44,
-      );
-      expect(
-        card.afterHeight,
-        `${card.slug} tap height`,
-      ).toBeGreaterThanOrEqual(44);
-      expect(
-        card.afterWidth,
-        `${card.slug} overlay width`,
-      ).toBeGreaterThanOrEqual(card.articleWidth - 4);
-      expect(
-        card.afterHeight,
-        `${card.slug} overlay height`,
-      ).toBeGreaterThanOrEqual(card.articleHeight - 4);
-    }
-  });
-
-  it("puts the selected work card ring on the article, not the title link", async () => {
-    const { browser, page } = await open("/");
-    const title = page.locator("#work article a").first();
-    await title.scrollIntoViewIfNeeded();
-    await page.keyboard.press("Tab");
-    await title.focus();
-
-    const outlines = await title.evaluate((link) => {
-      const article = link.closest("article");
-      if (!article) return null;
-      const linkStyle = getComputedStyle(link);
-      const articleStyle = getComputedStyle(article);
-      return {
-        linkMatches: link.matches(":focus-visible"),
-        linkOutlineStyle: linkStyle.outlineStyle,
-        articleOutlineStyle: articleStyle.outlineStyle,
-        articleOutlineWidth: articleStyle.outlineWidth,
-      };
-    });
-    await browser.close();
-
-    expect(outlines).not.toBeNull();
-    expect(outlines?.linkMatches).toBe(true);
-    expect(outlines?.linkOutlineStyle).toBe("none");
-    expect(outlines?.articleOutlineStyle).toBe("solid");
-    expect(outlines?.articleOutlineWidth).toBe("2px");
-  });
-
   it("shows the hero, then the Writing heading, on the first screen", async () => {
     const { browser, page } = await open("/");
     const view = await page.evaluate(() => {
@@ -267,7 +189,7 @@ describe("390px tap targets and first screen", () => {
       };
     });
     await browser.close();
-    expect(view.hero).toEqual([site.positioning.name]);
+    expect(view.hero).toEqual([site.positioning.name, site.positioning.intro]);
     expect(view.writingTitle).toBe(site.substack.name);
     expect(view.writingBottom).toBeGreaterThan(0);
     expect(view.writingBottom).toBeLessThanOrEqual(view.viewport);
@@ -416,8 +338,9 @@ describe("390px tap targets and first screen", () => {
   it("resolves résumé, email, LinkedIn, and the next case-study link", async () => {
     const { browser, page } = await open("/");
     const home = await page.evaluate(() => {
-      const resume =
-        document.querySelector<HTMLAnchorElement>("header a[download]");
+      const resume = document.querySelector<HTMLAnchorElement>(
+        "#about a[download], #contact a[download]",
+      );
       const email =
         document.querySelector<HTMLAnchorElement>('a[href^="mailto:"]');
       const linkedin = document.querySelector<HTMLAnchorElement>(
@@ -442,7 +365,7 @@ describe("390px tap targets and first screen", () => {
     expect(nextHref).toMatch(/\/work\/tesla-energy-portfolio\/?$/);
   });
 
-  it("keeps the header short and Résumé reachable at 320x256 with 200% text", async () => {
+  it("keeps the header short and Contact reachable at 320x256 with 200% text", async () => {
     const browser = await chromium.launch();
     const page = await browser.newPage({
       viewport: { width: 320, height: 256 },
@@ -507,7 +430,7 @@ describe("390px tap targets and first screen", () => {
     });
     await browser.close();
 
-    expect(menu.text).toMatch(/R[ée]sum[ée]/);
+    expect(menu.text).toBe("Contact");
     expect(menu.top).toBeGreaterThanOrEqual(menu.panelTop - 1);
     expect(menu.bottom).toBeLessThanOrEqual(menu.viewport + 1);
     expect(menu.bottom).toBeLessThanOrEqual(menu.panelBottom + 1);

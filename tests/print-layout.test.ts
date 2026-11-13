@@ -120,8 +120,7 @@ describe("print stylesheet", () => {
           (document.querySelector("main")?.getBoundingClientRect().height ??
             0) > 0,
         h2BreakAfter: breaks("h2", "breakAfter"),
-        h3BreakAfter: breaks("h3", "breakAfter"),
-        approachBreakInside: breaks("#approach li", "breakInside"),
+        workBreakInside: breaks("#work li", "breakInside"),
         contactBreakBefore: contact
           ? getComputedStyle(contact).breakBefore
           : "missing",
@@ -164,20 +163,18 @@ describe("print stylesheet", () => {
     expect(screen.bodyBackground).not.toBe("rgb(255, 255, 255)");
   });
 
-  it("keeps headings with the next block, keeps approach rows whole, and starts contact on a new page", async () => {
+  it("keeps headings with the next block, keeps work rows whole, and lets contact flow", async () => {
     const { print } = await readPrint("/", "light");
     const filled = (values: string[], expected: string) =>
       values.length === 0 ? ["missing"] : values.map(() => expected);
     expect({
       h2BreakAfter: print.h2BreakAfter,
-      h3BreakAfter: print.h3BreakAfter,
-      approachBreakInside: print.approachBreakInside,
+      workBreakInside: print.workBreakInside,
       contactBreakBefore: print.contactBreakBefore,
     }).toEqual({
       h2BreakAfter: filled(print.h2BreakAfter, "avoid"),
-      h3BreakAfter: filled(print.h3BreakAfter, "avoid"),
-      approachBreakInside: filled(print.approachBreakInside, "avoid"),
-      contactBreakBefore: "page",
+      workBreakInside: filled(print.workBreakInside, "avoid"),
+      contactBreakBefore: "auto",
     });
   });
 

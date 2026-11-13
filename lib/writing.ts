@@ -62,22 +62,56 @@ export function formatPostDate(iso: string): string {
   }).format(date);
 }
 
-function decode(text: string): string {
-  return oneLine(
-    text
-      .replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, "$1")
-      .replace(/<[^>]+>/g, " ")
-      .replace(/&amp;/g, "&")
-      .replace(/&lt;/g, "<")
-      .replace(/&gt;/g, ">")
-      .replace(/&quot;/g, '"')
-      .replace(/&#39;/g, "'"),
+const entities: Record<string, string> = {
+  amp: "&",
+  lt: "<",
+  gt: ">",
+  quot: '"',
+  apos: "'",
+  nbsp: " ",
+  lsquo: "‘",
+  rsquo: "’",
+  ldquo: "“",
+  rdquo: "”",
+  hellip: "…",
+};
+
+function decodeEntities(text: string): string {
+  return text.replace(
+    /&(#x[0-9a-f]+|#\d+|[a-z]+);/gi,
+    (entity, key: string) => {
+      if (!key.startsWith("#"))
+        return Object.hasOwn(entities, key) ? entities[key] : entity;
+      const hex = key[1]?.toLowerCase() === "x";
+      const value = Number.parseInt(key.slice(hex ? 2 : 1), hex ? 16 : 10);
+      if (
+        value === 0 ||
+        value > 0x10ffff ||
+        (value >= 0xd800 && value <= 0xdfff)
+      ) {
+        return "�";
+      }
+      return String.fromCodePoint(value);
+    },
   );
 }
 
+function decode(text: string): string {
+  const raw = text.replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, "$1");
+  return oneLine(decodeEntities(raw).replace(/<\/?[a-z][^>]*>/gi, " "));
+}
+
 function capBlurb(text: string): string {
-  if (text.length <= WRITING_BLURB_MAX_CHARS) return text;
-  return text.slice(0, WRITING_BLURB_MAX_CHARS).trimEnd();
+  const chars = Array.from(text);
+  if (chars.length <= WRITING_BLURB_MAX_CHARS) return text;
+  const limit = WRITING_BLURB_MAX_CHARS - 1;
+  const prefix = chars.slice(0, limit).join("");
+  const boundary = prefix.lastIndexOf(" ");
+  const clipped =
+    chars[limit] === " " || boundary < limit / 2
+      ? prefix
+      : prefix.slice(0, boundary);
+  return `${clipped.trimEnd()}…`;
 }
 
 function tag(block: string, name: string): string {
@@ -89,9 +123,9 @@ function tag(block: string, name: string): string {
 
 function hrefOf(block: string): string {
   const rel = block.match(/<link\b[^>]*rel="alternate"[^>]*href="([^"]+)"/i);
-  if (rel?.[1]) return rel[1];
+  if (rel?.[1]) return decodeEntities(rel[1]);
   const any = block.match(/<link\b[^>]*href="([^"]+)"/i);
-  if (any?.[1]) return any[1];
+  if (any?.[1]) return decodeEntities(any[1]);
   return tag(block, "link") || tag(block, "guid");
 }
 

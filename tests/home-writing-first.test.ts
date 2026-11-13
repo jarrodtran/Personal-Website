@@ -30,9 +30,7 @@ const HOME_SECTION_IDS = [
   "top",
   "writing",
   "about",
-  "experience",
   "work",
-  "approach",
   "contact",
 ] as const;
 
@@ -144,26 +142,37 @@ describe("writing-first home", () => {
     textPercent: 100 | 200 = 100,
   ) {
     const { browser, page } = await openHome(width, height, textPercent);
-    const layout = await page.evaluate((sectionIds) => {
-      const sections = sectionIds.map((id) => document.getElementById(id));
-      const h1 = document.querySelector("#top h1");
-      const brand = document.querySelector("header a");
-      const headerNav = document.querySelector('header nav[aria-label="Primary"]');
-      return {
-        h1: h1?.textContent?.trim() ?? "",
-        h1Left: h1 ? Math.round(h1.getBoundingClientRect().left) : -1,
-        brandLeft: brand ? Math.round(brand.getBoundingClientRect().left) : -1,
-        introParagraphCount: document.querySelectorAll("#top p").length,
-        sectionOrder: sections.map((section) => section?.id ?? ""),
-        sectionWidths: sections.map(
-          (section) => section?.getBoundingClientRect().width ?? -1,
-        ),
-        homeHeight: document.getElementById("content")?.scrollHeight ?? -1,
-        scrollWidth: document.documentElement.scrollWidth,
-        clientWidth: document.documentElement.clientWidth,
-        desktopNavDisplay: headerNav ? getComputedStyle(headerNav).display : "",
-      };
-    }, [...HOME_SECTION_IDS]);
+    const layout = await page.evaluate(
+      (sectionIds) => {
+        const sections = sectionIds.map((id) => document.getElementById(id));
+        const h1 = document.querySelector("#top h1");
+        const brand = document.querySelector("header a");
+        const headerNav = document.querySelector(
+          'header nav[aria-label="Primary"]',
+        );
+        return {
+          h1: h1?.textContent?.trim() ?? "",
+          h1Left: h1 ? Math.round(h1.getBoundingClientRect().left) : -1,
+          brandLeft: brand
+            ? Math.round(brand.getBoundingClientRect().left)
+            : -1,
+          introParagraphCount: document.querySelectorAll("#top p").length,
+          sectionOrder: [
+            ...document.querySelectorAll("[data-testid=home-prose] section"),
+          ].map(({ id }) => id),
+          sectionWidths: sections.map(
+            (section) => section?.getBoundingClientRect().width ?? -1,
+          ),
+          homeHeight: document.getElementById("content")?.scrollHeight ?? -1,
+          scrollWidth: document.documentElement.scrollWidth,
+          clientWidth: document.documentElement.clientWidth,
+          desktopNavDisplay: headerNav
+            ? getComputedStyle(headerNav).display
+            : "",
+        };
+      },
+      [...HOME_SECTION_IDS],
+    );
     await browser.close();
     return layout;
   }
@@ -172,8 +181,8 @@ describe("writing-first home", () => {
     const layout = await readHomeLayout(1280, 800);
     expect(layout.h1).toBe(site.positioning.name);
     expect(layout.h1).not.toBe(site.positioning.headline);
-    expect(layout.introParagraphCount).toBe(0);
-    expect(layout.sectionOrder.slice(0, 2)).toEqual(["top", "writing"]);
+    expect(layout.introParagraphCount).toBe(1);
+    expect(layout.sectionOrder).toEqual(HOME_SECTION_IDS);
   });
 
   it("keeps each home section no wider than the prose column at 1280", async () => {

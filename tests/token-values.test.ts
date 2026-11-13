@@ -84,12 +84,6 @@ type Exception = {
 
 const EXCEPTIONS: Exception[] = [
   {
-    audit: "H1 bg-muted/50",
-    pr: "PR 3",
-    match: (finding) =>
-      finding.kind === "background" && finding.off === "bg-muted/50",
-  },
-  {
     audit: "13 mono label",
     pr: "Spec B",
     match: (finding) =>
@@ -302,15 +296,6 @@ function collectPage(): PageSample {
     return `${el.tagName}${id}${classes.length ? `.${classes.join(".")}` : ""}`;
   };
 
-  const mutedHalfProbe = document.createElement("div");
-  mutedHalfProbe.className = "bg-muted/50";
-  mutedHalfProbe.setAttribute("data-token-probe", "");
-  document.body.append(mutedHalfProbe);
-  const mutedHalf = normalizeColor(
-    getComputedStyle(mutedHalfProbe).backgroundColor,
-  );
-  mutedHalfProbe.remove();
-
   const closeTo = (actual: number, expected: number) =>
     Math.abs(actual - expected) <= 0.75;
 
@@ -377,7 +362,10 @@ function collectPage(): PageSample {
       !monoLabel &&
       (ratio == null || Math.abs(ratio - 1.5) >= 0.02)
     ) {
-      const snippet = (el.textContent ?? "").replace(/\s+/g, " ").trim().slice(0, 48);
+      const snippet = (el.textContent ?? "")
+        .replace(/\s+/g, " ")
+        .trim()
+        .slice(0, 48);
       add({
         audit: "T3",
         kind: "line-height",
@@ -399,16 +387,13 @@ function collectPage(): PageSample {
       });
     }
     const background = normalizeColor(style.backgroundColor);
-    const mutedPanel =
-      background === mutedHalf &&
-      /^(experience|approach|contact)$/.test(el.id);
     if (!allowedColors.has(background)) {
       add({
         audit: "T5",
         kind: "background",
         name,
         detail: `${name} background ${style.backgroundColor}`,
-        off: mutedPanel ? "bg-muted/50" : "",
+        off: "",
         ratio: null,
       });
     }
@@ -673,8 +658,17 @@ function contractLines(
     if (!sample.css.includes("light-dark(")) {
       lines.push("T6 shipped CSS has no light-dark()");
     }
-    if (sample.css.includes("prefers-color-scheme")) {
-      lines.push("T6 shipped CSS still has a prefers-color-scheme fallback");
+    const nonIconCss = sample.css.replace(
+      /@media\s*\(prefers-color-scheme:\s*dark\)\s*\{(?:[^{}]|\{[^{}]*\})*\}/g,
+      (rule) =>
+        rule.includes(".theme-sun") &&
+        rule.includes(".theme-moon") &&
+        !rule.includes("--")
+          ? ""
+          : rule,
+    );
+    if (nonIconCss.includes("prefers-color-scheme")) {
+      lines.push("T6 only the theme icons may use prefers-color-scheme");
     }
     if (!/color-scheme:\s*light dark/.test(sample.css)) {
       lines.push("T6 shipped CSS does not set color-scheme: light dark");
@@ -799,15 +793,12 @@ function sectionLines(sample: PageSample, where: string): string[] {
   return lines;
 }
 
-it("paints figure tiles and case-study panels with --surface", async () => {
+it("paints case-study panels with --surface", async () => {
   const { origin, close } = await startOutServer();
   const browser = await chromium.launch();
   try {
     const page = await browser.newPage();
-    const routes = [
-      "/",
-      ...site.selectedWork.map((item) => `/work/${item.slug}/`),
-    ];
+    const routes = [...site.selectedWork.map((item) => `/work/${item.slug}/`)];
     for (const scheme of SCHEMES) {
       for (const route of routes) {
         await page.setViewportSize({ width: 1280, height: 900 });
@@ -820,26 +811,22 @@ it("paints figure tiles and case-study panels with --surface", async () => {
           (expected) => document.documentElement.classList.contains(expected),
           scheme,
         );
-        const painted = await page.evaluate((home) => {
+        const painted = await page.evaluate(() => {
           const probe = document.createElement("div");
           probe.setAttribute("data-token-probe", "");
           probe.style.backgroundColor = "var(--surface)";
           document.body.append(probe);
           const surface = getComputedStyle(probe).backgroundColor;
           probe.remove();
-          const selector = home
-            ? "#work article > div:first-child"
-            : "article > div.border";
+          const selector = "article > div.border";
           return {
             surface,
             colors: [...document.querySelectorAll(selector)].map(
               (el) => getComputedStyle(el).backgroundColor,
             ),
           };
-        }, route === "/");
-        expect(painted.colors, `${route} ${scheme}`).toEqual(
-          Array.from({ length: route === "/" ? 4 : 1 }, () => painted.surface),
-        );
+        });
+        expect(painted.colors, `${route} ${scheme}`).toEqual([painted.surface]);
       }
     }
   } finally {

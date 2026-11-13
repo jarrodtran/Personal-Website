@@ -72,11 +72,15 @@ describe("deploy wiring", () => {
     const readme = readSiteFile("README.md");
     expect(readme).toContain("https://jarrodtran.com");
     expect(readme).toMatch(/This repo is live at/);
-    expect(readme).not.toMatch(/jarrodtran\.com is not served from this repo yet/);
+    expect(readme).not.toMatch(
+      /jarrodtran\.com is not served from this repo yet/,
+    );
     expect(readme).not.toMatch(
       /The deploy build sets `BASE_PATH=\/Personal-Website`/,
     );
-    expect(readme).not.toMatch(/Moving jarrodtran\.com to this repo \(pending\)/);
+    expect(readme).not.toMatch(
+      /Moving jarrodtran\.com to this repo \(pending\)/,
+    );
     expect(readme).not.toMatch(/project Pages preview path/);
     expect(readme).not.toMatch(
       /pull-request preview of `https:\/\/jarrodtran\.github\.io\/Personal-Website\/`/,
@@ -97,7 +101,7 @@ describe("deploy wiring", () => {
 
   it("prefixes raw site-root hrefs and next/image src so they resolve under the project path", () => {
     const nav = readSiteFile("components/nav.tsx");
-    const contact = readSiteFile("components/sections/contact.tsx");
+    const contact = readSiteFile("components/resume-link.tsx");
 
     expect(nav).toContain("withBasePath");
     expect(contact).toContain("withBasePath");

@@ -1,10 +1,11 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { IBM_Plex_Sans, Newsreader } from "next/font/google";
 import { Footer } from "@/components/footer";
 import { Nav } from "@/components/nav";
 import { Providers } from "@/components/providers";
 import { site, siteUrl } from "@/content/site";
 import { withBasePath } from "@/lib/base-path";
+import { palette } from "@/lib/palette";
 import "./globals.css";
 
 const plexSans = IBM_Plex_Sans({
@@ -28,25 +29,10 @@ export const metadata: Metadata = {
     template: `%s · ${site.positioning.name}`,
   },
   description: site.positioning.valueProp,
-  alternates: {
-    canonical: "/",
-  },
-  openGraph: {
-    type: "website",
-    url: siteUrl,
-    title: site.positioning.documentTitle,
-    description: site.positioning.valueProp,
-    siteName: site.positioning.name,
-    locale: "en_US",
-  },
   twitter: {
     card: "summary_large_image",
     title: site.positioning.documentTitle,
     description: site.positioning.valueProp,
-  },
-  robots: {
-    index: true,
-    follow: true,
   },
   icons: {
     icon: withBasePath("/icon.png"),
@@ -56,6 +42,13 @@ export const metadata: Metadata = {
       type: "image/png",
     },
   },
+};
+
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: palette.light.bg },
+    { media: "(prefers-color-scheme: dark)", color: palette.dark.bg },
+  ],
 };
 
 const personJsonLd = {
@@ -99,17 +92,18 @@ export default function RootLayout({
         <Providers>
           <a
             href="#content"
-            className="focus:bg-card focus:text-foreground sr-only focus:not-sr-only focus:absolute focus:top-3 focus:left-3 focus:z-[60] focus:inline-flex focus:min-h-11 focus:items-center focus:px-4"
+            className="focus:bg-card focus:text-foreground sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[60] focus:inline-flex focus:min-h-11 focus:items-center focus:px-4"
           >
             Skip to content
           </a>
-          <Nav
-            name={site.positioning.name}
-            items={site.nav}
-            resumeHref={site.contact.resumeHref}
-            resumeFilename={site.contact.resumeFilename}
-          />
-          <main id="content">{children}</main>
+          <Nav name={site.positioning.name} items={site.nav} />
+          <main
+            id="content"
+            tabIndex={-1}
+            className="scroll-mt-24 focus:outline-none"
+          >
+            {children}
+          </main>
           <Footer />
         </Providers>
       </body>
