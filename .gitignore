@@ -41,3 +41,6 @@ next-env.d.ts
 
 # test scratch dirs
 out.tap-empty/
+
+# Local verification evidence. Cleanup must leave this directory in place.
+.cursor/skills/verify-site/evidence/
