@@ -297,7 +297,7 @@ describe("hero headline layout", () => {
         );
         const layout = await page.evaluate(readHome);
         process.stdout.write(
-          `${width} ${textPercent}%: h1=${layout.h1Font} body=${layout.bodyFont} main=${MAIN_TOP_HEIGHT[width][textPercent]} pr=${layout.topHeight} one-word=${JSON.stringify(layout.singles.map((row) => row.line[0]))}\n`,
+          `${width} ${textPercent}%: h1=${layout.h1Font} body=${layout.bodyFont} top=${layout.topHeight} one-word=${JSON.stringify(layout.singles.map((row) => row.line[0]))}\n`,
         );
         await browser.close();
         expect(
