@@ -117,12 +117,16 @@ const threeXml = readFileSync(
 describe("writing", () => {
   it("offers a direct publication link when the feed cannot load", () => {
     const html = renderToStaticMarkup(<Writing posts={[]} unavailable />);
-    expect(textOf(html)).toContain("Recent posts are unavailable here.");
+    expect(textOf(html)).toContain("Read Worth Mulling on Substack");
     expect(textOf(html)).not.toContain("Get new essays by email.");
-    expect(links(html)).toContainEqual({
-      href: site.substack.url,
-      text: "Read Worth Mulling on Substack",
-    });
+    expect(links(html)).toEqual([
+      { href: site.substack.url, text: "Read Worth Mulling on Substack" },
+      {
+        href: `${site.substack.url}/subscribe`,
+        text: "Subscribe on Substack",
+        target: "_blank",
+      },
+    ]);
   });
 
   it("shows the email invitation and subscribe link when there are 0 posts", () => {
@@ -248,7 +252,7 @@ describe("writing", () => {
     const alt = "https://altname.substack.com";
     site.substack.url = alt;
     try {
-      expect(writingSubscribeUrl(site.substack)).toBe(alt);
+      expect(writingSubscribeUrl(site.substack)).toBe(`${alt}/subscribe`);
       expect(writingFeedUrl(site.substack)).toBe(`${alt}/feed`);
       expect(isOwnWritingUrl(`${alt}/p/kept`, site.substack.url)).toBe(true);
       expect(
@@ -258,7 +262,7 @@ describe("writing", () => {
       const html = renderToStaticMarkup(<Writing posts={[]} />);
       expect(links(html)).toEqual([
         {
-          href: alt,
+          href: `${alt}/subscribe`,
           text: "Subscribe on Substack",
           target: "_blank",
         },
