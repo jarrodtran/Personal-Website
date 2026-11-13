@@ -1,36 +1,12 @@
-import { palette } from "./palette";
+import { hexRgb, palette, type PaletteMode } from "./palette";
 
 /** Hex tokens used by CSS and the contrast contract. */
-export const themes = {
-  light: {
-    background: palette.light.bg,
-    foreground: palette.light.fg,
-    muted: palette.light.muted,
-    mutedForeground: palette.light.mutedForeground,
-    border: palette.light.border,
-    borderControl: palette.light.borderControl,
-    surface: palette.light.surface,
-    card: palette.light.card,
-    accent: palette.light.accent,
-    accentHover: palette.light.accentHover,
-    accentForeground: palette.light.accentForeground,
-    ring: palette.light.accent,
-  },
-  dark: {
-    background: palette.dark.bg,
-    foreground: palette.dark.fg,
-    muted: palette.dark.muted,
-    mutedForeground: palette.dark.mutedForeground,
-    border: palette.dark.border,
-    borderControl: palette.dark.borderControl,
-    surface: palette.dark.surface,
-    card: palette.dark.card,
-    accent: palette.dark.accent,
-    accentHover: palette.dark.accentHover,
-    accentForeground: palette.dark.accentForeground,
-    ring: palette.dark.accent,
-  },
-} as const;
+function toTheme(mode: PaletteMode) {
+  const { bg, fg, ...colors } = palette[mode];
+  return { background: bg, foreground: fg, ...colors, ring: colors.accent };
+}
+
+export const themes = { light: toTheme("light"), dark: toTheme("dark") };
 
 export type ThemeName = keyof typeof themes;
 
@@ -40,10 +16,7 @@ function channel(value: number): number {
 }
 
 export function relativeLuminance(hex: string): number {
-  const value = Number.parseInt(hex.slice(1), 16);
-  const r = (value >> 16) & 255;
-  const g = (value >> 8) & 255;
-  const b = value & 255;
+  const [r, g, b] = hexRgb(hex);
   return 0.2126 * channel(r) + 0.7152 * channel(g) + 0.0722 * channel(b);
 }
 
