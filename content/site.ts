@@ -137,7 +137,7 @@ export const site: SiteContent = {
             "I own Tesla Energy’s AI enablement strategy and the product team that ships it: roadmap, rules, and what I report to leadership.",
           bullets: [
             {
-              text: "Built and lead a forward-deployed AI product and engineering org at Tesla Energy, scaling adoption to 1,000+ active users across 20+ production AI solutions: RAG troubleshooting, automated reporting, workflow automation, and decision-support.",
+              text: "Built and lead a product and engineering team at Tesla Energy, scaling adoption to 1,000+ active users across 20+ production AI tools: RAG troubleshooting, automated reporting, workflow automation, and decision support.",
               metric: "1,000+",
             },
             {
@@ -161,7 +161,7 @@ export const site: SiteContent = {
             "I ran new programs at Tesla, including the 4680 launch and the Model 3 and Model Y scale-up.",
           bullets: [
             {
-              text: "Advanced Project Roadrunner, Tesla's 4680 program, from early pilot to a launch-ready platform. Stage gates, readiness reviews, and cross-functional ownership through Battery Day.",
+              text: "Advanced Project Roadrunner, Tesla's 4680 program, from early pilot to launch readiness through Battery Day, running stage gates and readiness reviews across teams.",
             },
             {
               text: "Designed and launched a $3.5M/month coordination platform (“Warehouse on Wheels”) to protect product availability during rapid scale-up.",
@@ -244,15 +244,15 @@ export const site: SiteContent = {
           "Security and data boundaries could not bend for release speed",
         ],
         decisions: [
-          "Build a dedicated product-and-engineering team",
+          "Build a dedicated product and engineering team",
           "Sequence the backlog by hours reclaimed and decision quality",
           "Ship training plus weekly adoption reporting with each release",
         ],
         outcomeDetail:
-          "We hit 1,000+ active users across 20+ production AI solutions. Modeled impact: about 540 hours back each week and $1.6M in annualized productivity value.",
+          "We reached 1,000+ active users across 20+ production AI tools, modeling roughly 540 hours saved each week and $1.6M in annualized productivity value.",
         role: [
           "Owned the enablement roadmap and what leadership saw each week",
-          "Hired and led the product-and-engineering squad",
+          "Hired and led the AI product and engineering team",
           "Set prioritization rules, governance, and adoption metrics",
         ],
       },
@@ -262,7 +262,7 @@ export const site: SiteContent = {
       preview: "Ranking investment requests by their expected return.",
       title: "Tesla Energy: which dollar moves the P&L",
       problem:
-        "Demand outran what we could fund. 50+ asks. $23M to spend. Which dollar moved the P&L?",
+        "50+ initiatives competed for a $23M budget, and leadership needed a clear rule for which dollars moved the P&L.",
       contribution:
         "I built Python and Tableau models linking investment, labor, cost, and timing. We funded the work with the best return and killed the rest. The same logic ranks AI use cases today.",
       outcome:
@@ -314,7 +314,7 @@ export const site: SiteContent = {
       link: { label: "Apple India", href: "https://www.apple.com/in/" },
       caseStudy: {
         context:
-          "India had to move from slides to a live, scaled iPhone launch while partners and demand kept shifting.",
+          "Launching iPhone in India meant qualifying local partners, clearing regulatory gates, and scaling volume at the same time instead of in sequence.",
         constraints: [
           "Quality and regulatory bars could not slip to buy speed",
           "Partner readiness trailed the volume curve",
@@ -352,7 +352,7 @@ export const site: SiteContent = {
       link: { label: "Waymo", href: "https://waymo.com/" },
       caseStudy: {
         context:
-          "Planning lived in silos. Leaders argued over conflicting numbers in meetings that rarely left one shared set of facts.",
+          "Each function tracked goals in its own spreadsheets, turning leadership reviews into debates over whose numbers were right.",
         constraints: [
           "Every plan had to account for safety and regulatory work",
           "Six functions needed shared targets without private scorekeeping",
