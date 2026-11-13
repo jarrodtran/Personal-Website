@@ -218,17 +218,3 @@ export async function loadWritingResult(
     return { ok: false, posts: [], reason };
   }
 }
-
-export async function fetchSubstackPosts(
-  config: SubstackConfig,
-): Promise<WritingPost[]> {
-  const result = await loadWritingResult(config);
-  return result.posts;
-}
-
-export async function loadWriting(
-  config: SubstackConfig,
-): Promise<WritingPost[]> {
-  const result = await loadWritingResult(config);
-  return result.posts;
-}

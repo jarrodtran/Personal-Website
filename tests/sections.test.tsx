@@ -6,9 +6,7 @@ import { SectionHeading } from "@/components/section";
 import { About } from "@/components/sections/about";
 import { CaseStudyBody } from "@/components/sections/case-study";
 import { Contact } from "@/components/sections/contact";
-import { Experience } from "@/components/sections/experience";
 import { Hero } from "@/components/sections/hero";
-import { HowIWork } from "@/components/sections/how-i-work";
 import { SelectedWork } from "@/components/sections/selected-work";
 import { Writing } from "@/components/sections/writing";
 import { nextSelectedWork, site } from "@/content/site";
@@ -321,9 +319,7 @@ describe("section headings", () => {
     const html = [
       renderToStaticMarkup(<Writing posts={[]} />),
       renderToStaticMarkup(<About />),
-      renderToStaticMarkup(<Experience />),
       renderToStaticMarkup(<SelectedWork />),
-      renderToStaticMarkup(<HowIWork />),
       renderToStaticMarkup(<Contact />),
     ].join("\n");
     const text = textOf(html);
@@ -352,6 +348,16 @@ describe("section headings", () => {
     expect(
       existsSync(
         path.resolve(__dirname, "../components/sections/capabilities.tsx"),
+      ),
+    ).toBe(false);
+    expect(
+      existsSync(
+        path.resolve(__dirname, "../components/sections/experience.tsx"),
+      ),
+    ).toBe(false);
+    expect(
+      existsSync(
+        path.resolve(__dirname, "../components/sections/how-i-work.tsx"),
       ),
     ).toBe(false);
   });
@@ -401,32 +407,6 @@ describe("selected work", () => {
         text: `${title} ${preview}`,
       })),
     );
-  });
-});
-
-describe("experience", () => {
-  const html = renderToStaticMarkup(<Experience />);
-  const companies = site.experience.map((employer) => employer.company);
-
-  it("lists each employer once", () => {
-    expect(headings(html, "h3")).toEqual(companies);
-    expect(new Set(companies).size).toBe(companies.length);
-  });
-
-  it("nests each role, with its dates, under its employer", () => {
-    const starts = companies.map((company) => html.indexOf(`>${company}<`));
-    site.experience.forEach((employer, index) => {
-      const entry = html.slice(starts[index], starts[index + 1]);
-      expect(headings(entry, "h4")).toEqual(
-        employer.roles.map((role) => role.title),
-      );
-      for (const role of employer.roles) {
-        expect(textOf(entry)).toContain(role.dates);
-      }
-      if (employer.note) {
-        expect(textOf(entry)).toContain(employer.note);
-      }
-    });
   });
 });
 

@@ -118,14 +118,9 @@ describe("visitor-facing copy contract", () => {
       expect(section).toEqual({ title: expect.any(String) });
     }
 
-    const sectionFiles = [
-      "about",
-      "contact",
-      "experience",
-      "how-i-work",
-      "selected-work",
-      "writing",
-    ].map((name) => readSiteFile(`components/sections/${name}.tsx`));
+    const sectionFiles = ["about", "contact", "selected-work", "writing"].map(
+      (name) => readSiteFile(`components/sections/${name}.tsx`),
+    );
     for (const source of sectionFiles) {
       expect(source).not.toMatch(/eyebrow=/);
       expect(source).not.toMatch(/description=\{site\.sections\./);
@@ -216,9 +211,7 @@ describe("visitor-facing copy contract", () => {
       ["components/sections/writing.tsx", "site.substack.name"],
       ["components/sections/about.tsx", "site.about.bio"],
       ["components/sections/about.tsx", "site.sections.about"],
-      ["components/sections/experience.tsx", "site.sections.experience"],
       ["components/sections/selected-work.tsx", "site.sections.work"],
-      ["components/sections/how-i-work.tsx", "site.sections.approach"],
       ["components/sections/contact.tsx", "site.sections.contact"],
     ] as const;
 
