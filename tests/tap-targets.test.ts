@@ -1,5 +1,5 @@
 import { execFileSync } from "node:child_process";
-import { cpSync, rmSync } from "node:fs";
+import { rmSync } from "node:fs";
 import { join } from "node:path";
 import { chromium, type Browser } from "playwright-core";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
@@ -21,32 +21,6 @@ const outDir = requireOutBuild(
   "tap-targets test needs a production build in out/",
 );
 const layoutRoutes = listTopLevelPageRoutes(outDir);
-
-function buildWritingFixtureOut(): () => void {
-  const root = process.cwd();
-  const out = join(root, "out");
-  const backup = join(root, "out.tap-empty");
-  const fixture = join(root, "tests/fixtures/writing/three-posts.xml");
-  rmSync(backup, { recursive: true, force: true });
-  cpSync(out, backup, { recursive: true });
-  try {
-    execFileSync("pnpm", ["build"], {
-      cwd: root,
-      env: { ...process.env, WRITING_FEED_PATH: fixture },
-      stdio: "pipe",
-    });
-  } catch (error) {
-    rmSync(out, { recursive: true, force: true });
-    cpSync(backup, out, { recursive: true });
-    rmSync(backup, { recursive: true, force: true });
-    throw error;
-  }
-  return () => {
-    rmSync(out, { recursive: true, force: true });
-    cpSync(backup, out, { recursive: true });
-    rmSync(backup, { recursive: true, force: true });
-  };
-}
 
 describe("390px tap targets and first screen", () => {
   let origin = "";
@@ -164,12 +138,22 @@ describe("390px tap targets and first screen", () => {
   }
 
   it("underlines the first writing title only while hovered", async () => {
-    const restore = buildWritingFixtureOut();
-    let browser: Awaited<ReturnType<typeof open>>["browser"] | undefined;
+    const fixtureOut = join(process.cwd(), "out.writing-fixture");
+    let fixtureServer: Awaited<ReturnType<typeof startOutServer>> | undefined;
+    let page: Awaited<ReturnType<Browser["newPage"]>> | undefined;
     try {
-      const opened = await open("/");
-      browser = opened.browser;
-      const title = opened.page.locator("#writing li a").first();
+      execFileSync("pnpm", ["build"], {
+        env: {
+          ...process.env,
+          WRITING_FIXTURE_EXPORT: "1",
+          WRITING_FEED_PATH: "tests/fixtures/writing/three-posts.xml",
+        },
+        stdio: "inherit",
+      });
+      fixtureServer = await startOutServer(fixtureOut);
+      page = await browser.newPage({ viewport: { width: 390, height: 844 } });
+      await page.goto(`${fixtureServer.origin}/`, { waitUntil: "networkidle" });
+      const title = page.locator("#writing li a").first();
       await title.scrollIntoViewIfNeeded();
       expect(await title.innerText()).toContain(WRITING_FIXTURE_TITLES[0]);
       const rest = await title.evaluate(
@@ -182,8 +166,9 @@ describe("390px tap targets and first screen", () => {
       );
       expect(hovered).toBe("underline");
     } finally {
-      await browser?.close();
-      restore();
+      await page?.close();
+      await fixtureServer?.close();
+      rmSync(fixtureOut, { recursive: true, force: true });
     }
   }, 180_000);
 
