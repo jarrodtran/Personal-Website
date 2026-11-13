@@ -208,7 +208,6 @@ function collectPage(): PageSample {
     "--text-h1",
     "--text-h2",
     "--text-h3",
-    "--text-title-step",
     "--text-404",
     "--text-figure",
     "--text-figure-lg",
