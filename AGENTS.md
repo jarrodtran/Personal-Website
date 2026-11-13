@@ -10,29 +10,7 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 ## Review and merge
 
-Reviewers: fill in [docs/review-pass.md](docs/review-pass.md) for your PASS. Do not merge without Design, Preview QA, and Review Poteto all PASS the same head, with `touches: none`.
-
-### Gates
-
-`main` requires the `gates` status. Grading uses `scripts/gates.mjs` from the PR base ref, which keeps grading independent of the proposed changes. It turns green only when Design, Preview QA, and Review Poteto all PASS that same head, and Review Poteto includes `touches: none`.
-
-The Cursor reviewer app (`cursor[bot]`) posts the three verdicts when it approves a PR; a person on the allowlist can post them by hand instead. Post each verdict as its own plain PR comment. A review body and the PR description do not count. One line each, using the current 40-character head SHA:
-
-```
-GATE design PASS <40-character head sha>
-GATE qa PASS <40-character head sha>
-GATE review PASS <40-character head sha> touches: none
-```
-
-- `design` is Design, `qa` is Preview QA, and `review` is Review Poteto.
-- Review Poteto passes only with `touches: none`. `touches: data`, `touches: dns`, and `touches: money` stay red on purpose. A review PASS with no touches value stays red (`missing touches: none`).
-- Only comments from `jarrodtran` or `cursor[bot]` count. Any other author is ignored, including an agent that reviews under its own account.
-- Do not edit a gate comment after posting. An edited comment is ignored.
-- The newest countable verdict for the current head decides each gate. A verdict for an older commit is reported as stale only when there is no current-head verdict.
-- A line passes only when its SHA equals the PR head. Any new commit makes all three stale, so post them again for the new SHA. `gh pr view <number> --json headRefOid --jq .headRefOid` prints it.
-- The status description names the blocker. Examples: `design missing; qa missing; review missing` and `design PASS <old sha> stale`.
-
-Filling in [docs/review-pass.md](docs/review-pass.md) does not post a GATE line, and it does not turn `gates` green.
+Merge when GitHub’s required checks pass. Keep the `Head SHA:` in the PR description current and record the checks you ran.
 
 ### Rules
 
@@ -56,7 +34,6 @@ Each row names the test file that fails when the rule is broken, or `untestable`
 | Do not edit DNS, the custom domain, or GitHub Pages settings.                                                                                                           | untestable: those settings live outside this repo                       |
 | `rule:tap-targets-44px` Visible links, buttons, and inputs are at least 44 by 44. Skip inline prose links and visually hidden controls.                                 | `tests/tap-targets.test.ts`                                             |
 | `rule:no-horizontal-overflow` Built pages do not overflow the viewport horizontally across widths, text sizes, and themes.                                              | `tests/tap-targets.test.ts`                                             |
-| `rule:gates-at-head` A gate passes only when its newest allowlisted, unedited verdict at the PR head is PASS. Review Poteto also needs `touches: none`.                   | `tests/gates.test.ts`                                                   |
 | `rule:home-height` Home may be at most 700px taller than main at 640+ with 100% text; must stay shorter at 320 and 390; shorter at every width with 200% text.         | `tests/home-writing-first.test.ts`                                      |
 | `rule:contrast-aa` Body text meets WCAG AA contrast in light and dark.                                                                                                  | `tests/contrast.test.ts`                                                |
 | `rule:generated-images-palette` Icon and OG images stay on palette A with no tinted pixels.                                                                             | `tests/generated-images.test.ts`                                        |

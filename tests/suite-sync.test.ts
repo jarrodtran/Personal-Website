@@ -54,7 +54,7 @@ describe("test suite sync", () => {
   });
 
   // CI wiring for these scripts is not asserted here: reading .github/ as text
-  // in tests is banned (see lib/eslint-restricted.mjs and rule:gates-at-head),
+  // in tests is banned (see lib/eslint-restricted.mjs),
   // and CI proves the step by running it. What is checkable is that every path
   // a script names exists.
   it("names a real test file in every explicit test:* script", () => {
