@@ -1,5 +1,7 @@
+import { execFileSync } from "node:child_process";
 import { createHash } from "node:crypto";
 import { existsSync, readdirSync, readFileSync } from "node:fs";
+import { tmpdir } from "node:os";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
 import { site } from "@/content/site";
@@ -224,12 +226,25 @@ describe("visitor-facing copy contract", () => {
     expect(pdf.subarray(0, 5).toString("latin1")).toBe("%PDF-");
     expect(pdf.byteLength).toBeGreaterThan(3_000);
     expect(pdf.toString("latin1")).toContain("/Count 1");
+    expect(pdf.includes("/Subtype /Image")).toBe(false);
+    expect(pdf.includes("/XObject")).toBe(false);
   });
 
   it("pins the committed resume to the one-page file bytes", () => {
     const pdf = readFileSync(path.join(root, "public/resume.pdf"));
     expect(createHash("sha256").update(pdf).digest("hex")).toBe(
-      "0933308be9e1d33db155a2eb0c0dc2a2494311f1b3f926dae2ba3f5c1796e164",
+      "63be0cffa45293debeb6cd4b2b0333da1ecf0bb8c878a02c850cb49dcebc3c3c",
+    );
+  });
+
+  it("ships the résumé the builder writes", () => {
+    const destination = path.join(tmpdir(), `jarrod-resume-${process.pid}.pdf`);
+    execFileSync(process.execPath, [
+      path.join(root, "scripts/build-resume-pdf.mjs"),
+      destination,
+    ]);
+    expect(readFileSync(destination)).toEqual(
+      readFileSync(path.join(root, "public/resume.pdf")),
     );
   });
 
