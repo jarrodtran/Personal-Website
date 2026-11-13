@@ -117,7 +117,7 @@ export function Nav({
         scrolled ? "border-border" : "border-transparent",
       )}
     >
-      <div className="@container mx-auto flex min-h-14 max-w-5xl items-center justify-between gap-x-4 px-5 sm:px-8">
+      <div className="lg:max-w-site @container mx-auto flex min-h-14 max-w-5xl items-center justify-between gap-x-4 px-5 sm:px-8">
         <a
           href={homeHref}
           className={cn(tap, "min-w-0 font-medium tracking-tight")}
@@ -178,7 +178,7 @@ export function Nav({
           className="border-border bg-background max-h-[calc(100dvh-3.5rem)] overflow-y-auto overscroll-contain border-t"
         >
           <nav
-            className="mx-auto flex max-w-5xl flex-col px-5 py-3"
+            className="lg:max-w-site mx-auto flex max-w-5xl flex-col px-5 py-3"
             aria-label="Mobile"
           >
             {items.map((item) => (

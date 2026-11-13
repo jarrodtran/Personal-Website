@@ -67,6 +67,9 @@
 
 @theme static {
   --container-prose: 40rem;
+  --container-home: 54rem;
+  --container-study: 60rem;
+  --container-site: 72rem;
   --text-body: 1.125rem;
   --text-small: 0.9375rem;
   --text-small--line-height: 1.5;
@@ -165,6 +168,12 @@ body {
 
 .measure {
   max-width: 34rem;
+}
+
+@media (min-width: 64rem) {
+  .measure {
+    max-width: 40rem;
+  }
 }
 
 .tabular {
