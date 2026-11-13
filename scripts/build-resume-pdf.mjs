@@ -197,7 +197,8 @@ function documentBlocks() {
     { kind: "section", text: "Experience" },
   ];
   for (const role of resume.roles) {
-    blocks.push({ kind: "role", text: role.heading });
+    const [company, title, dates] = role.heading.split(" | ");
+    blocks.push({ kind: "job", text: `${company} | ${title}`, dates });
     if (role.note) blocks.push({ kind: "note", text: role.note });
     for (const bullet of role.bullets) {
       blocks.push({ kind: "bullet", text: bullet });
@@ -244,8 +245,8 @@ function assertCopy(blocks) {
 const styles = {
   name: {
     font: "bold",
-    size: 25,
-    leading: 29,
+    size: 28,
+    leading: 32,
     color: INK,
     gapBefore: 0,
     gapAfter: 4,
@@ -260,11 +261,11 @@ const styles = {
   },
   section: {
     font: "bold",
-    size: 12,
+    size: 11,
     leading: 15,
     color: INK,
-    gapBefore: 10,
-    gapAfter: 3,
+    gapBefore: 11,
+    gapAfter: 6,
   },
   prose: {
     font: "regular",
@@ -279,7 +280,7 @@ const styles = {
     size: 10.5,
     leading: 14,
     color: INK,
-    gapBefore: 7,
+    gapBefore: 8,
     gapAfter: 2,
   },
   note: {
@@ -332,12 +333,27 @@ function render(blocks) {
           );
         }
         place(lines, style, LEFT);
+        if (block.kind === "section") ops.push(rule(y - 4));
+        y -= style.gapAfter;
+        break;
+      }
+      case "job": {
+        const style = styles.role;
+        const dateSize = 9.5;
+        const dateX =
+          PAGE_W - RIGHT - measure(block.dates, "regular", dateSize);
+        if (LEFT + measure(block.text, style.font, style.size) + 12 > dateX) {
+          throw new Error(`Role heading and dates overlap: ${block.text}`);
+        }
+        y -= style.gapBefore;
+        place([block.text], style, LEFT);
+        ops.push(drawText("regular", dateSize, dateX, y, block.dates, MUTED));
         y -= style.gapAfter;
         break;
       }
       case "contact": {
         const size = 9;
-        const sep = "  |  ";
+        const sep = "   ";
         const full = block.parts.map((part) => part.text).join(sep);
         if (measure(full, "regular", size) > WIDTH) {
           throw new Error("Contact line does not fit");
@@ -361,9 +377,7 @@ function render(blocks) {
           }
           x += partWidth;
         });
-        y -= 7;
-        ops.push(rule(y));
-        y -= 2;
+        y -= 6;
         break;
       }
       case "bullet": {

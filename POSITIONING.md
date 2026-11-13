@@ -8,7 +8,7 @@ Use one public narrative. Keep the prose personal and specific. Work examples sh
 
 The homepage reads the Substack feed when the static site builds. After publishing on Substack, run the GitHub Pages deployment workflow to refresh the site. The site shows up to five recent posts. When the feed is empty, visitors can subscribe. When the feed is unavailable, visitors can open the publication directly.
 
-The résumé is a supporting download in About and the footer. Each figure used in the site’s case studies must appear in the committed résumé or have a recorded source in the metric ledger. The current PDF SHA-256 is `87d50ac0f615129efc197bd7b8845bb42c0dfcf2a7296deac3cdcd9b71f921b8`. Update the PDF, this hash, and its test assertion together.
+The résumé is a supporting download in About and the footer. Each figure used in the site’s case studies must appear in the committed résumé or have a recorded source in the metric ledger. The current PDF SHA-256 is `c479b457bad6c63ec2c9fcf8aa1d6fb2c68217cd51614c16b38f79407f2934f3`. Update the PDF, this hash, and its test assertion together.
 
 ## Design
 
