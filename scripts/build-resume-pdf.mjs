@@ -41,15 +41,15 @@ const resume = {
     { text: "github.com/jarrodtran", href: "https://github.com/jarrodtran" },
   ],
   summary: [
-    "I turn enterprise AI pilots into products people use. At Tesla Energy, I built the team that ships AI tools and set up the training and measurement that support adoption.",
+    "I turn enterprise AI pilots into products people use. At Tesla Energy, I built the team shipping production AI tools and the training and reporting behind adoption.",
   ],
   roles: [
     {
       heading: `Tesla | ${TITLE} | Aug 2023 - Present`,
       note: "Rejoined in 2023 after Apple and Waymo.",
       bullets: [
-        "Lead the product and engineering team I hired. Its 20+ production AI solutions serve 1,000+ active users and include RAG troubleshooting, automated reporting, workflow automation, and decision support.",
-        "Own the AI roadmap and rollout for an enablement program covering 10,000 employees. Rank use cases by time savings and decision quality, assign owners, and pair releases with training and weekly adoption reporting.",
+        "Built and lead a product and engineering team serving 1,000+ active users across 20+ production AI tools: RAG troubleshooting, automated reporting, workflow automation, and decision support.",
+        "Own the AI roadmap and rollout for 10,000 employees: rank use cases by time saved and decision quality, assign owners, and pair releases with training and weekly adoption reporting.",
         "Modeled roughly 540 hours reclaimed per week and $1.6M in annualized productivity value from AI tools.",
         "Built Python and Tableau models to rank investment requests by return. Allocated $23M across 50+ initiatives for $156M in incremental annual profit.",
         "Scaled Megapack 3.2\u00d7 and redesigned the investment plan to mitigate $550M in projected tariff exposure. A separate program delivered $260M in annualized savings.",
@@ -66,8 +66,8 @@ const resume = {
       heading:
         "Apple | Strategic Operations Program Manager | Jun 2021 - Jun 2022",
       bullets: [
-        "Led the 0-to-1 iPhone launch in India, from market entry and partner qualification through launch readiness and scaled delivery.",
-        "Supported 293% year-over-year growth (4.3M to 16.9M units) and a program whose reported revenue grew from $2B to $10B. Expanded exports from 6 to 40+ countries.",
+        "Led the 0-to-1 iPhone launch in India from market entry and partner qualification through readiness and scaled delivery under tight quality, regulatory, and timing requirements.",
+        "Supported 293% year-over-year unit growth (4.3M to 16.9M) as reported program revenue grew from $2B to $10B, and expanded exports from 6 to 40+ countries.",
       ],
     },
     {
@@ -75,7 +75,7 @@ const resume = {
         "Tesla | Program Manager, Special Projects | Jun 2018 - Jun 2021",
       bullets: [
         "Advanced Project Roadrunner, Tesla's 4680 program, from pilot to launch readiness through Battery Day. Led Model 3 and Model Y planning and recovery.",
-        "Launched Warehouse on Wheels, a $3.5M per month coordination platform that protected product availability during scale-up.",
+        "Designed and launched Warehouse on Wheels, a $3.5M per month coordination platform that protected product availability across rapid Model 3 and Model Y scale-up.",
       ],
     },
     {
