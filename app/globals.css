@@ -26,6 +26,28 @@
   color-scheme: dark;
 }
 
+.theme-sun {
+  display: none;
+}
+
+.dark .theme-sun {
+  display: block;
+}
+
+.dark .theme-moon {
+  display: none;
+}
+
+@media (prefers-color-scheme: dark) {
+  html:not(.light) .theme-sun {
+    display: block;
+  }
+
+  html:not(.light) .theme-moon {
+    display: none;
+  }
+}
+
 @theme inline {
   --font-sans: var(--font-plex-sans), ui-sans-serif, system-ui, sans-serif;
   --font-display: var(--font-newsreader), ui-serif, Georgia, serif;

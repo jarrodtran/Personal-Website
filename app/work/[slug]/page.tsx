@@ -36,6 +36,8 @@ export async function generateMetadata({
       url: `${siteUrl}${path}`,
       title: `${title} · ${site.positioning.name}`,
       description,
+      siteName: site.positioning.name,
+      locale: "en_US",
     },
     twitter: {
       card: "summary_large_image",
@@ -53,5 +55,28 @@ export default async function CaseStudyPage({
   const { slug } = await params;
   const item = getSelectedWorkBySlug(slug);
   if (!item) notFound();
-  return <CaseStudyBody item={item} />;
+  const breadcrumb = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Selected work",
+        item: `${siteUrl}/#work`,
+      },
+      { "@type": "ListItem", position: 2, name: item.panel.kicker },
+    ],
+  };
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(breadcrumb).replace(/</g, "\\u003c"),
+        }}
+      />
+      <CaseStudyBody item={item} />
+    </>
+  );
 }

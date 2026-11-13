@@ -40,8 +40,7 @@ function assertRedirectPage(
   const canonicals = [
     ...html.matchAll(/<link\b[^>]*rel=["']canonical["'][^>]*>/gi),
   ].map(([tag]) => tag);
-  expect(canonicals, file).toHaveLength(1);
-  expect(canonicals[0], file).not.toContain("#");
+  expect(canonicals, file).toHaveLength(0);
 }
 
 // rule:legacy-redirects

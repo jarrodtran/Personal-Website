@@ -142,6 +142,14 @@ describe("built icon and OG images stay on palette A", () => {
     expect(exported).toEqual([]);
   });
 
+  it("serves the generated 32px icon inside a valid favicon.ico", () => {
+    const ico = readFileSync(path.join(root, "out/favicon.ico"));
+    expect(ico.subarray(0, 8)).toEqual(Buffer.from([0, 0, 1, 0, 1, 0, 32, 32]));
+    const icon = ico.subarray(ico.readUInt32LE(18));
+    expect(icon).toHaveLength(ico.readUInt32LE(14));
+    expect(icon).toEqual(readFileSync(path.join(root, "out/icon.png")));
+  });
+
   it("rejects tinted pixels and leftover navy or cream", () => {
     const problems: string[] = [];
 

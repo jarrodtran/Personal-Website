@@ -327,6 +327,15 @@ const page = await browser.newPage({ viewport: viewports.phone });
 await page.goto(origin);
 const toggle = page.locator('button[aria-controls="mobile-nav"]');
 await toggle.click();
+await page.locator("#mobile-nav a").last().focus();
+await page.keyboard.press("Tab");
+if (
+  await page.evaluate(() =>
+    Boolean(document.activeElement?.closest("main, footer")),
+  )
+) {
+  failures.push("phone menu: Tab enters the background page");
+}
 await page.locator("#mobile-nav a").first().focus();
 await page.keyboard.press("Escape");
 if (await page.locator("#mobile-nav").isVisible()) {
@@ -337,6 +346,12 @@ const focusReturned = await toggle.evaluate(
 );
 if (!focusReturned) {
   failures.push("phone menu: focus does not return to the menu button");
+}
+await toggle.click();
+await page.locator("#mobile-nav a").first().focus();
+await page.mouse.click(1, viewports.phone.height - 1);
+if (await page.locator("#mobile-nav").isVisible()) {
+  failures.push("phone menu: a pointer press outside does not close the menu");
 }
 await toggle.click();
 await page.setViewportSize(viewports.desktop);
@@ -357,6 +372,38 @@ if (!released) {
     "phone menu: widening to desktop leaves the menu open and the page locked",
   );
 }
+
+const primary = page.getByRole("navigation", { name: "Primary", exact: true });
+await page.goto(origin);
+const active = primary.locator('[aria-current="location"]');
+await page.locator("#work").evaluate((section) => {
+  window.scrollBy({
+    top: section.getBoundingClientRect().top - window.innerHeight * 0.4,
+    behavior: "instant",
+  });
+});
+const markedWork = await primary
+  .locator('a[href="#work"][aria-current="location"]')
+  .waitFor({ state: "attached", timeout: 2000 })
+  .then(
+    () => true,
+    () => false,
+  );
+if (!markedWork) {
+  failures.push("primary nav: scrolling to Work does not mark it as current");
+}
+await page.evaluate(() => window.scrollTo({ top: 0, behavior: "instant" }));
+if (await active.count()) {
+  const cleared = await active
+    .waitFor({ state: "detached", timeout: 2000 })
+    .then(
+      () => true,
+      () => false,
+    );
+  if (!cleared)
+    failures.push("primary nav: current location remains marked at the top");
+}
+await page.close();
 
 const clipboardContext = await browser.newContext({
   viewport: viewports.desktop,
@@ -414,7 +461,8 @@ console.log(
     "nothing scrolls sideways at 390px",
     "page title within 60 characters",
     "reveals never hide content and stay still under reduced motion",
-    "phone menu closes on Escape, returns focus, and closes at desktop width",
+    "phone menu keeps focus out of the page, dismisses on Escape or outside press, and closes at desktop width",
+    "primary navigation marks the section in view and clears it at the top",
     "header controls stay on screen at 200% text",
     "phone menu stays reachable on a short viewport at 200% text",
     "copy email announces success and failure",

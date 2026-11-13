@@ -1,3 +1,4 @@
+import postcss from "postcss";
 import { readFileSync } from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
@@ -91,7 +92,12 @@ describe("shared palette lock", () => {
 
   it("paints both themes from light-dark() and leaves class overrides as color-scheme", () => {
     const css = readSiteFile("app/globals.css");
-    expect(css).not.toMatch(/prefers-color-scheme/);
+    postcss.parse(css).walkAtRules("media", (rule) => {
+      if (!rule.params.includes("prefers-color-scheme")) return;
+      rule.walkDecls((declaration) => {
+        expect(declaration.prop).not.toMatch(/^--|color-scheme/);
+      });
+    });
     expect(css).toMatch(/color-scheme:\s*light dark/);
     expect(css).toMatch(/\.light\s*\{\s*color-scheme:\s*light;\s*\}/);
     expect(css).toMatch(/\.dark\s*\{\s*color-scheme:\s*dark;\s*\}/);

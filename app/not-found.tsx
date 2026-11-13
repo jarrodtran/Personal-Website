@@ -7,7 +7,6 @@ export const metadata: Metadata = {
   title: {
     absolute: `Page not found · ${site.positioning.name}`,
   },
-  robots: { index: false, follow: false },
 };
 
 export default function NotFound() {

@@ -353,8 +353,9 @@ describe("390px tap targets and first screen", () => {
   it("resolves résumé, email, LinkedIn, and the next case-study link", async () => {
     const { browser, page } = await open("/");
     const home = await page.evaluate(() => {
-      const resume =
-        document.querySelector<HTMLAnchorElement>("header a[download]");
+      const resume = document.querySelector<HTMLAnchorElement>(
+        "#about a[download], #contact a[download]",
+      );
       const email =
         document.querySelector<HTMLAnchorElement>('a[href^="mailto:"]');
       const linkedin = document.querySelector<HTMLAnchorElement>(
@@ -379,7 +380,7 @@ describe("390px tap targets and first screen", () => {
     expect(nextHref).toMatch(/\/work\/tesla-energy-portfolio\/?$/);
   });
 
-  it("keeps the header short and Résumé reachable at 320x256 with 200% text", async () => {
+  it("keeps the header short and Contact reachable at 320x256 with 200% text", async () => {
     const browser = await chromium.launch();
     const page = await browser.newPage({
       viewport: { width: 320, height: 256 },
@@ -444,7 +445,7 @@ describe("390px tap targets and first screen", () => {
     });
     await browser.close();
 
-    expect(menu.text).toMatch(/R[ée]sum[ée]/);
+    expect(menu.text).toBe("Contact");
     expect(menu.top).toBeGreaterThanOrEqual(menu.panelTop - 1);
     expect(menu.bottom).toBeLessThanOrEqual(menu.viewport + 1);
     expect(menu.bottom).toBeLessThanOrEqual(menu.panelBottom + 1);

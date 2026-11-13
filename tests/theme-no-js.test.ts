@@ -89,6 +89,8 @@ describe("theme with JavaScript disabled", () => {
         background: body.backgroundColor,
         color: body.color,
         htmlClass: document.documentElement.className,
+        sun: getComputedStyle(document.querySelector(".theme-sun")!).display,
+        moon: getComputedStyle(document.querySelector(".theme-moon")!).display,
       };
     });
     await browser.close();
@@ -101,6 +103,9 @@ describe("theme with JavaScript disabled", () => {
     expect(home.background).toBe(hexToRgb(palette.dark.bg));
     expect(home.color).toBe(hexToRgb(palette.dark.fg));
 
+    expect(home.sun).not.toBe("none");
+    expect(home.moon).toBe("none");
+
     const notFound = await paint("/404.html", "dark");
     expect(notFound.background).toBe(hexToRgb(palette.dark.bg));
     expect(notFound.color).toBe(hexToRgb(palette.dark.fg));
@@ -110,5 +115,7 @@ describe("theme with JavaScript disabled", () => {
     const home = await paint("/", "light");
     expect(home.background).toBe(hexToRgb(palette.light.bg));
     expect(home.color).toBe(hexToRgb(palette.light.fg));
+    expect(home.sun).toBe("none");
+    expect(home.moon).not.toBe("none");
   });
 });
