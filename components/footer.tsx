@@ -23,7 +23,10 @@ export function Footer() {
             className="flex flex-wrap items-center gap-x-6 gap-y-1"
           >
             <li>
-              <a href={`mailto:${email}`} className={textAction}>
+              <a
+                href={`mailto:${email}`}
+                className={`${textAction} min-w-11 justify-center`}
+              >
                 Email
               </a>
             </li>
