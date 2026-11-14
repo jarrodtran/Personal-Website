@@ -175,7 +175,8 @@ export const site: SiteContent = {
   },
   about: {
     bio: [
-      "I’m Jarrod Tran. I live in Houston and write Worth Mulling when something is worth working through on the page, work or not.",
+      "I’m Jarrod Tran, and I live in Houston. I started Worth Mulling to put my thoughts on paper and prevent brain rot. I write about whatever topic I’ve been exploring, usually after falling down a rabbit hole on it.",
+      "Outside of work I’m a huge sports fan (Manchester City and the New England Patriots), and I work on AI literacy projects.",
       `By day I’m ${currentTitle} at Tesla Energy, where I built the AI team and the program it runs on from nothing. Before that I worked at Apple, Waymo and Amazon.`,
     ],
   },
