@@ -2,6 +2,7 @@ import {
   copyFileSync,
   readFileSync,
   readdirSync,
+  rmSync,
   statSync,
   writeFileSync,
 } from "node:fs";
@@ -74,7 +75,14 @@ function patchHtml(path) {
   if (next !== original) writeFileSync(path, next);
 }
 
+// Must match ESSAY_PLACEHOLDER_SLUG in lib/writing.ts.
+export const ESSAY_PLACEHOLDER_DIR = join("writing", "_none");
+
 function run() {
+  // Static export needs one page per dynamic route, so /writing/[slug] builds
+  // a stand-in before the first essay exists. Nobody links to it; drop it.
+  rmSync(join(out, ESSAY_PLACEHOLDER_DIR), { recursive: true, force: true });
+
   walk(out, (path) => {
     const name = basename(path);
     if (

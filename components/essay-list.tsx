@@ -1,11 +1,15 @@
 import { ArrowUpRight } from "lucide-react";
+import { withBasePath } from "@/lib/base-path";
 import { cn } from "@/lib/cn";
 import { tap } from "@/lib/ui";
 import { formatPostDate, type WritingPost } from "@/lib/writing";
 
+const titleLink = `${tap} text-foreground text-body max-w-full gap-1 leading-[var(--leading-title)] font-medium no-underline hover:underline`;
+
 /**
  * One row per essay: title link, summary, date. The date sits right of the
- * title from the sm breakpoint and under the summary below it.
+ * title from the sm breakpoint and under the summary below it. Essays the
+ * feed carries in full open on this site; the rest open on Substack.
  */
 export function EssayList({
   posts,
@@ -29,19 +33,25 @@ export function EssayList({
             key={post.href}
             className="grid grid-cols-1 gap-x-6 py-3 sm:grid-cols-[minmax(0,1fr)_auto]"
           >
-            <a
-              href={post.href}
-              className={`${tap} text-foreground text-body max-w-full gap-1 leading-[var(--leading-title)] font-medium no-underline hover:underline`}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <span className="min-w-0">{post.title}</span>
-              <ArrowUpRight
-                className="size-[16px] shrink-0"
-                aria-hidden="true"
-              />
-              <span className="sr-only">(opens Substack)</span>
-            </a>
+            {post.path ? (
+              <a href={withBasePath(post.path)} className={titleLink}>
+                <span className="min-w-0">{post.title}</span>
+              </a>
+            ) : (
+              <a
+                href={post.href}
+                className={titleLink}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <span className="min-w-0">{post.title}</span>
+                <ArrowUpRight
+                  className="size-[16px] shrink-0"
+                  aria-hidden="true"
+                />
+                <span className="sr-only">(opens Substack)</span>
+              </a>
+            )}
             {post.summary ? (
               <p
                 className={cn(

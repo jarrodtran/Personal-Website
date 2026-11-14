@@ -109,12 +109,20 @@ describe("hero", () => {
     expect(html).not.toContain(site.writing.readLatest);
   });
 
-  it("links the latest essay once one exists", () => {
+  it("links the latest essay on this site when the feed has its body", () => {
     const [latest] = parseFeed(threeXml, WRITING_FIXTURE_BASE);
     const filled = renderToStaticMarkup(<Hero latest={latest} />);
     expect(links(filled)).toEqual([
+      { href: "/writing/zxq-aurora/", text: site.writing.readLatest },
+    ]);
+  });
+
+  it("falls back to Substack for a latest essay without a body", () => {
+    const [, beacon] = parseFeed(threeXml, WRITING_FIXTURE_BASE);
+    const filled = renderToStaticMarkup(<Hero latest={beacon} />);
+    expect(links(filled)).toEqual([
       {
-        href: latest.href,
+        href: beacon.href,
         text: `${site.writing.readLatest} (opens Substack)`,
         target: "_blank",
       },
@@ -222,21 +230,13 @@ describe("writing", () => {
     expect(text).not.toContain(site.writing.allEssays);
     expect(text).not.toContain(site.writing.empty);
     expect(links(html)).toEqual([
-      {
-        href: `${WRITING_FIXTURE_BASE}/p/zxq-aurora`,
-        text: `${WRITING_FIXTURE_TITLES[0]} (opens Substack)`,
-        target: "_blank",
-      },
+      { href: "/writing/zxq-aurora/", text: WRITING_FIXTURE_TITLES[0] },
       {
         href: `${WRITING_FIXTURE_BASE}/p/zxq-beacon`,
         text: `${WRITING_FIXTURE_TITLES[1]} (opens Substack)`,
         target: "_blank",
       },
-      {
-        href: `${WRITING_FIXTURE_BASE}/p/zxq-cedar`,
-        text: `${WRITING_FIXTURE_TITLES[2]} (opens Substack)`,
-        target: "_blank",
-      },
+      { href: "/writing/zxq-cedar/", text: WRITING_FIXTURE_TITLES[2] },
       SUBSCRIBE_LINK,
     ]);
   });

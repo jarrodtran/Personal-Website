@@ -1,6 +1,7 @@
 import { ArrowUpRight } from "lucide-react";
 import { SubscribeButton, subscribeHref } from "@/components/subscribe";
 import { site } from "@/content/site";
+import { withBasePath } from "@/lib/base-path";
 import { btnPrimary } from "@/lib/ui";
 import type { WritingPost } from "@/lib/writing";
 
@@ -19,7 +20,14 @@ export function Hero({ latest }: { latest?: WritingPost }) {
         <p className="text-foreground measure text-body mt-4 leading-[var(--leading-copy)]">
           {site.positioning.intro}
         </p>
-        {latest ? (
+        {latest?.path ? (
+          <a
+            href={withBasePath(latest.path)}
+            className={`${btnPrimary} mt-6 w-fit max-w-full`}
+          >
+            {site.writing.readLatest}
+          </a>
+        ) : latest ? (
           <a
             href={latest.href}
             className={`${btnPrimary} mt-6 w-fit max-w-full`}

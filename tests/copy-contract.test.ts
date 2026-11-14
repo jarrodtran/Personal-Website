@@ -19,6 +19,7 @@ import {
   getVisitorFacingStrings,
   stripOfficialTitles,
 } from "@/content/visitor-copy";
+import { isFeedEssayFile } from "./banned-copy";
 
 const root = path.resolve(__dirname, "..");
 
@@ -282,6 +283,8 @@ describe("visitor-facing copy contract", () => {
         encoding: "utf8",
       })) {
         if (!file.endsWith(".html")) continue;
+        // Essay pages carry Jarrod's own prose from the feed.
+        if (isFeedEssayFile(`out/${file}`)) continue;
         if (emDash.test(readFileSync(path.join(outDir, file), "utf8"))) {
           hits.push(`out/${file}`);
         }

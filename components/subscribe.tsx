@@ -2,7 +2,11 @@ import { ArrowUpRight } from "lucide-react";
 import { site } from "@/content/site";
 import { cn } from "@/lib/cn";
 import { btnGhost, btnPrimary } from "@/lib/ui";
-import { isOwnWritingUrl, writingSubscribeUrl } from "@/lib/writing";
+import {
+  isOwnWritingUrl,
+  writingEmbedUrl,
+  writingSubscribeUrl,
+} from "@/lib/writing";
 
 /** The Substack subscribe page, or "" when the configured URL is not ours. */
 export function subscribeHref(): string {
@@ -37,16 +41,30 @@ export function SubscribeButton({
   );
 }
 
-/** Heading, pitch, button, and small print. h3 under a section, h2 at page level. */
+/** Substack's signup form URL, or "" when the configured URL is not ours. */
+export function subscribeEmbedHref(): string {
+  const href = writingEmbedUrl(site.substack);
+  return isOwnWritingUrl(href, site.substack.url) ? href : "";
+}
+
+/**
+ * Heading, pitch, button, and small print. h3 under a section, h2 at page
+ * level. With `embed`, Substack's own email form replaces the button so a
+ * reader can subscribe without leaving the page. It is Substack's markup in
+ * an iframe, so it stays light in dark mode.
+ */
 export function SubscribeBlock({
   level = 3,
+  embed = false,
   className,
 }: {
   level?: 2 | 3;
+  embed?: boolean;
   className?: string;
 }) {
   const href = subscribeHref();
   if (!href) return null;
+  const embedHref = embed ? subscribeEmbedHref() : "";
   const Heading = level === 2 ? "h2" : "h3";
   const { title, body, note } = site.writing.subscribe;
 
@@ -54,7 +72,9 @@ export function SubscribeBlock({
     <div
       data-testid="subscribe"
       className={cn(
-        "@container flex flex-col gap-4 @[34rem]:flex-row @[34rem]:items-center @[34rem]:justify-between @[34rem]:gap-8",
+        embedHref
+          ? "flex flex-col gap-4"
+          : "@container flex flex-col gap-4 @[34rem]:flex-row @[34rem]:items-center @[34rem]:justify-between @[34rem]:gap-8",
         className,
       )}
     >
@@ -67,7 +87,16 @@ export function SubscribeBlock({
         </p>
         <p className="text-muted-foreground text-small mt-2">{note}</p>
       </div>
-      <SubscribeButton href={href} className="@[34rem]:shrink-0" />
+      {embedHref ? (
+        <iframe
+          src={embedHref}
+          title={site.writing.subscribe.embedTitle}
+          loading="lazy"
+          className="border-border h-80 w-full max-w-[30rem] rounded-md border"
+        />
+      ) : (
+        <SubscribeButton href={href} className="@[34rem]:shrink-0" />
+      )}
     </div>
   );
 }

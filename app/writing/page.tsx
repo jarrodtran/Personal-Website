@@ -56,11 +56,11 @@ export default async function WritingPage() {
             <div className="mt-8">
               <NoEssays unavailable={!ok} />
             </div>
-            <SubscribeBlock level={2} className="mt-8" />
+            <SubscribeBlock level={2} embed className="mt-8" />
           </>
         ) : (
           <>
-            <SubscribeBlock level={2} className="mt-8" />
+            <SubscribeBlock level={2} embed className="mt-8" />
             {grouped ? (
               byYear(posts).map(([year, items]) => (
                 <section key={year || "undated"} className="mt-10">

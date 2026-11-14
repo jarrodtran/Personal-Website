@@ -71,7 +71,9 @@ export function findPhraseHits(
     }
   }
 
-  return hits.sort((a, b) => a.index - b.index || a.phrase.localeCompare(b.phrase));
+  return hits.sort(
+    (a, b) => a.index - b.index || a.phrase.localeCompare(b.phrase),
+  );
 }
 
 function decodeEntities(value: string): string {
@@ -160,7 +162,10 @@ export function scanCopySources(root: string, phrases: string[]): CopyHit[] {
     const base = path.basename(relative);
     if (base === path.basename(LIST_FILE)) continue;
     if (!relative.endsWith(".ts")) continue;
-    const source = path.posix.join("content", relative.split(path.sep).join("/"));
+    const source = path.posix.join(
+      "content",
+      relative.split(path.sep).join("/"),
+    );
     const text = readFileSync(path.join(contentDir, relative), "utf8");
     hits.push(...toHits(source, text, phrases));
   }
@@ -183,6 +188,15 @@ export function htmlPagePath(relativeHtmlPath: string): string {
 }
 
 const SKIP_PAYLOAD_NAMES = new Set(["robots.txt"]);
+
+/**
+ * Essay pages under /writing/<slug>/ carry Jarrod's own essays from the
+ * Substack feed. His prose is his to write, so the house copy rules (banned
+ * phrases, dashes) skip those pages. Everything else is still scanned.
+ */
+export function isFeedEssayFile(file: string): boolean {
+  return /^out\/writing\/[a-z0-9][a-z0-9-]*\//.test(file.replace(/\\/g, "/"));
+}
 
 export function requireBuiltHtml(root: string): string {
   const outDir = path.join(root, "out");
@@ -247,6 +261,7 @@ function hitsForFile(
 export function scanBuiltHtml(root: string, phrases: string[]): CopyHit[] {
   const hits: CopyHit[] = [];
   for (const file of listBuiltFiles(root, ".html")) {
+    if (isFeedEssayFile(file)) continue;
     const source = `${file} (${htmlPagePath(file)})`;
     const html = readFileSync(path.join(root, file), "utf8");
     const wording = phrases.filter(
@@ -267,6 +282,7 @@ export function scanBuiltHtml(root: string, phrases: string[]): CopyHit[] {
 export function scanBuiltPayloads(root: string, phrases: string[]): CopyHit[] {
   const hits: CopyHit[] = [];
   for (const file of listBuiltFiles(root, ".txt")) {
+    if (isFeedEssayFile(file)) continue;
     const text = readFileSync(path.join(root, file), "utf8");
     hits.push(...hitsForFile(`${file} (rsc)`, text, phrases));
   }

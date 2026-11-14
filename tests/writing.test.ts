@@ -6,7 +6,11 @@ import {
   formatPostDate,
   isOwnWritingUrl,
   isSubstackUrl,
+  ESSAY_PLACEHOLDER_SLUG,
+  essaySlug,
+  loadEssays,
   loadWritingResult,
+  parseEssayBodies,
   parseFeed,
   writingFeedUrl,
   WRITING_BLURB_MAX_CHARS,
@@ -19,6 +23,7 @@ import {
   WRITING_FIXTURE_SECRET_BODY,
   WRITING_FIXTURE_TITLES,
 } from "./fixtures/writing/titles";
+import { essayWordCount, sanitizeEssayHtml } from "@/lib/essay-html";
 
 const fixtures = path.join(__dirname, "fixtures/writing");
 const threeXml = readFileSync(path.join(fixtures, "three-posts.xml"), "utf8");
@@ -98,7 +103,7 @@ describe("parseFeed", () => {
     expect(posts.some((post) => post.href.startsWith("http://"))).toBe(false);
   });
 
-  it("reads Atom entries on the own host and ignores entry bodies", () => {
+  it("reads Atom entries on the own host and keeps bodies out of the summary", () => {
     const atom = `<?xml version="1.0"?>
 <feed>
   <entry>
@@ -115,8 +120,24 @@ describe("parseFeed", () => {
         href: `${WRITING_FIXTURE_BASE}/p/atom`,
         date: "2026-03-03T12:00:00.000Z",
         summary: "From Atom.",
+        path: "/writing/atom/",
       },
     ]);
+    expect(parseEssayBodies(atom, WRITING_FIXTURE_BASE).get("atom")).toBe(
+      WRITING_FIXTURE_SECRET_BODY,
+    );
+  });
+
+  it("only gives an on-site path to own posts with a body and a clean slug", () => {
+    const posts = parseFeed(threeXml, WRITING_FIXTURE_BASE);
+    const paths = Object.fromEntries(
+      posts.map((post) => [essaySlug(post.href), post.path ?? ""]),
+    );
+    expect(paths["zxq-aurora"]).toBe("/writing/zxq-aurora/");
+    expect(paths["zxq-beacon"]).toBe("");
+    expect(essaySlug(`${WRITING_FIXTURE_BASE}/p/../etc`)).toBe("");
+    expect(essaySlug(`${WRITING_FIXTURE_BASE}/p/Up-Case`)).toBe("");
+    expect(essaySlug(`${WRITING_FIXTURE_BASE}/about`)).toBe("");
   });
 });
 
@@ -298,5 +319,68 @@ describe("writing title underline", () => {
     );
     expect(source).toMatch(/no-underline/);
     expect(source).toMatch(/hover:underline/);
+  });
+});
+
+describe("essay bodies", () => {
+  afterEach(() => {
+    vi.unstubAllEnvs();
+  });
+
+  it("loads only own posts that carry a body, newest first", async () => {
+    vi.stubEnv("WRITING_FEED_PATH", path.join(fixtures, "three-posts.xml"));
+    const essays = await loadEssays(ownFeed);
+    expect(essays.map((essay) => essay.slug)).toEqual([
+      "zxq-aurora",
+      "zxq-cedar",
+    ]);
+    expect(essays[0]?.post.path).toBe("/writing/zxq-aurora/");
+  });
+
+  it("keeps prose and footnotes and drops scripts, embeds, and Substack widgets", () => {
+    const clean = sanitizeEssayHtml(`
+      <h1>Top</h1>
+      <p onclick="x()">Hi <a href="https://example.com" class="x" id="top">link</a><a class="footnote-anchor" href="#footnote-1" id="footnote-anchor-1">1</a></p>
+      <script>alert(1)</script><style>p{}</style><iframe src="https://example.com"></iframe>
+      <div class="subscription-widget-wrap"><p>Subscribe now</p><form><input></form></div>
+      <p class="button-wrapper"><a class="button" href="https://example.substack.com/subscribe">Subscribe</a></p>
+      <img src="https://substackcdn.com/a.png" alt="A chart" width="600" height="400" onerror="x()">
+      <img src="http://insecure.example/a.png" alt="no">
+      <p><a href="javascript:alert(1)">bad</a></p>
+      <div class="footnote"><a href="#footnote-anchor-1" id="footnote-1">1</a><div><p>Note.</p></div></div>
+    `);
+    expect(clean).toContain("<h2>Top</h2>");
+    expect(clean).toContain('<a href="https://example.com">link</a>');
+    expect(clean).toContain('id="footnote-anchor-1"');
+    expect(clean).toContain('id="footnote-1"');
+    expect(clean).toContain('alt="A chart"');
+    expect(clean).toContain('loading="lazy"');
+    expect(clean).toContain("Note.");
+    for (const banned of [
+      "<script",
+      "<style",
+      "<iframe",
+      "<form",
+      "<input",
+      "onclick",
+      "onerror",
+      "javascript:",
+      "Subscribe",
+      "class=",
+      'id="top"',
+      "http://insecure",
+    ]) {
+      expect(clean, banned).not.toContain(banned);
+    }
+    expect(essayWordCount("<p>One two <em>three</em></p>")).toBe(3);
+  });
+});
+
+describe("essay route placeholder", () => {
+  // tests/writing-output.test.ts checks that postbuild removes it from out/.
+  it("cannot clash with a real slug", () => {
+    expect(
+      essaySlug(`${WRITING_FIXTURE_BASE}/p/${ESSAY_PLACEHOLDER_SLUG}`),
+    ).toBe("");
   });
 });

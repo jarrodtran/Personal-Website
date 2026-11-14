@@ -84,6 +84,11 @@ export interface SiteContent {
       action: string;
       note: string;
       short: string;
+      embedTitle: string;
+    };
+    essay: {
+      minutes: string;
+      onSubstack: string;
     };
   };
   about: {
@@ -144,6 +149,11 @@ export const site: SiteContent = {
       action: "Subscribe",
       note: "Free. Sent through Substack. Unsubscribe anytime.",
       short: "If this was worth mulling, get the next one by email.",
+      embedTitle: "Substack signup form for Worth Mulling",
+    },
+    essay: {
+      minutes: "min read",
+      onSubstack: "Comment or share on Substack",
     },
   },
   about: {
