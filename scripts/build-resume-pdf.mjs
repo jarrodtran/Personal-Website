@@ -1,4 +1,4 @@
-import { writeFileSync } from "node:fs";
+import { readFileSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { deflateSync } from "node:zlib";
@@ -24,86 +24,52 @@ const BOLD = widths(
   "278 333 474 556 556 889 722 278 333 333 389 584 278 333 278 278 556 556 556 556 556 556 556 556 556 556 333 333 584 584 584 611 975 722 722 722 722 667 611 778 722 278 556 722 611 833 722 778 667 778 722 667 611 722 667 944 667 667 611 333 278 333 584 556 278 556 611 556 611 556 333 611 611 278 278 556 278 889 611 611 611 611 389 556 333 611 556 778 556 556 500 389 280 389 584",
 );
 
-const resume = {
-  name: "Jarrod Tran",
-  title: "AI Product Leader | Enterprise AI Deployment",
-  contact: [
-    { text: "Houston, TX" },
-    {
-      text: "jarrodtran@outlook.com",
-      href: "mailto:jarrodtran@outlook.com",
-    },
-    {
-      text: "linkedin.com/in/jarrodtran",
-      href: "https://www.linkedin.com/in/jarrodtran/",
-    },
-    { text: "jarrodtran.com", href: "https://jarrodtran.com" },
-    { text: "github.com/jarrodtran", href: "https://github.com/jarrodtran" },
-  ],
-  summary: [
-    "Product and operations leader who turns enterprise AI pilots into tools people use every day. At Tesla Energy, I built and lead the product and engineering team behind 20+ production AI tools with 1,000+ active users, plus the training and adoption reporting that keeps them in use. Before that, I led Apple's iPhone program in India, ran Engineering Operations planning at Waymo, and delivered battery and vehicle programs at Tesla.",
-  ],
-  roles: [
-    {
-      company: "Tesla Energy",
-      title: TITLE,
-      dates: "Aug 2023 to Present",
-      location: "Houston, TX",
-      note: "Rejoined Tesla in 2023 after Apple and Waymo.",
-      bullets: [
-        "Built and lead a 4-person AI product and engineering team that has shipped 20+ production AI tools now used by 1,000+ employees, including RAG-based troubleshooting assistants, automated reporting, workflow automation and decision support.",
-        "Own the roadmap for an AI enablement program reaching 10,000 employees: rank use cases, assign an owner to each, and pair every release with training and weekly adoption reports to leadership.",
-        "Freed an estimated 540 hours per week, worth $1.6M a year in productivity, by funding the tools that save the most time or improve decisions.",
-        "Built the Python and Tableau ROI model executives used to choose among 50+ competing initiatives for a $23M budget; the funded portfolio delivered $156M in incremental annual profit.",
-        "Redesigned the investment plan for Megapack, Tesla's utility-scale battery product, mitigating $550M in projected tariff exposure during a 3.2x scale-up.",
-        "Served as Program Champion for MegaUnleash, a program that delivered $260M in annualized savings.",
-      ],
-    },
-    {
-      company: "Waymo",
-      title: "Strategy & Operations Manager",
-      dates: "Oct 2022 to May 2023",
-      location: "Mountain View, CA",
-      bullets: [
-        "Moved six separately planned functions (hardware, software, fleet, Product, Legal and Engineering) onto one Engineering Operations plan, with shared OKRs, resource plans and quarterly business reviews for a 200+ person engineering organization.",
-        "Aligned those six functions on commercial deployment priorities as Waymo's driverless ride service expanded.",
-        "Built the leadership dashboards for fleet health, performance and milestones, cutting one-off reporting requests.",
-      ],
-    },
-    {
-      company: "Apple",
-      title: "Strategic Operations Program Manager",
-      dates: "Jun 2021 to Jun 2022",
-      location: "Cupertino, CA",
-      bullets: [
-        "Led the iPhone India program end to end from a standing start, keeping market entry, partner readiness and launch timing on one schedule.",
-        "Supported 293% year-over-year unit growth (4.3M to 16.9M) as program revenue grew from $2B to $10B and exports expanded from 6 to 40+ countries.",
-        "Turned demand forecasts into weekly funding and readiness plans, and raised quality, regulatory and timing risks to leadership.",
-      ],
-    },
-    {
-      company: "Tesla",
-      title: "Program Manager, Special Projects",
-      dates: "Jun 2018 to Jun 2021",
-      location: "Fremont, CA",
-      bullets: [
-        "Took Project Roadrunner, Tesla's 4680 battery cell program, from pilot to launch readiness through its public unveiling at Tesla's 2020 Battery Day.",
-        "Led Model 3 and Model Y production planning and recovery for two years from launch, ramping each model to 10,000 units per week and hitting every quarterly production and delivery goal.",
-        "Designed and launched Warehouse on Wheels, a coordination platform managing $3.5M per month in operating expenses.",
-      ],
-    },
-    {
-      company: "Amazon",
-      title: "Operations Area Manager",
-      dates: "Mar 2017 to Apr 2018",
-      location: "Patterson, CA",
-      // Trimmed to title and dates so the page stays at one sheet.
-      bullets: [],
-    },
-  ],
-  education:
-    "University at Buffalo | B.S. Business Administration, Finance | Cum Laude",
-};
+/** Single source: content/resume.json, shared with the site and /resume/. */
+const SOURCE = new URL("../content/resume.json", import.meta.url);
+
+/** WinAnsi-safe text: the data keeps typographic marks, the PDF prints plain ones. */
+export function normalizeText(text) {
+  return text
+    .replace(/[\u2018\u2019]/g, "'")
+    .replace(/[\u201c\u201d]/g, '"')
+    .replace(/\u00d7/g, "x");
+}
+
+/** Shape the shared data for the PDF: flat strings, Amazon-style roles title only. */
+export function toPdfResume(data) {
+  const n = normalizeText;
+  return {
+    name: n(data.name),
+    title: n(data.headline),
+    contact: data.contact.map((part) => ({ ...part, text: n(part.text) })),
+    summary: data.summary.map(n),
+    skills: (data.skills ?? []).map((skill) => ({
+      label: n(skill.label),
+      items: skill.items.map(n),
+    })),
+    roles: data.roles.map((role) => ({
+      company: n(role.heading ?? role.company),
+      title: n(role.title),
+      dates: n(role.dates),
+      location: n(role.location),
+      note: role.note ? n(role.note) : undefined,
+      bullets: role.pdfTitleOnly
+        ? []
+        : role.bullets.map((bullet) => ({
+            text: n(bullet.text),
+            group: bullet.group ? n(bullet.group) : undefined,
+          })),
+    })),
+    education: data.education
+      .map((e) => [e.school, e.degree, e.honors].filter(Boolean).join(" | "))
+      .map(n)
+      .join(" | "),
+  };
+}
+
+function loadResume() {
+  return toPdfResume(JSON.parse(readFileSync(SOURCE, "utf8")));
+}
 
 function widths(list) {
   const values = list.split(" ").map((value) => Number(value));
@@ -155,17 +121,6 @@ function wrap(text, font, size, maxWidth) {
       count += 1;
     }
     if (!line) throw new Error(`Word does not fit: ${words[0]}`);
-    const sentenceAt = line.lastIndexOf(". ");
-    const firstSentence =
-      sentenceAt === -1 ? "" : line.slice(0, sentenceAt + 1);
-    if (
-      firstSentence &&
-      measure(firstSentence, font, size) >= maxWidth * 0.62
-    ) {
-      lines.push(firstSentence);
-      rest = rest.slice(firstSentence.length).trimStart();
-      continue;
-    }
     lines.push(line);
     rest = words.slice(count).join(" ");
   }
@@ -205,15 +160,19 @@ function bulletMark(x, baseline) {
   return drawText("regular", 10, x, baseline, "\u2022", INK);
 }
 
-function documentBlocks() {
+export function documentBlocks(resume = loadResume()) {
   const blocks = [
     { kind: "name", text: resume.name },
     { kind: "title", text: resume.title },
     { kind: "contact", parts: resume.contact },
     { kind: "section", text: "Summary" },
     ...resume.summary.map((text) => ({ kind: "prose", text })),
-    { kind: "section", text: "Experience" },
   ];
+  if (resume.skills?.length) {
+    blocks.push({ kind: "section", text: "Skills" });
+    blocks.push({ kind: "skills", skills: resume.skills });
+  }
+  blocks.push({ kind: "section", text: "Experience" });
   for (const role of resume.roles) {
     blocks.push({
       kind: "job",
@@ -221,8 +180,13 @@ function documentBlocks() {
       dates: `${role.location} | ${role.dates}`,
     });
     if (role.note) blocks.push({ kind: "note", text: role.note });
+    let group;
     for (const bullet of role.bullets) {
-      blocks.push({ kind: "bullet", text: bullet });
+      if (bullet.group && bullet.group !== group) {
+        blocks.push({ kind: "group", text: bullet.group });
+      }
+      group = bullet.group ?? group;
+      blocks.push({ kind: "bullet", text: bullet.text });
     }
   }
   blocks.push({ kind: "section", text: "Education" });
@@ -232,7 +196,11 @@ function documentBlocks() {
 
 function assertCopy(blocks) {
   const text = blocks
-    .map((block) => block.text ?? "")
+    .map((block) =>
+      block.skills
+        ? block.skills.map((s) => `${s.label} ${s.items.join(" ")}`).join(" ")
+        : (block.text ?? ""),
+    )
     .filter(Boolean)
     .join(" ");
   if (text.includes("\u2014") || text.includes("\u2013")) {
@@ -257,7 +225,7 @@ function assertCopy(blocks) {
     !text.includes(
       "the funded portfolio delivered $156M in incremental annual profit.",
     ) ||
-    !text.includes("a program that delivered $260M in annualized savings.")
+    !text.includes("program that delivered $260M in annualized savings.")
   ) {
     throw new Error("The two money results are not both stated");
   }
@@ -312,6 +280,22 @@ const styles = {
     gapBefore: 0,
     gapAfter: 1,
   },
+  group: {
+    font: "bold",
+    size: 9,
+    leading: 11.5,
+    color: MUTED,
+    gapBefore: 2,
+    gapAfter: 0.6,
+  },
+  skills: {
+    font: "regular",
+    size: 9.5,
+    leading: 12.2,
+    color: INK,
+    gapBefore: 0,
+    gapAfter: 1,
+  },
   bullet: {
     font: "regular",
     size: 9.75,
@@ -322,7 +306,7 @@ const styles = {
   },
 };
 
-function render(blocks) {
+export function render(blocks) {
   assertCopy(blocks);
   let y = PAGE_H - TOP;
   const ops = [];
@@ -356,6 +340,56 @@ function render(blocks) {
         place(lines, style, LEFT);
         if (block.kind === "section") ops.push(rule(y - 4));
         y -= style.gapAfter;
+        break;
+      }
+      case "group": {
+        const style = styles.group;
+        y -= style.gapBefore;
+        place(wrap(block.text, style.font, style.size, WIDTH), style, LEFT);
+        y -= style.gapAfter;
+        break;
+      }
+      case "skills": {
+        const style = styles.skills;
+        const labels = block.skills.map((skill) => `${skill.label}:`);
+        const hang =
+          Math.max(...labels.map((l) => measure(l, "bold", style.size))) + 6;
+        block.skills.forEach((skill, index) => {
+          const lines = wrap(
+            skill.items.join(", "),
+            style.font,
+            style.size,
+            WIDTH - hang,
+          );
+          lines.forEach((line, lineIndex) => {
+            y -= style.leading;
+            if (y < BOTTOM)
+              throw new Error(`Resume overflows the page near: ${line}`);
+            if (lineIndex === 0) {
+              ops.push(
+                drawText(
+                  "bold",
+                  style.size,
+                  LEFT,
+                  y,
+                  labels[index],
+                  style.color,
+                ),
+              );
+            }
+            ops.push(
+              drawText(
+                style.font,
+                style.size,
+                LEFT + hang,
+                y,
+                line,
+                style.color,
+              ),
+            );
+          });
+          y -= style.gapAfter;
+        });
         break;
       }
       case "job": {
@@ -480,8 +514,8 @@ function assemble(stream, links) {
   return Buffer.from(body + xref, "latin1");
 }
 
-export function buildResumePdf() {
-  const { stream, links } = render(documentBlocks());
+export function buildResumePdf(resume = loadResume()) {
+  const { stream, links } = render(documentBlocks(resume));
   return assemble(stream, links);
 }
 

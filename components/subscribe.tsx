@@ -2,11 +2,7 @@ import { ArrowUpRight } from "lucide-react";
 import { site } from "@/content/site";
 import { cn } from "@/lib/cn";
 import { btnGhost, btnPrimary } from "@/lib/ui";
-import {
-  isOwnWritingUrl,
-  writingEmbedUrl,
-  writingSubscribeUrl,
-} from "@/lib/writing";
+import { isOwnWritingUrl, writingSubscribeUrl } from "@/lib/writing";
 
 /** The Substack subscribe page, or "" when the configured URL is not ours. */
 export function subscribeHref(): string {
@@ -41,30 +37,62 @@ export function SubscribeButton({
   );
 }
 
-/** Substack's signup form URL, or "" when the configured URL is not ours. */
-export function subscribeEmbedHref(): string {
-  const href = writingEmbedUrl(site.substack);
-  return isOwnWritingUrl(href, site.substack.url) ? href : "";
+/**
+ * An email field and Subscribe button in the site's own style. It submits by
+ * GET to the Substack subscribe page in a new tab, which fills the email in.
+ */
+export function SubscribeForm({
+  href,
+  className,
+}: {
+  href: string;
+  className?: string;
+}) {
+  return (
+    <form
+      action={href}
+      method="get"
+      target="_blank"
+      rel="noopener noreferrer"
+      className={cn("flex w-full flex-wrap gap-2", className)}
+    >
+      <label htmlFor="subscribe-email" className="sr-only">
+        Email address
+      </label>
+      <input
+        id="subscribe-email"
+        type="email"
+        name="email"
+        required
+        autoComplete="email"
+        placeholder="you@example.com"
+        className="border-border-control bg-background text-foreground placeholder:text-muted-foreground text-small min-h-11 min-w-0 flex-[1_1_12rem] border px-3"
+      />
+      <button type="submit" className={cn(btnPrimary, "max-w-full")}>
+        {site.writing.subscribe.action}
+        <ArrowUpRight className="size-[16px] shrink-0" aria-hidden="true" />
+        <span className="sr-only">(opens Substack)</span>
+      </button>
+    </form>
+  );
 }
 
 /**
- * Heading, pitch, button, and small print. h3 under a section, h2 at page
- * level. With `embed`, Substack's own email form replaces the button so a
- * reader can subscribe without leaving the page. It is Substack's markup in
- * an iframe, so it stays light in dark mode.
+ * Heading, pitch, email form, and small print. h3 under a section, h2 at page
+ * level. With `form`, the email field and button sit beside or under the
+ * pitch; otherwise one Subscribe link does.
  */
 export function SubscribeBlock({
   level = 3,
-  embed = false,
+  form = false,
   className,
 }: {
   level?: 2 | 3;
-  embed?: boolean;
+  form?: boolean;
   className?: string;
 }) {
   const href = subscribeHref();
   if (!href) return null;
-  const embedHref = embed ? subscribeEmbedHref() : "";
   const Heading = level === 2 ? "h2" : "h3";
   const { title, body, note } = site.writing.subscribe;
 
@@ -72,8 +100,8 @@ export function SubscribeBlock({
     <div
       data-testid="subscribe"
       className={cn(
-        embedHref
-          ? "flex flex-col gap-4"
+        form
+          ? "@container flex flex-col gap-4 @[44rem]:flex-row @[44rem]:items-center @[44rem]:justify-between @[44rem]:gap-8"
           : "@container flex flex-col gap-4 @[34rem]:flex-row @[34rem]:items-center @[34rem]:justify-between @[34rem]:gap-8",
         className,
       )}
@@ -87,12 +115,10 @@ export function SubscribeBlock({
         </p>
         <p className="text-muted-foreground text-small mt-2">{note}</p>
       </div>
-      {embedHref ? (
-        <iframe
-          src={embedHref}
-          title={site.writing.subscribe.embedTitle}
-          loading="lazy"
-          className="border-border h-80 w-full max-w-[30rem] rounded-md border"
+      {form ? (
+        <SubscribeForm
+          href={href}
+          className="@[44rem]:w-[24rem] @[44rem]:shrink-0"
         />
       ) : (
         <SubscribeButton href={href} className="@[34rem]:shrink-0" />

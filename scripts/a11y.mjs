@@ -52,7 +52,7 @@ const viewports = {
 
 // Home keeps the full suite below. Case studies get axe + reflow coverage.
 const caseStudyPath = "work/tesla-energy-ai-product/";
-const axeRoutes = ["", caseStudyPath];
+const axeRoutes = ["", caseStudyPath, "resume/"];
 
 for (const route of axeRoutes) {
   for (const [device, viewport] of Object.entries(viewports)) {
@@ -369,14 +369,14 @@ const clipboardContext = await browser.newContext({
 const contact = await clipboardContext.newPage();
 await contact.goto(origin);
 const email = await contact
-  .locator('#contact a[href^="mailto:"]:not([href*="?"])')
+  .locator('#about a[href^="mailto:"]:not([href*="?"])')
   .textContent();
-const copyButton = contact.locator("#contact button");
+const copyButton = contact.locator("#about button");
 const announces = (text) =>
   contact
     .waitForFunction(
       (expected) =>
-        document.querySelector('#contact [role="status"]').textContent ===
+        document.querySelector('#about [role="status"]').textContent ===
         expected,
       text,
       { timeout: 2000 },

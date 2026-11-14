@@ -1,4 +1,5 @@
-import { readFileSync } from "node:fs";
+import { readFileSync, writeFileSync } from "node:fs";
+import { join } from "node:path";
 
 export interface WritingPost {
   title: string;
@@ -34,12 +35,6 @@ export function writingSubscribeUrl(
 ): string {
   const base = writingPublicationUrl(config);
   return base ? `${base}/subscribe` : "";
-}
-
-/** Substack's own signup form, meant to sit in an iframe. */
-export function writingEmbedUrl(config: Pick<SubstackConfig, "url">): string {
-  const base = writingPublicationUrl(config);
-  return base ? `${base}/embed` : "";
 }
 
 export function writingFeedUrl(config: Pick<SubstackConfig, "url">): string {
@@ -253,23 +248,117 @@ export function parseEssayBodies(
 }
 
 export type WritingLoad =
-  { ok: true; posts: WritingPost[] } | { ok: false; posts: []; reason: string };
+  | { ok: true; posts: WritingPost[] }
+  | {
+      ok: false;
+      posts: [];
+      reason: string;
+      /** The snapshot holds posts that could not be shown. */
+      hasUnshownPosts: boolean;
+    };
 
-type FeedXml = { ok: true; xml: string } | { ok: false; reason: string };
+type FeedXml =
+  | { ok: true; xml: string; from: "fixture" | "live" | "snapshot" }
+  | { ok: false; reason: string; hasUnshownPosts: boolean };
 
-async function fetchFeedXml(feedUrl: string): Promise<FeedXml> {
+/** Substack answers some bot-looking requests from CI with 403. */
+export const WRITING_FEED_HEADERS = {
+  "User-Agent":
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36",
+  Accept: "application/rss+xml, application/xml;q=0.9, */*;q=0.8",
+} as const;
+export const WRITING_FEED_RETRY_DELAY_MS = 1_500;
+/** Committed copy of the feed, refreshed by `pnpm sync:writing`. */
+export const WRITING_SNAPSHOT_FILE = "content/writing-feed.xml";
+
+function isRetryable(status: number): boolean {
+  return status === 403 || status === 429 || status >= 500;
+}
+
+type Attempt = FeedXml & { retry?: boolean };
+
+async function fetchOnce(feedUrl: string): Promise<Attempt> {
   try {
     const response = await fetch(feedUrl, {
+      headers: WRITING_FEED_HEADERS,
       signal: AbortSignal.timeout(WRITING_FEED_TIMEOUT_MS),
     });
-    if (!response.ok) return { ok: false, reason: `HTTP ${response.status}` };
+    if (!response.ok) {
+      return {
+        ok: false,
+        reason: `HTTP ${response.status}`,
+        hasUnshownPosts: false,
+        retry: isRetryable(response.status),
+      };
+    }
     const xml = await response.text();
-    if (!looksLikeFeed(xml)) return { ok: false, reason: "malformed feed XML" };
-    return { ok: true, xml };
+    if (!looksLikeFeed(xml)) {
+      return {
+        ok: false,
+        reason: "malformed feed XML",
+        hasUnshownPosts: false,
+      };
+    }
+    return { ok: true, xml, from: "live" };
   } catch (error) {
     const reason = error instanceof Error ? error.message : "fetch failed";
-    return { ok: false, reason };
+    return { ok: false, reason, hasUnshownPosts: false, retry: true };
   }
+}
+
+/** One try, then one retry after a short backoff on 403, 429, 5xx, or a network error. */
+async function fetchFeedXml(feedUrl: string): Promise<FeedXml> {
+  const first = await fetchOnce(feedUrl);
+  if (first.ok || !first.retry) return first;
+  await new Promise((resolve) =>
+    setTimeout(resolve, WRITING_FEED_RETRY_DELAY_MS),
+  );
+  return fetchOnce(feedUrl);
+}
+
+function inBuild(): boolean {
+  return process.env.NEXT_PHASE === "phase-production-build";
+}
+
+function snapshotPath(): string {
+  return (
+    process.env.WRITING_SNAPSHOT_PATH ||
+    join(process.cwd(), WRITING_SNAPSHOT_FILE)
+  );
+}
+
+function readSnapshot(): string | null {
+  try {
+    return readFileSync(snapshotPath(), "utf8");
+  } catch {
+    return null;
+  }
+}
+
+function hasItems(xml: string): boolean {
+  return /<(item|entry)\b/i.test(xml);
+}
+
+/** Live feed first, then the committed snapshot. Says so loudly in CI. */
+async function fetchWithSnapshot(feedUrl: string): Promise<FeedXml> {
+  const live = await fetchFeedXml(feedUrl);
+  if (live.ok) return live;
+  const snapshot = readSnapshot();
+  const usable = snapshot !== null && looksLikeFeed(snapshot);
+  if (inBuild() && process.env.GITHUB_ACTIONS) {
+    const used = usable
+      ? "using the committed snapshot content/writing-feed.xml"
+      : "no usable snapshot, so no essays are shown";
+    console.warn(
+      `::warning title=Substack feed unavailable::writing feed: ${live.reason}; ${used}`,
+    );
+  }
+  if (usable) return { ok: true, xml: snapshot, from: "snapshot" };
+  return {
+    ok: false,
+    reason: live.reason,
+    hasUnshownPosts: snapshot !== null && hasItems(snapshot),
+  };
 }
 
 const buildFeeds = new Map<string, Promise<FeedXml>>();
@@ -280,24 +369,50 @@ const buildFeeds = new Map<string, Promise<FeedXml>>();
  * fetches afresh.
  */
 function loadFeedXml(feedUrl: string): Promise<FeedXml> {
-  if (process.env.NEXT_PHASE !== "phase-production-build") {
-    return fetchFeedXml(feedUrl);
-  }
+  if (!inBuild()) return fetchWithSnapshot(feedUrl);
   let pending = buildFeeds.get(feedUrl);
   if (!pending) {
-    pending = fetchFeedXml(feedUrl);
+    pending = fetchWithSnapshot(feedUrl);
     buildFeeds.set(feedUrl, pending);
   }
   return pending;
 }
 
-/** The feed XML from the fixture file or the network, or null when unset. */
+/** Tells scripts/postbuild.mjs which feed fed the build and what it holds. */
+export const WRITING_BUILD_MARKER = ".writing-build-source.json";
+
+function recordBuildSource(source: FeedXml, config: SubstackConfig): FeedXml {
+  if (!inBuild()) return source;
+  const posts = source.ok
+    ? selectPosts(parseFeed(source.xml, config.url), config.url, Infinity)
+    : [];
+  try {
+    writeFileSync(
+      join(process.cwd(), WRITING_BUILD_MARKER),
+      JSON.stringify({
+        source: source.ok ? source.from : "none",
+        count: posts.length,
+        newest: posts[0] ? { href: posts[0].href, path: posts[0].path } : null,
+      }),
+    );
+  } catch {
+    // The marker only feeds a post-build check.
+  }
+  return source;
+}
+
+/** The feed XML from the fixture file, the network, or the snapshot; null when unset. */
 async function feedSource(config: SubstackConfig): Promise<FeedXml | null> {
   const fixture = process.env.WRITING_FEED_PATH;
-  if (fixture) return { ok: true, xml: readFileSync(fixture, "utf8") };
+  if (fixture) {
+    return recordBuildSource(
+      { ok: true, xml: readFileSync(fixture, "utf8"), from: "fixture" },
+      config,
+    );
+  }
   const feedUrl = writingFeedUrl(config);
   if (!feedUrl) return null;
-  return loadFeedXml(feedUrl);
+  return recordBuildSource(await loadFeedXml(feedUrl), config);
 }
 
 /**
@@ -310,7 +425,14 @@ export async function loadWritingResult(
 ): Promise<WritingLoad> {
   const source = await feedSource(config);
   if (!source) return { ok: true, posts: [] };
-  if (!source.ok) return { ok: false, posts: [], reason: source.reason };
+  if (!source.ok) {
+    return {
+      ok: false,
+      posts: [],
+      reason: source.reason,
+      hasUnshownPosts: source.hasUnshownPosts,
+    };
+  }
   return {
     ok: true,
     posts: selectPosts(parseFeed(source.xml, config.url), config.url, limit),

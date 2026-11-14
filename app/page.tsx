@@ -1,5 +1,4 @@
 import { About } from "@/components/sections/about";
-import { Contact } from "@/components/sections/contact";
 import { Hero } from "@/components/sections/hero";
 import { SelectedWork } from "@/components/sections/selected-work";
 import { Writing } from "@/components/sections/writing";
@@ -14,6 +13,7 @@ export default async function Home() {
   if (!result.ok) {
     console.error(`writing feed: ${result.reason}`);
   }
+  const unavailable = !result.ok && result.hasUnshownPosts;
 
   return (
     <div
@@ -22,10 +22,18 @@ export default async function Home() {
     >
       <div className="lg:max-w-home w-full max-w-prose max-sm:[--spacing-section:1.75rem] [&_#top>div]:px-0 [&_section>div]:px-0">
         <Hero latest={result.posts[0]} />
-        <Writing posts={result.posts} unavailable={!result.ok} />
-        <SelectedWork />
+        {result.posts.length > 0 ? (
+          <>
+            <Writing posts={result.posts} />
+            <SelectedWork />
+          </>
+        ) : (
+          <>
+            <SelectedWork />
+            <Writing posts={result.posts} unavailable={unavailable} />
+          </>
+        )}
         <About />
-        <Contact />
       </div>
     </div>
   );

@@ -30,7 +30,9 @@ export function Nav({
       ? "#work"
       : /^\/writing\/?$/.test(pathname)
         ? "/writing/"
-        : "";
+        : /^\/resume\/?$/.test(pathname)
+          ? "/resume/"
+          : "";
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);

@@ -2,6 +2,7 @@ import { readFileSync } from "node:fs";
 import path from "node:path";
 import { inflateSync } from "node:zlib";
 import { describe, expect, it } from "vitest";
+import { resume } from "@/content/resume";
 import { site } from "@/content/site";
 import {
   extractFigures,
@@ -12,8 +13,29 @@ import {
 
 const root = path.resolve(__dirname, "..");
 
-/** Visible résumé text from the committed public/resume.pdf content stream. */
+/** Every résumé string in the shared source, content/resume.json. */
 function resumeText(): string {
+  return [
+    resume.name,
+    resume.headline,
+    ...resume.contact.map((part) => part.text),
+    ...resume.summary,
+    ...(resume.skills ?? []).flatMap((s) => [s.label, ...s.items]),
+    ...resume.roles.flatMap((role) => [
+      role.heading ?? role.company,
+      role.title,
+      role.dates,
+      role.location,
+      role.note ?? "",
+      role.summary ?? "",
+      ...role.bullets.flatMap((b) => [b.group ?? "", b.text]),
+    ]),
+    ...resume.education.flatMap((e) => [e.school, e.degree, e.honors ?? ""]),
+  ].join("\n");
+}
+
+/** Visible text from the committed public/resume.pdf content stream. */
+function pdfText(): string {
   const pdf = readFileSync(path.join(root, "public/resume.pdf"));
   const marker = Buffer.from("stream\n");
   const start = pdf.indexOf(marker);
@@ -69,6 +91,22 @@ describe("number ledger", () => {
     expect(untraced).toEqual([]);
   });
 
+  it("keeps the committed PDF in step with the shared source", () => {
+    const printed = pdfText().replace(/\s+/g, " ");
+    const plain = (text: string) =>
+      text.replace(/[\u2018\u2019]/g, "'").replace(/\u00d7/g, "x");
+    for (const role of resume.roles) {
+      expect(printed).toContain(plain(role.title));
+      expect(printed).toContain(plain(role.dates));
+      for (const bullet of role.pdfTitleOnly ? [] : role.bullets) {
+        expect(printed).toContain(plain(bullet.text));
+      }
+    }
+    for (const paragraph of resume.summary) {
+      expect(printed).toContain(plain(paragraph));
+    }
+  });
+
   it("catches figures the résumé does not support", () => {
     const untraced = extractFigures(
       "56% more throughput. −26% cost. Deployment 2.1×.",
@@ -83,7 +121,7 @@ describe("number ledger", () => {
       "for a $23M budget; the funded portfolio delivered $156M in incremental annual profit.",
     );
     expect(text).toContain(
-      "a program that delivered $260M in annualized savings.",
+      "program that delivered $260M in annualized savings.",
     );
     for (const sentence of text.split(/(?<=\.)\s+/)) {
       expect(sentence.includes("$156M") && sentence.includes("$260M")).toBe(

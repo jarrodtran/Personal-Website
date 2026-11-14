@@ -67,7 +67,11 @@ const personJsonLd = {
     addressCountry: "US",
   },
   alumniOf: { "@type": "CollegeOrUniversity", name: "University at Buffalo" },
-  sameAs: [site.contact.linkedin, site.contact.github].filter(Boolean),
+  sameAs: [
+    site.contact.linkedin,
+    site.contact.github,
+    site.substack.url,
+  ].filter(Boolean),
   knowsAbout: site.knowsAbout,
 };
 

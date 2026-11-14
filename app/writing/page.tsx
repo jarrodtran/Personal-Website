@@ -36,7 +36,8 @@ function byYear(posts: WritingPost[]): Array<[string, WritingPost[]]> {
 }
 
 export default async function WritingPage() {
-  const { ok, posts } = await loadArchive();
+  const result = await loadArchive();
+  const { posts } = result;
   const grouped = posts.length > ARCHIVE_GROUP_AFTER;
 
   return (
@@ -54,13 +55,13 @@ export default async function WritingPage() {
         {posts.length === 0 ? (
           <>
             <div className="mt-8">
-              <NoEssays unavailable={!ok} />
+              <NoEssays unavailable={!result.ok && result.hasUnshownPosts} />
             </div>
-            <SubscribeBlock level={2} embed className="mt-8" />
+            <SubscribeBlock level={2} form className="mt-8" />
           </>
         ) : (
           <>
-            <SubscribeBlock level={2} embed className="mt-8" />
+            <SubscribeBlock level={2} form className="mt-8" />
             {grouped ? (
               byYear(posts).map(([year, items]) => (
                 <section key={year || "undated"} className="mt-10">

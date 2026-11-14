@@ -4,6 +4,7 @@ import { join } from "node:path";
 import { chromium, type Browser } from "playwright-core";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { site } from "@/content/site";
+import { writingSubscribeUrl } from "@/lib/writing";
 import {
   COLOR_SCHEMES,
   LAYOUT_WIDTHS,
@@ -172,11 +173,11 @@ describe("390px tap targets and first screen", () => {
     }
   }, 180_000);
 
-  it("shows the hero, then the Writing heading, on the first screen", async () => {
+  it("shows the hero with its two actions, then the Selected work heading, with no posts", async () => {
     const { browser, page } = await open("/");
     const view = await page.evaluate(() => {
       const hero = document.getElementById("top");
-      const heading = document.querySelector("#writing h2");
+      const heading = document.querySelector("#top ~ section h2");
       const box = heading?.getBoundingClientRect();
       return {
         hero: (hero?.innerText || "")
@@ -185,7 +186,6 @@ describe("390px tap targets and first screen", () => {
           .filter(Boolean),
         writingTitle: heading?.textContent?.trim() ?? "",
         writingBottom: box?.bottom ?? 0,
-        viewport: window.innerHeight,
       };
     });
     await browser.close();
@@ -193,10 +193,10 @@ describe("390px tap targets and first screen", () => {
       site.positioning.name,
       site.positioning.intro,
     ]);
-    expect(view.hero.join(" ")).toMatch(/Subscribe|Read the latest essay/);
-    expect(view.writingTitle).toBe(site.writing.latestTitle);
+    expect(view.hero.slice(2)).toEqual([site.positioning.workAction, "Résumé"]);
+    expect(view.hero.join(" ")).not.toContain("Subscribe");
+    expect(view.writingTitle).toBe(site.sections.work.title);
     expect(view.writingBottom).toBeGreaterThan(0);
-    expect(view.writingBottom).toBeLessThanOrEqual(view.viewport);
   });
 
   it("aligns the hero name with the nav column at 1280px", async () => {
@@ -345,11 +345,54 @@ describe("390px tap targets and first screen", () => {
     },
   );
 
+  it("gives /writing/ a native 44px signup form that submits to Substack", async () => {
+    const { browser, page } = await open("/writing/");
+    const form = await page.evaluate(() => {
+      const el = document.querySelector<HTMLFormElement>(
+        "[data-testid=subscribe] form",
+      );
+      const input = el?.querySelector<HTMLInputElement>("input");
+      const button = el?.querySelector<HTMLButtonElement>("button");
+      const box = (node: Element | null | undefined) => {
+        const r = node?.getBoundingClientRect();
+        return { w: r?.width ?? 0, h: r?.height ?? 0 };
+      };
+      return {
+        iframes: document.querySelectorAll("iframe").length,
+        method: el?.method,
+        target: el?.target,
+        rel: el?.getAttribute("rel"),
+        action: el?.action,
+        type: input?.type,
+        name: input?.name,
+        required: input?.required,
+        autocomplete: input?.autocomplete,
+        label: input?.labels?.[0]?.textContent?.trim(),
+        input: box(input),
+        button: box(button),
+      };
+    });
+    await browser.close();
+    expect(form.iframes).toBe(0);
+    expect(form.method).toBe("get");
+    expect(form.target).toBe("_blank");
+    expect(form.rel).toContain("noopener");
+    expect(form.action).toBe(writingSubscribeUrl(site.substack));
+    expect(form.type).toBe("email");
+    expect(form.name).toBe("email");
+    expect(form.required).toBe(true);
+    expect(form.autocomplete).toBe("email");
+    expect(form.label).toBeTruthy();
+    expect(form.input.h).toBeGreaterThanOrEqual(44);
+    expect(form.button.h).toBeGreaterThanOrEqual(44);
+    expect(form.button.w).toBeGreaterThanOrEqual(44);
+  });
+
   it("resolves résumé, email, LinkedIn, and the next case-study link", async () => {
     const { browser, page } = await open("/");
     const home = await page.evaluate(() => {
       const resume = document.querySelector<HTMLAnchorElement>(
-        "#about a[download], #contact a[download]",
+        '#about a[href$="/resume/"]',
       );
       const email =
         document.querySelector<HTMLAnchorElement>('a[href^="mailto:"]');
@@ -363,7 +406,7 @@ describe("390px tap targets and first screen", () => {
       };
     });
     await browser.close();
-    expect(home.resume).toMatch(/resume\.pdf$/);
+    expect(home.resume).toMatch(/\/resume\/$/);
     expect(home.email).toBe(`mailto:${site.contact.email}`);
     expect(home.linkedin).toBe(site.contact.linkedin);
 

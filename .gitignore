@@ -41,3 +41,4 @@ next-env.d.ts
 
 # test scratch dirs
 /out.writing-fixture/
+/.writing-build-source.json

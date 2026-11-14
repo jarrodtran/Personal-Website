@@ -1,3 +1,5 @@
+import { resumeExperience } from "./resume";
+
 export const siteUrl = "https://jarrodtran.com";
 
 /** Official current title. Every surface (bio, experience, JSON-LD) reads this one value. */
@@ -6,17 +8,21 @@ const currentTitle = "Lead, AI Enablement & Factory Strategy";
 export interface ImpactBullet {
   text: string;
   metric?: string;
+  group?: string;
 }
 
 export interface WorkPanel {
   kicker: string;
   value: string;
   label: string;
+  /** Two or three supporting figures, each already in this item's copy. */
+  supporting?: { value: string; label: string }[];
 }
 
 export interface Role {
   title: string;
   dates: string;
+  location?: string;
   summary?: string;
   bullets: ImpactBullet[];
 }
@@ -29,11 +35,11 @@ export interface Employer {
 
 export interface CaseStudy {
   /** Opening scene for the deep page. */
-  context: string;
+  context: string | string[];
   constraints: string[];
   decisions: string[];
   /** Longer outcome narrative; figures must stay on the résumé ledger. */
-  outcomeDetail: string;
+  outcomeDetail: string | string[];
   /** What Jarrod personally owned. Prefer dropping a claim over inventing credit. */
   role: string[];
 }
@@ -61,6 +67,8 @@ export interface SiteContent {
     status: string;
     location: string;
     currentRole: string;
+    /** Hero primary action while there are no essays. Links to #work. */
+    workAction: string;
   };
   /**
    * Public Substack. `url` is the only publication setting: subscribe href,
@@ -84,7 +92,6 @@ export interface SiteContent {
       action: string;
       note: string;
       short: string;
-      embedTitle: string;
     };
     essay: {
       minutes: string;
@@ -99,7 +106,6 @@ export interface SiteContent {
   sections: {
     work: { title: string };
     about: { title: string };
-    contact: { title: string };
   };
   knowsAbout: string[];
   nav: { label: string; href: string }[];
@@ -108,6 +114,8 @@ export interface SiteContent {
     linkedin: string;
     github?: string;
     resumeHref: string;
+    /** On-site résumé page; every "Résumé" link opens it. */
+    resumePage: string;
     resumeFilename: string;
     calendar?: string;
     intro: string;
@@ -125,12 +133,14 @@ export const site: SiteContent = {
     name: "Jarrod Tran",
     headline: "Worth Mulling by Jarrod Tran",
     intro:
-      "I write Worth Mulling, where I think through whatever I’ve been chewing on lately and the rabbit holes I go down along the way. By day I lead AI enablement at Tesla Energy.",
+      "I lead the AI product team at Tesla Energy. We’ve shipped 20+ production AI tools that 1,000+ employees use. Before that, I led the iPhone India launch at Apple and planned Engineering Operations at Waymo. I also write Worth Mulling, where I think through whatever I’ve been chewing on lately.",
     documentTitle: "Jarrod Tran · Worth Mulling",
-    valueProp: "My thoughts, and whatever rabbit hole I’m down lately.",
+    valueProp:
+      "Jarrod Tran leads AI enablement at Tesla Energy and writes Worth Mulling, a Substack newsletter.",
     status: "Worth Mulling",
     location: "Houston, TX",
     currentRole: currentTitle,
+    workAction: "See selected work",
   },
   substack: {
     name: "Worth Mulling",
@@ -149,7 +159,6 @@ export const site: SiteContent = {
       action: "Subscribe",
       note: "Free. Sent through Substack. Unsubscribe anytime.",
       short: "If this was worth mulling, get the next one by email.",
-      embedTitle: "Substack signup form for Worth Mulling",
     },
     essay: {
       minutes: "min read",
@@ -158,126 +167,10 @@ export const site: SiteContent = {
   },
   about: {
     bio: [
-      `I’m Jarrod Tran. As ${currentTitle} at Tesla Energy, I hired the team behind our AI tools and set up the reporting that shows whether people use them. Before that, I led the iPhone launch program in India at Apple and planning for Engineering Operations at Waymo.`,
-      "Worth Mulling is where I write about whatever I’m thinking about, work or not.",
+      `I’m Jarrod Tran, based in Houston. As ${currentTitle} at Tesla Energy, I hired the team behind our AI tools and set up the reporting that shows whether people use them.`,
     ],
   },
-  experience: [
-    {
-      company: "Tesla",
-      note: "Rejoined Tesla in 2023 after Apple and Waymo.",
-      roles: [
-        {
-          title: currentTitle,
-          dates: "Aug 2023 to Present",
-          summary:
-            "I own Tesla Energy’s AI enablement strategy and the product team that ships it: roadmap, rules, and what I report to leadership.",
-          bullets: [
-            {
-              text: "Built and lead a 4-person team of AI product managers and engineers that has shipped 20+ production AI tools now used by 1,000+ employees, including RAG-based troubleshooting assistants, automated reporting, workflow automation and decision support.",
-              metric: "1,000+",
-            },
-            {
-              text: "Own the roadmap for an AI enablement program reaching 10,000 employees: rank use cases, assign an owner to each, and pair every release with training and weekly adoption reports to leadership.",
-              metric: "10,000",
-            },
-            {
-              text: "Freed an estimated 540 hours per week, worth $1.6M a year in productivity, by funding the tools that save the most time or improve decisions.",
-              metric: "$1.6M",
-            },
-            {
-              text: "Built the Python and Tableau ROI model executives used to choose among 50+ competing initiatives for a $23M budget. The funded portfolio delivered $156M in incremental annual profit.",
-              metric: "$156M",
-            },
-            {
-              text: "Redesigned the investment plan for Megapack, Tesla’s utility-scale battery product, mitigating $550M in projected tariff exposure during a 3.2× scale-up.",
-              metric: "$550M",
-            },
-            {
-              text: "Served as Program Champion for a separate program that delivered $260M in annualized savings.",
-              metric: "$260M",
-            },
-          ],
-        },
-        {
-          title: "Program Manager, Special Projects",
-          dates: "Jun 2018 to Jun 2021",
-          summary:
-            "I ran new programs at Tesla, including the 4680 launch and the Model 3 and Model Y scale-up.",
-          bullets: [
-            {
-              text: "Took Project Roadrunner, Tesla’s 4680 battery cell program, from pilot to launch readiness through its public unveiling at Tesla’s 2020 Battery Day.",
-            },
-            {
-              text: "Led Model 3 and Model Y production planning and recovery for two years from launch, ramping each model to 10,000 units per week and hitting every quarterly production and delivery goal.",
-              metric: "10,000",
-            },
-            {
-              text: "Designed and launched Warehouse on Wheels, a coordination platform managing $3.5M per month in operating expenses.",
-              metric: "$3.5M",
-            },
-          ],
-        },
-      ],
-    },
-    {
-      company: "Waymo",
-      roles: [
-        {
-          title: "Strategy & Operations Manager",
-          dates: "Oct 2022 to May 2023",
-          bullets: [
-            {
-              text: "Moved six separately planned functions (hardware, software, fleet, Product, Legal and Engineering) onto one Engineering Operations plan, with shared OKRs, resource plans and quarterly business reviews for a 200+ person engineering organization.",
-              metric: "200+",
-            },
-            {
-              text: "Aligned those six functions on commercial deployment priorities as Waymo’s driverless ride service expanded.",
-            },
-            {
-              text: "Built the leadership dashboards for fleet health, performance and milestones, cutting one-off reporting requests.",
-            },
-          ],
-        },
-      ],
-    },
-    {
-      company: "Apple",
-      roles: [
-        {
-          title: "Strategic Operations Program Manager",
-          dates: "Jun 2021 to Jun 2022",
-          bullets: [
-            {
-              text: "Led the iPhone India program end to end from a standing start, keeping market entry, partner readiness and launch timing on one schedule.",
-            },
-            {
-              text: "Supported 293% year-over-year unit growth (4.3M to 16.9M) as program revenue grew from $2B to $10B and exports expanded from 6 to 40+ countries.",
-              metric: "293%",
-            },
-            {
-              text: "Turned demand forecasts into weekly funding and readiness plans, and flagged quality, regulatory and timing issues for leadership.",
-            },
-          ],
-        },
-      ],
-    },
-    {
-      company: "Amazon",
-      roles: [
-        {
-          title: "Operations Area Manager",
-          dates: "Mar 2017 to Apr 2018",
-          bullets: [
-            {
-              text: "Led 100+ associates in a 1M sq ft fulfillment center handling 350K SKUs.",
-              metric: "100+",
-            },
-          ],
-        },
-      ],
-    },
-  ],
+  experience: resumeExperience(),
   selectedWork: [
     {
       slug: "tesla-energy-ai-product",
@@ -292,28 +185,39 @@ export const site: SiteContent = {
       panel: {
         kicker: "Tesla Energy",
         value: "1,000+",
-        label: "Active users across 20+ production AI solutions",
+        label: "Unique users across 20+ production AI tools",
+        supporting: [
+          { value: "2 weeks", label: "Faster time to hire" },
+          { value: "~540", label: "Hours reclaimed per week, modeled" },
+          { value: "$1.6M", label: "Annualized productivity value" },
+        ],
       },
       link: { label: "Tesla Energy", href: "https://www.tesla.com/energy" },
       caseStudy: {
-        context:
+        context: [
           "Some pilots showed promise. The harder question was whether they would help with work people already did.",
+          "I hired the team and decided what gets built. Tools we shipped include an internal agent chat that offloads agentic work, an automated résumé reviewer inside a hiring hub, operations automations, 3D product models in Three.js for onboarding, and executive daily task automations.",
+        ],
         constraints: [
-          "We measured adoption by use in day-to-day work",
-          "The team had limited capacity, so each use case needed an owner",
-          "Releases had to meet security and data requirements",
+          "Anything that touches personal data is off the table. People attendance is the example: it involves personally identifiable information, so we say no.",
+          "The team was four people, so each use case needed an owner.",
+          "Releases had to meet security and data requirements.",
+          "Adoption is counted as unique logins, so access alone does not count.",
         ],
         decisions: [
-          "Build a dedicated product and engineering team",
-          "Prioritize tools that save time or improve decisions",
-          "Pair releases with training and track adoption each week",
+          "Hire a dedicated product and engineering team instead of relying on one-off pilots, so every tool had someone responsible for it.",
+          "Fund what saves the most time or improves decisions, and turn down the rest.",
+          "Decline every use case that touches personal data, even when the request is reasonable.",
+          "Ship training with each release and report adoption every week, because a tool nobody opens saves no time.",
         ],
-        outcomeDetail:
-          "We used adoption data to track usage. Our productivity model estimated about 540 hours saved per week and $1.6M in annualized value.",
+        outcomeDetail: [
+          "The team has shipped 20+ production AI tools with 1,000+ unique users. The program is open to 10,000 eligible employees. Time to hire dropped by 2 weeks with the hiring hub.",
+          "Our productivity model estimates about 540 hours saved per week, worth $1.6M a year. Early on, we used too much technical language. The lesson: people need to know what a tool does for their work, not how it works.",
+        ],
         role: [
           "Owned the AI roadmap and reported adoption to leadership",
           "Hired and led the AI product and engineering team",
-          "Set prioritization rules, governance, and adoption metrics",
+          "Set the rules for what we build, including the personal-data limit",
         ],
       },
     },
@@ -331,27 +235,38 @@ export const site: SiteContent = {
         kicker: "Tesla Energy",
         value: "$156M",
         label: "Incremental annual profit from a $23M portfolio",
+        supporting: [
+          { value: "50+", label: "Competing initiatives" },
+          { value: "7.5%", label: "More capacity at the California site" },
+          { value: "3.2×", label: "Megapack scale-up" },
+        ],
       },
       link: { label: "Tesla Megapack", href: "https://www.tesla.com/megapack" },
       caseStudy: {
-        context:
+        context: [
           "The funding decision depended on how each proposal would affect profit, what it would cost, and when it could deliver.",
+          "Some calls were concrete. We funded an automated welding robot install. We cut a plan to add another crane, because installing it required too much downtime.",
+        ],
         constraints: [
-          "Only $23M was available against 50+ competing requests",
-          "Leaders needed a common basis for funding decisions",
-          "The model had to account for labor, cost, and timing",
+          "Only $23M was available against 50+ competing requests.",
+          "Each project in California was judged on capital cost, feasibility and overall impact on the site.",
+          "The extra crane would have needed too much downtime to install.",
+          "Tariff rates changed while plans were running, so the timing of imports mattered.",
         ],
         decisions: [
-          "Use Python and Tableau to compare expected returns and risks",
-          "Use funding reviews to choose the highest-return work",
-          "Reuse the ranking method later when sequencing AI use cases",
+          "Use Python and Tableau models to compare expected returns, so leaders could rank requests on one basis.",
+          "Fund the welding robot install and cut the extra crane, because the crane needed too much downtime.",
+          "Coordinate the California site investment myself and make the yes or no call on each project, so one person owned the answer.",
+          "For battery modules imported from China, time entry to and exit from foreign-trade zones to match tariff rates as they changed, close to a hedge, and fast-track more foreign-trade zones and tariff exclusions.",
         ],
-        outcomeDetail:
-          "The funded portfolio delivered $156M in incremental annual profit. Megapack scaled 3.2×. A separate program delivered $260M in annualized savings. Changes to what we built and where we invested mitigated $550M in projected tariff exposure.",
+        outcomeDetail: [
+          "The funded portfolio delivered $156M in incremental annual profit. The $23M California site investment unlocked 7.5% more capacity and incremental profit for Megapack.",
+          "Megapack scaled 3.2×, and the investment plan mitigated $550M in projected tariff exposure. A separate program, built on robotic automation and headcount optimization, saved $260M on an annualized basis.",
+        ],
         role: [
           "Owned the Energy investment roadmap and scheduled funding reviews",
+          "Ran the California site investment, including each yes or no decision",
           "Built the models executives used to compare proposals",
-          "Led the reviews that cut low-return proposals",
         ],
       },
     },
@@ -363,34 +278,44 @@ export const site: SiteContent = {
       problem:
         "Apple needed to prepare partners for the iPhone launch in India while demand and readiness were changing.",
       contribution:
-        "I drove market-entry decisions, partner qualification, and launch readiness, and kept demand, quality, and geopolitical risk in one plan.",
+        "I led production strategy and kept demand, quality, and geopolitical risk in one plan.",
       outcome:
         "Program revenue grew from $2B to $10B, and exports expanded from 6 to 40+ countries.",
       panel: {
         kicker: "Apple",
         value: "293%",
         label: "Year-over-year growth, 4.3M → 16.9M units",
+        supporting: [
+          { value: "$2B → $10B", label: "Program revenue" },
+          { value: "6 → 40+", label: "Countries exported to" },
+        ],
       },
       link: { label: "Apple India", href: "https://www.apple.com/in/" },
       caseStudy: {
-        context:
-          "Launch planning had to account for partner qualification, quality requirements, and regulatory approvals.",
+        context: [
+          "I owned the production strategy for iPhone in India. Sites began as greenfield and reached full-scale production. The footprint grew across Chennai and Bangalore.",
+          "Launch planning also had to account for partner qualification, quality requirements, and regulatory approvals.",
+        ],
         constraints: [
-          "The schedule had to meet quality and regulatory requirements",
-          "Partner readiness lagged expected volume",
-          "Demand forecasts and geopolitical risk both shaped readiness decisions",
+          "The schedule had to meet quality and regulatory requirements.",
+          "Partner readiness lagged expected volume.",
+          "Yield had to be right before shipping, even with a projected launch date to hit.",
+          "Demand forecasts and geopolitical risk both shaped readiness decisions.",
         ],
         decisions: [
-          "Use one schedule for market entry, partner checks, and launch readiness",
-          "Turn demand forecasts into funding and readiness plans for weekly review",
-          "Qualify additional sources to reduce dependence on one geography",
+          "Pause to improve yield, even though it put us behind the projected launch. We wanted the product right before it shipped. This was the hardest call.",
+          "Use one schedule for market entry, partner checks, and launch readiness, so timing risks showed up in one place.",
+          "Turn demand forecasts into funding and readiness plans for weekly review.",
+          "Qualify additional sources to reduce dependence on one geography.",
         ],
-        outcomeDetail:
-          "Reported program revenue grew from $2B to $10B, and exports expanded from 6 to 40+ countries.",
+        outcomeDetail: [
+          "Reported program revenue grew from $2B to $10B, and exports expanded from 6 to 40+ countries. Units grew 293%, from 4.3M to 16.9M.",
+          "The yield pause cost us time against the plan. We caught up later through other initiatives.",
+        ],
         role: [
-          "Led the India launch program end to end",
-          "Kept entry, partners, and readiness on one schedule",
-          "Brought quality, regulatory, and timing risks to leadership",
+          "Owned the production strategy end to end",
+          "Expanded the footprint across Chennai and Bangalore",
+          "Brought the yield pause and other timing and quality risks to leadership",
         ],
       },
     },
@@ -406,25 +331,32 @@ export const site: SiteContent = {
         "A shared Engineering Operations rhythm that forced tradeoffs into the open and cut the ad-hoc reporting.",
       panel: {
         kicker: "Waymo",
-        value: "One plan",
-        label: "Six functions on one shared scoreboard",
+        value: "200+",
+        label: "People in one engineering org, working from a single plan",
+        supporting: [
+          { value: "Six", label: "Functions planning from one calendar" },
+        ],
       },
       link: { label: "Waymo", href: "https://waymo.com/" },
       caseStudy: {
-        context:
+        context: [
           "Engineering Operations needed one plan that brought commercial deployment, safety, and regulatory priorities together.",
+          "Six functions planned on their own. Reporting was manual or sent by email.",
+        ],
         constraints: [
-          "Every plan had to account for safety and regulatory work",
-          "Teams needed shared targets and a common way to track them",
-          "One-off reporting took time away from planning",
+          "Every plan had to account for safety and regulatory work.",
+          "Teams needed shared targets and a common way to track them.",
+          "Manual and emailed reporting took time away from planning work.",
         ],
         decisions: [
-          "Put goals, resource plans, and quarterly reviews on one schedule",
-          "Bring decisions about priorities and resources into scheduled reviews",
-          "Publish dashboards covering performance, vehicle health, and milestones",
+          "Put goals, resource plans, and quarterly reviews on one schedule, so every function worked from the same dates.",
+          "Bring decisions about priorities and resources into scheduled reviews, so tradeoffs were made in the open.",
+          "Build dashboards and automations covering performance, vehicle health, and milestones in place of manual and emailed reports.",
         ],
-        outcomeDetail:
-          "Teams used the same calendar and figures to make tradeoffs in scheduled reviews. One-off reporting requests dropped.",
+        outcomeDetail: [
+          "Teams used the same calendar and figures to make tradeoffs in scheduled reviews. One plan covered a 200+ person engineering organization.",
+          "Dashboards replaced the emailed reports, and one-off reporting requests dropped.",
+        ],
         role: [
           "Led planning and quarterly reviews for Engineering Operations",
           "Built the dashboards leaders used to track progress",
@@ -440,9 +372,6 @@ export const site: SiteContent = {
     work: {
       title: "Selected work",
     },
-    contact: {
-      title: "Contact",
-    },
   },
   knowsAbout: [
     "AI product",
@@ -455,16 +384,17 @@ export const site: SiteContent = {
     { label: "Writing", href: "/writing/" },
     { label: "Work", href: "#work" },
     { label: "About", href: "#about" },
-    { label: "Résumé", href: "/resume.pdf" },
+    { label: "Résumé", href: "/resume/" },
   ],
   contact: {
     email: "jarrodtran@outlook.com",
     linkedin: "https://www.linkedin.com/in/jarrodtran/",
     github: "https://github.com/jarrodtran",
     resumeHref: "/resume.pdf",
+    resumePage: "/resume/",
     resumeFilename: "Jarrod-Tran-Resume.pdf",
     intro:
-      "I’m based in Houston. If an essay connects with your work, I’d like to hear what you’ve learned. Email is the best way to reach me.",
+      "If an essay connects with your work, I’d like to hear what you’ve learned. Email is the best way to reach me.",
   },
   outreach: {
     linkedin:

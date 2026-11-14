@@ -11,7 +11,11 @@ import {
   type WritingPost,
 } from "@/lib/writing";
 
-/** The empty state, or a direct Substack link when the feed could not load. */
+/**
+ * The empty copy, which also covers a feed that failed while the snapshot is
+ * empty. `unavailable` means the feed failed AND the snapshot holds posts that
+ * could not be shown, the only case worth a direct Substack link.
+ */
 export function NoEssays({ unavailable = false }: { unavailable?: boolean }) {
   const publication = writingPublicationUrl(site.substack);
   const linkable =

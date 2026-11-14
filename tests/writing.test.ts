@@ -1,4 +1,4 @@
-import { readdirSync, readFileSync, statSync } from "node:fs";
+import { readdirSync, readFileSync, rmSync, statSync } from "node:fs";
 import path from "node:path";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { site } from "@/content/site";
@@ -14,6 +14,10 @@ import {
   parseFeed,
   writingFeedUrl,
   WRITING_BLURB_MAX_CHARS,
+  WRITING_BUILD_MARKER,
+  WRITING_FEED_HEADERS,
+  WRITING_FEED_RETRY_DELAY_MS,
+  WRITING_SNAPSHOT_FILE,
   WRITING_FEED_TIMEOUT_MS,
   WRITING_POST_LIMIT,
   type SubstackConfig,
@@ -25,6 +29,7 @@ import {
 } from "./fixtures/writing/titles";
 import { essayWordCount, sanitizeEssayHtml } from "@/lib/essay-html";
 
+const root = path.resolve(__dirname, "..");
 const fixtures = path.join(__dirname, "fixtures/writing");
 const threeXml = readFileSync(path.join(fixtures, "three-posts.xml"), "utf8");
 const sixXml = readFileSync(path.join(fixtures, "six-posts.xml"), "utf8");
@@ -159,6 +164,8 @@ describe("formatPostDate", () => {
 describe("loadWritingResult", () => {
   afterEach(() => {
     vi.unstubAllGlobals();
+    vi.unstubAllEnvs();
+    vi.useRealTimers();
     vi.restoreAllMocks();
   });
 
@@ -170,16 +177,24 @@ describe("loadWritingResult", () => {
   });
 
   it("returns ok: false quietly on non-200, throw, timeout, or malformed XML", async () => {
+    vi.useFakeTimers();
+    vi.stubEnv("WRITING_SNAPSHOT_PATH", "/nonexistent/snapshot.xml");
+    vi.stubEnv("GITHUB_ACTIONS", "");
     const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
     const timeout = vi.spyOn(AbortSignal, "timeout");
+    const load = async () => {
+      const pending = loadWritingResult(ownFeed);
+      await vi.advanceTimersByTimeAsync(WRITING_FEED_RETRY_DELAY_MS);
+      return pending;
+    };
 
     stubFeed(threeXml, false);
-    const non200 = await loadWritingResult(ownFeed);
+    const non200 = await load();
     expect(non200.ok).toBe(false);
     expect(non200.posts).toEqual([]);
 
     vi.stubGlobal("fetch", vi.fn().mockRejectedValue(new Error("offline")));
-    const offline = await loadWritingResult(ownFeed);
+    const offline = await load();
     expect(offline.ok).toBe(false);
     expect(offline.posts).toEqual([]);
 
@@ -191,12 +206,12 @@ describe("loadWritingResult", () => {
           Object.assign(new Error("aborted"), { name: "TimeoutError" }),
         ),
     );
-    const timedOut = await loadWritingResult(ownFeed);
+    const timedOut = await load();
     expect(timedOut.ok).toBe(false);
     expect(timedOut.posts).toEqual([]);
 
     stubFeed("<html>not a feed</html>");
-    const malformed = await loadWritingResult(ownFeed);
+    const malformed = await load();
     expect(malformed.ok).toBe(false);
     expect(malformed.posts).toEqual([]);
 
@@ -204,6 +219,114 @@ describe("loadWritingResult", () => {
     expect(
       warn.mock.calls.some((call) => String(call[0]).includes("::warning::")),
     ).toBe(false);
+  });
+
+  it("sends browser-like headers and retries once on 403 after a backoff", async () => {
+    vi.useFakeTimers();
+    vi.stubEnv("WRITING_SNAPSHOT_PATH", "/nonexistent/snapshot.xml");
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce({ ok: false, status: 403, text: async () => "" })
+      .mockResolvedValueOnce({
+        ok: true,
+        status: 200,
+        text: async () => threeXml,
+      });
+    vi.stubGlobal("fetch", fetchMock);
+    const pending = loadWritingResult(ownFeed);
+    await vi.advanceTimersByTimeAsync(WRITING_FEED_RETRY_DELAY_MS);
+    const result = await pending;
+    vi.useRealTimers();
+    expect(result.ok).toBe(true);
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+    for (const call of fetchMock.mock.calls) {
+      expect(call[1].headers).toEqual(WRITING_FEED_HEADERS);
+    }
+    expect(WRITING_FEED_HEADERS["User-Agent"]).toMatch(/^Mozilla\/5\.0/);
+    expect(WRITING_FEED_HEADERS.Accept).toContain("application/rss+xml");
+  });
+
+  it("retries only once and does not retry a 404", async () => {
+    vi.useFakeTimers();
+    vi.stubEnv("WRITING_SNAPSHOT_PATH", "/nonexistent/snapshot.xml");
+    const always403 = vi
+      .fn()
+      .mockResolvedValue({ ok: false, status: 403, text: async () => "" });
+    vi.stubGlobal("fetch", always403);
+    const pending = loadWritingResult(ownFeed);
+    await vi.advanceTimersByTimeAsync(WRITING_FEED_RETRY_DELAY_MS * 3);
+    const result = await pending;
+    expect(result.ok).toBe(false);
+    expect(always403).toHaveBeenCalledTimes(2);
+
+    const notFound = vi
+      .fn()
+      .mockResolvedValue({ ok: false, status: 404, text: async () => "" });
+    vi.stubGlobal("fetch", notFound);
+    await loadWritingResult(ownFeed);
+    vi.useRealTimers();
+    expect(notFound).toHaveBeenCalledTimes(1);
+  });
+
+  it("falls back to the snapshot when the live feed fails, and says so in Actions builds", async () => {
+    vi.useFakeTimers();
+    vi.stubEnv("WRITING_SNAPSHOT_PATH", path.join(fixtures, "three-posts.xml"));
+    vi.stubEnv("NEXT_PHASE", "phase-production-build");
+    vi.stubEnv("GITHUB_ACTIONS", "true");
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+    vi.stubGlobal(
+      "fetch",
+      vi
+        .fn()
+        .mockResolvedValue({ ok: false, status: 403, text: async () => "" }),
+    );
+    const pending = loadWritingResult(ownFeed);
+    await vi.advanceTimersByTimeAsync(WRITING_FEED_RETRY_DELAY_MS);
+    const result = await pending;
+    vi.useRealTimers();
+    expect(result.ok).toBe(true);
+    expect(result.posts.map((post) => post.title)).toEqual([
+      ...WRITING_FIXTURE_TITLES,
+    ]);
+    const message = String(warn.mock.calls.at(0)?.[0]);
+    expect(message).toContain("::warning");
+    expect(message).toContain("HTTP 403");
+    expect(message).toContain("snapshot");
+    rmSync(path.join(root, WRITING_BUILD_MARKER), { force: true });
+  });
+
+  it("fails with hasUnshownPosts false when the snapshot is missing, and loads empty from an empty snapshot", async () => {
+    vi.useFakeTimers();
+    vi.stubGlobal("fetch", vi.fn().mockRejectedValue(new Error("offline")));
+    vi.stubEnv("WRITING_SNAPSHOT_PATH", "/nonexistent/snapshot.xml");
+    let pending = loadWritingResult(ownFeed);
+    await vi.advanceTimersByTimeAsync(WRITING_FEED_RETRY_DELAY_MS);
+    expect(await pending).toMatchObject({ ok: false, hasUnshownPosts: false });
+
+    vi.stubEnv("WRITING_SNAPSHOT_PATH", path.join(fixtures, "empty.xml"));
+    pending = loadWritingResult(ownFeed);
+    await vi.advanceTimersByTimeAsync(WRITING_FEED_RETRY_DELAY_MS);
+    const empty = await pending;
+    vi.useRealTimers();
+    expect(empty).toEqual({ ok: true, posts: [] });
+  });
+
+  it("lets WRITING_FEED_PATH win over both the live feed and the snapshot", async () => {
+    vi.stubEnv("WRITING_FEED_PATH", path.join(fixtures, "three-posts.xml"));
+    vi.stubEnv("WRITING_SNAPSHOT_PATH", path.join(fixtures, "six-posts.xml"));
+    const fetchMock = vi.fn();
+    vi.stubGlobal("fetch", fetchMock);
+    const { posts } = await loadWritingResult(ownFeed);
+    expect(fetchMock).not.toHaveBeenCalled();
+    expect(posts.map((post) => post.title)).toEqual([
+      ...WRITING_FIXTURE_TITLES,
+    ]);
+  });
+
+  it("ships a committed snapshot that is a valid empty feed", () => {
+    const xml = readFileSync(path.join(root, WRITING_SNAPSHOT_FILE), "utf8");
+    expect(xml).toMatch(/<rss\b/);
+    expect(parseFeed(xml, site.substack.url)).toEqual([]);
   });
 
   it("loads a live fixture newest first without inventing posts", async () => {
