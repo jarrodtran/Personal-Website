@@ -47,7 +47,7 @@ describe("visitor-facing copy contract", () => {
     expect(copy).toContain(site.positioning.intro);
     expect(site.positioning.documentTitle).toBe("Jarrod Tran · Worth Mulling");
     expect(site.positioning.lede).toContain(site.substack.name);
-    expect(site.contact.intro).toContain("If an essay connects");
+    expect(site.contact.intro).toContain("I’d like to hear about it");
   });
 
   // rule:one-public-narrative

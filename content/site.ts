@@ -141,10 +141,10 @@ export const site: SiteContent = {
     headline: "Jarrod Tran",
     lede: "I write Worth Mulling, where I think through whatever I’ve been chewing on lately.",
     intro:
-      "Some of it is about work and some of it is not. By day I run the team that puts AI to work at Tesla Energy, after earlier stints at Apple and Waymo. I’m based in Houston.",
+      "Sometimes it’s about work, sometimes it’s not. My day job is running the AI team at Tesla Energy. Before that I was at Apple and Waymo. I live in Houston.",
     documentTitle: "Jarrod Tran · Worth Mulling",
     valueProp:
-      "Jarrod Tran writes Worth Mulling, essays on whatever he is thinking through, and leads AI enablement at Tesla Energy.",
+      "Jarrod Tran writes Worth Mulling and leads AI enablement at Tesla Energy. He lives in Houston.",
     status: "Worth Mulling",
     location: "Houston, TX",
     currentRole: currentTitle,
@@ -157,13 +157,13 @@ export const site: SiteContent = {
   writing: {
     latestTitle: "Latest essays",
     archiveIntro:
-      "Whatever I’m thinking about, and wherever the rabbit hole goes.",
+      "Thoughts on whatever I’ve been exploring, and the rabbit holes that came with it.",
     empty: "The first essay is coming soon.",
     allEssays: "All essays",
     readLatest: "Read the latest essay",
     subscribe: {
       title: "Get new essays by email",
-      body: "Whatever I’m thinking about, or the rabbit hole I went down lately, written up when it’s worth sharing.",
+      body: "I write when I’ve gone down a rabbit hole and come back with something worth sharing.",
       action: "Subscribe",
       note: "Free. Sent through Substack. Unsubscribe anytime.",
       short: "If this was worth mulling, get the next one by email.",
@@ -175,23 +175,23 @@ export const site: SiteContent = {
   },
   about: {
     bio: [
-      "I’m Jarrod Tran, and I live in Houston. I started Worth Mulling to put my thoughts on paper and prevent brain rot. I write about whatever topic I’ve been exploring, usually after falling down a rabbit hole on it.",
-      "Outside of work I’m a huge sports fan (Manchester City and the New England Patriots), and I work on AI literacy projects.",
-      `By day I’m ${currentTitle} at Tesla Energy, where I built the AI team and the program it runs on from nothing. Before that I worked at Apple, Waymo and Amazon.`,
+      "I’m Jarrod. I started Worth Mulling to get my thoughts down on paper and keep the brain rot away. I write about whatever I’ve been exploring, which usually means I fell down a rabbit hole first.",
+      "Outside of work I’m a huge sports fan. Manchester City and the New England Patriots are my teams. I also work on AI literacy projects.",
+      `At Tesla Energy I’m ${currentTitle}. I built the AI team from scratch, along with the program it runs on. Earlier I worked at Apple and Waymo, did a first stretch at Tesla, and started out at Amazon.`,
     ],
   },
   experience: resumeExperience(),
   selectedWork: [
     {
       slug: "tesla-energy-ai-product",
-      preview: "How we chose use cases, trained users, and tracked adoption.",
+      preview: "How we picked what to build and got people using it.",
       title: "Tesla Energy: From AI pilots to daily use",
       problem:
-        "Tesla Energy had AI pilots, but teams lacked a shared way to choose which ones to ship or measure their value after launch.",
+        "Tesla Energy had AI pilots but no shared way to decide which ones to ship, or to tell whether they were worth it after launch.",
       contribution:
         "I built the team and our forward-deployed engineering program, ranked the use cases, and set up training and adoption reporting for everything we shipped.",
       outcome:
-        "Modeled at ~540 hours reclaimed per week and $1.6M in annualized productivity value.",
+        "Our model puts it at about 540 hours saved a week, worth $1.6M a year.",
       panel: {
         kicker: "Tesla Energy",
         value: "1,000+",
@@ -205,26 +205,26 @@ export const site: SiteContent = {
       link: { label: "Tesla Energy", href: "https://www.tesla.com/energy" },
       caseStudy: {
         context: [
-          "Some pilots showed promise. The harder question was whether they would help with work people already did.",
-          "I hired the team and decided what gets built. Tools we shipped include an internal agent chat that offloads agentic work, an automated résumé reviewer inside a hiring hub, operations automations, 3D product models in Three.js for onboarding, and executive daily task automations.",
-          "I set the program up around forward-deployed engineering: the deployment model, AI training, and architecture and security reviews. The tools run on Claude and Grok.",
+          "We had pilots that looked promising. What we didn’t know was whether they’d help with the work people were already doing.",
+          "I hired the team and I decide what gets built. So far that includes an internal agent chat that takes on agentic work, a hiring hub with an automated résumé reviewer, operations automations, 3D product models in Three.js for onboarding, and daily task automations for executives.",
+          "The program is built around forward-deployed engineering. That covers how we deploy, AI training, and the architecture and security reviews. The tools run on Claude and Grok.",
         ],
         constraints: [
-          "Anything that touches personal data is off the table. People attendance is the example: it involves personally identifiable information, so we say no.",
-          "The team was four people, so each use case needed an owner.",
+          "We don’t build anything that touches personal data. People attendance is the usual example. It involves personally identifiable information, so we say no.",
+          "There were four of us, so every use case needed an owner.",
           "Releases had to meet security and data requirements.",
-          "Adoption is counted as unique logins, so access alone does not count.",
+          "We count adoption by unique logins. Having access doesn’t count.",
         ],
         decisions: [
-          "Hire a dedicated product and engineering team instead of relying on one-off pilots, so every tool had someone responsible for it.",
-          "Fund what saves the most time or improves decisions, and turn down the rest.",
-          "Decline every use case that touches personal data, even when the request is reasonable.",
-          "Ship training with each release and report adoption every week, because a tool nobody opens saves no time.",
-          "Run every tool through architecture review, security review and user feedback testing before release, so nothing ships on enthusiasm alone.",
+          "We stopped relying on one-off pilots and hired a dedicated product and engineering team, so every tool has someone responsible for it.",
+          "We fund whatever saves the most time or improves a decision. Everything else waits or gets a no.",
+          "We turn down any use case involving personal data, even when the request is a reasonable one.",
+          "Every release ships with training, and we report adoption weekly.",
+          "Before release, each tool gets an architecture review, a security review and user feedback testing.",
         ],
         outcomeDetail: [
-          "The team has shipped 20+ production AI tools with 1,000+ active users. The program is open to 10,000 eligible employees. Time to hire dropped by 2 weeks with the hiring hub. The team is four people today, and the budget allows 15.",
-          "Our productivity model estimates about 540 hours saved per week, worth $1.6M a year. Early on, we used too much technical language. The lesson: people need to know what a tool does for their work, not how it works.",
+          "The team has shipped 20+ production AI tools, and 1,000+ people actively use them. The program is open to 10,000 eligible employees. With the hiring hub, hiring got 2 weeks faster. We’re four people today and have budget for 15.",
+          "Our productivity model estimates about 540 hours saved per week, worth $1.6M a year. One thing I’d do differently: we used too much technical language early on. People want to know what a tool does for their work. Most don’t need to hear how it works.",
         ],
         role: [
           "Owned the AI roadmap and reported adoption to leadership",
@@ -241,7 +241,7 @@ export const site: SiteContent = {
       problem:
         "50+ initiatives competed for a $23M budget. Leadership needed a way to compare their expected returns.",
       contribution:
-        "I built Python and Tableau models linking investment, labor, cost, and timing. We funded the work with the best return and killed the rest. The same logic ranks AI use cases today.",
+        "I built Python and Tableau models that tied together investment, labor, cost and timing. We funded what had the best return and cut the rest. I rank AI use cases the same way today.",
       outcome:
         "Megapack scaled 3.2× and tariff exposure fell by a projected $550M. A separate program saved $260M on an annualized basis.",
       panel: {
@@ -257,24 +257,23 @@ export const site: SiteContent = {
       link: { label: "Tesla Megapack", href: "https://www.tesla.com/megapack" },
       caseStudy: {
         context: [
-          "The funding decision depended on how each proposal would affect profit, what it would cost, and when it could deliver.",
-          "Some calls were concrete. We funded an automated welding robot install. We cut a plan to add another crane, because installing it required too much downtime.",
+          "For every proposal we looked at what it would do for profit, what it would cost, and when it could deliver.",
+          "Two examples: we funded an automated welding robot install, and we cut a plan to add another crane because putting it in meant too much downtime.",
         ],
         constraints: [
           "Only $23M was available against 50+ competing requests.",
           "Each project in California was judged on capital cost, feasibility and overall impact on the site.",
-          "The extra crane would have needed too much downtime to install.",
-          "Tariff rates changed while plans were running, so the timing of imports mattered.",
+          "Tariff rates kept changing while plans were in motion, so import timing mattered.",
         ],
         decisions: [
-          "Use Python and Tableau models to compare expected returns, so leaders could rank requests on one basis.",
-          "Fund the welding robot install and cut the extra crane, because the crane needed too much downtime.",
-          "Coordinate the California site investment myself and make the yes or no call on each project, so one person owned the answer.",
-          "For battery modules imported from China, time entry to and exit from foreign-trade zones to match tariff rates as they changed, close to a hedge, and fast-track more foreign-trade zones and tariff exclusions.",
+          "We used the models to compare expected returns, which let leaders rank every request the same way.",
+          "We funded the welding robots and cut the extra crane.",
+          "I coordinated the California site investment and made the yes or no call on each project.",
+          "For battery modules imported from China, we timed entry into and exit from foreign-trade zones to match tariff rates as they changed. It worked a lot like a hedge. We also fast-tracked more foreign-trade zones and tariff exclusions.",
         ],
         outcomeDetail: [
           "The funded portfolio delivered $156M in incremental annual profit. The $23M California site investment unlocked 7.5% more capacity and incremental profit for Megapack.",
-          "Megapack scaled 3.2×, and the investment plan mitigated $550M in projected tariff exposure. A separate program, built on robotic automation and headcount optimization, saved $260M on an annualized basis.",
+          "Megapack scaled 3.2×, and the investment plan mitigated $550M in projected tariff exposure. A separate program for robotic automation and headcount optimization saved $260M on an annualized basis.",
         ],
         role: [
           "Owned the Energy investment roadmap and scheduled funding reviews",
@@ -286,12 +285,12 @@ export const site: SiteContent = {
     {
       slug: "apple-iphone-india",
       preview:
-        "Balancing demand, partner readiness, and risk during a new market launch.",
+        "Standing up iPhone production in India, and the call to pause for yield.",
       title: "Apple: Launching iPhone in India",
       problem:
-        "Apple needed to prepare partners for the iPhone launch in India while demand and readiness were changing.",
+        "Apple was launching iPhone in India and needed partners ready while demand and readiness kept changing.",
       contribution:
-        "I led production strategy and kept demand, quality, and geopolitical risk in one plan.",
+        "I led production strategy and kept demand, quality and geopolitical risk in a single plan.",
       outcome:
         "Program revenue grew from $2B to $10B, and exports expanded from 6 to 40+ countries.",
       panel: {
@@ -306,20 +305,20 @@ export const site: SiteContent = {
       link: { label: "Apple India", href: "https://www.apple.com/in/" },
       caseStudy: {
         context: [
-          "I owned the production strategy for iPhone in India. Sites began as greenfield and reached full-scale production. The footprint grew across Chennai and Bangalore.",
+          "I owned production strategy for iPhone in India. The sites started as greenfield and got to full-scale production, and we expanded across Chennai and Bangalore.",
           "Launch planning also had to account for partner qualification, quality requirements, and regulatory approvals.",
         ],
         constraints: [
           "The schedule had to meet quality and regulatory requirements.",
           "Partner readiness lagged expected volume.",
-          "Yield had to be right before shipping, even with a projected launch date to hit.",
+          "Yield had to be right before we shipped, even with a launch date to hit.",
           "Demand forecasts and geopolitical risk both shaped readiness decisions.",
         ],
         decisions: [
-          "Pause to improve yield, even though it put us behind the projected launch. We wanted the product right before it shipped. This was the hardest call.",
-          "Use one schedule for market entry, partner checks, and launch readiness, so timing risks showed up in one place.",
-          "Turn demand forecasts into funding and readiness plans for weekly review.",
-          "Qualify additional sources to reduce dependence on one geography.",
+          "We paused to improve yield, which put us behind the projected launch. We wanted the product right before it shipped. It was the hardest call of the program.",
+          "We ran market entry, partner checks and launch readiness on one schedule, which put the timing risks in one place.",
+          "We turned demand forecasts into funding and readiness plans and reviewed them every week.",
+          "We qualified additional sources so we depended less on one geography.",
         ],
         outcomeDetail: [
           "Reported program revenue grew from $2B to $10B, and exports expanded from 6 to 40+ countries. Units grew 293%, from 4.3M to 16.9M.",
@@ -339,9 +338,9 @@ export const site: SiteContent = {
       problem:
         "Six functions planned separately. When their numbers differed, leadership had to reconcile them before making decisions.",
       contribution:
-        "I built the annual planning, OKR, resource-plan, QBR, and dashboard rhythm that every function worked from.",
+        "I set up the annual planning, OKRs, resource plans, QBRs and dashboards that every function worked from.",
       outcome:
-        "A shared Engineering Operations rhythm that forced tradeoffs into the open and cut the ad-hoc reporting.",
+        "Engineering Operations got one shared plan, tradeoffs were made where everyone could see them, and ad-hoc reporting dropped.",
       panel: {
         kicker: "Waymo",
         value: "200+",
@@ -354,7 +353,7 @@ export const site: SiteContent = {
       caseStudy: {
         context: [
           "Engineering Operations needed one plan that brought commercial deployment, safety, and regulatory priorities together.",
-          "Six functions planned on their own. Reporting was manual or sent by email.",
+          "Six functions each planned on their own, and reporting was manual or sent by email.",
         ],
         constraints: [
           "Every plan had to account for safety and regulatory work.",
@@ -362,9 +361,9 @@ export const site: SiteContent = {
           "Manual and emailed reporting took time away from planning work.",
         ],
         decisions: [
-          "Put goals, resource plans, and quarterly reviews on one schedule, so every function worked from the same dates.",
-          "Bring decisions about priorities and resources into scheduled reviews, so tradeoffs were made in the open.",
-          "Build dashboards and automations covering performance, vehicle health, and milestones in place of manual and emailed reports.",
+          "We put goals, resource plans and quarterly reviews on one schedule so every function worked from the same dates.",
+          "We moved decisions about priorities and resources into scheduled reviews, where the tradeoffs were visible to all six functions.",
+          "We built dashboards and automations for performance, vehicle health and milestones to replace the manual and emailed reports.",
         ],
         outcomeDetail: [
           "Teams used the same calendar and figures to make tradeoffs in scheduled reviews. One plan covered a 200+ person engineering organization.",
@@ -382,28 +381,28 @@ export const site: SiteContent = {
     title: "How I deploy AI",
     principles: [
       {
-        title: "Start with the work, not the model.",
-        body: "We fund tools that cut the most time or improve a decision, and say no to the rest.",
+        title: "Start with the work.",
+        body: "We look for the tasks eating the most time and the decisions that could be better, and build for those. The rest gets a no.",
       },
       {
-        title: "Give every tool an owner.",
-        body: "A team of four cannot babysit pilots, so someone is accountable for each use case before we build it.",
+        title: "Every tool gets an owner.",
+        body: "There are four of us and we can’t babysit pilots. Someone has to own a use case before we build it.",
       },
       {
-        title: "Review before release.",
-        body: "Each tool passes architecture review and security review, then testing with the people who will use it.",
+        title: "It gets reviewed before it ships.",
+        body: "Architecture review first, then security review. After that, the people who’ll use the tool test it.",
       },
       {
-        title: "Count use, not launches.",
-        body: "We report active users every week. A tool no one opens saves no time.",
+        title: "We count who uses it.",
+        body: "We report active users every week. If nobody opens a tool, it isn’t saving anyone time.",
       },
       {
-        title: "Decline what touches personal data.",
-        body: "Attendance tracking is the standing example. The request is reasonable and we still say no.",
+        title: "We don’t touch personal data.",
+        body: "Attendance tracking is the usual example. It’s a fair ask, but it involves personal information, so we turn it down.",
       },
       {
-        title: "Say what it does, not how it works.",
-        body: "Early on we explained tools in technical language and lost people. People need to see what a tool changes in their day.",
+        title: "We explain it in plain language.",
+        body: "Early on we got too technical and lost people. What they want to know is what a tool changes in their day.",
       },
     ],
   },
@@ -436,7 +435,7 @@ export const site: SiteContent = {
     resumePage: "/resume/",
     resumeFilename: "Jarrod-Tran-Resume.pdf",
     intro:
-      "If an essay connects with something you’re working through, I’d like to hear about it. Email is the best way to reach me.",
+      "If something I wrote got you thinking, I’d like to hear about it. Email is the best way to reach me.",
   },
   outreach: {
     linkedin:
