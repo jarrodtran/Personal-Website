@@ -9,7 +9,7 @@ import { Hero } from "@/components/sections/hero";
 import { SelectedWork } from "@/components/sections/selected-work";
 import { Writing } from "@/components/sections/writing";
 import { SubscribeBlock } from "@/components/subscribe";
-import { nextSelectedWork, site } from "@/content/site";
+import { site } from "@/content/site";
 import { btnGhost, btnPrimary } from "@/lib/ui";
 import {
   formatPostDate,
@@ -60,7 +60,7 @@ function headings(html: string, tag: string): string[] {
   ].map(([, inner]) => textOf(inner));
 }
 
-const { email, linkedin } = site.contact;
+const { email } = site.contact;
 
 const SECTION_EYEBROWS = [
   "01 / Essays",
@@ -140,6 +140,7 @@ describe("hero", () => {
 
   it("shows one name heading and the introduction", () => {
     expect(textOf(html)).toContain(site.positioning.intro);
+    expect(textOf(html)).toContain(site.positioning.lede);
     expect(headings(html, "h1")).toEqual([site.positioning.name]);
     expect(html).not.toContain(site.positioning.headline);
   });
@@ -443,7 +444,7 @@ describe("section headings", () => {
     for (const file of readdirSync(sectionDir)) {
       if (!file.endsWith(".tsx")) continue;
       const source = readFileSync(path.join(sectionDir, file), "utf8");
-      if (source.includes("mb-5 max-w-2xl sm:mb-8")) {
+      if (source.includes("mb-5 max-w-2xl lg:mb-0 lg:max-w-none")) {
         leftover.push(`components/sections/${file}`);
       }
     }
@@ -454,17 +455,19 @@ describe("section headings", () => {
       path.join(root, "components/section.tsx"),
       "utf8",
     );
-    expect(shared.match(/mb-5 max-w-2xl sm:mb-8/g) ?? []).toHaveLength(1);
+    expect(
+      shared.match(/mb-5 max-w-2xl lg:mb-0 lg:max-w-none/g) ?? [],
+    ).toHaveLength(1);
 
     const heading = renderToStaticMarkup(<SectionHeading title="Experience" />);
     expect(heading).toContain("mb-5");
     expect(heading).toContain("max-w-2xl");
-    expect(heading).toContain("sm:mb-8");
+    expect(heading).toContain("rail-label");
 
     const about = renderToStaticMarkup(<About />);
     expect(about).toContain("mb-5");
     expect(about).toContain("max-w-2xl");
-    expect(about).toContain("sm:mb-8");
+    expect(about).toContain("rail-label");
   });
 });
 
@@ -476,7 +479,7 @@ describe("selected work", () => {
     expect(links(html)).toEqual(
       site.selectedWork.map(({ slug, title, preview, panel }) => ({
         href: expect.stringMatching(new RegExp(`^/work/${slug}/?$`)),
-        text: `${title} ${preview} ${panel.value} ${panel.label}`,
+        text: `${panel.value} ${title} ${preview} ${panel.label}`,
       })),
     );
   });
@@ -504,12 +507,11 @@ describe("about and contact", () => {
     expect(path).toContain("Apple 2021 to 2022");
   });
 
-  it("offers email with a copy button, LinkedIn and the résumé, and no form", () => {
+  it("offers email with a copy button and no LinkedIn or résumé row, and no form", () => {
     expect(links(html)).toMatchObject([
       { href: `mailto:${email}`, text: email },
-      { href: linkedin, text: "LinkedIn", target: "_blank" },
-      { href: site.contact.resumePage, text: "Résumé" },
     ]);
+    expect(links(html)).toHaveLength(1);
     expect(html).toMatch(/<button\b[^>]*>Copy email<\/button>/);
     expect(html).not.toMatch(/<(form|input|textarea)\b/);
   });

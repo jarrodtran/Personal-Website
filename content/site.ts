@@ -61,6 +61,9 @@ export interface SiteContent {
   positioning: {
     name: string;
     headline: string;
+    /** First sentence of the hero, set in the display face. */
+    lede: string;
+    /** The rest of the hero introduction, set at body size. */
     intro: string;
     documentTitle: string;
     valueProp: string;
@@ -132,8 +135,9 @@ export const site: SiteContent = {
   positioning: {
     name: "Jarrod Tran",
     headline: "Worth Mulling by Jarrod Tran",
+    lede: "I lead the AI product team at Tesla Energy.",
     intro:
-      "I lead the AI product team at Tesla Energy. We’ve shipped 20+ production AI tools that 1,000+ employees use. Before that, I led the iPhone India launch at Apple and planned Engineering Operations at Waymo. I also write Worth Mulling, where I think through whatever I’ve been chewing on lately.",
+      "We’ve shipped 20+ production AI tools that 1,000+ employees use. Before that, I led the iPhone India launch at Apple and planned Engineering Operations at Waymo. I also write Worth Mulling, where I think through whatever I’ve been chewing on lately.",
     documentTitle: "Jarrod Tran · Worth Mulling",
     valueProp:
       "Jarrod Tran leads AI enablement at Tesla Energy and writes Worth Mulling, a Substack newsletter.",

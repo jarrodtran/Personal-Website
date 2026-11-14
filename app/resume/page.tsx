@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Download } from "lucide-react";
-import { Section, SectionHeading } from "@/components/section";
+import { Section, SectionHeading, siteContainer } from "@/components/section";
 import { resume, webBullet, type ResumeBullet } from "@/content/resume";
 import { site, siteUrl } from "@/content/site";
 import { withBasePath } from "@/lib/base-path";
@@ -46,8 +46,11 @@ function bulletGroups(bullets: ResumeBullet[]) {
 export default function ResumePage() {
   return (
     <div className="resume">
-      <Section id="resume" className="border-t-0">
-        <div className="max-w-3xl">
+      <section
+        id="resume"
+        className="scroll-mt-24 border-t-0 py-[var(--spacing-section)]"
+      >
+        <div className={siteContainer}>
           <h1 className="font-display text-[length:var(--text-h1)] leading-[var(--leading-title)] tracking-tight text-balance">
             {resume.name}
           </h1>
@@ -84,97 +87,87 @@ export default function ResumePage() {
             </a>
           </p>
         </div>
-      </Section>
+      </section>
 
       <Section id="summary">
-        <div className="max-w-3xl">
-          <SectionHeading title="Summary" />
-          {resume.summary.map((paragraph) => (
-            <p key={paragraph} className={prose}>
-              {paragraph}
-            </p>
-          ))}
-        </div>
+        <SectionHeading title="Summary" />
+        {resume.summary.map((paragraph) => (
+          <p key={paragraph} className={prose}>
+            {paragraph}
+          </p>
+        ))}
       </Section>
 
       {resume.skills?.length ? (
         <Section id="skills">
-          <div className="max-w-3xl">
-            <SectionHeading title="Skills" />
-            <dl className="text-[length:var(--text-body)] leading-[var(--leading-copy)]">
-              {resume.skills.map((skill) => (
-                <div key={skill.label} className="mt-2 first:mt-0">
-                  <dt className="inline font-medium">{skill.label}: </dt>
-                  <dd className="inline">{skill.items.join(", ")}</dd>
-                </div>
-              ))}
-            </dl>
-          </div>
+          <SectionHeading title="Skills" />
+          <dl className="text-[length:var(--text-body)] leading-[var(--leading-copy)]">
+            {resume.skills.map((skill) => (
+              <div key={skill.label} className="mt-2 first:mt-0">
+                <dt className="inline font-medium">{skill.label}: </dt>
+                <dd className="inline">{skill.items.join(", ")}</dd>
+              </div>
+            ))}
+          </dl>
         </Section>
       ) : null}
 
       <Section id="experience">
-        <div className="max-w-3xl">
-          <SectionHeading title="Experience" />
-          <div className="space-y-10">
-            {resume.roles.map((role) => (
-              <article
-                key={`${role.company}-${role.dates}`}
-                className="resume-role"
-              >
-                <h3 className="font-display text-[length:var(--text-h3)] leading-[var(--leading-title)] text-balance">
-                  {role.heading ?? role.company}
-                </h3>
-                <p className="text-[length:var(--text-body)] font-medium">
-                  {role.title}
-                </p>
+        <SectionHeading title="Experience" />
+        <div className="space-y-10">
+          {resume.roles.map((role) => (
+            <article
+              key={`${role.company}-${role.dates}`}
+              className="resume-role"
+            >
+              <h3 className="font-display text-[length:var(--text-h3)] leading-[var(--leading-title)] text-balance">
+                {role.heading ?? role.company}
+              </h3>
+              <p className="text-[length:var(--text-body)] font-medium">
+                {role.title}
+              </p>
+              <p className="text-muted-foreground text-small mt-1">
+                {role.location} · {role.dates}
+              </p>
+              {role.note ? (
                 <p className="text-muted-foreground text-small mt-1">
-                  {role.location} · {role.dates}
+                  {role.note}
                 </p>
-                {role.note ? (
-                  <p className="text-muted-foreground text-small mt-1">
-                    {role.note}
-                  </p>
-                ) : null}
-                {role.summary ? (
-                  <p className={`${prose} mt-3`}>{role.summary}</p>
-                ) : null}
-                {bulletGroups(role.bullets.map(webBullet)).map(
-                  (group, index) => (
-                    <div key={group.label ?? index} className="mt-3">
-                      {group.label ? (
-                        <p className="font-mono-label text-muted-foreground mb-2">
-                          {group.label}
-                        </p>
-                      ) : null}
-                      <ul
-                        role="list"
-                        className="text-foreground measure list-disc space-y-3 pl-5 text-[length:var(--text-body)] leading-[var(--leading-copy)]"
-                      >
-                        {group.items.map((bullet) => (
-                          <li key={bullet.text}>{bullet.text}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  ),
-                )}
-              </article>
-            ))}
-          </div>
+              ) : null}
+              {role.summary ? (
+                <p className={`${prose} mt-3`}>{role.summary}</p>
+              ) : null}
+              {bulletGroups(role.bullets.map(webBullet)).map((group, index) => (
+                <div key={group.label ?? index} className="mt-3">
+                  {group.label ? (
+                    <p className="font-mono-label text-muted-foreground mb-2">
+                      {group.label}
+                    </p>
+                  ) : null}
+                  <ul
+                    role="list"
+                    className="text-foreground measure list-disc space-y-3 pl-5 text-[length:var(--text-body)] leading-[var(--leading-copy)]"
+                  >
+                    {group.items.map((bullet) => (
+                      <li key={bullet.text}>{bullet.text}</li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </article>
+          ))}
         </div>
       </Section>
 
       <Section id="education">
-        <div className="max-w-3xl">
-          <SectionHeading title="Education" />
-          {resume.education.map((entry) => (
-            <p key={entry.school} className={prose}>
-              <span className="font-medium">{entry.school}</span>
-              <br />
-              {[entry.degree, entry.honors].filter(Boolean).join(", ")}
-            </p>
-          ))}
-        </div>
+        <SectionHeading title="Education" />
+        {resume.education.map((entry) => (
+          <p key={entry.school} className={prose}>
+            <span className="font-medium">{entry.school}</span>
+            <br />
+            {[entry.degree, entry.honors].filter(Boolean).join(", ")}
+          </p>
+        ))}
       </Section>
     </div>
   );

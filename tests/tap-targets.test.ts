@@ -189,11 +189,12 @@ describe("390px tap targets and first screen", () => {
       };
     });
     await browser.close();
-    expect(view.hero.slice(0, 2)).toEqual([
+    expect(view.hero.slice(0, 3)).toEqual([
       site.positioning.name,
+      site.positioning.lede,
       site.positioning.intro,
     ]);
-    expect(view.hero.slice(2)).toEqual([site.positioning.workAction, "Résumé"]);
+    expect(view.hero.slice(3)).toEqual([site.positioning.workAction, "Résumé"]);
     expect(view.hero.join(" ")).not.toContain("Subscribe");
     expect(view.writingTitle).toBe(site.sections.work.title);
     expect(view.writingBottom).toBeGreaterThan(0);
@@ -388,11 +389,11 @@ describe("390px tap targets and first screen", () => {
     expect(form.button.w).toBeGreaterThanOrEqual(44);
   });
 
-  it("resolves résumé, email, LinkedIn, and the next case-study link", async () => {
+  it("resolves the hero résumé, email, footer LinkedIn, and the next case-study link", async () => {
     const { browser, page } = await open("/");
     const home = await page.evaluate(() => {
       const resume = document.querySelector<HTMLAnchorElement>(
-        '#about a[href$="/resume/"]',
+        '#top a[href$="/resume/"]',
       );
       const email =
         document.querySelector<HTMLAnchorElement>('a[href^="mailto:"]');

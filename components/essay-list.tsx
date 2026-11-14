@@ -14,17 +14,24 @@ const titleLink = `${tap} text-foreground text-body max-w-full gap-1 leading-[va
 export function EssayList({
   posts,
   expanded = false,
+  bottomRule = true,
   className,
 }: {
   posts: WritingPost[];
   /** A lone essay gets a longer summary. */
   expanded?: boolean;
+  /** Drop the closing rule when whitespace already ends the list. */
+  bottomRule?: boolean;
   className?: string;
 }) {
   return (
     <ol
       role="list"
-      className={cn("border-border divide-border divide-y border-y", className)}
+      className={cn(
+        "border-border divide-border divide-y",
+        bottomRule ? "border-y" : "border-t",
+        className,
+      )}
     >
       {posts.map((post) => {
         const dateLabel = post.date ? formatPostDate(post.date) : "";

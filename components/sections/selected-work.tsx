@@ -1,43 +1,41 @@
-import { ArrowUpRight } from "lucide-react";
 import { Section, SectionHeading } from "@/components/section";
 import { site } from "@/content/site";
-import { tap } from "@/lib/ui";
 import { withBasePath } from "@/lib/base-path";
 
+/**
+ * One link per row, figure first. The numeral column is fixed from sm and the
+ * numeral stays inside it (min of the figure token and 30cqi of its own box),
+ * so "$156M" and "1,000+" never overflow at 320 or at 200% text. Below sm the
+ * numeral sits above the title.
+ */
 export function SelectedWork() {
   return (
     <Section id="work">
-      <span id="experience" className="block scroll-mt-24" />
+      <span id="experience" className="absolute scroll-mt-24" />
       <SectionHeading title={site.sections.work.title} />
-      <ul role="list" className="border-border divide-border divide-y border-y">
+      <ul role="list" className="border-border divide-border divide-y border-t">
         {site.selectedWork.map(({ slug, title, preview, panel }) => (
           <li key={slug}>
             <a
               href={withBasePath(`/work/${slug}/`)}
-              className={`${tap} w-full gap-3 py-3`}
+              className="grid min-h-11 w-full grid-cols-1 gap-x-6 gap-y-2 py-5 sm:grid-cols-[10rem_minmax(0,1fr)]"
             >
-              <span className="flex min-w-0 flex-1 flex-col gap-2 sm:flex-row sm:gap-6">
-                <span className="min-w-0 sm:flex-1">
-                  <span className="block font-medium underline underline-offset-4">
-                    {title}
-                  </span>
-                  <span className="text-muted-foreground text-small mt-1 block">
-                    {preview}
-                  </span>
-                </span>
-                <span className="block min-w-0 sm:w-52 sm:shrink-0">
-                  <span className="font-display block text-[length:var(--text-h2)] leading-[var(--leading-title)]">
-                    {panel.value}
-                  </span>
-                  <span className="text-muted-foreground text-small block">
-                    {panel.label}
-                  </span>
+              <span className="@container min-w-0">
+                <span className="tabular font-display block text-[length:min(var(--text-figure),30cqi)] leading-[var(--leading-figure)] tracking-tight">
+                  {panel.value}
                 </span>
               </span>
-              <ArrowUpRight
-                className="size-[16px] shrink-0"
-                aria-hidden="true"
-              />
+              <span className="min-w-0">
+                <span className="block font-medium underline underline-offset-4">
+                  {title}
+                </span>
+                <span className="text-foreground text-small mt-1 block">
+                  {preview}
+                </span>
+                <span className="text-muted-foreground text-small mt-2 block">
+                  {panel.label}
+                </span>
+              </span>
             </a>
           </li>
         ))}

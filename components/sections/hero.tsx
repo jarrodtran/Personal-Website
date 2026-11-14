@@ -1,4 +1,5 @@
 import { ArrowUpRight } from "lucide-react";
+import { siteContainer } from "@/components/section";
 import { site } from "@/content/site";
 import { withBasePath } from "@/lib/base-path";
 import { btnGhost, btnPrimary } from "@/lib/ui";
@@ -12,11 +13,14 @@ export function Hero({ latest }: { latest?: WritingPost }) {
       id="top"
       className="flex scroll-mt-24 flex-col justify-start py-[var(--spacing-section)]"
     >
-      <div className="@container mx-auto w-full max-w-5xl px-5 sm:px-8">
+      <div className={`@container ${siteContainer}`}>
         <h1 className="measure font-display text-[length:var(--text-h1)] leading-[var(--leading-hero)] tracking-tight text-balance">
           {site.positioning.name}
         </h1>
-        <p className="text-foreground measure text-body mt-4 leading-[var(--leading-copy)]">
+        <p className="font-display measure mt-4 text-[length:var(--text-h3)] leading-[var(--leading-title)] text-balance">
+          {site.positioning.lede}
+        </p>
+        <p className="text-foreground measure text-body mt-3 leading-[var(--leading-copy)]">
           {site.positioning.intro}
         </p>
         <div className="mt-6 flex flex-wrap gap-3">

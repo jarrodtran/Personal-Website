@@ -1,9 +1,7 @@
-import { ArrowUpRight } from "lucide-react";
 import { CopyEmail } from "@/components/copy-email";
 import { Section, SectionHeading } from "@/components/section";
-import { ResumeLink } from "@/components/resume-link";
 import { site } from "@/content/site";
-import { tap, textAction } from "@/lib/ui";
+import { tap } from "@/lib/ui";
 
 /** "Tesla 2023 to now · Waymo 2022 to 2023 · …", newest start first, from site.experience. */
 export function careerPath(): string {
@@ -25,12 +23,12 @@ export function careerPath(): string {
 }
 
 export function About() {
-  const { email, linkedin } = site.contact;
+  const { email } = site.contact;
 
   return (
     <Section id="about">
-      <span id="approach" className="block scroll-mt-24" />
-      <span id="contact" className="block scroll-mt-24" />
+      <span id="approach" className="absolute scroll-mt-24" />
+      <span id="contact" className="absolute scroll-mt-24" />
       <SectionHeading title={site.sections.about.title} />
       <div className="space-y-4">
         {[...site.about.bio, site.contact.intro].map((paragraph) => (
@@ -56,18 +54,6 @@ export function About() {
           {email}
         </a>
         <CopyEmail email={email} />
-      </div>
-      <div className="flex flex-wrap gap-x-6">
-        <a
-          href={linkedin}
-          target="_blank"
-          rel="noopener noreferrer"
-          className={textAction}
-        >
-          LinkedIn
-          <ArrowUpRight className="size-[16px] shrink-0" aria-hidden="true" />
-        </a>
-        <ResumeLink />
       </div>
     </Section>
   );

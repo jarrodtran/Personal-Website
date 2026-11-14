@@ -492,7 +492,7 @@ function collectPage(): PageSample {
     rem225: fontOf("font-size: 1.75rem"),
     spacing: px(probe("padding-top: var(--spacing-section)"), "paddingTop"),
     homeSpacing: (() => {
-      const home = document.querySelector("[data-testid=home-prose] > div");
+      const home = document.querySelector("[data-testid=home-prose]");
       if (!home) return 0;
       return px(
         probe(
