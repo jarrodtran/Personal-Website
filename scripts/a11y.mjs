@@ -218,7 +218,9 @@ const shortHeader = await shortMenu.evaluate(() => {
     ...document.querySelectorAll('header nav[aria-label="Primary"] a'),
   ];
   const last = links[links.length - 1];
-  last?.scrollIntoView({ block: "center" });
+  // html has scroll-behavior: smooth, so a default scrollIntoView animates and
+  // the box below would be measured before the scroll lands.
+  last?.scrollIntoView({ block: "center", behavior: "instant" });
   const box = last?.getBoundingClientRect();
   const hit = box
     ? document.elementFromPoint(
