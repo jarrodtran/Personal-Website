@@ -1,7 +1,7 @@
 import { ArrowUpRight } from "lucide-react";
-import Link from "next/link";
 import { nextSelectedWork, type SelectedWorkItem } from "@/content/site";
 import { tap, textAction } from "@/lib/ui";
+import { withBasePath } from "@/lib/base-path";
 
 function Block({
   label,
@@ -38,9 +38,9 @@ export function CaseStudyBody({ item }: { item: SelectedWorkItem }) {
   return (
     <article className="lg:max-w-study mx-auto max-w-3xl px-5 py-12 sm:px-8 sm:py-20">
       <p className="font-mono-label text-muted-foreground">
-        <Link href="/#work" className={tap}>
+        <a href={withBasePath("/#work")} className={tap}>
           Selected work
-        </Link>
+        </a>
         <span aria-hidden="true"> / </span>
         {item.panel.kicker}
       </p>
@@ -84,12 +84,12 @@ export function CaseStudyBody({ item }: { item: SelectedWorkItem }) {
 
       <div className="border-border mt-10 flex flex-col gap-1 border-t pt-6 sm:flex-row sm:flex-wrap sm:items-center sm:gap-4">
         {next ? (
-          <Link
-            href={`/work/${next.slug}/`}
+          <a
+            href={withBasePath(`/work/${next.slug}/`)}
             className={`${textAction} w-full sm:w-auto`}
           >
             Next: {next.title}
-          </Link>
+          </a>
         ) : null}
         {item.link ? (
           <a
@@ -102,12 +102,12 @@ export function CaseStudyBody({ item }: { item: SelectedWorkItem }) {
             <ArrowUpRight className="size-[16px] shrink-0" aria-hidden="true" />
           </a>
         ) : null}
-        <Link
-          href="/#work"
+        <a
+          href={withBasePath("/#work")}
           className={`${tap} text-muted-foreground hover:text-foreground underline underline-offset-4`}
         >
           Back to selected work
-        </Link>
+        </a>
       </div>
     </article>
   );

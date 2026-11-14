@@ -1,8 +1,8 @@
 import { ArrowUpRight } from "lucide-react";
-import Link from "next/link";
 import { Section, SectionHeading } from "@/components/section";
 import { site } from "@/content/site";
 import { tap } from "@/lib/ui";
+import { withBasePath } from "@/lib/base-path";
 
 export function SelectedWork() {
   return (
@@ -12,8 +12,8 @@ export function SelectedWork() {
       <ul role="list" className="border-border divide-border divide-y border-y">
         {site.selectedWork.map(({ slug, title, preview }) => (
           <li key={slug}>
-            <Link
-              href={`/work/${slug}/`}
+            <a
+              href={withBasePath(`/work/${slug}/`)}
               className={`${tap} w-full gap-3 py-3`}
             >
               <span className="min-w-0 flex-1">
@@ -28,7 +28,7 @@ export function SelectedWork() {
                 className="size-[16px] shrink-0"
                 aria-hidden="true"
               />
-            </Link>
+            </a>
           </li>
         ))}
       </ul>
