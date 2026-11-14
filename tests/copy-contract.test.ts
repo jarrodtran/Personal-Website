@@ -45,11 +45,9 @@ describe("visitor-facing copy contract", () => {
 
   it("uses one writing-led introduction and contact invitation", () => {
     expect(copy).toContain(site.positioning.intro);
-    expect(site.positioning.documentTitle).toBe(
-      "Jarrod Tran · AI product and deployment",
-    );
-    expect(site.positioning.intro).toContain(site.substack.name);
-    expect(site.contact.intro).toContain("with anyone an essay reaches");
+    expect(site.positioning.documentTitle).toBe("Jarrod Tran · Worth Mulling");
+    expect(site.positioning.lede).toContain(site.substack.name);
+    expect(site.contact.intro).toContain("If an essay connects");
   });
 
   // rule:one-public-narrative

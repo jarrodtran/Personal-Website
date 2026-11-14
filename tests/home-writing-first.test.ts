@@ -29,14 +29,14 @@ function withoutBasePath(pathname: string): string {
 const HOME_SECTION_IDS = [
   "top",
   "writing",
+  "about",
   "work",
   "approach",
-  "about",
 ] as const;
 
-/** Work leads while there are no essays; Writing leads once there is one. */
-const ORDER_NO_POSTS = ["top", "work", "approach", "writing", "about"];
-const ORDER_WITH_POSTS = ["top", "writing", "work", "approach", "about"];
+/** Writing and About lead with or without essays; the work follows. */
+const ORDER_NO_POSTS = ["top", "writing", "about", "work", "approach"];
+const ORDER_WITH_POSTS = ORDER_NO_POSTS;
 
 // Measured on origin/main (136043b) production build in this Playwright setup.
 const MAIN_HOME_SCROLL_HEIGHT_100 = {

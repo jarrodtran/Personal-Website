@@ -145,10 +145,13 @@ describe("hero", () => {
     expect(headings(html, "h1")).toEqual([site.positioning.name]);
   });
 
-  it("offers selected work and the résumé while there are no posts, and no subscribe", () => {
+  it("offers subscribe first and selected work second while there are no posts", () => {
     expect(links(html)).toMatchObject([
+      {
+        href: `${site.substack.url}/subscribe`,
+        text: `${site.writing.subscribe.action} (opens Substack)`,
+      },
       { href: "#work", text: site.positioning.workAction },
-      { href: site.contact.resumePage, text: "Résumé" },
     ]);
     expect(html).toContain(btnPrimary);
     expect(html).not.toMatch(/coming soon/i);
@@ -160,7 +163,7 @@ describe("hero", () => {
     const filled = renderToStaticMarkup(<Hero latest={latest} />);
     expect(links(filled)).toMatchObject([
       { href: "/writing/zxq-aurora/", text: site.writing.readLatest },
-      { href: site.contact.resumePage, text: "Résumé" },
+      { href: "#work", text: site.positioning.workAction },
     ]);
   });
 
@@ -173,7 +176,7 @@ describe("hero", () => {
         text: `${site.writing.readLatest} (opens Substack)`,
         target: "_blank",
       },
-      { href: site.contact.resumePage, text: "Résumé" },
+      { href: "#work", text: site.positioning.workAction },
     ]);
   });
 
