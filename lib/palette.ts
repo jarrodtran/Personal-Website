@@ -51,5 +51,6 @@ export const ogColors = {
   bg: palette.dark.bg,
   fg: palette.dark.fg,
   accent: palette.dark.accent,
+  border: palette.dark.border,
   muted: withAlpha(palette.dark.fg, 0.72),
 } as const;

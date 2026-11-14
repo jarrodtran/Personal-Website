@@ -1,4 +1,5 @@
 import { About } from "@/components/sections/about";
+import { Approach } from "@/components/sections/approach";
 import { Hero } from "@/components/sections/hero";
 import { SelectedWork } from "@/components/sections/selected-work";
 import { Writing } from "@/components/sections/writing";
@@ -25,10 +26,12 @@ export default async function Home() {
         <>
           <Writing posts={result.posts} />
           <SelectedWork />
+          <Approach />
         </>
       ) : (
         <>
           <SelectedWork />
+          <Approach />
           <Writing posts={result.posts} unavailable={unavailable} />
         </>
       )}

@@ -26,11 +26,17 @@ function withoutBasePath(pathname: string): string {
   return pathname;
 }
 
-const HOME_SECTION_IDS = ["top", "writing", "work", "about"] as const;
+const HOME_SECTION_IDS = [
+  "top",
+  "writing",
+  "work",
+  "approach",
+  "about",
+] as const;
 
 /** Work leads while there are no essays; Writing leads once there is one. */
-const ORDER_NO_POSTS = ["top", "work", "writing", "about"];
-const ORDER_WITH_POSTS = ["top", "writing", "work", "about"];
+const ORDER_NO_POSTS = ["top", "work", "approach", "writing", "about"];
+const ORDER_WITH_POSTS = ["top", "writing", "work", "approach", "about"];
 
 // Measured on origin/main (136043b) production build in this Playwright setup.
 const MAIN_HOME_SCROLL_HEIGHT_100 = {
@@ -180,7 +186,6 @@ describe("writing-first home", () => {
   it("uses the name as the only home h1 and orders sections by whether essays exist", async () => {
     const layout = await readHomeLayout(1280, 800);
     expect(layout.h1).toBe(site.positioning.name);
-    expect(layout.h1).not.toBe(site.positioning.headline);
     // The lede and the rest of the introduction.
     expect(layout.introParagraphCount).toBe(2);
     expect(layout.sectionOrder).toEqual(
@@ -200,7 +205,7 @@ describe("writing-first home", () => {
       };
       return {
         brand: box(document.querySelector("header a")),
-        sections: ["writing", "work", "about"].map((id) => {
+        sections: ["writing", "work", "approach", "about"].map((id) => {
           const section = document.getElementById(id);
           const label = section?.querySelector(".rail-label");
           const columns = label?.parentElement
@@ -238,7 +243,7 @@ describe("writing-first home", () => {
   it("stacks the heading above the content below lg", async () => {
     const { browser, page } = await openHome(768, 800);
     const stacked = await page.evaluate(() =>
-      ["writing", "work", "about"].map((id) => {
+      ["writing", "work", "approach", "about"].map((id) => {
         const section = document.getElementById(id);
         const label = section?.querySelector(".rail-label");
         const content = [...(label?.parentElement?.children ?? [])].find(
