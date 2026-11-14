@@ -71,6 +71,26 @@ export interface SiteContent {
     name: string;
     url: string;
   };
+  /** Copy for the latest-essays list, the /writing/ archive, and subscribe prompts. */
+  writing: {
+    latestTitle: string;
+    archiveIntro: string;
+    empty: string;
+    allEssays: string;
+    readLatest: string;
+    subscribe: {
+      title: string;
+      body: string;
+      action: string;
+      note: string;
+      short: string;
+      embedTitle: string;
+    };
+    essay: {
+      minutes: string;
+      onSubstack: string;
+    };
+  };
   about: {
     bio: string[];
   };
@@ -103,12 +123,11 @@ export interface SiteContent {
 export const site: SiteContent = {
   positioning: {
     name: "Jarrod Tran",
-    headline: "How teams build and use AI",
+    headline: "Worth Mulling by Jarrod Tran",
     intro:
-      "I lead an AI product team at Tesla Energy. I write about choosing which problems to solve with AI and measuring what changes after launch.",
+      "I write Worth Mulling, where I think through whatever I’ve been chewing on lately and the rabbit holes I go down along the way. By day I lead AI enablement at Tesla Energy.",
     documentTitle: "Jarrod Tran · Worth Mulling",
-    valueProp:
-      "Worth Mulling is Jarrod Tran’s publication on AI product decisions, from picking a use case to measuring adoption.",
+    valueProp: "My thoughts, and whatever rabbit hole I’m down lately.",
     status: "Worth Mulling",
     location: "Houston, TX",
     currentRole: currentTitle,
@@ -117,55 +136,85 @@ export const site: SiteContent = {
     name: "Worth Mulling",
     url: "https://jarrodtran.substack.com",
   },
+  writing: {
+    latestTitle: "Latest essays",
+    archiveIntro:
+      "Whatever I’m thinking about, and wherever the rabbit hole goes.",
+    empty: "The first essay is coming soon.",
+    allEssays: "All essays",
+    readLatest: "Read the latest essay",
+    subscribe: {
+      title: "Get new essays by email",
+      body: "Whatever I’m thinking about, or the rabbit hole I went down lately, written up when it’s worth sharing.",
+      action: "Subscribe",
+      note: "Free. Sent through Substack. Unsubscribe anytime.",
+      short: "If this was worth mulling, get the next one by email.",
+      embedTitle: "Substack signup form for Worth Mulling",
+    },
+    essay: {
+      minutes: "min read",
+      onSubstack: "Comment or share on Substack",
+    },
+  },
   about: {
     bio: [
-      `As ${currentTitle} at Tesla Energy, I hired the team behind our AI tools and set up adoption reporting. At Apple, I led the iPhone launch program in India. At Waymo, I led planning for Engineering Operations.`,
+      `I’m Jarrod Tran. As ${currentTitle} at Tesla Energy, I hired the team behind our AI tools and set up the reporting that shows whether people use them. Before that, I led the iPhone launch program in India at Apple and planning for Engineering Operations at Waymo.`,
+      "Worth Mulling is where I write about whatever I’m thinking about, work or not.",
     ],
   },
   experience: [
     {
       company: "Tesla",
-      note: "Rejoined in 2023 after Apple and Waymo.",
+      note: "Rejoined Tesla in 2023 after Apple and Waymo.",
       roles: [
         {
           title: currentTitle,
-          dates: "Aug 2023 - Present",
+          dates: "Aug 2023 to Present",
           summary:
             "I own Tesla Energy’s AI enablement strategy and the product team that ships it: roadmap, rules, and what I report to leadership.",
           bullets: [
             {
-              text: "Hired the team I now lead at Tesla Energy. Its 20+ production AI tools serve 1,000+ active users and include RAG troubleshooting, automated reporting, workflow automation, and decision support.",
+              text: "Built and lead a 4-person team of AI product managers and engineers that has shipped 20+ production AI tools now used by 1,000+ employees, including RAG-based troubleshooting assistants, automated reporting, workflow automation and decision support.",
               metric: "1,000+",
             },
             {
-              text: "Modeled AI productivity at roughly 540 hours reclaimed per week and $1.6M in annualized value, with more upside as automation adoption grows.",
+              text: "Own the roadmap for an AI enablement program reaching 10,000 employees: rank use cases, assign an owner to each, and pair every release with training and weekly adoption reports to leadership.",
+              metric: "10,000",
+            },
+            {
+              text: "Freed an estimated 540 hours per week, worth $1.6M a year in productivity, by funding the tools that save the most time or improve decisions.",
               metric: "$1.6M",
             },
             {
-              text: "Owned the global investment roadmap across California, Texas, and Shanghai: scaled Megapack 3.2×, allocated $23M across 50+ initiatives for $156M in incremental annual profit, and led a separate program that delivered $260M in annualized savings.",
+              text: "Built the Python and Tableau ROI model executives used to choose among 50+ competing initiatives for a $23M budget. The funded portfolio delivered $156M in incremental annual profit.",
               metric: "$156M",
             },
             {
-              text: "Mitigated $550M in projected tariff exposure by redesigning the product and investment plan, then built and promoted successors so I could focus on AI enablement.",
+              text: "Redesigned the investment plan for Megapack, Tesla’s utility-scale battery product, mitigating $550M in projected tariff exposure during a 3.2× scale-up.",
               metric: "$550M",
+            },
+            {
+              text: "Served as Program Champion for a separate program that delivered $260M in annualized savings.",
+              metric: "$260M",
             },
           ],
         },
         {
           title: "Program Manager, Special Projects",
-          dates: "Jun 2018 - Jun 2021",
+          dates: "Jun 2018 to Jun 2021",
           summary:
             "I ran new programs at Tesla, including the 4680 launch and the Model 3 and Model Y scale-up.",
           bullets: [
             {
-              text: "Advanced Project Roadrunner, Tesla's 4680 program, from early pilot to launch readiness through Battery Day, running stage gates and readiness reviews across teams.",
+              text: "Took Project Roadrunner, Tesla’s 4680 battery cell program, from pilot to launch readiness through its public unveiling at Tesla’s 2020 Battery Day.",
             },
             {
-              text: "Designed and launched a $3.5M/month coordination platform (“Warehouse on Wheels”) to protect product availability during rapid scale-up.",
-              metric: "$3.5M/month",
+              text: "Led Model 3 and Model Y production planning and recovery for two years from launch, ramping each model to 10,000 units per week and hitting every quarterly production and delivery goal.",
+              metric: "10,000",
             },
             {
-              text: "Led planning and recovery across Model 3 and Model Y programs through demand surges and supply disruptions.",
+              text: "Designed and launched Warehouse on Wheels, a coordination platform managing $3.5M per month in operating expenses.",
+              metric: "$3.5M",
             },
           ],
         },
@@ -176,16 +225,17 @@ export const site: SiteContent = {
       roles: [
         {
           title: "Strategy & Operations Manager",
-          dates: "Oct 2022 - May 2023",
+          dates: "Oct 2022 to May 2023",
           bullets: [
             {
-              text: "Led annual planning, OKRs, and quarterly business reviews for Engineering Operations. Turned org priorities into resource plans, targets, and milestones.",
+              text: "Moved six separately planned functions (hardware, software, fleet, Product, Legal and Engineering) onto one Engineering Operations plan, with shared OKRs, resource plans and quarterly business reviews for a 200+ person engineering organization.",
+              metric: "200+",
             },
             {
-              text: "Got hardware, software, fleet, Product, Legal, and Engineering onto the same facts, including safety and regulatory work for commercial autonomous-vehicle deployment.",
+              text: "Aligned those six functions on commercial deployment priorities as Waymo’s driverless ride service expanded.",
             },
             {
-              text: "Built leadership dashboards for performance, fleet health, and program milestones so senior leaders weren't stuck in ad-hoc reporting.",
+              text: "Built the leadership dashboards for fleet health, performance and milestones, cutting one-off reporting requests.",
             },
           ],
         },
@@ -196,18 +246,32 @@ export const site: SiteContent = {
       roles: [
         {
           title: "Strategic Operations Program Manager",
-          dates: "Jun 2021 - Jun 2022",
+          dates: "Jun 2021 to Jun 2022",
           bullets: [
             {
-              text: "Led the 0→1 iPhone India launch from market entry and partner qualification through readiness and scaled delivery, under tight quality, regulatory, and timing requirements.",
+              text: "Led the iPhone India program end to end from a standing start, keeping market entry, partner readiness and launch timing on one schedule.",
             },
             {
-              text: "Supported 293% year-over-year growth (4.3M → 16.9M units) and a program whose reported revenue grew from $2B to $10B by translating demand into investment and readiness plans.",
+              text: "Supported 293% year-over-year unit growth (4.3M to 16.9M) as program revenue grew from $2B to $10B and exports expanded from 6 to 40+ countries.",
               metric: "293%",
             },
             {
-              text: "Expanded iPhone India exports from 6 to 40+ countries, building a second-source network that reduced geographic concentration risk.",
-              metric: "40+",
+              text: "Turned demand forecasts into weekly funding and readiness plans, and flagged quality, regulatory and timing issues for leadership.",
+            },
+          ],
+        },
+      ],
+    },
+    {
+      company: "Amazon",
+      roles: [
+        {
+          title: "Operations Area Manager",
+          dates: "Mar 2017 to Apr 2018",
+          bullets: [
+            {
+              text: "Led 100+ associates in a 1M sq ft fulfillment center handling 350K SKUs.",
+              metric: "100+",
             },
           ],
         },
@@ -388,10 +452,10 @@ export const site: SiteContent = {
     "0→1 launches",
   ],
   nav: [
-    { label: "Writing", href: "#writing" },
-    { label: "About", href: "#about" },
+    { label: "Writing", href: "/writing/" },
     { label: "Work", href: "#work" },
-    { label: "Contact", href: "#contact" },
+    { label: "About", href: "#about" },
+    { label: "Résumé", href: "/resume.pdf" },
   ],
   contact: {
     email: "jarrodtran@outlook.com",
@@ -400,7 +464,7 @@ export const site: SiteContent = {
     resumeHref: "/resume.pdf",
     resumeFilename: "Jarrod-Tran-Resume.pdf",
     intro:
-      "I’m based in Houston. If something I’ve written connects with your work, I’d like to hear what you’ve learned.",
+      "I’m based in Houston. If an essay connects with your work, I’d like to hear what you’ve learned. Email is the best way to reach me.",
   },
   outreach: {
     linkedin:

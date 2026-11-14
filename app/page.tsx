@@ -20,11 +20,11 @@ export default async function Home() {
       data-testid="home-prose"
       className="lg:max-w-site mx-auto w-full max-w-5xl px-5 sm:px-8"
     >
-      <div className="lg:max-w-home w-full max-w-prose max-sm:[--spacing-section:2.5rem] [&_#top>div]:px-0 [&_section>div]:px-0">
-        <Hero />
+      <div className="lg:max-w-home w-full max-w-prose max-sm:[--spacing-section:1.75rem] [&_#top>div]:px-0 [&_section>div]:px-0">
+        <Hero latest={result.posts[0]} />
         <Writing posts={result.posts} unavailable={!result.ok} />
-        <About />
         <SelectedWork />
+        <About />
         <Contact />
       </div>
     </div>

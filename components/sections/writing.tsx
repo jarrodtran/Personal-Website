@@ -1,35 +1,31 @@
-import { ArrowUpRight } from "lucide-react";
+import { EssayList } from "@/components/essay-list";
 import { Section, SectionHeading } from "@/components/section";
+import { SubscribeBlock } from "@/components/subscribe";
 import { site } from "@/content/site";
-import { cn } from "@/lib/cn";
-import { btnGhost, tap } from "@/lib/ui";
+import { withBasePath } from "@/lib/base-path";
+import { tap, textAction } from "@/lib/ui";
 import {
-  formatPostDate,
+  HOME_ESSAY_LIMIT,
   isOwnWritingUrl,
   writingPublicationUrl,
-  writingSubscribeUrl,
   type WritingPost,
 } from "@/lib/writing";
 
-const EMPTY_COPY = "Get new essays by email.";
-
-function SubscribeLink({
-  href,
-  className,
-}: {
-  href: string;
-  className?: string;
-}) {
+/** The empty state, or a direct Substack link when the feed could not load. */
+export function NoEssays({ unavailable = false }: { unavailable?: boolean }) {
+  const publication = writingPublicationUrl(site.substack);
+  const linkable =
+    unavailable && isOwnWritingUrl(publication, site.substack.url);
   return (
-    <a
-      href={href}
-      className={cn(btnGhost, "w-fit max-w-full flex-wrap", className)}
-      target="_blank"
-      rel="noopener noreferrer"
-    >
-      <span className="min-w-0 flex-1">Subscribe on Substack</span>
-      <ArrowUpRight className="size-[16px] shrink-0" aria-hidden="true" />
-    </a>
+    <p className="text-muted-foreground measure text-[length:var(--text-body)] leading-[var(--leading-copy)]">
+      {linkable ? (
+        <a href={publication} className={`${tap} underline underline-offset-4`}>
+          Read {site.substack.name} on Substack
+        </a>
+      ) : (
+        site.writing.empty
+      )}
+    </p>
   );
 }
 
@@ -40,78 +36,25 @@ export function Writing({
   posts: WritingPost[];
   unavailable?: boolean;
 }) {
-  const latest = posts.slice(0, 5);
-  const publication = writingPublicationUrl(site.substack);
-  const subscribe = writingSubscribeUrl(site.substack);
-  const canSubscribe = isOwnWritingUrl(subscribe, site.substack.url);
-  const empty = latest.length === 0;
+  const latest = posts.slice(0, HOME_ESSAY_LIMIT);
+  const more = posts.length > HOME_ESSAY_LIMIT;
 
   return (
     <Section id="writing">
-      <SectionHeading title={site.substack.name} />
-      {empty ? (
-        <div className="@container flex max-w-3xl flex-col gap-5 sm:flex-row sm:items-center sm:gap-6">
-          <p className="text-muted-foreground measure min-w-0 text-[length:var(--text-body)] leading-[var(--leading-copy)]">
-            {unavailable && canSubscribe ? (
-              <a
-                href={publication}
-                className={`${tap} underline underline-offset-4`}
-              >
-                Read {site.substack.name} on Substack
-              </a>
-            ) : (
-              EMPTY_COPY
-            )}
-          </p>
-          {canSubscribe ? (
-            <SubscribeLink
-              href={subscribe}
-              className="max-w-full min-w-0 @[28rem]:shrink-0"
-            />
-          ) : null}
-        </div>
+      <SectionHeading title={site.writing.latestTitle} />
+      {latest.length === 0 ? (
+        <NoEssays unavailable={unavailable} />
       ) : (
-        <div className="max-w-2xl">
-          <ol role="list" className="border-border border-t">
-            {latest.map((post) => {
-              const dateLabel = post.date ? formatPostDate(post.date) : "";
-              return (
-                <li key={post.href} className="border-border border-b py-4">
-                  <a
-                    href={post.href}
-                    className={`${tap} text-foreground text-body max-w-full gap-1 leading-[var(--leading-title)] font-medium no-underline hover:underline`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <span className="min-w-0">{post.title}</span>
-                    <ArrowUpRight
-                      className="size-[16px] shrink-0"
-                      aria-hidden="true"
-                    />
-                    <span className="sr-only">(opens Substack)</span>
-                  </a>
-                  {dateLabel ? (
-                    <time
-                      dateTime={post.date}
-                      className="text-muted-foreground font-mono-label tabular block"
-                    >
-                      {dateLabel}
-                    </time>
-                  ) : null}
-                  {post.summary ? (
-                    <p className="text-muted-foreground measure mt-1 line-clamp-2 text-[length:var(--text-body)] leading-[var(--leading-copy)]">
-                      {post.summary}
-                    </p>
-                  ) : null}
-                </li>
-              );
-            })}
-          </ol>
-          {canSubscribe ? (
-            <SubscribeLink href={subscribe} className="mt-6" />
-          ) : null}
-        </div>
+        <EssayList posts={latest} expanded={latest.length === 1} />
       )}
+      {more ? (
+        <p className="mt-3">
+          <a href={withBasePath("/writing/")} className={textAction}>
+            {site.writing.allEssays}
+          </a>
+        </p>
+      ) : null}
+      <SubscribeBlock className="mt-8" />
     </Section>
   );
 }

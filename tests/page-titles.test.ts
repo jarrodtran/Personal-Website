@@ -76,11 +76,21 @@ describe("route tab titles", () => {
       }
     }
 
+    // /writing/ stays noindex until the feed lists an essay, then it is a
+    // self-canonical page in the sitemap.
+    const writingHtml = readSiteFile("out/writing/index.html");
+    const writingListed = !writingHtml.includes('content="noindex');
+    if (writingListed) {
+      expect(writingHtml.match(/<link rel="canonical"[^>]*>/g)).toEqual([
+        `<link rel="canonical" href="${siteUrl}/writing/"/>`,
+      ]);
+    }
+
     for (const [file, robots] of [
       ["404.html", "noindex"],
       ["_not-found/index.html", "noindex"],
       ["work/index.html", "noindex, follow"],
-      ["writing/index.html", "noindex, follow"],
+      ...(writingListed ? [] : [["writing/index.html", "noindex, follow"]]),
     ]) {
       const html = readSiteFile(`out/${file}`);
       expect(html).not.toMatch(/rel="canonical"|property="og:url"/);
@@ -92,7 +102,12 @@ describe("route tab titles", () => {
     const sitemap = readSiteFile("out/sitemap.xml");
     expect(
       [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map(([, url]) => url),
-    ).toEqual(routes.map((route) => `${siteUrl}${route}`));
+    ).toEqual([
+      `${siteUrl}/`,
+      ...(writingListed ? [`${siteUrl}/writing/`] : []),
+      ...routes.slice(1).map((route) => `${siteUrl}${route}`),
+      `${siteUrl}${site.contact.resumeHref}`,
+    ]);
     expect(sitemap).not.toMatch(/<lastmod>|<changefreq>|<priority>/);
   });
 });

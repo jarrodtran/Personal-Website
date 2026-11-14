@@ -7,6 +7,7 @@ import {
   findPhraseHits,
   formatHits,
   htmlPagePath,
+  isFeedEssayFile,
   listBuiltFiles,
   loadBannedPhrases,
   parseBannedPhrases,
@@ -72,7 +73,9 @@ describe("planted fixtures", () => {
 
     const delve = hits.find((hit) => hit.phrase === "delve");
     expect(delve?.context).toMatch(/delve/i);
-    expect(delve?.context.toLowerCase()).toContain("please delve into the brief");
+    expect(delve?.context.toLowerCase()).toContain(
+      "please delve into the brief",
+    );
 
     const dash = hits.find((hit) => hit.phrase === "\u2014");
     expect(dash?.context).toContain("\u2014");
@@ -120,6 +123,17 @@ describe("repo scan", () => {
     expect(
       hits.filter((hit) => hit.source.endsWith("banned-phrases.txt")),
     ).toEqual([]);
+  });
+
+  it("skips only essay pages from the feed, never the archive or other pages", () => {
+    expect(isFeedEssayFile("out/writing/some-essay/index.html")).toBe(true);
+    expect(isFeedEssayFile("out/writing/some-essay/index.txt")).toBe(true);
+    expect(isFeedEssayFile("out/writing/index.html")).toBe(false);
+    expect(isFeedEssayFile("out/writing/__next._full.txt")).toBe(false);
+    expect(isFeedEssayFile("out/index.html")).toBe(false);
+    expect(isFeedEssayFile("out/work/apple-iphone-india/index.html")).toBe(
+      false,
+    );
   });
 
   it("allows the official title string", () => {

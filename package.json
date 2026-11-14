@@ -32,13 +32,15 @@
     "next": "16.4.5",
     "next-themes": "0.4.6",
     "react": "19.2.8",
-    "react-dom": "19.2.8"
+    "react-dom": "19.2.8",
+    "sanitize-html": "^2.18.2"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "4.3.4",
     "@types/node": "^26.6.6",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
+    "@types/sanitize-html": "^2.16.2",
     "axe-core": "4.14.0",
     "eslint": "^9.39.5",
     "eslint-config-next": "16.4.5",

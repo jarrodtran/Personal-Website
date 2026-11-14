@@ -11,7 +11,7 @@ export function Contact() {
     <Section id="contact">
       <div className="space-y-4">
         <SectionHeading title={site.sections.contact.title}>
-          <p className="text-muted-foreground measure mt-4 text-[length:var(--text-body)] leading-[var(--leading-copy)] text-pretty">
+          <p className="text-foreground measure mt-4 text-[length:var(--text-body)] leading-[var(--leading-copy)] text-pretty">
             {site.contact.intro}
           </p>
         </SectionHeading>

@@ -32,6 +32,10 @@ describe("writing fixtures stay out of the shipped site", () => {
     expect(hits).toEqual([]);
   });
 
+  it("drops the essay route placeholder from the export", () => {
+    expect(existsSync(path.join(outDir, "writing", "_none"))).toBe(false);
+  });
+
   it("does not keep fixture posts in content/", () => {
     const contentDir = path.join(root, "content");
     const hits: string[] = [];

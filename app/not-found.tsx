@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { site } from "@/content/site";
 import { btnPrimary } from "@/lib/ui";
+import { withBasePath } from "@/lib/base-path";
 
 export const metadata: Metadata = {
   title: {
@@ -19,9 +19,9 @@ export default function NotFound() {
       <p className="text-muted-foreground measure mt-3">
         Head back to {site.positioning.name}&apos;s home page.
       </p>
-      <Link href="/" className={`${btnPrimary} mt-8`}>
+      <a href={withBasePath("/")} className={`${btnPrimary} mt-8`}>
         Go home
-      </Link>
+      </a>
     </div>
   );
 }

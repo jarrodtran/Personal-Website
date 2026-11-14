@@ -45,6 +45,11 @@ function flatResume(): string {
 const sourcedFigures: Record<string, string> = {
   "293%": "unit growth from 4.3M to 16.9M",
   "540": "burden cost estimates times hours saved",
+  // Amazon is title and dates only on the one-page résumé. Jarrod confirmed
+  // these in the November 2026 résumé rewrite.
+  "100+": "Amazon associates led, confirmed by Jarrod",
+  "1M": "Amazon fulfillment center square feet, confirmed by Jarrod",
+  "350K": "Amazon SKUs handled, confirmed by Jarrod",
 };
 
 describe("number ledger", () => {
@@ -75,10 +80,10 @@ describe("number ledger", () => {
     const text = flatResume();
     expect(text).toContain("Lead, AI Enablement & Factory Strategy");
     expect(text).toContain(
-      "Allocated $23M across 50+ initiatives for $156M in incremental annual profit.",
+      "for a $23M budget; the funded portfolio delivered $156M in incremental annual profit.",
     );
     expect(text).toContain(
-      "A separate program delivered $260M in annualized savings.",
+      "a program that delivered $260M in annualized savings.",
     );
     for (const sentence of text.split(/(?<=\.)\s+/)) {
       expect(sentence.includes("$156M") && sentence.includes("$260M")).toBe(
@@ -93,20 +98,20 @@ describe("number ledger", () => {
   it("keeps the recorded employers, dates, and education", () => {
     const text = flatResume();
     for (const fact of [
-      "Aug 2023 - Present",
-      "Rejoined in 2023 after Apple and Waymo.",
+      "Aug 2023 to Present",
+      "Rejoined Tesla in 2023 after Apple and Waymo.",
       "Strategy & Operations Manager",
-      "Oct 2022 - May 2023",
+      "Oct 2022 to May 2023",
       "Strategic Operations Program Manager",
-      "Jun 2021 - Jun 2022",
+      "Jun 2021 to Jun 2022",
       "Program Manager, Special Projects",
-      "Jun 2018 - Jun 2021",
+      "Jun 2018 to Jun 2021",
       "Operations Area Manager",
-      "Mar 2017 - Apr 2018",
+      "Mar 2017 to Apr 2018",
       "University at Buffalo",
       "B.S. Business Administration, Finance",
       "Cum Laude",
-      "RAG troubleshooting",
+      "RAG-based troubleshooting",
       "Houston, TX",
     ]) {
       expect(text, fact).toContain(fact);
