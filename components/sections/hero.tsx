@@ -16,7 +16,7 @@ export function Hero({ latest }: { latest?: WritingPost }) {
         <h1 className="measure font-display text-[length:var(--text-h1)] leading-[var(--leading-hero)] tracking-tight text-balance">
           {site.positioning.name}
         </h1>
-        <p className="text-muted-foreground measure text-body mt-4 leading-[var(--leading-copy)]">
+        <p className="text-foreground measure text-body mt-4 leading-[var(--leading-copy)]">
           {site.positioning.intro}
         </p>
         {latest ? (

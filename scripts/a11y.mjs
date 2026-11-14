@@ -202,8 +202,8 @@ for (const [width, height] of [
   await large.close();
 }
 
-// A short viewport plus 200% text must keep the header compact and the last
-// menu link fully inside the remaining viewport (scroll the panel if needed).
+// A short viewport plus 200% text: there is no phone menu, so the links wrap
+// under the name, the header scrolls away, and the last link stays reachable.
 const shortMenu = await browser.newPage({
   viewport: { width: 320, height: 256 },
 });
@@ -214,45 +214,37 @@ await shortMenu.evaluate(() => {
 await shortMenu.waitForTimeout(300);
 const shortHeader = await shortMenu.evaluate(() => {
   const header = document.querySelector("header");
-  const bar = header?.firstElementChild;
+  const links = [
+    ...document.querySelectorAll('header nav[aria-label="Primary"] a'),
+  ];
+  const last = links[links.length - 1];
+  last?.scrollIntoView({ block: "center" });
+  const box = last?.getBoundingClientRect();
+  const hit = box
+    ? document.elementFromPoint(
+        box.left + box.width / 2,
+        box.top + box.height / 2,
+      )
+    : null;
   return {
-    headerHeight: header?.getBoundingClientRect().height ?? 0,
-    barBottom: bar?.getBoundingClientRect().bottom ?? 0,
+    position: header ? getComputedStyle(header).position : "",
+    menuButton: Boolean(document.querySelector('[aria-label="Open menu"]')),
+    clickable: Boolean(last && hit && (hit === last || last.contains(hit))),
   };
 });
-if (shortHeader.headerHeight >= 184 || shortHeader.barBottom >= 184) {
+if (shortHeader.position === "sticky" || shortHeader.position === "fixed") {
   failures.push(
-    `phone menu: at 320x256 / 200% text the header is ${Math.round(shortHeader.headerHeight)}px (bar ${Math.round(shortHeader.barBottom)}px), want under 184px`,
+    `phone nav: at 320x256 / 200% text the header is ${shortHeader.position} and can cover the page`,
   );
 }
-await shortMenu.locator('button[aria-controls="mobile-nav"]').click();
-const reachable = await shortMenu.evaluate(() => {
-  const panel = document.querySelector("#mobile-nav");
-  panel.scrollTop = panel.scrollHeight;
-  const links = [...document.querySelectorAll("#mobile-nav a")];
-  const last = links[links.length - 1];
-  last.focus();
-  const box = last.getBoundingClientRect();
-  const panelBox = panel.getBoundingClientRect();
-  const hitY = Math.min(box.bottom - 1, panelBox.bottom - 1);
-  const hit = document.elementFromPoint(box.left + box.width / 2, hitY);
-  return {
-    top: box.top,
-    bottom: box.bottom,
-    panelTop: panelBox.top,
-    panelBottom: panelBox.bottom,
-    viewport: window.innerHeight,
-    clickable: hit === last || last.contains(hit),
-  };
-});
-if (
-  reachable.top < reachable.panelTop - 1 ||
-  reachable.bottom > reachable.viewport + 1 ||
-  reachable.bottom > reachable.panelBottom + 1 ||
-  !reachable.clickable
-) {
+if (shortHeader.menuButton) {
   failures.push(
-    `phone menu: at 320x256 / 200% text the last link is not fully in the viewport (top ${Math.round(reachable.top)}, bottom ${Math.round(reachable.bottom)}, panel ${Math.round(reachable.panelTop)}-${Math.round(reachable.panelBottom)}, viewport ${reachable.viewport})`,
+    "phone nav: a menu button came back; links should stay visible",
+  );
+}
+if (!shortHeader.clickable) {
+  failures.push(
+    "phone nav: at 320x256 / 200% text the last nav link is not clickable",
   );
 }
 await shortMenu.close();
@@ -322,52 +314,18 @@ await still.close();
 
 const page = await browser.newPage({ viewport: viewports.phone });
 await page.goto(origin);
-const toggle = page.locator('button[aria-controls="mobile-nav"]');
-await toggle.click();
-await page.locator("#mobile-nav a").last().focus();
-await page.keyboard.press("Tab");
-if (
-  await page.evaluate(() =>
-    Boolean(document.activeElement?.closest("main, footer")),
-  )
-) {
-  failures.push("phone menu: Tab enters the background page");
-}
-await page.locator("#mobile-nav a").first().focus();
-await page.keyboard.press("Escape");
-if (await page.locator("#mobile-nav").isVisible()) {
-  failures.push("phone menu: Escape does not close the menu");
-}
-const focusReturned = await toggle.evaluate(
-  (button) => document.activeElement === button,
-);
-if (!focusReturned) {
-  failures.push("phone menu: focus does not return to the menu button");
-}
-await toggle.click();
-await page.locator("#mobile-nav a").first().focus();
-await page.mouse.click(1, viewports.phone.height - 1);
-if (await page.locator("#mobile-nav").isVisible()) {
-  failures.push("phone menu: a pointer press outside does not close the menu");
-}
-await toggle.click();
-await page.setViewportSize(viewports.desktop);
-const released = await page
-  .waitForFunction(
-    () =>
-      !document.getElementById("mobile-nav") &&
-      getComputedStyle(document.body).overflow !== "hidden",
-    null,
-    { timeout: 2000 },
-  )
-  .then(
-    () => true,
-    () => false,
+const phoneLinks = await page
+  .getByRole("navigation", { name: "Primary", exact: true })
+  .locator("a")
+  .evaluateAll(
+    (links) =>
+      links.filter((link) => {
+        const box = link.getBoundingClientRect();
+        return box.width > 1 && box.height > 1;
+      }).length,
   );
-if (!released) {
-  failures.push(
-    "phone menu: widening to desktop leaves the menu open and the page locked",
-  );
+if (phoneLinks < 4) {
+  failures.push(`phone nav: only ${phoneLinks} primary links are visible`);
 }
 
 const primary = page.getByRole("navigation", { name: "Primary", exact: true });
@@ -458,10 +416,10 @@ console.log(
     "nothing scrolls sideways at 390px",
     "page title within 60 characters",
     "reveals never hide content and stay still under reduced motion",
-    "phone menu keeps focus out of the page, dismisses on Escape or outside press, and closes at desktop width",
+    "every primary link is visible at phone width, with no menu button",
     "primary navigation marks the section in view and clears it at the top",
     "header controls stay on screen at 200% text",
-    "phone menu stays reachable on a short viewport at 200% text",
+    "the phone header scrolls away and its last link stays reachable at 200% text",
     "copy email announces success and failure",
   ].join("\n  "),
 );

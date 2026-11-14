@@ -256,8 +256,11 @@ describe("390px tap targets and first screen", () => {
       ]
         .map((el) => visibleBox(el))
         .find((box) => box);
-      const menu = visibleBox(
-        document.querySelector('[aria-label="Open menu"]'),
+      const navLinks = [
+        ...document.querySelectorAll('header nav[aria-label="Primary"] a'),
+      ].filter((el) => visibleBox(el));
+      const menuButton = visibleBox(
+        document.querySelector('header button[aria-label="Open menu"]'),
       );
       const headerBox = header?.getBoundingClientRect();
       const nameBox = visibleBox(nameLink);
@@ -267,7 +270,8 @@ describe("390px tap targets and first screen", () => {
         nameLeft: nameBox?.left ?? null,
         headerMid: headerBox ? headerBox.left + headerBox.width / 2 : 0,
         themeLeft: theme?.left ?? null,
-        menuLeft: menu?.left ?? null,
+        navLinkCount: navLinks.length,
+        menuButton: Boolean(menuButton),
       };
     }, site.positioning.name);
     await browser.close();
@@ -275,12 +279,13 @@ describe("390px tap targets and first screen", () => {
   }
 
   it.each(["light", "dark"] as const)(
-    "keeps Jarrod Tran readable and actions on the right at 390px %s",
+    "keeps Jarrod Tran readable, every nav link visible, and the theme toggle on the right at 390px %s",
     async (colorScheme) => {
       const layout = await headerLayout(390, colorScheme);
       expect(layout.nameWidth).toBeGreaterThanOrEqual(80);
       expect(layout.themeLeft).toBeGreaterThanOrEqual(layout.headerMid);
-      expect(layout.menuLeft).toBeGreaterThanOrEqual(layout.headerMid);
+      expect(layout.navLinkCount).toBe(site.nav.length);
+      expect(layout.menuButton).toBe(false);
     },
   );
 
@@ -291,7 +296,8 @@ describe("390px tap targets and first screen", () => {
       expect(layout.nameWidth).toBeGreaterThanOrEqual(80);
       expect(layout.nameLeft).toBe(96);
       expect(layout.themeLeft).toBeGreaterThanOrEqual(layout.headerMid);
-      expect(layout.menuLeft).toBeNull();
+      expect(layout.navLinkCount).toBe(site.nav.length);
+      expect(layout.menuButton).toBe(false);
     },
   );
 
@@ -369,7 +375,7 @@ describe("390px tap targets and first screen", () => {
     expect(nextHref).toMatch(/\/work\/tesla-energy-portfolio\/?$/);
   });
 
-  it("keeps the header short and Contact reachable at 320x256 with 200% text", async () => {
+  it("keeps the header out of the way and every nav link reachable at 320x256 with 200% text", async () => {
     const browser = await chromium.launch();
     const page = await browser.newPage({
       viewport: { width: 320, height: 256 },
@@ -392,60 +398,38 @@ describe("390px tap targets and first screen", () => {
     );
     await page.waitForTimeout(300);
 
-    const closed = await page.evaluate(() => {
-      const header = document.querySelector("header");
-      const bar = header?.firstElementChild;
-      return {
-        headerHeight: header?.getBoundingClientRect().height ?? 0,
-        barBottom: bar?.getBoundingClientRect().bottom ?? 0,
-      };
-    });
-    expect(closed.headerHeight).toBeLessThan(184);
-    expect(closed.barBottom).toBeLessThan(184);
+    // Below md the links wrap under the name instead of hiding behind a menu
+    // button, and the header scrolls away so the extra rows never cover text.
+    const position = await page.evaluate(
+      () => getComputedStyle(document.querySelector("header")!).position,
+    );
+    expect(position).not.toBe("sticky");
+    expect(position).not.toBe("fixed");
 
-    await page.locator('button[aria-controls="mobile-nav"]').click();
-    await page.waitForSelector("#mobile-nav a");
-
-    const menu = await page.evaluate(() => {
-      const panel = document.querySelector("#mobile-nav");
-      if (panel) panel.scrollTop = panel.scrollHeight;
-      const links = [...document.querySelectorAll("#mobile-nav a")];
-      const last = links[links.length - 1];
-      const lastBox = last?.getBoundingClientRect();
-      const panelBox = panel?.getBoundingClientRect();
-      const hit = lastBox
-        ? document.elementFromPoint(
-            lastBox.left + lastBox.width / 2,
-            Math.min(
-              lastBox.bottom - 1,
-              (panelBox?.bottom ?? window.innerHeight) - 1,
-            ),
-          )
-        : null;
+    const last = page.locator('header nav[aria-label="Primary"] a').last();
+    await last.scrollIntoViewIfNeeded();
+    const result = await last.evaluate((el) => {
+      const box = el.getBoundingClientRect();
+      const hit = document.elementFromPoint(
+        box.left + box.width / 2,
+        box.top + box.height / 2,
+      );
       return {
-        text: last?.textContent?.trim() ?? "",
-        top: lastBox?.top ?? -1,
-        bottom: lastBox?.bottom ?? -1,
-        panelTop: panelBox?.top ?? -1,
-        panelBottom: panelBox?.bottom ?? -1,
-        viewport: window.innerHeight,
-        clickable: Boolean(last && hit && (hit === last || last.contains(hit))),
+        text: el.textContent?.trim() ?? "",
+        clickable: Boolean(hit && (hit === el || el.contains(hit))),
       };
     });
     await browser.close();
 
-    expect(menu.text).toBe("Résumé");
-    expect(menu.top).toBeGreaterThanOrEqual(menu.panelTop - 1);
-    expect(menu.bottom).toBeLessThanOrEqual(menu.viewport + 1);
-    expect(menu.bottom).toBeLessThanOrEqual(menu.panelBottom + 1);
-    expect(menu.clickable).toBe(true);
+    expect(result.text).toBe("Résumé");
+    expect(result.clickable).toBe(true);
   });
 
   it.each([
     { width: 320, height: 256 },
     { width: 1280, height: 800 },
   ])(
-    "keeps header theme and menu icons at 16px at $width with 200% text",
+    "keeps the header theme icon at 16px at $width with 200% text",
     async ({ width, height }) => {
       const browser = await chromium.launch();
       const page = await browser.newPage({
@@ -489,13 +473,7 @@ describe("390px tap targets and first screen", () => {
         for (const button of document.querySelectorAll("header button")) {
           if (!visible(button)) continue;
           const label = button.getAttribute("aria-label") ?? "";
-          if (
-            label !== "Toggle color theme" &&
-            label !== "Open menu" &&
-            label !== "Close menu"
-          ) {
-            continue;
-          }
+          if (label !== "Toggle color theme") continue;
           for (const svg of button.querySelectorAll("svg")) {
             const box = visible(svg);
             if (!box) continue;
@@ -513,9 +491,6 @@ describe("390px tap targets and first screen", () => {
       expect(icons.some((icon) => icon.label === "Toggle color theme")).toBe(
         true,
       );
-      if (width === 320) {
-        expect(icons.some((icon) => icon.label === "Open menu")).toBe(true);
-      }
       for (const icon of icons) {
         expect(icon.width, `${icon.label} width`).toBe(16);
         expect(icon.height, `${icon.label} height`).toBe(16);

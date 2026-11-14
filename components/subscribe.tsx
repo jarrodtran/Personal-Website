@@ -62,7 +62,7 @@ export function SubscribeBlock({
         <Heading className="text-body leading-[var(--leading-title)] font-medium">
           {title}
         </Heading>
-        <p className="text-muted-foreground measure mt-1 text-[length:var(--text-body)] leading-[var(--leading-copy)] text-pretty">
+        <p className="text-foreground measure mt-1 text-[length:var(--text-body)] leading-[var(--leading-copy)] text-pretty">
           {body}
         </p>
         <p className="text-muted-foreground text-small mt-2">{note}</p>

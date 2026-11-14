@@ -42,6 +42,6 @@ describe("legacy /work/ index route and the /writing/ archive", () => {
 
   it("gives section anchors room to clear the sticky header", () => {
     expect(readSiteFile("components/section.tsx")).toMatch(/scroll-mt-24/);
-    expect(readSiteFile("components/nav.tsx")).toContain("sticky top-0");
+    expect(readSiteFile("components/nav.tsx")).toContain("md:sticky md:top-0");
   });
 });

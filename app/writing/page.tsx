@@ -48,7 +48,7 @@ export default async function WritingPage() {
         <h1 className="measure font-display text-[length:var(--text-h1)] leading-[var(--leading-hero)] tracking-tight text-balance">
           {site.substack.name}
         </h1>
-        <p className="text-muted-foreground measure text-body mt-4 leading-[var(--leading-copy)]">
+        <p className="text-foreground measure text-body mt-4 leading-[var(--leading-copy)]">
           {site.writing.archiveIntro}
         </p>
         {posts.length === 0 ? (

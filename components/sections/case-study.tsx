@@ -22,7 +22,7 @@ function BulletList({ items }: { items: string[] }) {
   return (
     <ul
       role="list"
-      className="text-muted-foreground measure space-y-3 text-[length:var(--text-body)] leading-[var(--leading-copy)]"
+      className="text-foreground measure space-y-3 text-[length:var(--text-body)] leading-[var(--leading-copy)]"
     >
       {items.map((item) => (
         <li key={item}>{item}</li>
@@ -47,7 +47,7 @@ export function CaseStudyBody({ item }: { item: SelectedWorkItem }) {
       <h1 className="font-display mt-4 text-[length:var(--text-h2)] leading-[var(--leading-title)] tracking-tight text-balance sm:text-[length:var(--text-figure)]">
         {item.title}
       </h1>
-      <p className="text-muted-foreground measure mt-5 text-[length:var(--text-body)] leading-[var(--leading-copy)] text-pretty">
+      <p className="text-foreground measure mt-5 text-[length:var(--text-body)] leading-[var(--leading-copy)] text-pretty">
         {item.problem}
       </p>
 
@@ -62,7 +62,7 @@ export function CaseStudyBody({ item }: { item: SelectedWorkItem }) {
 
       <div className="mt-12">
         <Block label="Context">
-          <p className="text-muted-foreground measure text-[length:var(--text-body)] leading-[var(--leading-copy)] text-pretty">
+          <p className="text-foreground measure text-[length:var(--text-body)] leading-[var(--leading-copy)] text-pretty">
             {caseStudy.context}
           </p>
         </Block>
@@ -73,7 +73,7 @@ export function CaseStudyBody({ item }: { item: SelectedWorkItem }) {
           <BulletList items={caseStudy.decisions} />
         </Block>
         <Block label="Outcome">
-          <p className="text-muted-foreground measure text-[length:var(--text-body)] leading-[var(--leading-copy)] text-pretty">
+          <p className="text-foreground measure text-[length:var(--text-body)] leading-[var(--leading-copy)] text-pretty">
             {caseStudy.outcomeDetail}
           </p>
         </Block>

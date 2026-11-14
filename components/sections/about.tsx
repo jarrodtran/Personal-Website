@@ -13,7 +13,7 @@ export function About() {
         {site.about.bio.map((paragraph) => (
           <p
             key={paragraph}
-            className="text-muted-foreground measure text-[length:var(--text-body)] leading-[var(--leading-copy)]"
+            className="text-foreground measure text-[length:var(--text-body)] leading-[var(--leading-copy)]"
           >
             {paragraph}
           </p>
