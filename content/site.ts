@@ -106,6 +106,10 @@ export interface SiteContent {
   };
   experience: Employer[];
   selectedWork: SelectedWorkItem[];
+  approach: {
+    title: string;
+    principles: { title: string; body: string }[];
+  };
   sections: {
     work: { title: string };
     about: { title: string };
@@ -134,13 +138,13 @@ export interface SiteContent {
 export const site: SiteContent = {
   positioning: {
     name: "Jarrod Tran",
-    headline: "Worth Mulling by Jarrod Tran",
-    lede: "I lead the AI product team at Tesla Energy.",
+    headline: "Jarrod Tran",
+    lede: "I run the team that puts AI to work at Tesla Energy.",
     intro:
-      "We’ve shipped 20+ production AI tools that 1,000+ employees use. Before that, I led the iPhone India launch at Apple and planned Engineering Operations at Waymo. I also write Worth Mulling, where I think through whatever I’ve been chewing on lately.",
-    documentTitle: "Jarrod Tran · Worth Mulling",
+      "I built our forward-deployed engineering program from nothing. The team has shipped 20+ production AI tools on Claude and Grok, and 1,000+ employees use them. Before that, I ran iPhone India production strategy at Apple and planned Engineering Operations at Waymo. I also write Worth Mulling.",
+    documentTitle: "Jarrod Tran · AI product and deployment",
     valueProp:
-      "Jarrod Tran leads AI enablement at Tesla Energy and writes Worth Mulling, a Substack newsletter.",
+      "Jarrod Tran runs AI deployment at Tesla Energy: a forward-deployed engineering program, 20+ production AI tools and 1,000+ users. He also writes Worth Mulling.",
     status: "Worth Mulling",
     location: "Houston, TX",
     currentRole: currentTitle,
@@ -171,7 +175,7 @@ export const site: SiteContent = {
   },
   about: {
     bio: [
-      `I’m Jarrod Tran, based in Houston. As ${currentTitle} at Tesla Energy, I hired the team behind our AI tools and set up the reporting that shows whether people use them.`,
+      `I’m Jarrod Tran, based in Houston. As ${currentTitle} at Tesla Energy, I built the AI team and the program it runs on from nothing, and became the point person for AI across the organization.`,
     ],
   },
   experience: resumeExperience(),
@@ -183,13 +187,13 @@ export const site: SiteContent = {
       problem:
         "Tesla Energy had AI pilots, but teams lacked a shared way to choose which ones to ship or measure their value after launch.",
       contribution:
-        "I stood up the product and engineering team, ranked the use cases, and set up training and adoption reporting for everything we shipped.",
+        "I built the team and our forward-deployed engineering program, ranked the use cases, and set up training and adoption reporting for everything we shipped.",
       outcome:
         "Modeled at ~540 hours reclaimed per week and $1.6M in annualized productivity value.",
       panel: {
         kicker: "Tesla Energy",
         value: "1,000+",
-        label: "Unique users across 20+ production AI tools",
+        label: "Active users across 20+ production AI tools",
         supporting: [
           { value: "2 weeks", label: "Faster time to hire" },
           { value: "~540", label: "Hours reclaimed per week, modeled" },
@@ -201,6 +205,7 @@ export const site: SiteContent = {
         context: [
           "Some pilots showed promise. The harder question was whether they would help with work people already did.",
           "I hired the team and decided what gets built. Tools we shipped include an internal agent chat that offloads agentic work, an automated résumé reviewer inside a hiring hub, operations automations, 3D product models in Three.js for onboarding, and executive daily task automations.",
+          "I set the program up around forward-deployed engineering: the deployment model, AI training, and architecture and security reviews. The tools run on Claude and Grok.",
         ],
         constraints: [
           "Anything that touches personal data is off the table. People attendance is the example: it involves personally identifiable information, so we say no.",
@@ -213,14 +218,16 @@ export const site: SiteContent = {
           "Fund what saves the most time or improves decisions, and turn down the rest.",
           "Decline every use case that touches personal data, even when the request is reasonable.",
           "Ship training with each release and report adoption every week, because a tool nobody opens saves no time.",
+          "Run every tool through architecture review, security review and user feedback testing before release, so nothing ships on enthusiasm alone.",
         ],
         outcomeDetail: [
-          "The team has shipped 20+ production AI tools with 1,000+ unique users. The program is open to 10,000 eligible employees. Time to hire dropped by 2 weeks with the hiring hub.",
+          "The team has shipped 20+ production AI tools with 1,000+ active users. The program is open to 10,000 eligible employees. Time to hire dropped by 2 weeks with the hiring hub. The team is four people today, and the budget allows 15.",
           "Our productivity model estimates about 540 hours saved per week, worth $1.6M a year. Early on, we used too much technical language. The lesson: people need to know what a tool does for their work, not how it works.",
         ],
         role: [
           "Owned the AI roadmap and reported adoption to leadership",
           "Hired and led the AI product and engineering team",
+          "Designed the forward-deployed engineering program and its review process",
           "Set the rules for what we build, including the personal-data limit",
         ],
       },
@@ -369,6 +376,35 @@ export const site: SiteContent = {
       },
     },
   ],
+  approach: {
+    title: "How I deploy AI",
+    principles: [
+      {
+        title: "Start with the work, not the model.",
+        body: "We fund tools that cut the most time or improve a decision, and say no to the rest.",
+      },
+      {
+        title: "Give every tool an owner.",
+        body: "A team of four cannot babysit pilots, so someone is accountable for each use case before we build it.",
+      },
+      {
+        title: "Review before release.",
+        body: "Each tool passes architecture review and security review, then testing with the people who will use it.",
+      },
+      {
+        title: "Count use, not launches.",
+        body: "We report active users every week. A tool no one opens saves no time.",
+      },
+      {
+        title: "Decline what touches personal data.",
+        body: "Attendance tracking is the standing example. The request is reasonable and we still say no.",
+      },
+      {
+        title: "Say what it does, not how it works.",
+        body: "Early on we explained tools in technical language and lost people. People need to see what a tool changes in their day.",
+      },
+    ],
+  },
   sections: {
     about: {
       title: "About",
@@ -398,7 +434,7 @@ export const site: SiteContent = {
     resumePage: "/resume/",
     resumeFilename: "Jarrod-Tran-Resume.pdf",
     intro:
-      "If an essay connects with your work, I’d like to hear what you’ve learned. Email is the best way to reach me.",
+      "I like talking with people who deploy AI inside large organizations, and with anyone an essay reaches. Email is the best way to reach me.",
   },
   outreach: {
     linkedin:

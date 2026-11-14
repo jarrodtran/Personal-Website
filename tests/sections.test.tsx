@@ -4,6 +4,7 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 import { SectionHeading } from "@/components/section";
 import { About } from "@/components/sections/about";
+import { Approach } from "@/components/sections/approach";
 import { CaseStudyBody } from "@/components/sections/case-study";
 import { Hero } from "@/components/sections/hero";
 import { SelectedWork } from "@/components/sections/selected-work";
@@ -142,7 +143,6 @@ describe("hero", () => {
     expect(textOf(html)).toContain(site.positioning.intro);
     expect(textOf(html)).toContain(site.positioning.lede);
     expect(headings(html, "h1")).toEqual([site.positioning.name]);
-    expect(html).not.toContain(site.positioning.headline);
   });
 
   it("offers selected work and the résumé while there are no posts, and no subscribe", () => {
@@ -183,6 +183,33 @@ describe("hero", () => {
     );
     expect(html).not.toContain("text-lg");
     expect(html).not.toContain("text-[1.0625rem]");
+  });
+});
+
+describe("approach", () => {
+  const html = renderToStaticMarkup(<Approach />);
+
+  it("renders the heading and six principles in order", () => {
+    expect(headings(html, "h2")).toEqual([site.approach.title]);
+    expect(site.approach.principles).toHaveLength(6);
+    expect(headings(html, "h3")).toEqual(
+      site.approach.principles.map(({ title }) => title),
+    );
+    const items = [...html.matchAll(/<li\b[^>]*>([\s\S]*?)<\/li>/g)].map(
+      ([, inner]) => textOf(inner),
+    );
+    expect(items).toEqual(
+      site.approach.principles.map(
+        ({ title, body }, index) =>
+          `0${index + 1} ${title} ${body}`,
+      ),
+    );
+    expect(html).toContain("<ol");
+    expect(html).toContain('id="approach"');
+  });
+
+  it("leaves the legacy approach anchor out of About", () => {
+    expect(renderToStaticMarkup(<About />)).not.toContain('id="approach"');
   });
 });
 

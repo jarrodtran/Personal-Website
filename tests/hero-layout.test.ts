@@ -200,7 +200,7 @@ describe("hero headline layout", () => {
     };
   }
 
-  it("has exactly one h1 on every route, and the home h1 is the headline", async () => {
+  it("has exactly one h1 on every route, and the home h1 is the name", async () => {
     for (const path of ROUTES) {
       const { browser, page } = await openPage(path, 390, 844, 100, "light");
       const headings = await page.evaluate(() =>

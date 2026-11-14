@@ -27,7 +27,6 @@ export function About() {
 
   return (
     <Section id="about">
-      <span id="approach" className="absolute scroll-mt-24" />
       <span id="contact" className="absolute scroll-mt-24" />
       <SectionHeading title={site.sections.about.title} />
       <div className="space-y-4">

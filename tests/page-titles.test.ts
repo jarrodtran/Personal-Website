@@ -1,4 +1,4 @@
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
 import { selectedWorkSlugs, site, siteUrl } from "@/content/site";
@@ -47,6 +47,20 @@ describe("route tab titles", () => {
       `${site.positioning.name} · ${site.positioning.name}`,
     );
   });
+  it("does not publish the GitHub profile on any built page", () => {
+    const pages = readdirSync(path.join(root, "out"), {
+      recursive: true,
+      encoding: "utf8",
+    }).filter((file) => file.endsWith(".html"));
+    expect(pages.length).toBeGreaterThan(0);
+    for (const page of pages) {
+      expect(
+        readSiteFile(`out/${page}`),
+        `${page} mentions the GitHub profile`,
+      ).not.toContain("github.com/jarrodtran");
+    }
+  });
+
   it("publishes only self-canonicals and excludes fallback routes from indexing", () => {
     const routes = [
       "/",
