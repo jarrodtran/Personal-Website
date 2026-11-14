@@ -1,5 +1,6 @@
 import { ArrowUpRight } from "lucide-react";
 import { siteContainer } from "@/components/section";
+import { SubscribeButton, subscribeHref } from "@/components/subscribe";
 import { site } from "@/content/site";
 import { withBasePath } from "@/lib/base-path";
 import { btnGhost, btnPrimary } from "@/lib/ui";
@@ -8,6 +9,7 @@ import type { WritingPost } from "@/lib/writing";
 const primaryClass = `${btnPrimary} w-fit max-w-full`;
 
 export function Hero({ latest }: { latest?: WritingPost }) {
+  const subscribe = subscribeHref();
   return (
     <section
       id="top"
@@ -42,16 +44,11 @@ export function Hero({ latest }: { latest?: WritingPost }) {
               />
               <span className="sr-only">(opens Substack)</span>
             </a>
-          ) : (
-            <a href="#work" className={primaryClass}>
-              {site.positioning.workAction}
-            </a>
-          )}
-          <a
-            href={withBasePath(site.contact.resumePage)}
-            className={`${btnGhost} w-fit max-w-full`}
-          >
-            Résumé
+          ) : subscribe ? (
+            <SubscribeButton href={subscribe} primary />
+          ) : null}
+          <a href="#work" className={`${btnGhost} w-fit max-w-full`}>
+            {site.positioning.workAction}
           </a>
         </div>
       </div>

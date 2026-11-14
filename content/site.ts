@@ -139,16 +139,16 @@ export const site: SiteContent = {
   positioning: {
     name: "Jarrod Tran",
     headline: "Jarrod Tran",
-    lede: "I run the team that puts AI to work at Tesla Energy.",
+    lede: "I write Worth Mulling, where I think through whatever I’ve been chewing on lately.",
     intro:
-      "I built our forward-deployed engineering program from nothing. The team has shipped 20+ production AI tools on Claude and Grok, and 1,000+ employees use them. Before that, I ran iPhone India production strategy at Apple and planned Engineering Operations at Waymo. I also write Worth Mulling.",
-    documentTitle: "Jarrod Tran · AI product and deployment",
+      "Some of it is about work and some of it is not. By day I run the team that puts AI to work at Tesla Energy, after earlier stints at Apple and Waymo. I’m based in Houston.",
+    documentTitle: "Jarrod Tran · Worth Mulling",
     valueProp:
-      "Jarrod Tran runs AI deployment at Tesla Energy: a forward-deployed engineering program, 20+ production AI tools and 1,000+ users. He also writes Worth Mulling.",
+      "Jarrod Tran writes Worth Mulling, essays on whatever he is thinking through, and leads AI enablement at Tesla Energy.",
     status: "Worth Mulling",
     location: "Houston, TX",
     currentRole: currentTitle,
-    workAction: "See selected work",
+    workAction: "Selected work",
   },
   substack: {
     name: "Worth Mulling",
@@ -175,7 +175,8 @@ export const site: SiteContent = {
   },
   about: {
     bio: [
-      `I’m Jarrod Tran, based in Houston. As ${currentTitle} at Tesla Energy, I built the AI team and the program it runs on from nothing, and became the point person for AI across the organization.`,
+      "I’m Jarrod Tran. I live in Houston and write Worth Mulling when something is worth working through on the page, work or not.",
+      `By day I’m ${currentTitle} at Tesla Energy, where I built the AI team and the program it runs on from nothing. Before that I worked at Apple, Waymo and Amazon.`,
     ],
   },
   experience: resumeExperience(),
@@ -422,8 +423,8 @@ export const site: SiteContent = {
   ],
   nav: [
     { label: "Writing", href: "/writing/" },
-    { label: "Work", href: "#work" },
     { label: "About", href: "#about" },
+    { label: "Work", href: "#work" },
     { label: "Résumé", href: "/resume/" },
   ],
   contact: {
@@ -434,7 +435,7 @@ export const site: SiteContent = {
     resumePage: "/resume/",
     resumeFilename: "Jarrod-Tran-Resume.pdf",
     intro:
-      "I like talking with people who deploy AI inside large organizations, and with anyone an essay reaches. Email is the best way to reach me.",
+      "If an essay connects with something you’re working through, I’d like to hear about it. Email is the best way to reach me.",
   },
   outreach: {
     linkedin:

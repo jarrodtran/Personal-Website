@@ -22,20 +22,10 @@ export default async function Home() {
       className="w-full max-sm:[--spacing-section:1.75rem]"
     >
       <Hero latest={result.posts[0]} />
-      {result.posts.length > 0 ? (
-        <>
-          <Writing posts={result.posts} />
-          <SelectedWork />
-          <Approach />
-        </>
-      ) : (
-        <>
-          <SelectedWork />
-          <Approach />
-          <Writing posts={result.posts} unavailable={unavailable} />
-        </>
-      )}
+      <Writing posts={result.posts} unavailable={unavailable} />
       <About />
+      <SelectedWork />
+      <Approach />
     </div>
   );
 }
