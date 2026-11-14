@@ -45,7 +45,7 @@ describe("visitor-facing copy contract", () => {
   it("uses one writing-led introduction and contact invitation", () => {
     expect(copy).toContain(site.positioning.intro);
     expect(site.positioning.documentTitle).toContain(site.substack.name);
-    expect(site.contact.intro).toContain("something I’ve written");
+    expect(site.contact.intro).toContain("If an essay connects with your work");
   });
 
   // rule:one-public-narrative
@@ -232,7 +232,7 @@ describe("visitor-facing copy contract", () => {
   it("pins the committed resume to the one-page file bytes", () => {
     const pdf = readFileSync(path.join(root, "public/resume.pdf"));
     expect(createHash("sha256").update(pdf).digest("hex")).toBe(
-      "2073405e8c8525e8f7545af589215e5fb70744bcf17e34fa5aee4ed61a0176fb",
+      "9868ca0ad2945bf54c9c8015dae9e55cb494bab21468708d4000bf68773da758",
     );
   });
 

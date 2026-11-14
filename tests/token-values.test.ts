@@ -488,8 +488,8 @@ function collectPage(): PageSample {
     textH2: fontOf("font-size: var(--text-h2)"),
     textH3: fontOf("font-size: var(--text-h3)"),
     remH3: fontOf("font-size: 1.5rem"),
-    rem2: fontOf("font-size: 2rem"),
-    rem225: fontOf("font-size: 2.25rem"),
+    rem2: fontOf("font-size: 1.625rem"),
+    rem225: fontOf("font-size: 1.75rem"),
     spacing: px(probe("padding-top: var(--spacing-section)"), "paddingTop"),
     homeSpacing: (() => {
       const home = document.querySelector("[data-testid=home-prose] > div");
@@ -497,8 +497,8 @@ function collectPage(): PageSample {
       return px(
         probe(
           matchMedia("(width < 40rem)").matches
-            ? "padding-top: 2.5rem"
-            : "padding-top: 4rem",
+            ? "padding-top: 1.75rem"
+            : "padding-top: 2.75rem",
         ),
         "paddingTop",
       );
@@ -736,7 +736,7 @@ function contractLines(
     );
   }
   const headingTarget = width < 640 ? sample.rem2 : sample.rem225;
-  const headingLabel = width < 640 ? "2rem" : "2.25rem";
+  const headingLabel = width < 640 ? "1.625rem" : "1.75rem";
   for (const heading of sample.headingFonts) {
     if (!near(heading, headingTarget)) {
       lines.push(

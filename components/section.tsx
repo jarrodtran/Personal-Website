@@ -30,7 +30,7 @@ export function SectionHeading({
   children?: React.ReactNode;
 }) {
   return (
-    <div className="mb-6 max-w-2xl sm:mb-12">
+    <div className="mb-5 max-w-2xl sm:mb-8">
       <h2 className="font-display text-[length:var(--text-h2)] leading-[var(--leading-title)] tracking-tight text-balance">
         {title}
       </h2>

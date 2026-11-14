@@ -19,11 +19,7 @@ function escapeRegExp(value: string): string {
   return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
-function assertRedirectPage(
-  file: string,
-  hash: "writing" | "work",
-  label: string,
-) {
+function assertRedirectPage(file: string, hash: "work", label: string) {
   const html = readOut(file);
   const target = withBasePath(`/#${hash}`);
   const href = new RegExp(`href="${escapeRegExp(target)}"`);
@@ -35,7 +31,9 @@ function assertRedirectPage(
   expect(html, file).toMatch(href);
   expect(html, file).toContain(label);
   expect(html, file).toMatch(/noindex/i);
-  expect(html, file).not.toMatch(/<script[^>]*>[\s\S]*location\.(href|replace)/i);
+  expect(html, file).not.toMatch(
+    /<script[^>]*>[\s\S]*location\.(href|replace)/i,
+  );
 
   const canonicals = [
     ...html.matchAll(/<link\b[^>]*rel=["']canonical["'][^>]*>/gi),
@@ -44,13 +42,18 @@ function assertRedirectPage(
 }
 
 // rule:legacy-redirects
-describe("exported /writing/ and /work/ redirects", () => {
-  it("writes index HTML that points at the current-base-path home anchors", () => {
-    assertRedirectPage("out/writing/index.html", "writing", "Go to Writing");
+describe("exported /work/ redirect and /writing/ archive", () => {
+  it("writes /work/ index HTML that points at the current-base-path home anchor", () => {
     assertRedirectPage("out/work/index.html", "work", "Go to Work");
   });
 
-  it("keeps case-study pages and leaves the old index URLs out of the sitemap", () => {
+  it("writes /writing/ as the essay archive, not a redirect", () => {
+    const html = readOut("out/writing/index.html");
+    expect(html).not.toMatch(/http-equiv=["']refresh["']/i);
+    expect(html).toMatch(/<h1\b[^>]*>Worth Mulling<\/h1>/);
+  });
+
+  it("keeps case-study pages and lists /writing/ only when it has essays", () => {
     for (const slug of selectedWorkSlugs()) {
       expect(existsSync(path.join(root, `out/work/${slug}/index.html`))).toBe(
         true,
@@ -58,7 +61,9 @@ describe("exported /writing/ and /work/ redirects", () => {
     }
 
     const sitemap = readOut("out/sitemap.xml");
-    expect(sitemap).not.toContain("/writing/");
+    const archive = readOut("out/writing/index.html");
+    const hasEssays = !/noindex/i.test(archive);
+    expect(sitemap.includes("/writing/")).toBe(hasEssays);
     expect(sitemap).not.toMatch(/https:\/\/jarrodtran\.com\/work\/<\/loc>/);
     expect(sitemap).toContain("/work/tesla-energy-ai-product/");
   });

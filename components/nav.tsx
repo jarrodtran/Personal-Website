@@ -32,7 +32,9 @@ export function Nav({
       : ""
     : /^\/work\/[^/]+/.test(pathname)
       ? "#work"
-      : "";
+      : /^\/writing\/?$/.test(pathname)
+        ? "/writing/"
+        : "";
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
@@ -43,7 +45,9 @@ export function Nav({
 
   useEffect(() => {
     if (!onHome) return;
-    const ids = items.map((item) => item.href.split("#").pop() ?? "");
+    const ids = items
+      .filter((item) => item.href.startsWith("#"))
+      .map((item) => item.href.slice(1));
     const visible = new Map<Element, number>();
     const observer = new IntersectionObserver(
       (entries) => {

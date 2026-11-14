@@ -29,8 +29,8 @@ function withoutBasePath(pathname: string): string {
 const HOME_SECTION_IDS = [
   "top",
   "writing",
-  "about",
   "work",
+  "about",
   "contact",
 ] as const;
 

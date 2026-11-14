@@ -74,10 +74,10 @@
   --text-small: 0.9375rem;
   --text-small--line-height: 1.5;
   --text-h3: 1.5rem;
-  --text-h2: 2rem;
+  --text-h2: 1.625rem;
   --text-h1: 2.5rem;
   --leading-body: 1.65;
-  --spacing-section: 4rem;
+  --spacing-section: 2.75rem;
   --text-404: 2.25rem;
   --text-figure: 3rem;
   --text-figure-lg: 3.75rem;
@@ -91,7 +91,7 @@
 @media (min-width: 40rem) {
   :root {
     --text-h1: 2.8125rem;
-    --text-h2: 2.25rem;
+    --text-h2: 1.75rem;
   }
 }
 
@@ -190,6 +190,10 @@ footer a {
 }
 
 #writing li a:not(:hover) {
+  text-decoration: none;
+}
+
+#essays li a:not(:hover) {
   text-decoration: none;
 }
 

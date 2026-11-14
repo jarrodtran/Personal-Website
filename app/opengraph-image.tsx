@@ -2,7 +2,7 @@ import { ImageResponse } from "next/og";
 import { site } from "@/content/site";
 import { loadOgFonts, ogColors, ogSize } from "@/lib/og";
 
-export const alt = `${site.positioning.name}: ${site.positioning.headline}`;
+export const alt = site.positioning.headline;
 export const size = ogSize;
 export const contentType = "image/png";
 export const dynamic = "force-static";
@@ -52,7 +52,7 @@ export default function OpenGraphImage() {
             lineHeight: 1.05,
           }}
         >
-          {site.positioning.name}
+          {site.positioning.headline}
         </div>
         <div
           style={{
@@ -64,19 +64,8 @@ export default function OpenGraphImage() {
             lineHeight: 1.35,
           }}
         >
-          {site.positioning.headline}
+          {site.positioning.valueProp}
         </div>
-      </div>
-      <div
-        style={{
-          display: "flex",
-          fontFamily: "IBM Plex Sans",
-          fontSize: 22,
-          fontWeight: 600,
-          color: ogColors.accent,
-        }}
-      >
-        {site.positioning.status}
       </div>
     </div>,
     { ...ogSize, fonts },

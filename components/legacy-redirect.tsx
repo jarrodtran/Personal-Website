@@ -2,10 +2,9 @@ import type { Metadata } from "next";
 import { withBasePath } from "@/lib/base-path";
 import { tap } from "@/lib/ui";
 
-export type LegacyHash = "writing" | "work";
+export type LegacyHash = "work";
 
 const COPY: Record<LegacyHash, { title: string; label: string }> = {
-  writing: { title: "Writing", label: "Go to Writing" },
   work: { title: "Work", label: "Go to Work" },
 };
 

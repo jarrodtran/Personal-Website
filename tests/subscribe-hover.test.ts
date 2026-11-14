@@ -47,9 +47,7 @@ describe("ghost Subscribe hover", () => {
           (expected) => document.documentElement.classList.contains(expected),
           scheme,
         );
-        const link = page
-          .getByRole("link", { name: "Subscribe on Substack" })
-          .first();
+        const link = page.locator("#writing [data-testid=subscribe] a").first();
         await link.scrollIntoViewIfNeeded();
         const resting = await link.evaluate(
           (el) => getComputedStyle(el).borderTopColor,

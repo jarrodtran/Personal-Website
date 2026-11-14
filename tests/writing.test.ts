@@ -286,10 +286,13 @@ describe("writing title underline", () => {
       "utf8",
     );
     const source = readFileSync(
-      path.resolve(__dirname, "../components/sections/writing.tsx"),
+      path.resolve(__dirname, "../components/essay-list.tsx"),
       "utf8",
     );
     expect(css).toMatch(/main li a/);
+    expect(css).toMatch(
+      /#essays\s+li\s+a:not\(:hover\)\s*\{[^}]*text-decoration:\s*none/,
+    );
     expect(css).toMatch(
       /#writing\s+li\s+a:not\(:hover\)\s*\{[^}]*text-decoration:\s*none/,
     );

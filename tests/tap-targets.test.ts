@@ -189,8 +189,12 @@ describe("390px tap targets and first screen", () => {
       };
     });
     await browser.close();
-    expect(view.hero).toEqual([site.positioning.name, site.positioning.intro]);
-    expect(view.writingTitle).toBe(site.substack.name);
+    expect(view.hero.slice(0, 2)).toEqual([
+      site.positioning.name,
+      site.positioning.intro,
+    ]);
+    expect(view.hero.join(" ")).toMatch(/Subscribe|Read the latest essay/);
+    expect(view.writingTitle).toBe(site.writing.latestTitle);
     expect(view.writingBottom).toBeGreaterThan(0);
     expect(view.writingBottom).toBeLessThanOrEqual(view.viewport);
   });
@@ -430,7 +434,7 @@ describe("390px tap targets and first screen", () => {
     });
     await browser.close();
 
-    expect(menu.text).toBe("Contact");
+    expect(menu.text).toBe("Résumé");
     expect(menu.top).toBeGreaterThanOrEqual(menu.panelTop - 1);
     expect(menu.bottom).toBeLessThanOrEqual(menu.viewport + 1);
     expect(menu.bottom).toBeLessThanOrEqual(menu.panelBottom + 1);
@@ -579,9 +583,9 @@ describe("390px tap targets and first screen", () => {
       await browser.close();
 
       expect(icons.length).toBeGreaterThan(0);
-      expect(
-        icons.some((icon) => icon.name.includes("Subscribe on Substack")),
-      ).toBe(true);
+      expect(icons.some((icon) => icon.name.startsWith("Subscribe"))).toBe(
+        true,
+      );
       for (const icon of icons) {
         expect(icon.width, `${icon.name} width`).toBe(16);
         expect(icon.height, `${icon.name} height`).toBe(16);

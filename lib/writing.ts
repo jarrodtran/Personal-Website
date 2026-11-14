@@ -13,6 +13,10 @@ export interface SubstackConfig {
 }
 
 export const WRITING_POST_LIMIT = 5;
+/** Rows the homepage shows before linking to the full /writing/ archive. */
+export const HOME_ESSAY_LIMIT = 3;
+/** The /writing/ archive groups entries by year once it holds more than this. */
+export const ARCHIVE_GROUP_AFTER = 10;
 export const WRITING_BLURB_MAX_CHARS = 220;
 export const WRITING_FEED_TIMEOUT_MS = 10_000;
 export const WRITING_DATE_TIME_ZONE = "America/Chicago";
@@ -56,6 +60,16 @@ export function isOwnWritingUrl(url: string, baseUrl: string): boolean {
 
 export function oneLine(text: string): string {
   return text.replace(/\s+/g, " ").trim();
+}
+
+/** Calendar year of a post in the site's time zone, or "" when undated. */
+export function postYear(iso: string): string {
+  const date = new Date(iso);
+  if (Number.isNaN(date.getTime())) return "";
+  return new Intl.DateTimeFormat("en-US", {
+    year: "numeric",
+    timeZone: WRITING_DATE_TIME_ZONE,
+  }).format(date);
 }
 
 export function formatPostDate(iso: string): string {
@@ -140,11 +154,15 @@ function looksLikeFeed(xml: string): boolean {
   return /<(rss|feed|rdf:RDF)\b/i.test(xml);
 }
 
-function selectPosts(posts: WritingPost[], baseUrl: string): WritingPost[] {
+function selectPosts(
+  posts: WritingPost[],
+  baseUrl: string,
+  limit: number,
+): WritingPost[] {
   return posts
     .filter((post) => isOwnWritingUrl(post.href, baseUrl))
     .sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : 0))
-    .slice(0, WRITING_POST_LIMIT);
+    .slice(0, limit);
 }
 
 export function parseFeed(xml: string, baseUrl: string): WritingPost[] {
@@ -180,19 +198,28 @@ export function parseFeed(xml: string, baseUrl: string): WritingPost[] {
 export type WritingLoad =
   { ok: true; posts: WritingPost[] } | { ok: false; posts: []; reason: string };
 
-function readFixturePosts(baseUrl: string): WritingPost[] | null {
+function readFixturePosts(
+  baseUrl: string,
+  limit: number,
+): WritingPost[] | null {
   const fixture = process.env.WRITING_FEED_PATH;
   if (!fixture) return null;
   return selectPosts(
     parseFeed(readFileSync(fixture, "utf8"), baseUrl),
     baseUrl,
+    limit,
   );
 }
 
+/**
+ * Reads the Substack feed at build time. The homepage keeps the default cap;
+ * the /writing/ archive passes `Infinity` to list every post the feed holds.
+ */
 export async function loadWritingResult(
   config: SubstackConfig,
+  { limit = WRITING_POST_LIMIT }: { limit?: number } = {},
 ): Promise<WritingLoad> {
-  const fixture = readFixturePosts(config.url);
+  const fixture = readFixturePosts(config.url, limit);
   if (fixture) return { ok: true, posts: fixture };
 
   const feedUrl = writingFeedUrl(config);
@@ -211,7 +238,7 @@ export async function loadWritingResult(
     }
     return {
       ok: true,
-      posts: selectPosts(parseFeed(xml, config.url), config.url),
+      posts: selectPosts(parseFeed(xml, config.url), config.url, limit),
     };
   } catch (error) {
     const reason = error instanceof Error ? error.message : "fetch failed";

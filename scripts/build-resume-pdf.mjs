@@ -11,10 +11,10 @@ const RULE = [0.898, 0.898, 0.898];
 
 const PAGE_W = 612;
 const PAGE_H = 792;
-const LEFT = 50;
-const RIGHT = 50;
-const TOP = 32;
-const BOTTOM = 42;
+const LEFT = 48;
+const RIGHT = 48;
+const TOP = 28;
+const BOTTOM = 34;
 const WIDTH = PAGE_W - LEFT - RIGHT;
 
 const REGULAR = widths(
@@ -26,7 +26,7 @@ const BOLD = widths(
 
 const resume = {
   name: "Jarrod Tran",
-  title: "AI Product Leadership | Enterprise Deployment",
+  title: "AI Product Leader | Enterprise AI Deployment",
   contact: [
     { text: "Houston, TX" },
     {
@@ -41,46 +41,64 @@ const resume = {
     { text: "github.com/jarrodtran", href: "https://github.com/jarrodtran" },
   ],
   summary: [
-    "I turn enterprise AI pilots into products people use. At Tesla Energy, I built the team that ships AI tools and created the training and reporting that support adoption.",
+    "Product and operations leader who turns enterprise AI pilots into tools people use every day. At Tesla Energy, I built and lead the product and engineering team behind 20+ production AI tools with 1,000+ active users, plus the training and adoption reporting that keeps them in use. Before that, I led Apple's iPhone program in India, ran Engineering Operations planning at Waymo, and delivered battery and vehicle programs at Tesla.",
   ],
   roles: [
     {
-      heading: `Tesla | ${TITLE} | Aug 2023 - Present`,
-      note: "Rejoined in 2023 after Apple and Waymo.",
+      company: "Tesla Energy",
+      title: TITLE,
+      dates: "Aug 2023 to Present",
+      location: "Houston, TX",
+      note: "Rejoined Tesla in 2023 after Apple and Waymo.",
       bullets: [
-        "Lead the product and engineering team I hired. Its 20+ production AI tools serve 1,000+ active users and include RAG troubleshooting, automated reporting, workflow automation, and decision support.",
-        "Own the roadmap for an AI enablement program covering 10,000 employees. Rank use cases, assign owners, and pair releases with training and weekly adoption reports.",
-        "Modeled roughly 540 hours reclaimed per week and $1.6M in annualized productivity value from AI tools.",
-        "Built Python and Tableau models to rank investment requests by return. Allocated $23M across 50+ initiatives for $156M in incremental annual profit.",
-        "Scaled Megapack 3.2\u00d7 and redesigned the investment plan to mitigate $550M in projected tariff exposure. A separate program delivered $260M in annualized savings.",
+        "Built and lead a 4-person AI product and engineering team that has shipped 20+ production AI tools now used by 1,000+ employees, including RAG-based troubleshooting assistants, automated reporting, workflow automation and decision support.",
+        "Own the roadmap for an AI enablement program reaching 10,000 employees: rank use cases, assign an owner to each, and pair every release with training and weekly adoption reports to leadership.",
+        "Freed an estimated 540 hours per week, worth $1.6M a year in productivity, by funding the tools that save the most time or improve decisions.",
+        "Built the Python and Tableau ROI model executives used to choose among 50+ competing initiatives for a $23M budget; the funded portfolio delivered $156M in incremental annual profit.",
+        "Redesigned the investment plan for Megapack, Tesla's utility-scale battery product, mitigating $550M in projected tariff exposure during a 3.2x scale-up.",
+        "Served as Program Champion for MegaUnleash, a program that delivered $260M in annualized savings.",
       ],
     },
     {
-      heading: "Waymo | Strategy & Operations Manager | Oct 2022 - May 2023",
+      company: "Waymo",
+      title: "Strategy & Operations Manager",
+      dates: "Oct 2022 to May 2023",
+      location: "Mountain View, CA",
       bullets: [
-        "Led annual planning, OKRs, and quarterly business reviews for Engineering Operations. Turned leadership priorities into resource plans, targets, and milestones.",
-        "Aligned hardware, software, fleet, Product, Legal, and Engineering on priorities for commercial deployment. Built leadership dashboards for fleet health, performance, and milestones.",
+        "Moved six separately planned functions (hardware, software, fleet, Product, Legal and Engineering) onto one Engineering Operations plan, with shared OKRs, resource plans and quarterly business reviews for a 200+ person engineering organization.",
+        "Aligned those six functions on commercial deployment priorities as Waymo's driverless ride service expanded.",
+        "Built the leadership dashboards for fleet health, performance and milestones, cutting one-off reporting requests.",
       ],
     },
     {
-      heading:
-        "Apple | Strategic Operations Program Manager | Jun 2021 - Jun 2022",
+      company: "Apple",
+      title: "Strategic Operations Program Manager",
+      dates: "Jun 2021 to Jun 2022",
+      location: "Cupertino, CA",
       bullets: [
-        "Led the 0-to-1 iPhone launch in India from market entry and partner qualification through readiness and scaled delivery under tight quality, regulatory, and timing requirements.",
-        "Supported 293% year-over-year unit growth (4.3M to 16.9M) as reported program revenue grew from $2B to $10B, and expanded exports from 6 to 40+ countries.",
+        "Led the iPhone India program end to end from a standing start, keeping market entry, partner readiness and launch timing on one schedule.",
+        "Supported 293% year-over-year unit growth (4.3M to 16.9M) as program revenue grew from $2B to $10B and exports expanded from 6 to 40+ countries.",
+        "Turned demand forecasts into weekly funding and readiness plans, and raised quality, regulatory and timing risks to leadership.",
       ],
     },
     {
-      heading:
-        "Tesla | Program Manager, Special Projects | Jun 2018 - Jun 2021",
+      company: "Tesla",
+      title: "Program Manager, Special Projects",
+      dates: "Jun 2018 to Jun 2021",
+      location: "Fremont, CA",
       bullets: [
-        "Advanced Project Roadrunner, Tesla's 4680 program, from pilot to launch readiness through Battery Day. Led Model 3 and Model Y planning and recovery.",
-        "Designed and launched Warehouse on Wheels, a $3.5M per month coordination platform that protected product availability during rapid scale-up.",
+        "Took Project Roadrunner, Tesla's 4680 battery cell program, from pilot to launch readiness through its public unveiling at Tesla's 2020 Battery Day.",
+        "Led Model 3 and Model Y production planning and recovery for two years from launch, ramping each model to 10,000 units per week and hitting every quarterly production and delivery goal.",
+        "Designed and launched Warehouse on Wheels, a coordination platform managing $3.5M per month in operating expenses.",
       ],
     },
     {
-      heading: "Amazon | Operations Area Manager | Mar 2017 - Apr 2018",
-      bullets: ["Led 100+ associates in a high-volume fulfillment center."],
+      company: "Amazon",
+      title: "Operations Area Manager",
+      dates: "Mar 2017 to Apr 2018",
+      location: "Patterson, CA",
+      // Trimmed to title and dates so the page stays at one sheet.
+      bullets: [],
     },
   ],
   education:
@@ -197,8 +215,11 @@ function documentBlocks() {
     { kind: "section", text: "Experience" },
   ];
   for (const role of resume.roles) {
-    const [company, title, dates] = role.heading.split(" | ");
-    blocks.push({ kind: "job", text: `${company} | ${title}`, dates });
+    blocks.push({
+      kind: "job",
+      text: `${role.company} | ${role.title}`,
+      dates: `${role.location} | ${role.dates}`,
+    });
     if (role.note) blocks.push({ kind: "note", text: role.note });
     for (const bullet of role.bullets) {
       blocks.push({ kind: "bullet", text: bullet });
@@ -234,9 +255,9 @@ function assertCopy(blocks) {
   }
   if (
     !text.includes(
-      "Allocated $23M across 50+ initiatives for $156M in incremental annual profit.",
+      "the funded portfolio delivered $156M in incremental annual profit.",
     ) ||
-    !text.includes("A separate program delivered $260M in annualized savings.")
+    !text.includes("a program that delivered $260M in annualized savings.")
   ) {
     throw new Error("The two money results are not both stated");
   }
@@ -245,8 +266,8 @@ function assertCopy(blocks) {
 const styles = {
   name: {
     font: "bold",
-    size: 28,
-    leading: 32,
+    size: 26,
+    leading: 29,
     color: INK,
     gapBefore: 0,
     gapAfter: 4,
@@ -264,13 +285,13 @@ const styles = {
     size: 11,
     leading: 15,
     color: INK,
-    gapBefore: 11,
-    gapAfter: 6,
+    gapBefore: 8,
+    gapAfter: 5,
   },
   prose: {
     font: "regular",
-    size: 10.5,
-    leading: 14,
+    size: 9.75,
+    leading: 12.8,
     color: INK,
     gapBefore: 0,
     gapAfter: 0,
@@ -280,7 +301,7 @@ const styles = {
     size: 10.5,
     leading: 14,
     color: INK,
-    gapBefore: 8,
+    gapBefore: 6,
     gapAfter: 2,
   },
   note: {
@@ -293,11 +314,11 @@ const styles = {
   },
   bullet: {
     font: "regular",
-    size: 10.5,
-    leading: 13.5,
+    size: 9.75,
+    leading: 12.4,
     color: INK,
     gapBefore: 0,
-    gapAfter: 2,
+    gapAfter: 1.4,
   },
 };
 

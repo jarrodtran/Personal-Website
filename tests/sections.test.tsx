@@ -10,7 +10,7 @@ import { Hero } from "@/components/sections/hero";
 import { SelectedWork } from "@/components/sections/selected-work";
 import { Writing } from "@/components/sections/writing";
 import { nextSelectedWork, site } from "@/content/site";
-import { btnGhost } from "@/lib/ui";
+import { btnGhost, btnPrimary } from "@/lib/ui";
 import {
   formatPostDate,
   isOwnWritingUrl,
@@ -82,6 +82,17 @@ const SECTION_DESCRIPTIONS = [
 
 const CONTACT_INTRO = site.contact.intro;
 
+const threeXml = readFileSync(
+  path.join(__dirname, "fixtures/writing/three-posts.xml"),
+  "utf8",
+);
+
+const SUBSCRIBE_LINK = {
+  href: writingSubscribeUrl(site.substack),
+  text: "Subscribe (opens Substack)",
+  target: "_blank",
+};
+
 describe("hero", () => {
   const html = renderToStaticMarkup(<Hero />);
 
@@ -91,11 +102,23 @@ describe("hero", () => {
     expect(html).not.toContain(site.positioning.headline);
   });
 
-  it("does not invent posts, links, or a subscribe placeholder", () => {
-    expect(links(html)).toEqual([]);
-    expect(html).not.toMatch(/substack/i);
-    expect(html).not.toMatch(/subscribe/i);
+  it("offers Subscribe while there are no posts, and no invented post", () => {
+    expect(links(html)).toEqual([SUBSCRIBE_LINK]);
+    expect(html).toContain(btnPrimary);
     expect(html).not.toMatch(/coming soon/i);
+    expect(html).not.toContain(site.writing.readLatest);
+  });
+
+  it("links the latest essay once one exists", () => {
+    const [latest] = parseFeed(threeXml, WRITING_FIXTURE_BASE);
+    const filled = renderToStaticMarkup(<Hero latest={latest} />);
+    expect(links(filled)).toEqual([
+      {
+        href: latest.href,
+        text: `${site.writing.readLatest} (opens Substack)`,
+        target: "_blank",
+      },
+    ]);
   });
 
   it("sizes the headline with the shared display classes", () => {
@@ -107,53 +130,36 @@ describe("hero", () => {
   });
 });
 
-const threeXml = readFileSync(
-  path.join(__dirname, "fixtures/writing/three-posts.xml"),
-  "utf8",
-);
-
 describe("writing", () => {
   it("offers a direct publication link when the feed cannot load", () => {
     const html = renderToStaticMarkup(<Writing posts={[]} unavailable />);
     expect(textOf(html)).toContain("Read Worth Mulling on Substack");
-    expect(textOf(html)).not.toContain("Get new essays by email.");
+    expect(textOf(html)).not.toContain(site.writing.empty);
     expect(links(html)).toEqual([
       { href: site.substack.url, text: "Read Worth Mulling on Substack" },
-      {
-        href: `${site.substack.url}/subscribe`,
-        text: "Subscribe on Substack",
-        target: "_blank",
-      },
+      SUBSCRIBE_LINK,
     ]);
   });
 
-  it("shows the email invitation and subscribe link when there are 0 posts", () => {
+  it("shows the coming-soon line and the subscribe block when there are 0 posts", () => {
     const html = renderToStaticMarkup(<Writing posts={[]} />);
     const text = textOf(html);
     const paragraphs = [...html.matchAll(/<p\b[^>]*>([\s\S]*?)<\/p>/g)].map(
       ([, inner]) => textOf(inner),
     );
-    expect(text).toContain(site.substack.name);
+    expect(headings(html, "h2")).toEqual([site.writing.latestTitle]);
+    expect(headings(html, "h3")).toEqual([site.writing.subscribe.title]);
+    expect(paragraphs).toContain(site.writing.empty);
+    expect(paragraphs).toContain(site.writing.subscribe.body);
+    expect(paragraphs).toContain(site.writing.subscribe.note);
     expect(text).not.toContain("01 / Essays");
-    expect(text).not.toContain("Posts from my Substack.");
-    expect(paragraphs).toContain("Get new essays by email.");
-    expect(text).not.toContain("Nothing published yet");
-    expect(text).not.toContain("Subscribe and the first post");
-    expect(text).not.toContain("First post soon");
-    expect(text).not.toContain("All writing");
+    expect(text).not.toContain(site.writing.allEssays);
     expect(html).not.toMatch(/<ol\b/);
     expect(html).not.toMatch(/skeleton|card|placeholder/i);
-    expect(links(html)).toEqual([
-      {
-        href: writingSubscribeUrl(site.substack),
-        text: "Subscribe on Substack",
-        target: "_blank",
-      },
-    ]);
+    expect(links(html)).toEqual([SUBSCRIBE_LINK]);
     expect(html).toMatch(/rel="noopener noreferrer"/);
     expect(html).toContain(btnGhost);
     expect(html).toContain("size-[16px]");
-    expect(html).toMatch(/sm:flex-row[\s\S]*Subscribe on Substack/);
   });
 
   it("gives the empty and filled writing sections the same section padding", () => {
@@ -161,7 +167,6 @@ describe("writing", () => {
     expect(empty).toContain("py-[var(--spacing-section)]");
     expect(empty).not.toContain("py-10");
     expect(empty).not.toContain("py-16");
-    expect(empty).not.toContain("mt-6");
 
     const filled = renderToStaticMarkup(
       <Writing posts={parseFeed(threeXml, WRITING_FIXTURE_BASE)} />,
@@ -169,21 +174,18 @@ describe("writing", () => {
     expect(filled).toContain("py-[var(--spacing-section)]");
     expect(filled).not.toContain("py-10");
     expect(filled).not.toContain("py-16");
-    expect(filled).toMatch(
-      /mt-6[\s\S]*Subscribe on Substack|Subscribe on Substack[\s\S]*mt-6/,
-    );
   });
 
-  it("sets the writing heading from site.substack.name", () => {
-    const previous = site.substack.name;
-    const alt = "ZXQ Writing Publication Name";
-    site.substack.name = alt;
+  it("sets the writing heading from site.writing.latestTitle", () => {
+    const previous = site.writing.latestTitle;
+    const alt = "ZXQ Latest Heading";
+    site.writing.latestTitle = alt;
     try {
       const html = renderToStaticMarkup(<Writing posts={[]} />);
       expect(html).toContain('id="writing"');
       expect(headings(html, "h2")).toEqual([alt]);
     } finally {
-      site.substack.name = previous;
+      site.writing.latestTitle = previous;
     }
   });
 
@@ -194,7 +196,6 @@ describe("writing", () => {
     ]);
     const html = renderToStaticMarkup(<Writing posts={fixturePosts} />);
     const text = textOf(html);
-    expect(text).not.toContain("Posts from my Substack.");
     const aurora = text.indexOf(WRITING_FIXTURE_TITLES[0]);
     const beacon = text.indexOf(WRITING_FIXTURE_TITLES[1]);
     const cedar = text.indexOf(WRITING_FIXTURE_TITLES[2]);
@@ -218,9 +219,8 @@ describe("writing", () => {
       /<ol\b[^>]*>[\s\S]*<a\b[^>]*\bno-underline\b[^>]*\bhover:underline\b/,
     );
     expect(html).toMatch(/rel="noopener noreferrer"/);
-    expect(html).not.toContain("All writing");
-    expect(html).not.toContain("First post soon");
-    expect(html).toContain('<div class="max-w-2xl">');
+    expect(text).not.toContain(site.writing.allEssays);
+    expect(text).not.toContain(site.writing.empty);
     expect(links(html)).toEqual([
       {
         href: `${WRITING_FIXTURE_BASE}/p/zxq-aurora`,
@@ -237,12 +237,33 @@ describe("writing", () => {
         text: `${WRITING_FIXTURE_TITLES[2]} (opens Substack)`,
         target: "_blank",
       },
-      {
-        href: writingSubscribeUrl(site.substack),
-        text: "Subscribe on Substack",
-        target: "_blank",
-      },
+      SUBSCRIBE_LINK,
     ]);
+  });
+
+  it("gives a lone essay a longer summary", () => {
+    const [only] = parseFeed(threeXml, WRITING_FIXTURE_BASE);
+    const html = renderToStaticMarkup(<Writing posts={[only]} />);
+    expect(html).toContain("line-clamp-3");
+    expect(html).not.toContain("line-clamp-2");
+  });
+
+  it("shows the three newest and an All essays link past three posts", () => {
+    const posts = parseFeed(threeXml, WRITING_FIXTURE_BASE);
+    const four = [
+      ...posts,
+      {
+        ...posts[2],
+        href: `${WRITING_FIXTURE_BASE}/p/zxq-delta`,
+        title: "ZXQ Delta",
+      },
+    ];
+    const html = renderToStaticMarkup(<Writing posts={four} />);
+    expect(html).not.toContain("ZXQ Delta");
+    expect(links(html)).toContainEqual({
+      href: "/writing/",
+      text: site.writing.allEssays,
+    });
   });
 
   it("follows a swapped Substack base for feed, subscribe, and allowed host", () => {
@@ -261,7 +282,7 @@ describe("writing", () => {
       expect(links(html)).toEqual([
         {
           href: `${alt}/subscribe`,
-          text: "Subscribe on Substack",
+          text: "Subscribe (opens Substack)",
           target: "_blank",
         },
       ]);
@@ -370,7 +391,7 @@ describe("section headings", () => {
     for (const file of readdirSync(sectionDir)) {
       if (!file.endsWith(".tsx")) continue;
       const source = readFileSync(path.join(sectionDir, file), "utf8");
-      if (source.includes("mb-6 max-w-2xl sm:mb-12")) {
+      if (source.includes("mb-5 max-w-2xl sm:mb-8")) {
         leftover.push(`components/sections/${file}`);
       }
     }
@@ -381,17 +402,17 @@ describe("section headings", () => {
       path.join(root, "components/section.tsx"),
       "utf8",
     );
-    expect(shared.match(/mb-6 max-w-2xl sm:mb-12/g) ?? []).toHaveLength(1);
+    expect(shared.match(/mb-5 max-w-2xl sm:mb-8/g) ?? []).toHaveLength(1);
 
     const heading = renderToStaticMarkup(<SectionHeading title="Experience" />);
-    expect(heading).toContain("mb-6");
+    expect(heading).toContain("mb-5");
     expect(heading).toContain("max-w-2xl");
-    expect(heading).toContain("sm:mb-12");
+    expect(heading).toContain("sm:mb-8");
 
     const contact = renderToStaticMarkup(<Contact />);
-    expect(contact).toContain("mb-6");
+    expect(contact).toContain("mb-5");
     expect(contact).toContain("max-w-2xl");
-    expect(contact).toContain("sm:mb-12");
+    expect(contact).toContain("sm:mb-8");
     expect(contact).toMatch(/<h2\b[^>]*>[\s\S]*?<\/h2>\s*<p\b[^>]*\bmt-4\b/);
   });
 });
