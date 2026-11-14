@@ -103,7 +103,7 @@ export default async function EssayPage({
           dangerouslySetInnerHTML={{ __html: html }}
         />
         <div className="border-border mt-12 border-t pt-8">
-          <SubscribeBlock level={2} embed />
+          <SubscribeBlock level={2} form />
           <a
             href={post.href}
             className={`${textAction} mt-8`}

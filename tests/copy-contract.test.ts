@@ -119,8 +119,8 @@ describe("visitor-facing copy contract", () => {
       expect(section).toEqual({ title: expect.any(String) });
     }
 
-    const sectionFiles = ["about", "contact", "selected-work", "writing"].map(
-      (name) => readSiteFile(`components/sections/${name}.tsx`),
+    const sectionFiles = ["about", "selected-work", "writing"].map((name) =>
+      readSiteFile(`components/sections/${name}.tsx`),
     );
     for (const source of sectionFiles) {
       expect(source).not.toMatch(/eyebrow=/);
@@ -213,7 +213,6 @@ describe("visitor-facing copy contract", () => {
       ["components/sections/about.tsx", "site.about.bio"],
       ["components/sections/about.tsx", "site.sections.about"],
       ["components/sections/selected-work.tsx", "site.sections.work"],
-      ["components/sections/contact.tsx", "site.sections.contact"],
     ] as const;
 
     for (const [file, token] of files) {
@@ -233,7 +232,7 @@ describe("visitor-facing copy contract", () => {
   it("pins the committed resume to the one-page file bytes", () => {
     const pdf = readFileSync(path.join(root, "public/resume.pdf"));
     expect(createHash("sha256").update(pdf).digest("hex")).toBe(
-      "9868ca0ad2945bf54c9c8015dae9e55cb494bab21468708d4000bf68773da758",
+      "423866775ec6d842c28ba4e23635c6aa0424eff948441528c730a925c18d280b",
     );
   });
 

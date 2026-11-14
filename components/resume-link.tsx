@@ -4,11 +4,7 @@ import { textAction } from "@/lib/ui";
 
 export function ResumeLink() {
   return (
-    <a
-      href={withBasePath(site.contact.resumeHref)}
-      download={site.contact.resumeFilename}
-      className={textAction}
-    >
+    <a href={withBasePath(site.contact.resumePage)} className={textAction}>
       Résumé
     </a>
   );

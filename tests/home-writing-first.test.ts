@@ -26,13 +26,11 @@ function withoutBasePath(pathname: string): string {
   return pathname;
 }
 
-const HOME_SECTION_IDS = [
-  "top",
-  "writing",
-  "work",
-  "about",
-  "contact",
-] as const;
+const HOME_SECTION_IDS = ["top", "writing", "work", "about"] as const;
+
+/** Work leads while there are no essays; Writing leads once there is one. */
+const ORDER_NO_POSTS = ["top", "work", "writing", "about"];
+const ORDER_WITH_POSTS = ["top", "writing", "work", "about"];
 
 // Measured on origin/main (136043b) production build in this Playwright setup.
 const MAIN_HOME_SCROLL_HEIGHT_100 = {
@@ -163,6 +161,8 @@ describe("writing-first home", () => {
           sectionWidths: sections.map(
             (section) => section?.getBoundingClientRect().width ?? -1,
           ),
+          hasPosts: document.querySelectorAll("#writing li").length > 0,
+          hasContactAnchor: Boolean(document.getElementById("contact")),
           homeHeight: document.getElementById("content")?.scrollHeight ?? -1,
           scrollWidth: document.documentElement.scrollWidth,
           clientWidth: document.documentElement.clientWidth,
@@ -177,12 +177,15 @@ describe("writing-first home", () => {
     return layout;
   }
 
-  it("uses the name as the only home h1 and puts Writing second", async () => {
+  it("uses the name as the only home h1 and orders sections by whether essays exist", async () => {
     const layout = await readHomeLayout(1280, 800);
     expect(layout.h1).toBe(site.positioning.name);
     expect(layout.h1).not.toBe(site.positioning.headline);
     expect(layout.introParagraphCount).toBe(1);
-    expect(layout.sectionOrder).toEqual(HOME_SECTION_IDS);
+    expect(layout.sectionOrder).toEqual(
+      layout.hasPosts ? ORDER_WITH_POSTS : ORDER_NO_POSTS,
+    );
+    expect(layout.hasContactAnchor).toBe(true);
   });
 
   it("gives homepage sections an 864px column at 1280", async () => {

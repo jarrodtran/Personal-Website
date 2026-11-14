@@ -11,9 +11,11 @@ function Block({
   children: React.ReactNode;
 }) {
   return (
-    <section className="border-border border-t py-[var(--spacing-section)] first:border-t-0">
-      <h2 className="text-accent font-mono-label mb-3">{label}</h2>
-      {children}
+    <section className="group border-border mt-6 border-t first:mt-0 first:border-t-0 sm:mt-8">
+      <div className="pt-6 group-first:pt-0 sm:pt-8 sm:group-first:pt-0">
+        <h2 className="text-accent font-mono-label mb-3">{label}</h2>
+        {children}
+      </div>
     </section>
   );
 }
@@ -28,6 +30,22 @@ function BulletList({ items }: { items: string[] }) {
         <li key={item}>{item}</li>
       ))}
     </ul>
+  );
+}
+
+function Paragraphs({ text }: { text: string | string[] }) {
+  const paragraphs = Array.isArray(text) ? text : [text];
+  return (
+    <div className="space-y-4">
+      {paragraphs.map((paragraph) => (
+        <p
+          key={paragraph}
+          className="text-foreground measure text-[length:var(--text-body)] leading-[var(--leading-copy)] text-pretty"
+        >
+          {paragraph}
+        </p>
+      ))}
+    </div>
   );
 }
 
@@ -58,13 +76,25 @@ export function CaseStudyBody({ item }: { item: SelectedWorkItem }) {
         <p className="text-muted-foreground text-small mt-2 max-w-sm">
           {item.panel.label}
         </p>
+        {item.panel.supporting?.length ? (
+          <dl className="border-border mt-5 grid grid-cols-[repeat(auto-fit,minmax(min(9rem,100%),1fr))] gap-x-6 gap-y-4 border-t pt-5">
+            {item.panel.supporting.map((figure) => (
+              <div key={figure.label} className="flex min-w-0 flex-col">
+                <dt className="text-muted-foreground text-small order-2">
+                  {figure.label}
+                </dt>
+                <dd className="tabular font-display order-1 text-[length:var(--text-h2)] leading-[var(--leading-figure)]">
+                  {figure.value}
+                </dd>
+              </div>
+            ))}
+          </dl>
+        ) : null}
       </div>
 
-      <div className="mt-12">
+      <div className="mt-10">
         <Block label="Context">
-          <p className="text-foreground measure text-[length:var(--text-body)] leading-[var(--leading-copy)] text-pretty">
-            {caseStudy.context}
-          </p>
+          <Paragraphs text={caseStudy.context} />
         </Block>
         <Block label="Constraints">
           <BulletList items={caseStudy.constraints} />
@@ -73,9 +103,7 @@ export function CaseStudyBody({ item }: { item: SelectedWorkItem }) {
           <BulletList items={caseStudy.decisions} />
         </Block>
         <Block label="Outcome">
-          <p className="text-foreground measure text-[length:var(--text-body)] leading-[var(--leading-copy)] text-pretty">
-            {caseStudy.outcomeDetail}
-          </p>
+          <Paragraphs text={caseStudy.outcomeDetail} />
         </Block>
         <Block label="My role">
           <BulletList items={caseStudy.role} />

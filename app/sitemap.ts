@@ -18,6 +18,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...selectedWorkSlugs().map((slug) => ({
       url: `${siteUrl}/work/${slug}/`,
     })),
+    { url: `${siteUrl}/resume/` },
     { url: `${siteUrl}${site.contact.resumeHref}` },
   ];
 }

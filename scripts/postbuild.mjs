@@ -78,6 +78,39 @@ function patchHtml(path) {
 // Must match ESSAY_PLACEHOLDER_SLUG in lib/writing.ts.
 export const ESSAY_PLACEHOLDER_DIR = join("writing", "_none");
 
+// Must match WRITING_BUILD_MARKER in lib/writing.ts.
+const WRITING_BUILD_MARKER = ".writing-build-source.json";
+
+/** Fails when the feed in use had own posts but the built homepage lists none. */
+export function missingEssays(marker, html) {
+  if (!marker || !marker.count || !marker.newest) return [];
+  const { href, path } = marker.newest;
+  const needles = [href, path].filter(Boolean);
+  return needles.some((needle) => html.includes(needle))
+    ? []
+    : [
+        `feed source "${marker.source}" holds ${marker.count} own post(s) but ${join(out, "index.html")} does not list ${href}`,
+      ];
+}
+
+function checkWritingListed() {
+  let marker = null;
+  try {
+    marker = JSON.parse(readFileSync(WRITING_BUILD_MARKER, "utf8"));
+    rmSync(WRITING_BUILD_MARKER, { force: true });
+  } catch {
+    return;
+  }
+  const problems = missingEssays(
+    marker,
+    readFileSync(join(out, "index.html"), "utf8"),
+  );
+  if (problems.length) {
+    console.error(`Writing feed check failed:\n${problems.join("\n")}`);
+    process.exit(1);
+  }
+}
+
 function run() {
   // Static export needs one page per dynamic route, so /writing/[slug] builds
   // a stand-in before the first essay exists. Nobody links to it; drop it.
@@ -115,6 +148,7 @@ function run() {
       bad.push(`${path}: ${url}`);
     }
   });
+  checkWritingListed();
   if (bad.length) {
     console.error(
       "Built HTML still references a root-relative asset without BASE_PATH:\n" +

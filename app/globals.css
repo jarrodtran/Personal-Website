@@ -349,3 +349,22 @@ footer a {
     overflow-wrap: anywhere;
   }
 }
+
+/* Résumé page: print as a plain sheet. */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+
+  .resume section {
+    padding-block: 0.6rem;
+  }
+
+  .resume .resume-role {
+    break-inside: avoid;
+  }
+
+  .resume a[href]::after {
+    content: none !important;
+  }
+}

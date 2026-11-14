@@ -1,13 +1,12 @@
 import { ArrowUpRight } from "lucide-react";
-import { SubscribeButton, subscribeHref } from "@/components/subscribe";
 import { site } from "@/content/site";
 import { withBasePath } from "@/lib/base-path";
-import { btnPrimary } from "@/lib/ui";
+import { btnGhost, btnPrimary } from "@/lib/ui";
 import type { WritingPost } from "@/lib/writing";
 
-export function Hero({ latest }: { latest?: WritingPost }) {
-  const subscribe = subscribeHref();
+const primaryClass = `${btnPrimary} w-fit max-w-full`;
 
+export function Hero({ latest }: { latest?: WritingPost }) {
   return (
     <section
       id="top"
@@ -20,27 +19,37 @@ export function Hero({ latest }: { latest?: WritingPost }) {
         <p className="text-foreground measure text-body mt-4 leading-[var(--leading-copy)]">
           {site.positioning.intro}
         </p>
-        {latest?.path ? (
+        <div className="mt-6 flex flex-wrap gap-3">
+          {latest?.path ? (
+            <a href={withBasePath(latest.path)} className={primaryClass}>
+              {site.writing.readLatest}
+            </a>
+          ) : latest ? (
+            <a
+              href={latest.href}
+              className={primaryClass}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {site.writing.readLatest}
+              <ArrowUpRight
+                className="size-[16px] shrink-0"
+                aria-hidden="true"
+              />
+              <span className="sr-only">(opens Substack)</span>
+            </a>
+          ) : (
+            <a href="#work" className={primaryClass}>
+              {site.positioning.workAction}
+            </a>
+          )}
           <a
-            href={withBasePath(latest.path)}
-            className={`${btnPrimary} mt-6 w-fit max-w-full`}
+            href={withBasePath(site.contact.resumePage)}
+            className={`${btnGhost} w-fit max-w-full`}
           >
-            {site.writing.readLatest}
+            Résumé
           </a>
-        ) : latest ? (
-          <a
-            href={latest.href}
-            className={`${btnPrimary} mt-6 w-fit max-w-full`}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            {site.writing.readLatest}
-            <ArrowUpRight className="size-[16px] shrink-0" aria-hidden="true" />
-            <span className="sr-only">(opens Substack)</span>
-          </a>
-        ) : subscribe ? (
-          <SubscribeButton href={subscribe} primary className="mt-6" />
-        ) : null}
+        </div>
       </div>
     </section>
   );

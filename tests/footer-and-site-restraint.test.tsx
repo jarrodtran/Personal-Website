@@ -6,10 +6,10 @@ import { Footer } from "@/components/footer";
 import { site } from "@/content/site";
 
 describe("footer and site content restraint", () => {
-  it("renders Footer with copyright and the résumé download from site.positioning without hardcoded employer taglines", () => {
+  it("renders Footer with copyright and the résumé link from site.positioning without hardcoded employer taglines", () => {
     const html = renderToStaticMarkup(<Footer />);
     expect(html).toContain(site.positioning.name);
-    expect(html).toContain(site.contact.resumeFilename);
+    expect(html).toContain(`href="${site.contact.resumePage}"`);
     expect(html).not.toContain("Tesla");
     expect(html).not.toContain("Apple");
     expect(html).not.toContain("Waymo");

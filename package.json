@@ -20,6 +20,7 @@
     "test:theme": "vitest run tests/theme-no-js.test.ts",
     "test:theme-toggle": "vitest run tests/theme-toggle-pressed.test.ts",
     "test:tokens": "vitest run tests/tokens.test.ts",
+    "sync:writing": "node scripts/sync-writing.mjs",
     "a11y": "node scripts/a11y.mjs",
     "size": "node scripts/js-size.mjs",
     "format": "prettier --write .",

@@ -19,6 +19,7 @@ const types: Record<string, string> = {
 const builtPages = [
   "/",
   ...selectedWorkSlugs().map((slug) => `/work/${slug}/`),
+  "/resume/",
   "/404.html",
 ];
 

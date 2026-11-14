@@ -1,0 +1,138 @@
+{
+  "name": "Jarrod Tran",
+  "headline": "AI Product Leader | Enterprise AI, Strategy & Operations",
+  "contact": [
+    {
+      "text": "Houston, TX"
+    },
+    {
+      "text": "jarrodtran@outlook.com",
+      "href": "mailto:jarrodtran@outlook.com"
+    },
+    {
+      "text": "linkedin.com/in/jarrodtran",
+      "href": "https://www.linkedin.com/in/jarrodtran/"
+    },
+    {
+      "text": "jarrodtran.com",
+      "href": "https://jarrodtran.com"
+    }
+  ],
+  "summary": [
+    "AI product leader who takes enterprise AI from pilot to daily use. At Tesla Energy, I built the forward-deployed engineering program and team behind 20+ production AI tools on Claude and Grok, with 1,000+ active users, and the investment model behind $156M in incremental annual profit. Earlier: iPhone India production strategy at Apple, Engineering Operations planning at Waymo, and battery and vehicle programs at Tesla."
+  ],
+  "roles": [
+    {
+      "company": "Tesla",
+      "heading": "Tesla Energy",
+      "title": "Lead, AI Enablement & Factory Strategy",
+      "dates": "Aug 2023 to Present",
+      "location": "Houston, TX",
+      "note": "Rejoined Tesla in 2023 after Apple and Waymo.",
+      "summary": "I own Tesla Energy’s AI enablement strategy and the product team that ships it: roadmap, rules, and what I report to leadership.",
+      "bullets": [
+        {
+          "text": "Architected Tesla Energy’s forward-deployed engineering (FDE) and software engineering program for AI from nothing: deployment model, AI training, architecture (ARB) and security reviews. Hired the first 4, with budget to grow to 15.",
+          "metric": "15",
+          "group": "AI enablement"
+        },
+        {
+          "text": "Shipped 20+ production AI tools with 1,000+ active users, built on Claude and Grok models with terminal-based coding tools and tested with user feedback: RAG-based troubleshooting assistants, an internal agent chat, a hiring hub that cut time to hire by 2 weeks, and executive task automations.",
+          "metric": "1,000+"
+        },
+        {
+          "text": "Own the roadmap for a program open to 10,000 eligible employees: rank use cases, assign owners, pair releases with training and weekly adoption reports, and decline any use of personal data.",
+          "metric": "10,000"
+        },
+        {
+          "text": "Freed an estimated 540 hours per week, worth $1.6M a year, by funding the tools that save the most time.",
+          "metric": "$1.6M"
+        },
+        {
+          "text": "Built the Python and Tableau model executives used to rank 50+ initiatives for a $23M budget; the funded portfolio delivered $156M in incremental annual profit. Ran MegaUnleash, adding 7.5% California Megapack capacity.",
+          "webText": "Built the Python and Tableau model executives used to rank 50+ initiatives for a $23M budget; the funded portfolio delivered $156M in incremental annual profit. Ran the site investment, adding 7.5% California Megapack capacity.",
+          "metric": "$156M",
+          "group": "Strategy and investment"
+        },
+        {
+          "text": "Redesigned the Megapack investment plan, mitigating $550M in tariff exposure during a 3.2× scale-up. For modules from China, timed foreign-trade zone entry and exit to tariff changes and fast-tracked more zones and exclusions.",
+          "metric": "$550M"
+        },
+        {
+          "text": "Program Champion for a separate headcount and robotics program that delivered $260M in annualized savings.",
+          "metric": "$260M"
+        }
+      ]
+    },
+    {
+      "company": "Waymo",
+      "title": "Strategy & Operations Manager",
+      "dates": "Oct 2022 to May 2023",
+      "location": "Mountain View, CA",
+      "bullets": [
+        {
+          "text": "Moved six separately planned functions (hardware, software, fleet, Product, Legal and Engineering) onto one Engineering Operations plan, with shared OKRs, resource plans and reviews for a 200+ person engineering org.",
+          "metric": "200+"
+        },
+        {
+          "text": "Replaced manual and emailed reporting with dashboards and automations for fleet health and milestones."
+        }
+      ]
+    },
+    {
+      "company": "Apple",
+      "title": "Strategic Operations Program Manager",
+      "dates": "Jun 2021 to Jun 2022",
+      "location": "Cupertino, CA",
+      "bullets": [
+        {
+          "text": "Owned iPhone India production strategy, taking sites in Chennai and Bangalore from greenfield to full-scale production as units grew 293% year over year (4.3M to 16.9M), program revenue rose from $2B to $10B, and exports expanded from 6 to 40+ countries.",
+          "metric": "293%"
+        },
+        {
+          "text": "Delayed launch to raise yield, then caught up through other initiatives."
+        }
+      ]
+    },
+    {
+      "company": "Tesla",
+      "title": "Program Manager, Special Projects",
+      "dates": "Jun 2018 to Jun 2021",
+      "location": "Fremont, CA",
+      "summary": "I ran new programs at Tesla, including the 4680 launch and the Model 3 and Model Y scale-up.",
+      "bullets": [
+        {
+          "text": "Took Project Roadrunner, Tesla’s 4680 battery cell program, from pilot to launch readiness through its public unveiling at Tesla’s 2020 Battery Day."
+        },
+        {
+          "text": "Led Model 3 and Model Y production planning and recovery for two years from launch, ramping each model to 10,000 units per week and hitting every quarterly production and delivery goal.",
+          "metric": "10,000"
+        },
+        {
+          "text": "Designed and launched Warehouse on Wheels, a platform managing $3.5M per month in operating expenses.",
+          "metric": "$3.5M"
+        }
+      ]
+    },
+    {
+      "company": "Amazon",
+      "title": "Operations Area Manager",
+      "dates": "Mar 2017 to Apr 2018",
+      "location": "Patterson, CA",
+      "bullets": [
+        {
+          "text": "Led 100+ associates in a 1M sq ft fulfillment center handling 350K SKUs.",
+          "metric": "100+"
+        }
+      ],
+      "pdfTitleOnly": true
+    }
+  ],
+  "education": [
+    {
+      "school": "University at Buffalo",
+      "degree": "B.S. Business Administration, Finance",
+      "honors": "Cum Laude"
+    }
+  ]
+}

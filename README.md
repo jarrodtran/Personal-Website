@@ -8,7 +8,15 @@ Personal site for [Jarrod Tran](https://jarrodtran.com) and his publication, Wor
 
 - [content/site.ts](content/site.ts) holds the introduction, biography, case studies, contact details, résumé link, and Substack URL.
 - [app/globals.css](app/globals.css) and [lib/palette.ts](lib/palette.ts) define the type scale, spacing, and shared colors.
-- Publish essays on Substack, then run the GitHub Pages deployment workflow to update the static homepage.
+- Publish essays on Substack, then follow Publishing below.
+
+## Publishing
+
+1. Publish on Substack.
+2. Run `pnpm sync:writing` and commit the refreshed `content/writing-feed.xml`. GitHub Actions can get HTTP 403 from Substack, so the build tries the live feed first (one retry), then this snapshot.
+3. Push, or run the GitHub Pages deployment workflow.
+
+A failed live fetch in Actions prints a `::warning::` in the deploy log. The build fails if the feed has posts but the homepage lists none. Until the first essay exists, a loaded-empty and a failed feed both show the same coming-soon line. `WRITING_FEED_PATH` still points a build at a fixture file and overrides both.
 
 Every figure on the site must also appear in the résumé source. Add numbers to the résumé first; `pnpm test` fails otherwise.
 

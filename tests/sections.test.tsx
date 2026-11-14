@@ -5,10 +5,10 @@ import { describe, expect, it } from "vitest";
 import { SectionHeading } from "@/components/section";
 import { About } from "@/components/sections/about";
 import { CaseStudyBody } from "@/components/sections/case-study";
-import { Contact } from "@/components/sections/contact";
 import { Hero } from "@/components/sections/hero";
 import { SelectedWork } from "@/components/sections/selected-work";
 import { Writing } from "@/components/sections/writing";
+import { SubscribeBlock } from "@/components/subscribe";
 import { nextSelectedWork, site } from "@/content/site";
 import { btnGhost, btnPrimary } from "@/lib/ui";
 import {
@@ -80,8 +80,6 @@ const SECTION_DESCRIPTIONS = [
   "The skills I use most, grouped by area.",
 ] as const;
 
-const CONTACT_INTRO = site.contact.intro;
-
 const threeXml = readFileSync(
   path.join(__dirname, "fixtures/writing/three-posts.xml"),
   "utf8",
@@ -93,6 +91,50 @@ const SUBSCRIBE_LINK = {
   target: "_blank",
 };
 
+describe("case-study supporting figures", () => {
+  it("renders each item's supporting figures under the headline panel", () => {
+    for (const item of site.selectedWork) {
+      expect(item.panel.supporting?.length, item.slug).toBeGreaterThanOrEqual(
+        1,
+      );
+      const html = renderToStaticMarkup(<CaseStudyBody item={item} />);
+      for (const figure of item.panel.supporting ?? []) {
+        expect(textOf(html)).toContain(figure.value);
+        expect(textOf(html)).toContain(figure.label);
+      }
+    }
+  });
+});
+
+describe("subscribe form", () => {
+  it("renders a labelled email field that submits by GET to Substack", () => {
+    const html = renderToStaticMarkup(<SubscribeBlock level={2} form />);
+    expect(html).toContain(`action="${writingSubscribeUrl(site.substack)}"`);
+    expect(html).toContain('method="get"');
+    expect(html).toContain('target="_blank"');
+    expect(html).toMatch(/rel="noopener noreferrer"/);
+    expect(html).toMatch(/<label[^>]*for="subscribe-email"/);
+    expect(html).toMatch(/<input[^>]*type="email"/);
+    expect(html).toMatch(/<input[^>]*name="email"/);
+    expect(html).toMatch(/<input[^>]*required/);
+    expect(html).toMatch(
+      /<input[^>]*autoComplete="email"|autocomplete="email"/,
+    );
+    expect(html).toContain(btnPrimary);
+    expect(html).not.toContain("<iframe");
+  });
+
+  it("renders nothing when the configured URL is not an https Substack host we own", () => {
+    const previous = site.substack.url;
+    site.substack.url = "javascript:alert(1)";
+    try {
+      expect(renderToStaticMarkup(<SubscribeBlock form />)).toBe("");
+    } finally {
+      site.substack.url = previous;
+    }
+  });
+});
+
 describe("hero", () => {
   const html = renderToStaticMarkup(<Hero />);
 
@@ -102,8 +144,11 @@ describe("hero", () => {
     expect(html).not.toContain(site.positioning.headline);
   });
 
-  it("offers Subscribe while there are no posts, and no invented post", () => {
-    expect(links(html)).toEqual([SUBSCRIBE_LINK]);
+  it("offers selected work and the résumé while there are no posts, and no subscribe", () => {
+    expect(links(html)).toMatchObject([
+      { href: "#work", text: site.positioning.workAction },
+      { href: site.contact.resumePage, text: "Résumé" },
+    ]);
     expect(html).toContain(btnPrimary);
     expect(html).not.toMatch(/coming soon/i);
     expect(html).not.toContain(site.writing.readLatest);
@@ -112,20 +157,22 @@ describe("hero", () => {
   it("links the latest essay on this site when the feed has its body", () => {
     const [latest] = parseFeed(threeXml, WRITING_FIXTURE_BASE);
     const filled = renderToStaticMarkup(<Hero latest={latest} />);
-    expect(links(filled)).toEqual([
+    expect(links(filled)).toMatchObject([
       { href: "/writing/zxq-aurora/", text: site.writing.readLatest },
+      { href: site.contact.resumePage, text: "Résumé" },
     ]);
   });
 
   it("falls back to Substack for a latest essay without a body", () => {
     const [, beacon] = parseFeed(threeXml, WRITING_FIXTURE_BASE);
     const filled = renderToStaticMarkup(<Hero latest={beacon} />);
-    expect(links(filled)).toEqual([
+    expect(links(filled)).toMatchObject([
       {
         href: beacon.href,
         text: `${site.writing.readLatest} (opens Substack)`,
         target: "_blank",
       },
+      { href: site.contact.resumePage, text: "Résumé" },
     ]);
   });
 
@@ -139,7 +186,13 @@ describe("hero", () => {
 });
 
 describe("writing", () => {
-  it("offers a direct publication link when the feed cannot load", () => {
+  it("shows the empty copy, not a Substack link, when nothing was held back", () => {
+    const html = renderToStaticMarkup(<Writing posts={[]} />);
+    expect(textOf(html)).toContain(site.writing.empty);
+    expect(textOf(html)).not.toContain("on Substack");
+  });
+
+  it("offers a direct publication link only when snapshot posts could not be shown", () => {
     const html = renderToStaticMarkup(<Writing posts={[]} unavailable />);
     expect(textOf(html)).toContain("Read Worth Mulling on Substack");
     expect(textOf(html)).not.toContain(site.writing.empty);
@@ -341,7 +394,6 @@ describe("section headings", () => {
       renderToStaticMarkup(<Writing posts={[]} />),
       renderToStaticMarkup(<About />),
       renderToStaticMarkup(<SelectedWork />),
-      renderToStaticMarkup(<Contact />),
     ].join("\n");
     const text = textOf(html);
 
@@ -358,7 +410,7 @@ describe("section headings", () => {
     expect(heading.match(/<h2\b/g) ?? []).toHaveLength(1);
   });
 
-  it("keeps the homepage focused on Writing, About, Work, and Contact", () => {
+  it("keeps the homepage focused on Writing, Work, and About", () => {
     const page = readFileSync(
       path.resolve(__dirname, "../app/page.tsx"),
       "utf8",
@@ -409,11 +461,10 @@ describe("section headings", () => {
     expect(heading).toContain("max-w-2xl");
     expect(heading).toContain("sm:mb-8");
 
-    const contact = renderToStaticMarkup(<Contact />);
-    expect(contact).toContain("mb-5");
-    expect(contact).toContain("max-w-2xl");
-    expect(contact).toContain("sm:mb-8");
-    expect(contact).toMatch(/<h2\b[^>]*>[\s\S]*?<\/h2>\s*<p\b[^>]*\bmt-4\b/);
+    const about = renderToStaticMarkup(<About />);
+    expect(about).toContain("mb-5");
+    expect(about).toContain("max-w-2xl");
+    expect(about).toContain("sm:mb-8");
   });
 });
 
@@ -423,90 +474,61 @@ describe("selected work", () => {
     expect(html).toContain('role="list"');
     expect(html).not.toContain("<article");
     expect(links(html)).toEqual(
-      site.selectedWork.map(({ slug, title, preview }) => ({
+      site.selectedWork.map(({ slug, title, preview, panel }) => ({
         href: expect.stringMatching(new RegExp(`^/work/${slug}/?$`)),
-        text: `${title} ${preview}`,
+        text: `${title} ${preview} ${panel.value} ${panel.label}`,
       })),
     );
   });
 });
 
-describe("contact", () => {
-  const html = renderToStaticMarkup(<Contact />);
+describe("about and contact", () => {
+  const html = renderToStaticMarkup(<About />);
 
-  it("renders the contact intro under the Contact h2", () => {
-    expect(site.contact.intro).toBe(CONTACT_INTRO);
-    expect(html).toMatch(
-      new RegExp(
-        `<h2\\b[^>]*>${site.sections.contact.title.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}</h2>\\s*<p\\b[^>]*>${CONTACT_INTRO.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}</p>`,
-      ),
-    );
+  it("keeps the #about and #contact anchors and renders the bio and invitation once", () => {
+    expect(html).toContain('id="about"');
+    expect(html).toContain('id="contact"');
+    expect(html).not.toContain("Invite me to speak");
+    for (const paragraph of [...site.about.bio, site.contact.intro]) {
+      expect(textOf(html).split(paragraph).length - 1).toBe(1);
+    }
   });
 
-  it("offers email with a copy button, LinkedIn, a speaking invite and the calendar when set, and no form", () => {
-    const { calendar } = site.contact;
-    expect(links(html)).toEqual([
+  it("renders the career path from site.experience, newest start first", () => {
+    const path = textOf(
+      html.match(/data-testid="career-path"[^>]*>([\s\S]*?)<\/p>/)![1],
+    );
+    expect(path.startsWith("Tesla 2023 to now · Waymo 2022 to 2023 · ")).toBe(
+      true,
+    );
+    expect(path).toContain("Apple 2021 to 2022");
+  });
+
+  it("offers email with a copy button, LinkedIn and the résumé, and no form", () => {
+    expect(links(html)).toMatchObject([
       { href: `mailto:${email}`, text: email },
-      {
-        href: linkedin,
-        text: expect.stringMatching(/^linkedin\.com\/in\/[^/]+$/),
-        target: "_blank",
-      },
-      {
-        href: `mailto:${email}?subject=Speaking%20invitation`,
-        text: "Invite me to speak",
-      },
-      ...(calendar
-        ? [{ href: calendar, text: "Book a call", target: "_blank" }]
-        : []),
+      { href: linkedin, text: "LinkedIn", target: "_blank" },
+      { href: site.contact.resumePage, text: "Résumé" },
     ]);
     expect(html).toMatch(/<button\b[^>]*>Copy email<\/button>/);
     expect(html).not.toMatch(/<(form|input|textarea)\b/);
   });
 
-  it("adds a calendar link when one is configured", () => {
-    const configured = site.contact.calendar;
-    site.contact.calendar = "https://example.com/book";
-    try {
-      expect(links(renderToStaticMarkup(<Contact />))).toContainEqual({
-        href: "https://example.com/book",
-        text: "Book a call",
-        target: "_blank",
-      });
-    } finally {
-      site.contact.calendar = configured;
-    }
+  it("keeps Section on a single contained path", () => {
+    const source = readFileSync(
+      path.resolve(__dirname, "../components/section.tsx"),
+      "utf8",
+    );
+    expect(source).not.toContain("contained");
   });
 });
 
-describe("case study", () => {
-  const item = site.selectedWork[0];
-  const html = renderToStaticMarkup(<CaseStudyBody item={item} />);
-  const next = nextSelectedWork(item.slug);
-
-  it("lets a reader skim the problem, see the proof, and reach the next link", () => {
-    const text = textOf(html);
-    expect(text.indexOf(item.problem)).toBeGreaterThan(-1);
-    expect(text.indexOf(item.panel.value)).toBeGreaterThan(
-      text.indexOf(item.problem),
-    );
-    expect(next).toBeDefined();
-    expect(text.indexOf(`Next: ${next!.title}`)).toBeGreaterThan(
-      text.indexOf(item.panel.value),
-    );
-    expect(html).toMatch(new RegExp(`/work/${next!.slug}/?`));
-  });
-
-  it("structures sections under h2 headings for screen reader navigation", () => {
-    const headings = [...html.matchAll(/<h2\b[^>]*>([\s\S]*?)<\/h2>/g)].map(
-      ([, text]) => textOf(text).trim(),
-    );
-    expect(headings).toEqual([
-      "Context",
-      "Constraints",
-      "Decisions",
-      "Outcome",
-      "My role",
-    ]);
+describe("selected work figures", () => {
+  it("shows each panel value and label in its row", () => {
+    const html = renderToStaticMarkup(<SelectedWork />);
+    for (const { panel } of site.selectedWork) {
+      expect(textOf(html)).toContain(panel.value);
+      expect(textOf(html)).toContain(panel.label);
+    }
   });
 });
