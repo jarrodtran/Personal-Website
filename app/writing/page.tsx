@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { siteContainer } from "@/components/section";
 import { EssayList } from "@/components/essay-list";
 import { SubscribeBlock } from "@/components/subscribe";
 import { NoEssays } from "@/components/sections/writing";
@@ -41,7 +42,7 @@ export default async function WritingPage() {
   const grouped = posts.length > ARCHIVE_GROUP_AFTER;
 
   return (
-    <div className="lg:max-w-site mx-auto w-full max-w-5xl px-5 sm:px-8">
+    <div className={siteContainer}>
       <div
         id="essays"
         className="lg:max-w-home w-full max-w-prose py-[var(--spacing-section)]"

@@ -18,23 +18,21 @@ export default async function Home() {
   return (
     <div
       data-testid="home-prose"
-      className="lg:max-w-site mx-auto w-full max-w-5xl px-5 sm:px-8"
+      className="w-full max-sm:[--spacing-section:1.75rem]"
     >
-      <div className="lg:max-w-home w-full max-w-prose max-sm:[--spacing-section:1.75rem] [&_#top>div]:px-0 [&_section>div]:px-0">
-        <Hero latest={result.posts[0]} />
-        {result.posts.length > 0 ? (
-          <>
-            <Writing posts={result.posts} />
-            <SelectedWork />
-          </>
-        ) : (
-          <>
-            <SelectedWork />
-            <Writing posts={result.posts} unavailable={unavailable} />
-          </>
-        )}
-        <About />
-      </div>
+      <Hero latest={result.posts[0]} />
+      {result.posts.length > 0 ? (
+        <>
+          <Writing posts={result.posts} />
+          <SelectedWork />
+        </>
+      ) : (
+        <>
+          <SelectedWork />
+          <Writing posts={result.posts} unavailable={unavailable} />
+        </>
+      )}
+      <About />
     </div>
   );
 }

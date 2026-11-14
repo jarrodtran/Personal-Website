@@ -49,7 +49,11 @@ export function Writing({
       {latest.length === 0 ? (
         <NoEssays unavailable={unavailable} />
       ) : (
-        <EssayList posts={latest} expanded={latest.length === 1} />
+        <EssayList
+          posts={latest}
+          expanded={latest.length === 1}
+          bottomRule={false}
+        />
       )}
       {more ? (
         <p className="mt-3">

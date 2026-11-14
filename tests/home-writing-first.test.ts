@@ -181,17 +181,86 @@ describe("writing-first home", () => {
     const layout = await readHomeLayout(1280, 800);
     expect(layout.h1).toBe(site.positioning.name);
     expect(layout.h1).not.toBe(site.positioning.headline);
-    expect(layout.introParagraphCount).toBe(1);
+    // The lede and the rest of the introduction.
+    expect(layout.introParagraphCount).toBe(2);
     expect(layout.sectionOrder).toEqual(
       layout.hasPosts ? ORDER_WITH_POSTS : ORDER_NO_POSTS,
     );
     expect(layout.hasContactAnchor).toBe(true);
   });
 
-  it("gives homepage sections an 864px column at 1280", async () => {
-    const layout = await readHomeLayout(1280, 800);
-    for (const [index, width] of layout.sectionWidths.entries()) {
-      expect(width, `${HOME_SECTION_IDS[index]} width at 1280`).toBe(864);
+  it("gives homepage sections a 192px label rail and an 864px content column at 1280", async () => {
+    const { browser, page } = await openHome(1280, 800);
+    const geometry = await page.evaluate(() => {
+      const box = (el: Element | null | undefined) => {
+        const r = el?.getBoundingClientRect();
+        return r
+          ? { left: Math.round(r.left), width: Math.round(r.width) }
+          : null;
+      };
+      return {
+        brand: box(document.querySelector("header a")),
+        sections: ["writing", "work", "about"].map((id) => {
+          const section = document.getElementById(id);
+          const label = section?.querySelector(".rail-label");
+          const columns = label?.parentElement
+            ? getComputedStyle(label.parentElement)
+                .gridTemplateColumns.split(" ")
+                .map((value) => Math.round(parseFloat(value)))
+            : [];
+          const content = [...(label?.parentElement?.children ?? [])].find(
+            (el) =>
+              el !== label && getComputedStyle(el).position !== "absolute",
+          );
+          return {
+            id,
+            label: box(label),
+            heading: box(section?.querySelector("h2")),
+            content: box(content),
+            columns,
+          };
+        }),
+      };
+    });
+    await browser.close();
+    for (const { id, label, heading, content, columns } of geometry.sections) {
+      // Heading and brand share the left edge; the content column follows the rail.
+      expect(heading?.left, `${id} h2 left edge`).toBe(geometry.brand?.left);
+      expect(label?.width, `${id} rail width at 1280`).toBe(192);
+      expect(content?.left, `${id} content left`).toBe(
+        (geometry.brand?.left ?? 0) + 192 + 32,
+      );
+      // The content column is 864px; prose inside it is capped by .measure.
+      expect(columns, `${id} grid columns at 1280`).toEqual([192, 864]);
+    }
+  });
+
+  it("stacks the heading above the content below lg", async () => {
+    const { browser, page } = await openHome(768, 800);
+    const stacked = await page.evaluate(() =>
+      ["writing", "work", "about"].map((id) => {
+        const section = document.getElementById(id);
+        const label = section?.querySelector(".rail-label");
+        const content = [...(label?.parentElement?.children ?? [])].find(
+          (el) => el !== label && getComputedStyle(el).position !== "absolute",
+        );
+        return {
+          id,
+          sameLeft:
+            Math.round(label?.getBoundingClientRect().left ?? -1) ===
+            Math.round(content?.getBoundingClientRect().left ?? -2),
+          above:
+            (label?.getBoundingClientRect().bottom ?? 1e9) <=
+            (content?.getBoundingClientRect().top ?? -1) + 1,
+        };
+      }),
+    );
+    await browser.close();
+    for (const row of stacked) {
+      expect(row.sameLeft, `${row.id} shares the left edge at 768`).toBe(true);
+      expect(row.above, `${row.id} heading sits above content at 768`).toBe(
+        true,
+      );
     }
   });
 
@@ -241,5 +310,37 @@ describe("writing-first home", () => {
   it("keeps the #140 desktop nav breakpoint at 1280", async () => {
     const layout = await readHomeLayout(1280, 800);
     expect(layout.desktopNavDisplay).toBe("flex");
+  });
+
+  it("starts every page's first heading at the nav brand's left edge at 1280", async () => {
+    const browser = await chromium.launch();
+    try {
+      for (const path of [
+        "/",
+        "/work/tesla-energy-ai-product/",
+        "/resume/",
+        "/writing/",
+      ]) {
+        const page = await browser.newPage({
+          viewport: { width: 1280, height: 800 },
+        });
+        await page.goto(`${origin}${path}`, { waitUntil: "load" });
+        const edges = await page.evaluate(() => {
+          const left = (el: Element | null) =>
+            el ? el.getBoundingClientRect().left : Number.NaN;
+          return {
+            brand: left(document.querySelector("header a")),
+            heading: left(document.querySelector("main h1")),
+          };
+        });
+        expect(edges.heading, `${path} h1 left edge`).toBeCloseTo(
+          edges.brand,
+          0,
+        );
+        await page.close();
+      }
+    } finally {
+      await browser.close();
+    }
   });
 });

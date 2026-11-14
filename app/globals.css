@@ -176,6 +176,31 @@ body {
   }
 }
 
+/*
+ * Label rail. From lg, a rail-grid is a 12rem label column plus one content
+ * column. Direct children land in the content column; a .rail-label child
+ * (SectionHeading) takes the rail. Below lg everything stacks.
+ */
+.rail-grid {
+  --rail: 12rem;
+}
+
+@media (min-width: 64rem) {
+  .rail-grid {
+    display: grid;
+    grid-template-columns: var(--rail) minmax(0, 1fr);
+    column-gap: 2rem;
+  }
+
+  .rail-grid > * {
+    grid-column: 2;
+  }
+
+  .rail-grid > .rail-label {
+    grid-column: 1;
+  }
+}
+
 .tabular {
   font-variant-numeric: tabular-nums;
 }
@@ -360,8 +385,33 @@ footer a {
     padding-block: 0.6rem;
   }
 
-  .resume .resume-role {
+  .resume .rail-grid {
+    display: block;
+  }
+
+  .resume .rail-label {
+    margin-bottom: 0.5rem;
+  }
+
+  /* A whole role is taller than what is left of page one, so keep bullets
+     and headings intact instead of the role. */
+  .resume .resume-role li {
     break-inside: avoid;
+  }
+
+  .resume h2,
+  .resume h3,
+  .resume .resume-role > :not(ul) {
+    break-after: avoid;
+  }
+
+  .resume .measure {
+    max-width: none;
+  }
+
+  /* Type sizes are in rem, so scale the root to print at about 11pt. */
+  html:has(.resume) {
+    font-size: 70%;
   }
 
   .resume a[href]::after {

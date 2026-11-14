@@ -12,4 +12,4 @@ The résumé is in the nav, About, and the footer. Each figure used in the site�
 
 ## Design
 
-Keep the monochrome palette, Newsreader and IBM Plex Sans, and one readable prose column. Keep controls reachable by keyboard and touch, including at narrow widths and doubled text size. The four case-study URLs, the /writing/ archive, and the legacy /work/ redirect remain part of the public site.
+Keep the monochrome palette, Newsreader and IBM Plex Sans, a label rail beside one readable prose column. Keep controls reachable by keyboard and touch, including at narrow widths and doubled text size. The four case-study URLs, the /writing/ archive, and the legacy /work/ redirect remain part of the public site.

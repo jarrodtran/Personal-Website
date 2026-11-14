@@ -2,6 +2,8 @@ import { ArrowUpRight } from "lucide-react";
 import { nextSelectedWork, type SelectedWorkItem } from "@/content/site";
 import { tap, textAction } from "@/lib/ui";
 import { withBasePath } from "@/lib/base-path";
+import { cn } from "@/lib/cn";
+import { railGrid, railLabel, siteContainer } from "@/components/section";
 
 function Block({
   label,
@@ -12,9 +14,18 @@ function Block({
 }) {
   return (
     <section className="group border-border mt-6 border-t first:mt-0 first:border-t-0 sm:mt-8">
-      <div className="pt-6 group-first:pt-0 sm:pt-8 sm:group-first:pt-0">
-        <h2 className="text-accent font-mono-label mb-3">{label}</h2>
-        {children}
+      <div
+        className={cn(
+          railGrid,
+          "pt-6 group-first:pt-0 sm:pt-8 sm:group-first:pt-0",
+        )}
+      >
+        <h2
+          className={cn(railLabel, "text-accent font-mono-label mb-3 lg:mb-0")}
+        >
+          {label}
+        </h2>
+        <div>{children}</div>
       </div>
     </section>
   );
@@ -54,7 +65,7 @@ export function CaseStudyBody({ item }: { item: SelectedWorkItem }) {
   const next = nextSelectedWork(item.slug);
 
   return (
-    <article className="lg:max-w-study mx-auto max-w-3xl px-5 py-12 sm:px-8 sm:py-20">
+    <article className={cn(siteContainer, "py-12 sm:py-20")}>
       <p className="font-mono-label text-muted-foreground">
         <a href={withBasePath("/#work")} className={tap}>
           Selected work
@@ -69,7 +80,7 @@ export function CaseStudyBody({ item }: { item: SelectedWorkItem }) {
         {item.problem}
       </p>
 
-      <div className="border-border bg-surface mt-8 border p-5 sm:p-7">
+      <div className="border-border bg-surface lg:max-w-home mt-8 border p-5 sm:p-7">
         <p className="tabular font-display text-[length:var(--text-figure)] leading-[var(--leading-figure)] sm:text-[length:var(--text-figure-lg)]">
           {item.panel.value}
         </p>
@@ -110,32 +121,37 @@ export function CaseStudyBody({ item }: { item: SelectedWorkItem }) {
         </Block>
       </div>
 
-      <div className="border-border mt-10 flex flex-col gap-1 border-t pt-6 sm:flex-row sm:flex-wrap sm:items-center sm:gap-4">
-        {next ? (
+      <div className={cn(railGrid, "border-border mt-10 border-t pt-6")}>
+        <div className="flex flex-col gap-1 sm:flex-row sm:flex-wrap sm:items-center sm:gap-4">
+          {next ? (
+            <a
+              href={withBasePath(`/work/${next.slug}/`)}
+              className={`${textAction} w-full sm:w-auto`}
+            >
+              Next: {next.title}
+            </a>
+          ) : null}
+          {item.link ? (
+            <a
+              href={item.link.href}
+              className={textAction}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {item.link.label}
+              <ArrowUpRight
+                className="size-[16px] shrink-0"
+                aria-hidden="true"
+              />
+            </a>
+          ) : null}
           <a
-            href={withBasePath(`/work/${next.slug}/`)}
-            className={`${textAction} w-full sm:w-auto`}
+            href={withBasePath("/#work")}
+            className={`${tap} text-muted-foreground hover:text-foreground underline underline-offset-4`}
           >
-            Next: {next.title}
+            Back to selected work
           </a>
-        ) : null}
-        {item.link ? (
-          <a
-            href={item.link.href}
-            className={textAction}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            {item.link.label}
-            <ArrowUpRight className="size-[16px] shrink-0" aria-hidden="true" />
-          </a>
-        ) : null}
-        <a
-          href={withBasePath("/#work")}
-          className={`${tap} text-muted-foreground hover:text-foreground underline underline-offset-4`}
-        >
-          Back to selected work
-        </a>
+        </div>
       </div>
     </article>
   );

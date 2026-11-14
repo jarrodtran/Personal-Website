@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { ArrowLeft, ArrowUpRight } from "lucide-react";
 import { notFound } from "next/navigation";
+import { siteContainer } from "@/components/section";
 import { SubscribeBlock } from "@/components/subscribe";
 import { site, siteUrl } from "@/content/site";
 import { withBasePath } from "@/lib/base-path";
@@ -74,7 +75,7 @@ export default async function EssayPage({
   const dateLabel = post.date ? formatPostDate(post.date) : "";
 
   return (
-    <div className="lg:max-w-site mx-auto w-full max-w-5xl px-5 sm:px-8">
+    <div className={siteContainer}>
       <article
         data-essay
         className="lg:max-w-home w-full max-w-prose py-[var(--spacing-section)]"
