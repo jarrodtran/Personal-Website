@@ -10,6 +10,27 @@ Personal site for [Jarrod Tran](https://jarrodtran.com) and his publication, Wor
 - [app/globals.css](app/globals.css) and [lib/palette.ts](lib/palette.ts) define the type scale, spacing, and shared colors.
 - Publish essays on Substack, then follow Publishing below.
 
+## Library
+
+The bookshelf lives at `/library/`, with a one-row teaser at the bottom of the homepage. By default it is shelved like a bookstore: one labeled section per category, in the order of `categories` in the data file, then by the first author's surname. Corporate or single-name authors set `authorSort` (for example `"harvard business review"`) to file under the first word. The page has search, sort (title, author, recently added), category filters (a dropdown on phones), and two views: covers, or a shelf of spines painted from each cover's color. Every book opens a detail panel at `/library/#book-<slug>`; the homepage covers link straight to those.
+
+Books are in [content/library.json](content/library.json). Covers are JPEGs in `public/library/covers/`, downloaded once from Open Library, or from Apple Books when Open Library has none, and served from this site. Each book records its source in `coverRef`, so `pnpm add:book --fill --force` rebuilds the same images. `year` is the first-published year (checked by hand; Open Library often gives a reprint year, so correct it in the file) and `olKey` links the panel to Open Library. `color` comes from `pnpm library:colors`.
+
+Add a book any of these ways, then commit and push (the issue form does that for you):
+
+- **Command line:** `pnpm add:book "Poor Charlie's Almanack"` or `pnpm add:book 9781953953575`. It shows matches to pick from, asks for a category, saves the cover, and appends the entry. Add `--author "Munger"` to narrow the search, `--category "Investing & Finance"` and `--yes` to skip prompts. It refuses duplicates and titles with banned phrases, and turns dashes into colons.
+- **From your phone:** open a new issue with the **Add a book** form. The `add-book` workflow runs the same script and opens a pull request that merges once checks pass. It needs the one-time setup at the top of [`.github/workflows/add-book.yml`](.github/workflows/add-book.yml) (a `LIBRARY_BOT_TOKEN` secret and auto-merge enabled).
+- **From a shelf photo:** give Claude Code the photo and ask it to add the new books. It reads the spines and runs `pnpm add:book` for each.
+- **By hand:** append `{ "slug", "title", "author", "category", "added" }` to `books` in `content/library.json`, then run `pnpm add:book --fill --meta` (cover, year, Open Library link) and `pnpm library:colors` (spine color).
+
+Fixing covers: books with no cover show a typeset tile. To swap a wrong edition:
+
+- `pnpm add:book --fill <slug> --source apple --force` tries Apple Books instead of Open Library.
+- `pnpm add:book --fill <slug> --cover-id <id>` uses an exact Open Library cover (the number in its image URL).
+- `pnpm add:book --fill <slug> --cover-url <https://...jpg>` uses any JPEG, such as a publisher's cover image.
+
+Then run `pnpm library:colors --force` so the spine matches. `"noCover": true` keeps a text tile and stops `--fill` from retrying. Categories are the `categories` list in the same file; keep the issue form's dropdown in step.
+
 ## Publishing
 
 1. Publish on Substack.

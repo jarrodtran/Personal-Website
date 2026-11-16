@@ -1,6 +1,7 @@
 import { About } from "@/components/sections/about";
 import { Approach } from "@/components/sections/approach";
 import { Hero } from "@/components/sections/hero";
+import { Library } from "@/components/sections/library";
 import { SelectedWork } from "@/components/sections/selected-work";
 import { Writing } from "@/components/sections/writing";
 import { site } from "@/content/site";
@@ -26,6 +27,7 @@ export default async function Home() {
       <About />
       <SelectedWork />
       <Approach />
+      <Library />
     </div>
   );
 }

@@ -20,6 +20,7 @@ export type LayoutViolation = {
 const types: Record<string, string> = {
   ".css": "text/css",
   ".html": "text/html; charset=utf-8",
+  ".jpg": "image/jpeg",
   ".js": "text/javascript",
   ".pdf": "application/pdf",
   ".png": "image/png",

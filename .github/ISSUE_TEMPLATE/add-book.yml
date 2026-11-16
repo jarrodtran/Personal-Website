@@ -1,0 +1,38 @@
+name: Add a book
+description: Add a book to the library on jarrodtran.com. A bot opens a pull request that merges when checks pass.
+title: "Add book: "
+labels: ["add-book"]
+body:
+  - type: input
+    id: query
+    attributes:
+      label: Title or ISBN
+      description: As it reads on the cover. An ISBN (from the barcode) picks the exact edition.
+      placeholder: Poor Charlie's Almanack
+    validations:
+      required: true
+  - type: input
+    id: author
+    attributes:
+      label: Author
+      description: Needed unless you gave an ISBN. Shown on the site as typed.
+  - type: dropdown
+    id: category
+    attributes:
+      label: Category
+      description: Keep these in step with "categories" in content/library.json.
+      options:
+        - Guess from the book
+        - Money & Markets
+        - Venture & Startups
+        - Leadership & Management
+        - Power & Persuasion
+        - Technology & AI
+        - History & Economics
+        - Biography & Memoir
+        - Philosophy & Psychology
+        - Productivity & Self-Help
+        - Fiction
+      default: 0
+    validations:
+      required: true

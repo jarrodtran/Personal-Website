@@ -1,0 +1,133 @@
+name: Add a book
+
+# Runs the "Add a book" issue form through scripts/add-book.mjs and opens a
+# pull request that auto-merges once the required checks pass.
+#
+# One-time setup:
+# 1. Repo secret LIBRARY_BOT_TOKEN: a fine-grained token for this repo with
+#    Contents, Pull requests and Issues read/write. Pull requests opened with
+#    the default GITHUB_TOKEN do not start the required checks.
+# 2. Settings > General > Allow auto-merge.
+
+on:
+  issues:
+    types: [opened]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: add-book
+  cancel-in-progress: false
+
+jobs:
+  add:
+    # The repo is public: only the owner's issues run this.
+    if: >-
+      github.event.issue.user.login == github.repository_owner &&
+      startsWith(github.event.issue.title, 'Add book')
+    runs-on: ubuntu-latest
+    # Lets the fallback token comment when the bot secret is missing.
+    permissions:
+      contents: read
+      issues: write
+    env:
+      GH_TOKEN: ${{ secrets.LIBRARY_BOT_TOKEN }}
+      ISSUE_NUMBER: ${{ github.event.issue.number }}
+    steps:
+      - name: Check the bot token
+        env:
+          FALLBACK_TOKEN: ${{ github.token }}
+        run: |
+          if [ -z "$GH_TOKEN" ]; then
+            GH_TOKEN="$FALLBACK_TOKEN" gh issue comment "$ISSUE_NUMBER" --repo "$GITHUB_REPOSITORY" \
+              --body "Could not add this book: the LIBRARY_BOT_TOKEN secret is not set. See .github/workflows/add-book.yml for setup, or run pnpm add:book locally." || true
+            echo "::error::LIBRARY_BOT_TOKEN is not set"
+            exit 1
+          fi
+
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          token: ${{ secrets.LIBRARY_BOT_TOKEN }}
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 22
+
+      - name: Read the form
+        id: form
+        env:
+          ISSUE_BODY: ${{ github.event.issue.body }}
+        run: |
+          node --input-type=module -e '
+            import { appendFileSync } from "node:fs";
+            const body = process.env.ISSUE_BODY ?? "";
+            const field = (label) => {
+              const match = body.match(new RegExp(`### ${label}\\s*\\n+([^\\n]*)`));
+              const value = (match?.[1] ?? "").trim();
+              return value === "_No response_" ? "" : value.replace(/[\r\n]/g, " ");
+            };
+            const category = field("Category");
+            const out = [
+              `query=${field("Title or ISBN")}`,
+              `author=${field("Author")}`,
+              `category=${category === "Guess from the book" ? "" : category}`,
+            ].join("\n");
+            appendFileSync(process.env.GITHUB_OUTPUT, `${out}\n`);
+          '
+
+      - name: Add the book
+        id: add
+        env:
+          QUERY: ${{ steps.form.outputs.query }}
+          AUTHOR: ${{ steps.form.outputs.author }}
+          CATEGORY: ${{ steps.form.outputs.category }}
+        run: |
+          set -o pipefail
+          args=("$QUERY" --yes)
+          [ -n "$AUTHOR" ] && args+=(--author "$AUTHOR")
+          [ -n "$CATEGORY" ] && args+=(--category "$CATEGORY")
+          node scripts/add-book.mjs "${args[@]}" 2>&1 | tee add-book.log
+          echo "summary=$(grep -m1 '^Added ' add-book.log)" >> "$GITHUB_OUTPUT"
+
+      - uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # v4
+
+      # The shelf view paints spines from the cover color. Optional: without
+      # it the new book gets a neutral spine until pnpm library:colors runs.
+      - name: Sample the spine color
+        continue-on-error: true
+        run: |
+          pnpm install --frozen-lockfile
+          pnpm exec playwright install --with-deps chromium
+          pnpm library:colors
+
+      - name: Open a pull request
+        env:
+          SUMMARY: ${{ steps.add.outputs.summary }}
+        run: |
+          branch="library/add-book-$ISSUE_NUMBER"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git switch -c "$branch"
+          git add content/library.json public/library/covers
+          git commit -m "Add a book to the library" -m "$SUMMARY" -m "Closes #$ISSUE_NUMBER"
+          git push origin "$branch"
+          url=$(gh pr create --base main --head "$branch" \
+            --title "Library: add a book (#$ISSUE_NUMBER)" \
+            --body "$SUMMARY"$'\n\n'"Closes #$ISSUE_NUMBER. Opened by the Add a book workflow.")
+          gh pr merge "$url" --auto --squash || echo "::warning::auto-merge is off; merge $url by hand"
+          gh issue comment "$ISSUE_NUMBER" --body "$SUMMARY Pull request: $url"
+
+      - name: Report a failure
+        if: failure() && steps.add.outcome == 'failure'
+        run: |
+          {
+            echo "Could not add this book. The script said:"
+            echo
+            echo '```'
+            tail -n 20 add-book.log
+            echo '```'
+            echo
+            echo "Edit the issue details and open a new one, or run pnpm add:book locally."
+          } > comment.md
+          gh issue comment "$ISSUE_NUMBER" --body-file comment.md

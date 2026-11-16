@@ -37,15 +37,22 @@ describe("built HTML does not ship a photo of Jarrod", () => {
 
   it("does not reference avatar.webp or avatar-og.png", () => {
     const hits = pages
-      .filter((page) =>
-        PHOTO_TOKENS.some((token) => page.html.includes(token)),
-      )
+      .filter((page) => PHOTO_TOKENS.some((token) => page.html.includes(token)))
       .map((page) => page.file);
     expect(hits).toEqual([]);
   });
 
-  it("renders the home page without an img", () => {
+  // Book covers in the Library teaser are the only images allowed on home.
+  it("renders the home page with no img outside the library covers", () => {
     const home = readFileSync(path.join(outDir, "index.html"), "utf8");
-    expect(home.match(/<img\b/gi) ?? []).toEqual([]);
+    const sources = [...home.matchAll(/<img\b[^>]*>/gi)].map(
+      ([tag]) => tag.match(/\bsrc="([^"]*)"/)?.[1] ?? "",
+    );
+    expect(sources.length).toBeGreaterThan(0);
+    expect(
+      sources.filter(
+        (src) => !/^(?:\/[\w-]+)?\/library\/covers\/[\w-]+\.jpg$/.test(src),
+      ),
+    ).toEqual([]);
   });
 });
