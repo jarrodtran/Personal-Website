@@ -222,6 +222,11 @@ footer a {
   text-decoration: none;
 }
 
+/* Library covers and spines are whole-card links; the title underlines on hover. */
+#library li a.group {
+  text-decoration: none;
+}
+
 /*
  * Essay bodies come from the Substack feed, sanitized to plain prose tags with
  * no classes, so they are styled by element here.

@@ -9,6 +9,7 @@ const basePath = (process.env.BASE_PATH ?? "").replace(/\/$/, "");
 const types = {
   ".css": "text/css",
   ".html": "text/html; charset=utf-8",
+  ".jpg": "image/jpeg",
   ".js": "text/javascript",
   ".pdf": "application/pdf",
   ".png": "image/png",
@@ -52,7 +53,7 @@ const viewports = {
 
 // Home keeps the full suite below. Case studies get axe + reflow coverage.
 const caseStudyPath = "work/tesla-energy-ai-product/";
-const axeRoutes = ["", caseStudyPath, "resume/"];
+const axeRoutes = ["", caseStudyPath, "resume/", "library/"];
 
 for (const route of axeRoutes) {
   for (const [device, viewport] of Object.entries(viewports)) {

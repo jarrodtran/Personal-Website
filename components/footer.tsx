@@ -1,6 +1,7 @@
 import { ArrowUpRight } from "lucide-react";
 import { ResumeLink } from "@/components/resume-link";
 import { site } from "@/content/site";
+import { withBasePath } from "@/lib/base-path";
 import { textAction } from "@/lib/ui";
 
 export function Footer() {
@@ -38,6 +39,11 @@ export function Footer() {
             </li>
             <li>
               <ResumeLink />
+            </li>
+            <li>
+              <a href={withBasePath("/library/")} className={textAction}>
+                Library
+              </a>
             </li>
           </ul>
           <p>

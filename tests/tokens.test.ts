@@ -8,6 +8,7 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest";
 const types: Record<string, string> = {
   ".css": "text/css",
   ".html": "text/html; charset=utf-8",
+  ".jpg": "image/jpeg",
   ".js": "text/javascript",
   ".png": "image/png",
   ".webp": "image/webp",

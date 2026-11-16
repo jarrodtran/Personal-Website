@@ -9,6 +9,7 @@ import { site } from "@/content/site";
 const types: Record<string, string> = {
   ".css": "text/css",
   ".html": "text/html; charset=utf-8",
+  ".jpg": "image/jpeg",
   ".js": "text/javascript",
   ".png": "image/png",
   ".webp": "image/webp",
@@ -32,10 +33,18 @@ const HOME_SECTION_IDS = [
   "about",
   "work",
   "approach",
+  "library",
 ] as const;
 
 /** Writing and About lead with or without essays; the work follows. */
-const ORDER_NO_POSTS = ["top", "writing", "about", "work", "approach"];
+const ORDER_NO_POSTS = [
+  "top",
+  "writing",
+  "about",
+  "work",
+  "approach",
+  "library",
+];
 const ORDER_WITH_POSTS = ORDER_NO_POSTS;
 
 // Measured on origin/main (136043b) production build in this Playwright setup.
@@ -205,26 +214,28 @@ describe("writing-first home", () => {
       };
       return {
         brand: box(document.querySelector("header a")),
-        sections: ["writing", "work", "approach", "about"].map((id) => {
-          const section = document.getElementById(id);
-          const label = section?.querySelector(".rail-label");
-          const columns = label?.parentElement
-            ? getComputedStyle(label.parentElement)
-                .gridTemplateColumns.split(" ")
-                .map((value) => Math.round(parseFloat(value)))
-            : [];
-          const content = [...(label?.parentElement?.children ?? [])].find(
-            (el) =>
-              el !== label && getComputedStyle(el).position !== "absolute",
-          );
-          return {
-            id,
-            label: box(label),
-            heading: box(section?.querySelector("h2")),
-            content: box(content),
-            columns,
-          };
-        }),
+        sections: ["writing", "work", "approach", "about", "library"].map(
+          (id) => {
+            const section = document.getElementById(id);
+            const label = section?.querySelector(".rail-label");
+            const columns = label?.parentElement
+              ? getComputedStyle(label.parentElement)
+                  .gridTemplateColumns.split(" ")
+                  .map((value) => Math.round(parseFloat(value)))
+              : [];
+            const content = [...(label?.parentElement?.children ?? [])].find(
+              (el) =>
+                el !== label && getComputedStyle(el).position !== "absolute",
+            );
+            return {
+              id,
+              label: box(label),
+              heading: box(section?.querySelector("h2")),
+              content: box(content),
+              columns,
+            };
+          },
+        ),
       };
     });
     await browser.close();
@@ -243,7 +254,7 @@ describe("writing-first home", () => {
   it("stacks the heading above the content below lg", async () => {
     const { browser, page } = await openHome(768, 800);
     const stacked = await page.evaluate(() =>
-      ["writing", "work", "approach", "about"].map((id) => {
+      ["writing", "work", "approach", "about", "library"].map((id) => {
         const section = document.getElementById(id);
         const label = section?.querySelector(".rail-label");
         const content = [...(label?.parentElement?.children ?? [])].find(
@@ -325,6 +336,7 @@ describe("writing-first home", () => {
         "/work/tesla-energy-ai-product/",
         "/resume/",
         "/writing/",
+        "/library/",
       ]) {
         const page = await browser.newPage({
           viewport: { width: 1280, height: 800 },

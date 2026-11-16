@@ -113,6 +113,7 @@ export interface SiteContent {
   sections: {
     work: { title: string };
     about: { title: string };
+    library: { title: string };
   };
   knowsAbout: string[];
   nav: { label: string; href: string }[];
@@ -412,6 +413,9 @@ export const site: SiteContent = {
     },
     work: {
       title: "Selected work",
+    },
+    library: {
+      title: "Library",
     },
   },
   knowsAbout: [

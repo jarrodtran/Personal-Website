@@ -96,6 +96,12 @@ describe("route tab titles", () => {
       `<link rel="canonical" href="${siteUrl}/resume/"/>`,
     ]);
 
+    const libraryHtml = readSiteFile("out/library/index.html");
+    expect(pageTitle(libraryHtml)).toBe(`Library · ${site.positioning.name}`);
+    expect(libraryHtml.match(/<link rel="canonical"[^>]*>/g)).toEqual([
+      `<link rel="canonical" href="${siteUrl}/library/"/>`,
+    ]);
+
     // /writing/ stays noindex until the feed lists an essay, then it is a
     // self-canonical page in the sitemap.
     const writingHtml = readSiteFile("out/writing/index.html");
@@ -127,6 +133,7 @@ describe("route tab titles", () => {
       ...(writingListed ? [`${siteUrl}/writing/`] : []),
       ...routes.slice(1).map((route) => `${siteUrl}${route}`),
       `${siteUrl}/resume/`,
+      `${siteUrl}/library/`,
       `${siteUrl}${site.contact.resumeHref}`,
     ]);
     expect(sitemap).not.toMatch(/<lastmod>|<changefreq>|<priority>/);

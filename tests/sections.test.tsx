@@ -7,6 +7,7 @@ import { About } from "@/components/sections/about";
 import { Approach } from "@/components/sections/approach";
 import { CaseStudyBody } from "@/components/sections/case-study";
 import { Hero } from "@/components/sections/hero";
+import { Library } from "@/components/sections/library";
 import { SelectedWork } from "@/components/sections/selected-work";
 import { Writing } from "@/components/sections/writing";
 import { SubscribeBlock } from "@/components/subscribe";
@@ -203,8 +204,7 @@ describe("approach", () => {
     );
     expect(items).toEqual(
       site.approach.principles.map(
-        ({ title, body }, index) =>
-          `0${index + 1} ${title} ${body}`,
+        ({ title, body }, index) => `0${index + 1} ${title} ${body}`,
       ),
     );
     expect(html).toContain("<ol");
@@ -511,6 +511,37 @@ describe("selected work", () => {
         href: expect.stringMatching(new RegExp(`^/work/${slug}/?$`)),
         text: `${panel.value} ${title} ${preview} ${panel.label}`,
       })),
+    );
+  });
+});
+
+describe("library teaser", () => {
+  const html = renderToStaticMarkup(<Library />);
+
+  it("renders one row of covers with alt text and a link to the full library", () => {
+    expect(html).toContain('id="library"');
+    expect(headings(html, "h2")).toEqual([site.sections.library.title]);
+    const images = [...html.matchAll(/<img\b([^>]*)>/g)].map(([, attrs]) => ({
+      src: attribute(attrs, "src") ?? "",
+      alt: attribute(attrs, "alt") ?? "",
+    }));
+    expect(images.length).toBeGreaterThan(0);
+    expect(images.length).toBeLessThanOrEqual(6);
+    for (const image of images) {
+      expect(image.src).toMatch(/\/library\/covers\/[\w-]+\.jpg$/);
+      expect(image.alt).toMatch(/ by /);
+    }
+    const all = links(html);
+    // Each cover opens its book's panel on /library/; the last link browses.
+    expect(all).toHaveLength(images.length + 1);
+    for (const link of all.slice(0, -1)) {
+      expect(link.href).toMatch(/\/library\/#book-[a-z0-9-]+$/);
+    }
+    expect(all.at(-1)).toEqual(
+      expect.objectContaining({
+        href: expect.stringMatching(/\/library\/$/),
+        text: "Browse the library",
+      }),
     );
   });
 });

@@ -142,6 +142,7 @@ function collectPage(): PageSample {
     "work",
     "approach",
     "contact",
+    "library",
   ]);
   const host = document.createElement("div");
   host.setAttribute("data-token-probe", "");
