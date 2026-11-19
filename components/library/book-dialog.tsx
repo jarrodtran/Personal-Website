@@ -1,18 +1,21 @@
 "use client";
 
-import { ArrowUpRight, ChevronLeft, ChevronRight, X } from "lucide-react";
+import { ArrowLeft, ArrowRight, ArrowUpRight } from "lucide-react";
 import { useEffect, useRef } from "react";
-import { BookCover } from "@/components/library/book-cover";
 import { cn } from "@/lib/cn";
-import type { ShelfBook } from "@/lib/library";
-import { btnGhost, tap, textAction } from "@/lib/ui";
+import { shade, SPINE_FALLBACK, type ShelfBook } from "@/lib/library";
 
-const iconButton = cn(tap, "min-w-11 justify-center transition-colors");
+const label = "font-library-mono text-[0.6875rem] tracking-[0.22em] uppercase";
+const action = cn(
+  label,
+  "text-muted-foreground hover:text-foreground inline-flex min-h-11 min-w-11 items-center justify-center gap-2 transition-colors",
+);
 
 /**
- * Book detail in a native modal dialog: focus moves in and back, Escape and a
- * backdrop click close it, and the arrow keys step through the books in the
- * current filter and sort order.
+ * Book detail in a native modal dialog, laid out like the book pulled off the
+ * shelf: the cover, turned slightly to show its spine, beside its card. Focus
+ * moves in and back, Escape and a click outside close it, and the arrow keys
+ * step through the books in the current filter and sort order.
  */
 export function BookDialog({
   book,
@@ -52,6 +55,7 @@ export function BookDialog({
         },
       ]
     : [];
+  const color = book?.color ?? SPINE_FALLBACK;
 
   return (
     <dialog
@@ -59,104 +63,139 @@ export function BookDialog({
       aria-labelledby="book-dialog-title"
       onClose={onClose}
       onClick={(event) => {
-        if (event.target === event.currentTarget) onClose();
+        const target = event.target as HTMLElement;
+        if (target === event.currentTarget || target.dataset.backdrop)
+          onClose();
       }}
       onKeyDown={(event) => {
         if (event.key === "ArrowLeft") onStep(-1);
         if (event.key === "ArrowRight") onStep(1);
       }}
-      className="bg-background text-foreground border-border m-auto w-[calc(100%-2rem)] max-w-2xl border p-0 backdrop:bg-black/60"
+      className="text-foreground m-0 h-full max-h-none w-full max-w-none overflow-y-auto bg-transparent p-0 backdrop:bg-[color-mix(in_srgb,var(--muted)_86%,transparent)] backdrop:backdrop-blur-xl"
     >
       {book ? (
-        <div className="p-5 sm:p-6">
-          <div className="flex items-center justify-between gap-2">
-            <p
-              className="text-muted-foreground text-small tabular"
-              aria-live="polite"
+        <div
+          data-backdrop="true"
+          className="mx-auto flex min-h-full w-full max-w-5xl flex-col items-center justify-center gap-10 px-5 py-12 sm:px-8 md:flex-row md:gap-16"
+        >
+          <div
+            className="w-40 shrink-0 sm:w-56 md:w-72"
+            style={{ perspective: "1600px" }}
+          >
+            <div
+              className="relative aspect-[2/3] w-full shadow-[0_50px_100px_-40px_rgb(0_0_0/0.55)] transition-transform duration-700 motion-reduce:transition-none"
+              style={{
+                transform: "rotateY(16deg)",
+                transformStyle: "preserve-3d",
+              }}
             >
-              {`${position + 1} of ${total}`}
-            </p>
-            <button
-              type="button"
-              onClick={onClose}
-              aria-label="Close"
-              className={cn(iconButton, "hover:bg-muted -mr-2")}
-            >
-              <X aria-hidden="true" className="size-5" />
-            </button>
-          </div>
-          <div className="mt-2 grid grid-cols-[minmax(0,1fr)] gap-6 sm:grid-cols-[11rem_minmax(0,1fr)]">
-            <div className="w-40 max-w-full sm:w-auto">
-              <BookCover
-                title={book.title}
-                author={book.author}
-                src={book.src}
-                eager
+              <div
+                className="bg-surface border-border absolute inset-0 overflow-hidden rounded-r-[3px] border"
+                style={{ backgroundColor: book.src ? color : undefined }}
+              >
+                {book.src ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={book.src}
+                    alt={`Cover of ${book.title}`}
+                    width={400}
+                    height={600}
+                    className="size-full object-cover"
+                  />
+                ) : (
+                  <span className="flex size-full flex-col items-center justify-center gap-3 p-4 text-center">
+                    <span className="font-display text-[1.25rem] leading-tight">
+                      {book.title}
+                    </span>
+                    <span className="bg-border-control h-px w-8" />
+                    <span className="text-muted-foreground text-small">
+                      {book.author}
+                    </span>
+                  </span>
+                )}
+                <span className="pointer-events-none absolute inset-y-0 left-0 w-3 bg-[linear-gradient(90deg,rgb(0_0_0/0.28),rgb(255_255_255/0.12)_45%,rgb(0_0_0/0.06))]" />
+              </div>
+              {/* The spine, folded back from the left edge */}
+              <div
+                aria-hidden="true"
+                className="absolute top-0 right-full h-full w-7 rounded-l-[2px] [backface-visibility:hidden]"
+                style={{
+                  backgroundColor: shade(color, 0.12),
+                  transformOrigin: "right center",
+                  transform: "rotateY(-90deg)",
+                }}
               />
             </div>
-            <div className="min-w-0">
-              <h2
-                id="book-dialog-title"
-                className="font-display text-[length:var(--text-h2)] leading-[var(--leading-title)] tracking-tight text-balance [overflow-wrap:anywhere]"
+          </div>
+
+          <div className="w-full max-w-xl min-w-0">
+            <p className={cn(label, "text-muted-foreground")}>
+              {book.category}
+            </p>
+            <h2
+              id="book-dialog-title"
+              className="font-display mt-3 text-[clamp(2.25rem,5vw,3.25rem)] leading-[1.05] text-balance [overflow-wrap:anywhere]"
+            >
+              {book.title}
+            </h2>
+            <p className="font-display mt-3 text-[1.375rem] italic">
+              {book.author}
+            </p>
+            <p
+              className={cn(label, "text-muted-foreground tabular mt-5")}
+              aria-live="polite"
+            >
+              {book.year ? `First published ${book.year} · ` : ""}
+              {`${position + 1} of ${total}`}
+            </p>
+            <ul role="list" className="mt-3 flex flex-wrap gap-x-6">
+              {links.map((link) => (
+                <li key={link.label} className="max-w-full">
+                  <a
+                    href={link.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={cn(action, "text-foreground")}
+                  >
+                    <span className="min-w-0 [overflow-wrap:anywhere]">
+                      {link.label}
+                    </span>
+                    <ArrowUpRight aria-hidden="true" className="size-3.5" />
+                    <span className="sr-only">(opens in a new tab)</span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+            <div className="border-border mt-6 flex flex-wrap items-center gap-x-6 border-t pt-3">
+              {total > 1 ? (
+                <>
+                  <button
+                    type="button"
+                    onClick={() => onStep(-1)}
+                    className={action}
+                  >
+                    <ArrowLeft aria-hidden="true" className="size-3.5" />
+                    Previous
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => onStep(1)}
+                    className={action}
+                  >
+                    Next
+                    <ArrowRight aria-hidden="true" className="size-3.5" />
+                  </button>
+                </>
+              ) : null}
+              <button
+                type="button"
+                onClick={onClose}
+                className={cn(action, "text-foreground ml-auto")}
               >
-                {book.title}
-              </h2>
-              <p className="mt-1 text-[length:var(--text-body)]">
-                {book.author}
-              </p>
-              <dl className="text-small mt-4 grid grid-cols-[auto_minmax(0,1fr)] gap-x-4 gap-y-1">
-                <dt className="text-muted-foreground">Category</dt>
-                <dd>{book.category}</dd>
-                {book.year ? (
-                  <>
-                    <dt className="text-muted-foreground">First published</dt>
-                    <dd className="tabular">{book.year}</dd>
-                  </>
-                ) : null}
-              </dl>
-              <ul role="list" className="mt-4 flex flex-wrap gap-x-5">
-                {links.map((link) => (
-                  <li key={link.label} className="max-w-full">
-                    <a
-                      href={link.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className={cn(textAction, "max-w-full")}
-                    >
-                      <span className="min-w-0 [overflow-wrap:anywhere]">
-                        {link.label}
-                      </span>
-                      <ArrowUpRight
-                        aria-hidden="true"
-                        className="size-[16px] shrink-0"
-                      />
-                      <span className="sr-only">(opens in a new tab)</span>
-                    </a>
-                  </li>
-                ))}
-              </ul>
+                Close
+              </button>
             </div>
           </div>
-          {total > 1 ? (
-            <div className="border-border mt-6 flex flex-wrap justify-between gap-2 border-t pt-4">
-              <button
-                type="button"
-                onClick={() => onStep(-1)}
-                className={btnGhost}
-              >
-                <ChevronLeft aria-hidden="true" className="size-4" />
-                Previous
-              </button>
-              <button
-                type="button"
-                onClick={() => onStep(1)}
-                className={btnGhost}
-              >
-                Next
-                <ChevronRight aria-hidden="true" className="size-4" />
-              </button>
-            </div>
-          ) : null}
         </div>
       ) : null}
     </dialog>

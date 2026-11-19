@@ -14,7 +14,8 @@ import {
   sortBooks,
   SPINE_FALLBACK,
   spineInk,
-  spineSize,
+  spineLook,
+  spineTurn,
   type ShelfBook,
 } from "@/lib/library";
 import { contrastRatio } from "@/lib/theme";
@@ -105,10 +106,19 @@ describe("library UI helpers", () => {
 
   it("sizes every spine as a full tap target and the same way each build", () => {
     for (const book of libraryBooks) {
-      const size = spineSize(book);
-      expect(size.width * 16, book.slug).toBeGreaterThanOrEqual(44);
-      expect(spineSize(book)).toEqual(size);
+      const look = spineLook(book);
+      expect(look.width, book.slug).toBeGreaterThanOrEqual(44);
+      expect(look.height, book.slug).toBeGreaterThanOrEqual(44);
+      expect(spineLook(book)).toEqual(look);
     }
+  });
+
+  it("swings shelf ends open symmetrically and stands the middle straight", () => {
+    expect(spineTurn(0)).toBe(0);
+    expect(spineTurn(-1)).toBe(-34);
+    expect(spineTurn(1)).toBe(34);
+    expect(spineTurn(5)).toBe(34);
+    expect(spineTurn(-0.5)).toBeCloseTo(-spineTurn(0.5));
   });
 });
 

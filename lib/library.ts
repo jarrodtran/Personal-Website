@@ -124,20 +124,70 @@ function hash(text: string): number {
   return value >>> 0;
 }
 
-/**
- * Spine box in rem. Longer titles get thicker spines; height varies a little
- * per book like a real shelf. Width never drops under 2.75rem (44px), so each
- * spine is a full tap target.
- */
-export function spineSize(book: Pick<ShelfBook, "slug" | "title">): {
+/** How a spine's title is set: the shelf mixes them like real bindings. */
+export type SpineFace = "serif" | "serif-caps" | "sans" | "sans-caps";
+
+export const SPINE_FACES: readonly SpineFace[] = [
+  "serif",
+  "serif-caps",
+  "sans",
+  "sans-caps",
+];
+
+export interface SpineLook {
+  /** Spine width in px; never under 44, so each spine is a full tap target. */
   width: number;
+  /** Spine height in px. */
   height: number;
-} {
+  /** Cover depth in px (the side face), at the cover's 2:3 ratio. */
+  depth: number;
+  /** Small lean in degrees; most books stand straight. */
+  lean: number;
+  /** Push in or out from the shelf edge, in px. */
+  z: number;
+  face: SpineFace;
+}
+
+/**
+ * A book's spine, stable between builds. Longer titles get thicker spines;
+ * height, lean, and type vary a little per book like a real shelf.
+ */
+export function spineLook(book: Pick<ShelfBook, "slug" | "title">): SpineLook {
   const h = hash(book.slug);
   const width = Math.min(
-    3.75,
-    2.75 + Math.floor(book.title.length / 14) * 0.25 + (h % 3) * 0.125,
+    62,
+    44 + Math.floor(book.title.length / 12) * 4 + (h % 4) * 2,
   );
-  const height = 10 + ((h >>> 3) % 7) * 0.5;
-  return { width, height };
+  const height = 200 + ((h >>> 3) % 11) * 5;
+  const leanRoll = (h >>> 7) % 9;
+  const lean = leanRoll === 0 ? 1.6 : leanRoll === 1 ? -1.1 : 0;
+  const z = (((h >>> 11) % 17) - 8) * 1;
+  const face = SPINE_FACES[(h >>> 15) % SPINE_FACES.length];
+  return {
+    width,
+    height,
+    depth: Math.round((height * 2) / 3),
+    lean,
+    z,
+    face,
+  };
+}
+
+/** Darker shade of a spine color, for the back face and page edges. */
+export function shade(hex: string, amount: number): string {
+  const value = Number.parseInt(hex.slice(1), 16);
+  const channel = (shift: number) =>
+    Math.round(((value >> shift) & 255) * (1 - amount))
+      .toString(16)
+      .padStart(2, "0");
+  return `#${channel(16)}${channel(8)}${channel(0)}`;
+}
+
+/**
+ * Turn for a spine at horizontal offset `t` from the shelf's center (-1 at
+ * the left edge, 1 at the right): the ends swing open so their covers show.
+ */
+export function spineTurn(t: number, max = 34): number {
+  const clamped = Math.max(-1, Math.min(1, t));
+  return Math.sign(clamped) * Math.abs(clamped) ** 1.5 * max;
 }

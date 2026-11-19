@@ -270,7 +270,10 @@ function collectPage(): PageSample {
   ];
 
   const hidden = (el: Element) => {
-    if (el.closest(".sr-only, [data-token-probe]")) return true;
+    // Book spines are artwork: their colors and type sizes come from each
+    // cover, like the cover images themselves.
+    if (el.closest(".sr-only, [data-token-probe], [data-book-art]"))
+      return true;
     const style = getComputedStyle(el);
     if (style.display === "none" || style.visibility === "hidden") return true;
     if (parseFloat(style.opacity) === 0) return true;
