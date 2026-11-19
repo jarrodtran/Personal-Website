@@ -423,3 +423,14 @@ footer a {
     content: none !important;
   }
 }
+
+/* Library page faces (loaded on /library/ only; see app/library/page.tsx). */
+.font-library-mono {
+  font-family: var(--font-library-mono, ui-monospace), ui-monospace, monospace;
+}
+
+.font-library-italic {
+  font-family: var(--font-library-italic, var(--font-display)), Georgia, serif;
+  font-style: italic;
+  font-weight: 300;
+}

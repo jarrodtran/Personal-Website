@@ -14,9 +14,9 @@ import {
 requireOutBuild("library interactions test needs a production build in out/");
 
 /**
- * The layout and axe gates load /library/ in its default state: cover grid,
- * dialog closed. This covers the states they never see: the shelf view, the
- * open book panel, the deep link from the home page, and search.
+ * The layout and axe gates load /library/ in its default state: the shelf,
+ * dialog closed. This covers the states they never see: the shelf after a
+ * click, the open book panel, the deep link from the home page, and search.
  */
 describe("library interactions", () => {
   let origin = "";

@@ -518,25 +518,30 @@ describe("selected work", () => {
 describe("library teaser", () => {
   const html = renderToStaticMarkup(<Library />);
 
-  it("renders one row of covers with alt text and a link to the full library", () => {
+  it("renders a short shelf of named spines and a link to the full library", () => {
     expect(html).toContain('id="library"');
     expect(headings(html, "h2")).toEqual([site.sections.library.title]);
+    // Spine art is decorative; each link carries the book's name.
     const images = [...html.matchAll(/<img\b([^>]*)>/g)].map(([, attrs]) => ({
       src: attribute(attrs, "src") ?? "",
-      alt: attribute(attrs, "alt") ?? "",
+      alt: attribute(attrs, "alt"),
     }));
     expect(images.length).toBeGreaterThan(0);
-    expect(images.length).toBeLessThanOrEqual(6);
     for (const image of images) {
       expect(image.src).toMatch(/\/library\/covers\/[\w-]+\.jpg$/);
-      expect(image.alt).toMatch(/ by /);
+      expect(image.alt).toBe("");
+    }
+    const spines = [...html.matchAll(/<a\b([^>]*)>/g)]
+      .map(([, attrs]) => attrs)
+      .filter((attrs) => /#book-/.test(attribute(attrs, "href") ?? ""));
+    expect(spines.length).toBeGreaterThan(0);
+    expect(spines.length).toBeLessThanOrEqual(15);
+    for (const attrs of spines) {
+      expect(attribute(attrs, "href")).toMatch(/\/library\/#book-[a-z0-9-]+$/);
+      expect(attribute(attrs, "aria-label")).toMatch(/ by /);
     }
     const all = links(html);
-    // Each cover opens its book's panel on /library/; the last link browses.
-    expect(all).toHaveLength(images.length + 1);
-    for (const link of all.slice(0, -1)) {
-      expect(link.href).toMatch(/\/library\/#book-[a-z0-9-]+$/);
-    }
+    expect(all).toHaveLength(spines.length + 1);
     expect(all.at(-1)).toEqual(
       expect.objectContaining({
         href: expect.stringMatching(/\/library\/$/),

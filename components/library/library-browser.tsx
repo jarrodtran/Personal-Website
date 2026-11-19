@@ -1,31 +1,38 @@
 "use client";
 
-import { LayoutGrid, Library as ShelfIcon, Search } from "lucide-react";
 import { useCallback, useMemo, useState, useSyncExternalStore } from "react";
 import { BookCover } from "@/components/library/book-cover";
 import { BookDialog } from "@/components/library/book-dialog";
+import { Shelf } from "@/components/library/shelf";
+import { siteContainer } from "@/components/section";
 import { cn } from "@/lib/cn";
 import {
   groupByCategory,
   matchesQuery,
   sortBooks,
-  SPINE_FALLBACK,
-  spineInk,
-  spineSize,
   type LibrarySort,
   type LibraryView,
   type ShelfBook,
 } from "@/lib/library";
-import { btnGhost } from "@/lib/ui";
 
 const VIEW_KEY = "library-view";
 const HASH_PREFIX = "#book-";
 
-const pressedClass =
-  "bg-accent text-accent-foreground hover:bg-accent-hover border-transparent";
+/** Small spaced capitals, like the labels on a library card. */
+const label = "font-library-mono text-[0.6875rem] tracking-[0.2em] uppercase";
 
-const field =
-  "border-border-control bg-background text-foreground text-small min-h-11 border px-3";
+const pill = cn(
+  label,
+  "inline-flex min-h-11 min-w-11 items-center justify-center gap-2 rounded-full border px-4 transition-colors",
+);
+const pillIdle =
+  "border-border-control text-muted-foreground hover:border-foreground hover:text-foreground";
+const pillOn = "border-foreground bg-foreground text-background";
+
+const quietSelect = cn(
+  label,
+  "text-foreground min-h-11 min-w-0 cursor-pointer rounded-full border border-border-control bg-transparent px-4",
+);
 
 const VIEW_EVENT = "library-view-change";
 
@@ -42,7 +49,7 @@ function subscribeHash(onChange: () => void) {
 }
 
 // Used when localStorage is blocked, so the toggle still works for the visit.
-let memoryView: LibraryView = "covers";
+let memoryView: LibraryView = "shelf";
 
 function readView(): LibraryView {
   try {
@@ -70,8 +77,8 @@ function subscribeView(onChange: () => void) {
 }
 
 /**
- * The /library/ page: search, sort, category chips, a cover grid or a shelf
- * of spines, and a detail dialog. Each book is a link to #book-<slug>, so the
+ * The /library/ page below the title: search, category pills, sort, a 3D
+ * shelf of spines (or a cover grid), and a detail dialog. Each book is a link to #book-<slug>, so the
  * page works without JS (every cover shows, links jump to the book) and the
  * same link opens the dialog with JS, including from the home page.
  */
@@ -87,13 +94,13 @@ export function LibraryBrowser({
   const [sort, setSort] = useState<LibrarySort>("category");
   // The open book lives in the URL (#book-<slug>) and the view in
   // localStorage. The server snapshots are the defaults, so the static HTML
-  // is the cover grid with no dialog.
+  // is the shelf with no dialog.
   const openSlug = useSyncExternalStore(
     subscribeHash,
     readHashSlug,
     () => null,
   );
-  const view = useSyncExternalStore(subscribeView, readView, () => "covers");
+  const view = useSyncExternalStore(subscribeView, readView, () => "shelf");
 
   const visible = useMemo(
     () =>
@@ -201,105 +208,63 @@ export function LibraryBrowser({
     </ul>
   );
 
-  const renderShelf = (list: ShelfBook[], label: string | null) => (
-    <ul
-      role="list"
-      data-shelf=""
-      aria-label={label ? `${label} shelf` : "Bookshelf"}
-      className="mt-6 flex flex-wrap items-end gap-y-8"
-    >
-      {list.map((book) => {
-        const { width, height } = spineSize(book);
-        const background = book.color ?? SPINE_FALLBACK;
-        return (
-          <li
-            key={book.slug}
-            id={`book-${book.slug}`}
-            className="border-border-control scroll-mt-24 border-b-8 px-px"
-          >
-            <a
-              href={`${HASH_PREFIX}${book.slug}`}
-              onClick={(event) => onBookClick(event, book.slug)}
-              aria-label={`${book.title} by ${book.author}`}
-              style={{
-                width: `${width}rem`,
-                height: `${height}rem`,
-                backgroundColor: background,
-                color: spineInk(background),
-              }}
-              className="group flex flex-col items-center justify-between overflow-hidden rounded-t-[2px] px-1 py-2 shadow-[inset_0_0_0_1px_rgb(0_0_0/0.14),inset_-3px_0_0_rgb(0_0_0/0.18),inset_2px_0_0_rgb(255_255_255/0.12)] transition-transform [writing-mode:vertical-rl] hover:-translate-y-1"
-            >
-              <span className="font-display max-h-full min-h-0 overflow-hidden text-[0.9375rem] leading-tight text-ellipsis whitespace-nowrap">
-                {book.title}
-              </span>
-              <span className="mt-2 max-h-full min-h-0 shrink-0 overflow-hidden text-[0.6875rem] leading-tight text-ellipsis whitespace-nowrap">
-                {book.author.split(/\s+and\s+/)[0]}
-              </span>
-            </a>
-          </li>
-        );
-      })}
-    </ul>
-  );
-
   const chips: (string | null)[] = [
     null,
     ...categories.filter((c) => (counts.get(c) ?? 0) > 0),
   ];
 
+  const groupHeading = (group: {
+    category: string | null;
+    slug: string;
+    books: ShelfBook[];
+  }) =>
+    group.category ? (
+      <h2
+        id={`shelf-${group.slug}`}
+        className={cn(
+          label,
+          "border-border text-foreground flex items-baseline justify-between gap-3 border-b pb-2",
+        )}
+      >
+        <span className="min-w-0 [overflow-wrap:anywhere]">
+          {group.category}
+        </span>
+        <span className="text-muted-foreground tabular">
+          {group.books.length}
+        </span>
+      </h2>
+    ) : null;
+
+  const summary = `${visible.length === 1 ? "1 book" : `${visible.length} books`}${category ? ` in ${category}` : ""}${query.trim() ? ` matching “${query.trim()}”` : ""}`;
+
   return (
     <div>
-      <div className="flex flex-wrap items-end gap-3">
-        <div className="relative min-w-0 basis-full sm:flex-1 sm:basis-auto">
+      <div className={cn(siteContainer, "flex flex-col items-center")}>
+        <div className="relative w-full max-w-xl">
           <label htmlFor="library-search" className="sr-only">
             Search titles and authors
           </label>
-          <Search
-            aria-hidden="true"
-            className="text-muted-foreground pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2"
-          />
           <input
             id="library-search"
             type="search"
             value={query}
             onChange={(event) => setQuery(event.target.value)}
-            placeholder="Search titles and authors"
+            placeholder="What are you looking for?"
             autoComplete="off"
-            className={cn(field, "w-full pl-9")}
+            className="border-border-control focus:border-foreground font-display placeholder:text-muted-foreground min-h-11 w-full border-0 border-b bg-transparent px-2 pb-2 text-center text-[1.25rem] italic outline-none focus-visible:outline-none"
           />
         </div>
-        <div className="flex min-w-0 items-center gap-2">
-          <label
-            htmlFor="library-sort"
-            className="text-muted-foreground text-small"
-          >
-            Sort
-          </label>
-          <select
-            id="library-sort"
-            value={sort}
-            onChange={(event) => setSort(event.target.value as LibrarySort)}
-            className={cn(field, "min-w-0")}
-          >
-            <option value="category">Category</option>
-            <option value="title">Title</option>
-            <option value="author">Author</option>
-            <option value="recent">Recently added</option>
-          </select>
-        </div>
-        {/* Phones get one select instead of nine rows of chips. */}
-        <div className="flex min-w-0 items-center gap-2 sm:hidden">
-          <label
-            htmlFor="library-category"
-            className="text-muted-foreground text-small"
-          >
+
+        {/* Phones get one select instead of rows of pills. */}
+        <div className="mt-5 flex max-w-full sm:hidden">
+          <label htmlFor="library-category" className="sr-only">
             Category
           </label>
           <select
             id="library-category"
             value={category ?? ""}
             onChange={(event) => setCategory(event.target.value || null)}
-            className={cn(field, "max-w-full min-w-0")}
+            className={cn(quietSelect, "max-w-full")}
           >
             <option value="">{`All (${books.length})`}</option>
             {chips.slice(1).map((chip) => (
@@ -309,104 +274,112 @@ export function LibraryBrowser({
             ))}
           </select>
         </div>
+
         <div
           role="group"
-          aria-label="View"
-          className="flex max-w-full flex-wrap gap-2"
+          aria-label="Filter by category"
+          className="mt-5 hidden max-w-5xl flex-wrap justify-center gap-2 sm:flex"
         >
-          {(
-            [
-              ["covers", "Covers", LayoutGrid],
-              ["shelf", "Shelf", ShelfIcon],
-            ] as const
-          ).map(([value, label, Icon]) => (
+          {chips.map((chip) => (
             <button
-              key={value}
+              key={chip ?? "all"}
               type="button"
-              aria-pressed={view === value}
-              onClick={() => chooseView(value)}
-              className={cn(
-                btnGhost,
-                "min-w-11",
-                view === value && pressedClass,
-              )}
+              aria-pressed={category === chip}
+              onClick={() => setCategory(chip)}
+              className={cn(pill, category === chip ? pillOn : pillIdle)}
             >
-              <Icon aria-hidden="true" className="size-4 shrink-0" />
-              {label}
+              <span className="min-w-0">{chip ?? "All"}</span>
+              <span className="tabular">
+                {chip ? (counts.get(chip) ?? 0) : books.length}
+              </span>
             </button>
           ))}
         </div>
-      </div>
 
-      <div
-        role="group"
-        aria-label="Filter by category"
-        className="mt-4 hidden flex-wrap gap-2 sm:flex"
-      >
-        {chips.map((chip) => (
-          <button
-            key={chip ?? "all"}
-            type="button"
-            aria-pressed={category === chip}
-            onClick={() => setCategory(chip)}
-            className={cn(
-              btnGhost,
-              "max-w-full min-w-11 text-left",
-              category === chip && pressedClass,
-            )}
+        <div className="mt-4 flex w-full flex-wrap items-center justify-center gap-x-4 gap-y-2">
+          <p aria-live="polite" className={cn(label, "text-muted-foreground")}>
+            {summary}
+          </p>
+          <div className="flex max-w-full min-w-0 items-center">
+            <label htmlFor="library-sort" className="sr-only">
+              Sort
+            </label>
+            <select
+              id="library-sort"
+              value={sort}
+              onChange={(event) => setSort(event.target.value as LibrarySort)}
+              className={cn(quietSelect, "max-w-full")}
+            >
+              <option value="category">Sort: Section</option>
+              <option value="title">Sort: Title</option>
+              <option value="author">Sort: Author</option>
+              <option value="recent">Sort: Recently added</option>
+            </select>
+          </div>
+          <div
+            role="group"
+            aria-label="View"
+            className="flex max-w-full flex-wrap justify-center gap-1"
           >
-            <span className="min-w-0">{chip ?? "All"}</span>
-            <span className="tabular">
-              {chip ? (counts.get(chip) ?? 0) : books.length}
-            </span>
-          </button>
-        ))}
+            {(
+              [
+                ["shelf", "Shelf"],
+                ["covers", "Covers"],
+              ] as const
+            ).map(([value, text]) => (
+              <button
+                key={value}
+                type="button"
+                aria-pressed={view === value}
+                onClick={() => chooseView(value)}
+                className={cn(pill, view === value ? pillOn : pillIdle)}
+              >
+                {text}
+              </button>
+            ))}
+          </div>
+        </div>
       </div>
-
-      <p aria-live="polite" className="text-muted-foreground text-small mt-5">
-        {visible.length === 1 ? "1 book" : `${visible.length} books`}
-        {category ? ` in ${category}` : ""}
-        {query.trim() ? ` matching “${query.trim()}”` : ""}
-      </p>
 
       {visible.length === 0 ? (
-        <div className="mt-4">
-          <p className="text-[length:var(--text-body)]">No books match.</p>
+        <div
+          className={cn(
+            siteContainer,
+            "mt-12 flex flex-col items-center pb-8 text-center",
+          )}
+        >
+          <p className="font-display text-[1.375rem] italic">
+            Nothing on the shelf matches.
+          </p>
           <button
             type="button"
             onClick={() => {
               setQuery("");
               setCategory(null);
             }}
-            className={cn(btnGhost, "mt-3")}
+            className={cn(pill, pillIdle, "mt-4")}
           >
             Clear search and filters
           </button>
         </div>
+      ) : view === "shelf" ? (
+        <div>
+          <Shelf
+            books={visible}
+            label={category ? `${category} shelf` : "Bookshelf"}
+            bookends={sort === "category" && !category}
+            onOpen={onBookClick}
+          />
+        </div>
       ) : (
-        groups.map((group) => (
-          <div
-            key={group.category ?? "all"}
-            className="mt-8 first-of-type:mt-6"
-          >
-            {group.category ? (
-              <h2
-                id={`shelf-${group.slug}`}
-                className="border-border font-display flex items-baseline justify-between gap-3 border-b pb-2 text-[length:var(--text-h3)] leading-[var(--leading-title)] tracking-tight"
-              >
-                <span className="min-w-0 [overflow-wrap:anywhere]">
-                  {group.category}
-                </span>
-                <span className="text-muted-foreground text-small tabular font-sans tracking-normal">
-                  {group.books.length}
-                </span>
-              </h2>
-            ) : null}
-            {view === "covers"
-              ? renderCovers(group.books)
-              : renderShelf(group.books, group.category)}
-          </div>
-        ))
+        <div className={cn(siteContainer, "mt-10")}>
+          {groups.map((group) => (
+            <div key={group.category ?? "all"} className="mt-10 first:mt-0">
+              {groupHeading(group)}
+              {renderCovers(group.books)}
+            </div>
+          ))}
+        </div>
       )}
 
       <BookDialog
